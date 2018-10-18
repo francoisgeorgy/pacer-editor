@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Print SysEx formatted</title>
+    <meta name="author" content="francois.georgy@gmail.com">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <style>
+        #data {
+            font-family: Courier New, Courier, monospace;
+        }
+        .wrapper {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .wrapped-left {
+            flex:0;
+        }
+        .wrapped-middle {
+            flex:1;
+            margin-left: 50px;
+        }
+        .wrapped-right > div {
+            margin-bottom: 1em;
+        }
+        .dump, .code {
+            white-space: pre;
+        }
+        span.dim {
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Print SysEx</h2>
+    <hr />
+    <button id="clear">clear</button>
+
+    <div id="data"></div>
+
+    <script>
+        const SYSEX_START = 0xF0;
+        const SYSEX_END = 0xF7;
+
+        var midi = null;  // global MIDIAccess object
+
+        const COLS = 8;
+        const EOL = '\n';
+
+        String.prototype.padZero = function (len, c) {
+            var s = '', c = c || '0', len = (len || 2) - this.length;
+            while (s.length < len) s += c;
+            return s + this;
+        };
+
+        function dim(s) {
+            return `<span class="dim">${s}</span>`;
+        }
+
+        function b(v) {
+            return v.toString(2).padZero(8);
+        }
+
+        function b7(v) {
+            return v.toString(2).padZero(7);    // 7 bits !!!
+        }
+
+        function h(v) {
+            return v.toString(16).toUpperCase().padZero(2);
+        }
+
+        function getBinRepr(data) {
+
+            var s = '    ';
+            for (let i = 0; i < 8; i++) {
+                s += `      ${dim(i)} `;
+            }
+            s += EOL;
+
+            var k = 0;
+            for (let i=0; i < data.byteLength; i++) {
+
+                if ((k % COLS) == 0) {
+                    s += dim(k.toString(10).padZero(3)) + ' ';
+                }
+
+                if (data[i] == SYSEX_START) {
+                    s += '-START- ';
+                } else if (data[i] == SYSEX_END) {
+                    s += '--END-- ';
+                } else {
+                    s += b7(data[i]) + ' ';
+                }
+
+                k++;
+                if ((k % COLS) == 0) {
+                    s += EOL;
+                }
+            }
+            return s;
+        }
+
+        function getHexRepr(data) {
+
+            var s = '    ';
+            for (var i = 0; i < 8; i++) {
+                s += ` ${dim(i)} `;
+            }
+            s += EOL;
+
+            var k = 0;
+            for (let i = 0; i < data.byteLength; i++) {
+
+                if ((k % COLS) == 0) {
+                    s += dim(k.toString(10).padZero(3)) + ' ';
+                }
+
+                s += h(data[i]) + ' ';
+
+                k++;
+                if ((k % COLS) == 0) {
+                    s += EOL;
+                }
+               
+            }
+            return s;
+        }
+
+        function displaySysEx(bytes) {
+            $("#data").prepend(
+                `<div class="wrapper">
+                    <div class="wrapped-left dump">${getBinRepr(bytes)}</div>
+                    <div class="wrapped-middle dump">${getHexRepr(bytes)}</div>
+                </div>`);
+        }
+
+        function handleMessage(event) {
+            if (event instanceof MIDIMessageEvent) {
+                if (event.data[0] == SYSEX_START) {
+                    displaySysEx(event.data);
+                }
+            }
+        }
+
+        function subscribeInputs(midiAccess) {
+            var inputs = midiAccess.inputs.values();
+            for (var input = inputs.next(); input && !input.done; input = inputs.next()) {
+                input.value.onmidimessage = handleMessage;
+            }
+        }
+
+        $(function () {
+
+            navigator.requestMIDIAccess({ sysex: true }).then(onMIDISuccess, onMIDIFailure);
+
+            function onMIDISuccess(midiAccess) {
+                midi = midiAccess;
+                subscribeInputs(midi);
+            }
+
+            function onMIDIFailure(msg) {
+                console.warn("onMIDIFailure", msg);
+            }
+
+            $('#clear').click(function () { $('#data').empty(); });
+
+        });
+    </script>
+</body>
+</html>
