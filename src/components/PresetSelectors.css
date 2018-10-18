@@ -1,0 +1,57 @@
+.selectors {
+    margin: 10px 0;
+    /*justify-content: start;*/
+    /*justify-items: stretch;*/
+    /*align-items: stretch;*/
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.selectors > div {
+    display: flex;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+.selectors > div > div {
+    background-color: #eeeeee;
+    margin-right: 4px;
+    padding: 8px 0;
+    width: 40px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.selectors > div > div:hover {
+    background-color: lightblue;
+}
+
+.selectors > div > div.selected {
+    background-color: orange;       /* present selected color overrides preset hover color */
+}
+
+/* GRID
+.selectors {
+    margin: 10px 0;
+    display: grid;
+    grid: repeat(4, 50px) / repeat(6, 50px);
+    grid-column-gap: 4px;
+    grid-row-gap: 10px;
+    justify-content: start;
+    justify-items: stretch;
+    align-items: stretch;
+}
+
+.selectors > div {
+    background-color: #eeeeee;
+    padding: 4px;
+}
+
+.selectors > div.selected {
+    background-color: orange;
+}
+
+.selectors > div:hover {
+    background-color: lightblue;
+}
+*/

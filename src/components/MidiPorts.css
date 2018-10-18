@@ -1,0 +1,46 @@
+#ports {
+    display: flex;
+    flex-direction: row;
+}
+
+.port {
+    border: 1px solid #aaa;
+    display: flex;
+    flex-direction: column;
+}
+
+.port-description {
+    padding: 5px;
+}
+
+.port.enabled .port-description {
+}
+
+.port-state {
+    padding: 5px;
+}
+
+.port.enabled .port-state {
+}
+
+.port-usage {
+    cursor: pointer;
+    font-size: 0.85rem;
+    user-select: none;
+    margin-left: 10px;
+}
+
+.port-manufacturer {
+}
+
+.port-manufacturer.unknown {
+    font-style: italic;
+}
+
+.port-name {
+    font-weight: bold;
+}
+
+.react-switch {
+    vertical-align: middle;
+}

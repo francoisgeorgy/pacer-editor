@@ -1,0 +1,59 @@
+div.preset {
+
+}
+
+.stompswitches,
+.external-footswitches,
+.expression-pedals {
+    margin: 10px 0;
+    display: grid;
+    justify-content: start;
+    grid-column-gap: 4px;
+    grid-row-gap: 10px;
+    justify-items: stretch;
+    align-items: stretch;
+}
+
+.stompswitches {
+    grid: repeat(2, 1fr) / repeat(6, auto);
+}
+
+.external-footswitches {
+    grid-template-columns: repeat(4, auto);
+}
+
+.expression-pedals {
+    grid-template-columns: repeat(2, auto);
+}
+
+.stompswitches > div {
+    background-color: #eeeeee;
+    padding: 4px;
+}
+
+.stompswitches > div.selected {
+    background-color: orange;
+}
+
+.stompswitches > div:hover {
+    background-color: lightblue;
+}
+
+.stompswitches > div,
+.external-footswitches > div,
+.expression-pedals > div {
+    background-color: #eeeeee;
+    padding: 4px;
+}
+
+.stompswitches > div.selected,
+.external-footswitches > div.selected,
+.expression-pedals > div.selected {
+    background-color: orange;
+}
+
+.stompswitches > div:hover,
+.external-footswitches > div:hover,
+.expression-pedals > div:hover {
+    background-color: lightblue;
+}
