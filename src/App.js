@@ -69,20 +69,22 @@ class App extends Component {
         this.setState({ outputs: outs });
     };
 
-    handleMidiInputEvent= (event) => {
-        if (event instanceof MIDIMessageEvent) {
-            // if (isSysexData(event.data)) {
-            //     this.setState({data: event.data});
-            // }
-            console.log(event);
-        }
+    handleMidiInputEvent = (event) => {
+        console.log("handleMidiInputEvent", event, event.data);
+        // if (event instanceof MIDIMessageEvent) {
+            if (isSysexData(event.data)) {
+                this.setState({data: event.data});
+            } else {
+                console.log("MIDI message is not a sysex message")
+            }
+        // }
     };
 
     connectInput = id => {
         const i = inputFromId(id);
         if (i) {
             i.addListener('noteon', 'all', this.handleMidiInputEvent);
-            console.log(`connectInput: input ${id} connected`);
+            console.log(`connectInput: input ${id} connected`, i);
         } else {
             console.log(`connectInput: input ${id} not found`);
         }
@@ -160,8 +162,10 @@ class App extends Component {
                     <h1>Nektar Pacer Editor</h1>
                 </header>
 
-                <MidiPorts ports={WebMidi.inputs} enabledPorts={inputs} onToggle={this.toggleInputPort} />
-                <MidiPorts ports={WebMidi.outputs} enabledPorts={outputs} onToggle={this.toggleOutputPort} />
+                <div className="all-ports">
+                    <MidiPorts ports={WebMidi.inputs} enabledPorts={inputs} onToggle={this.toggleInputPort} />
+                    <MidiPorts ports={WebMidi.outputs} enabledPorts={outputs} onToggle={this.toggleOutputPort} />
+                </div>
 
                 <Dropzone onDrop={this.onDrop} className="drop-zone">
                     Drop patch file here or click to open the file dialog

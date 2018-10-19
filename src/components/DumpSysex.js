@@ -17,8 +17,10 @@ const Preset = ({ name, data }) => {
                     {
                         value.map(v =>
                             <div>
-                                <div>[{h(v.element)}] {v.element_type === "control" ? CONTROL_ELEMENT[v.element] : MIDI_ELEMENT[v.element]}</div>
-                                <div className="data">{hs(v.data)}</div>
+                                <div>
+                                    [{h(v.element)}] {`${v.element_type === "control" ? CONTROL_ELEMENT[v.element] : MIDI_ELEMENT[v.element]}`.padEnd(30)}
+                                    <span className="data">{hs(v.data.subarray(0, v.data.length - 1))}</span>
+                                </div>
                             </div>
                         )
                     }

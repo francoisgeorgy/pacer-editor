@@ -18,12 +18,9 @@ const ELM = 8;
  * @param data ArrayBuffer
  */
 function isSysexData(data) {
-    let view = new DataView(data);
-    if (view.getUint8(0) !== SYSEX_START) return false;
-    if (view.getUint8(data.byteLength - 1) !== SYSEX_END) return false;
-
-    //TODO: check that all bytes have msb=0 (only 7 bits values)
-
+    let view = new Uint8Array(data);
+    if (view[0] !== SYSEX_START) return false;
+    if (view[view.byteLength - 1] !== SYSEX_END) return false;
     return true;
 }
 
