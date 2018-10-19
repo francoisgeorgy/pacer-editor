@@ -7,6 +7,7 @@ import {isSysexData, parseSysexData} from "./utils/sysex";
 import Dropzone from "react-dropzone";
 import PresetSelectors from "./components/PresetSelectors";
 import Preset from "./components/Preset";
+import DumpSysex from "./components/DumpSysex";
 
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
@@ -15,7 +16,8 @@ class App extends Component {
 
     state = {
         outputs: {},        // MIDI outputs
-        currentPreset: ""   // preset name, like "B2"
+        currentPreset: "",  // preset name, like "B2",
+        data: null
     };
 
     /**
@@ -31,7 +33,8 @@ class App extends Component {
                 } else {
                     const data = await new Response(file).arrayBuffer();
                     if (isSysexData(data)) {
-                        let patches = parseSysexData(data);
+                        this.setState({data});
+                        // let patches = parseSysexData(data);
                         // let num_patches = patches.length;        // number of patches found in file
                         /*
                         patches.map(p => {
@@ -93,7 +96,7 @@ class App extends Component {
      */
     render() {
 
-        const { outputs, currentPreset } = this.state;
+        const { outputs, currentPreset, data } = this.state;
 
         return (
             <div className="App">
@@ -110,9 +113,11 @@ class App extends Component {
                     Drop patch file here or click to open the file dialog
                 </Dropzone>
 
-                <PresetSelectors currentPreset={currentPreset} onClick={this.selectPreset} />
+                <DumpSysex data={data} />
 
-                {currentPreset && <Preset name={currentPreset}/>}
+                {/*<PresetSelectors currentPreset={currentPreset} onClick={this.selectPreset} />*/}
+
+                {/*{currentPreset && <Preset name={currentPreset}/>}*/}
 
             </div>
         );

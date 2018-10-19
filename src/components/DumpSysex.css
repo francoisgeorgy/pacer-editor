@@ -1,0 +1,10 @@
+.dump {
+    margin-top: 1rem;
+    font-family: Courier New, Courier, monospace;
+    white-space: pre;
+}
+
+.data {
+    margin: 0.5rem 0 1rem;
+    font-family: Courier New, Courier, monospace;
+}
