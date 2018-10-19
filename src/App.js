@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
+import * as WebMidi from "webmidi";
 import './App.css';
-import {portFromId} from "./utils/ports";
+import {inputFromId, portFromId} from "./utils/ports";
 import Midi from "./components/Midi";
 import MidiPorts from "./components/MidiPorts";
 import {isSysexData, parseSysexData} from "./utils/sysex";
@@ -15,6 +16,7 @@ const MAX_FILE_SIZE = 5 * 1024*1024;
 class App extends Component {
 
     state = {
+        inputs: {},         // MIDI inputs
         outputs: {},        // MIDI outputs
         currentPreset: "",  // preset name, like "B2",
         data: null
@@ -67,11 +69,62 @@ class App extends Component {
         this.setState({ outputs: outs });
     };
 
+    handleMidiInputEvent= (event) => {
+        if (event instanceof MIDIMessageEvent) {
+            // if (isSysexData(event.data)) {
+            //     this.setState({data: event.data});
+            // }
+            console.log(event);
+        }
+    };
+
+    connectInput = id => {
+        const i = inputFromId(id);
+        if (i) {
+            i.addListener('noteon', 'all', this.handleMidiInputEvent);
+            console.log(`connectInput: input ${id} connected`);
+        } else {
+            console.log(`connectInput: input ${id} not found`);
+        }
+        console.log('add input to state.connectedInputs');
+        // this.setState({connectedInputs: [...this.state.connectedInputs, id]});
+    };
+
+    disconnectInput = id => {
+        const i = inputFromId(id);
+        if (i) {
+            i.removeListener();
+            console.log(`disconnectInput: input ${id} disconnected`);
+        } else {
+            console.log(`disconnectInput: input ${id} not found`);
+        }
+        // let current = this.state.connectedInputs;
+        // current.splice(current.indexOf(id), 1);     // remove id from array
+        // console.log('remove input from state.connectedInputs');
+        // this.setState({connectedInputs: current});
+    };
+
+    toggleInputPort = (port_id) => {
+        let p = portFromId(port_id);
+        let ins = this.state.inputs;
+        if (ins.hasOwnProperty(p.id)) {
+            this.disconnectInput(p.id);
+            delete ins[p.id];
+        } else {
+            this.connectInput(p.id);
+            ins[p.id] = {
+                manufacturer: p.manufacturer,
+                name: p.name
+            };
+        }
+        this.setState({ inputs: ins });
+    };
+
     /**
      *
      * @param port_id
      */
-    togglePort = (port_id) => {
+    toggleOutputPort = (port_id) => {
         let p = portFromId(port_id);
         let outs = this.state.outputs;
         if (outs.hasOwnProperty(p.id)) {
@@ -96,7 +149,7 @@ class App extends Component {
      */
     render() {
 
-        const { outputs, currentPreset, data } = this.state;
+        const { inputs, outputs, currentPreset, data } = this.state;
 
         return (
             <div className="App">
@@ -107,7 +160,8 @@ class App extends Component {
                     <h1>Nektar Pacer Editor</h1>
                 </header>
 
-                <MidiPorts outputs={outputs} onToggle={this.togglePort} />
+                <MidiPorts ports={WebMidi.inputs} enabledPorts={inputs} onToggle={this.toggleInputPort} />
+                <MidiPorts ports={WebMidi.outputs} enabledPorts={outputs} onToggle={this.toggleOutputPort} />
 
                 <Dropzone onDrop={this.onDrop} className="drop-zone">
                     Drop patch file here or click to open the file dialog

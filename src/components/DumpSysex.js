@@ -30,7 +30,7 @@ const Preset = ({ name, data }) => {
 const DumpSysex = ({ data }) => {
     let presets = _.groupBy(parseSysexData(data), e => `${TARGET[e.target]} ${e.index}`);
     if (presets === null) return null;
-    console.log(presets);
+    // console.log(presets);
     return (
         <div className="dump">
             {
