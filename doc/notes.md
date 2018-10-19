@@ -1,3 +1,51 @@
+# Programming
+
+Data Encoder: select CTRL 
+press/move switch/control to edit
+Data Encoder: select 
+
+SETUP
+    ALL     All steps, one shot
+    SEQ     Sequence
+    ESS     External Step Select
+STEPS
+    press switch 2..6 to activate/deactivate
+TYPE
+    CCTOG   CC toggle
+    CCTRG
+    CCSTP
+    NT
+    NTTOG
+    PGBNK
+    PGSTEP
+    NRPNC
+    NRPNF
+    MMC
+    RELAY
+    PRESET
+    PR-+
+    STEP
+    STP-+
+    OFF
+PRG
+    0..127
+LSB
+    0..127
+MSB
+    0..127
+M CHA
+    0..16
+LED
+    MIDI
+    ONCLR
+    OFCLR
+    LEDNM
+    BACK
+CLEAR
+BACK
+
+
+
 # Organization
 
 - Global settings

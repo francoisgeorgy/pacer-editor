@@ -7,14 +7,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
-    <pre id="data"></pre>
+<pre id="data">                 cm tg ix obj  elm  data
+</pre>
     <script>
         const SYSEX_START = 0xF0;
         const SYSEX_END = 0xF7;
 
         var midi = null;  // global MIDIAccess object
 
-        const COLS = 8;
+        const COLS = 64;
         const EOL = '\n';
 
         String.prototype.padZero = function (len, c) {
@@ -37,10 +38,23 @@
                 s += h(data[i]) + ' ';
 
                 k++;
+/*
                 if ((k % COLS) == 0) {
                     s += EOL;
+                } else if ((k % 8) == 0) {
+                    s += '  ';
                 }
-               
+*/
+                if (k === 5) {
+                    s += '  ';
+                } else if (k === 9) {
+                    s += '  ';
+                } else if (k === 10) {
+                    s += '  ';
+                } else if (k === data.byteLength - 2) {
+                    s += '  ';
+                }
+
             }
 
             s += EOL;
@@ -49,7 +63,7 @@
         }
 
         function displaySysEx(bytes) {
-            $("#data").prepend(`${getHexRepr(bytes)}`);
+            $("#data").append(`${getHexRepr(bytes)}`);
         }
 
         function handleMessage(event) {

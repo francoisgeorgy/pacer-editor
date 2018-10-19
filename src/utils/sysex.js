@@ -28,6 +28,21 @@ function getManufacturerName(id) {
     return id in midi_name ? midi_name[id] : "manufacturer unknown";
 }
 
+function getElement(data) {
+    // console.log("getElement", hs(data));
+
+    const e = {};
+
+    //e.element = CONTROL_ELEMENT[data[0]];
+    e.element = data[0];
+
+    // we ignore the first byte, which seems to always be 0x01
+    // we take only one byte
+    // e.element_data = data.slice(2, 3);
+    e.element_data = data[2];
+
+    return e;
+}
 
 function parseData(data) {
 
@@ -35,17 +50,18 @@ function parseData(data) {
         command: null,
         target: null,
         index: null,
-        element: null,
-        data: null
+        // element: null,
+        // data: null
+        elements: null
     };
 
-    console.log("parseData", hs(data));
+    // console.log("parseData", hs(data));
 
     let cmd = data[CMD];
     let tgt = data[TGT];
     let idx = data[IDX];
     let obj = data[OBJ];
-    let elm = data[ELM];
+    // let elm = data[ELM];    //TODO: delete
 
     // console.log(h(cmd), h(tgt), h(idx), h(obj));
 
@@ -121,20 +137,32 @@ function parseData(data) {
             break;
         default:
             console.log('invalid obj', obj);
-            return;
+            return null;
     }
 
-    if (elm in control_elm) {
-        console.log(`element is ${control_elm[elm]}`);
-    } else {
-        console.log("invalid/ignored element", h(elm));
+    // if (elm in control_elm) {
+    //     console.log(`element is ${control_elm[elm]}`);
+    // } else {
+    //     console.log("invalid/ignored element", h(elm));
+    // }
+    // preset.element = elm;
+
+    // preset.data = data.slice(ELM);
+    // console.log("data", hs(data.slice(ELM)));
+
+    // Elements:
+
+    // 01 0F 00   02 01 47 00   03 01 44 00   04 01 55 00   05 01 66 00   06 01 01
+
+    preset.elements = [];
+    if (preset.element_type === "control") {
+        preset.elements.push(getElement(data.slice(ELM,      ELM +  4)));
+        preset.elements.push(getElement(data.slice(ELM +  4, ELM +  8)));
+        preset.elements.push(getElement(data.slice(ELM +  8, ELM + 12)));
+        preset.elements.push(getElement(data.slice(ELM + 12, ELM + 16)));
+        preset.elements.push(getElement(data.slice(ELM + 16, ELM + 20)));
+        preset.elements.push(getElement(data.slice(ELM + 20, ELM + 23)));
     }
-
-    preset.element = elm;
-
-    preset.data = data.slice(ELM+1);
-
-    console.log("data", hs(data.slice(ELM+1)));
 
     return preset;
 

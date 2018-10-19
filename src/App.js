@@ -83,7 +83,7 @@ class App extends Component {
     connectInput = id => {
         const i = inputFromId(id);
         if (i) {
-            i.addListener('noteon', 'all', this.handleMidiInputEvent);
+            i.addListener('sysex', 'all', this.handleMidiInputEvent);
             console.log(`connectInput: input ${id} connected`, i);
         } else {
             console.log(`connectInput: input ${id} not found`);
