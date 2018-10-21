@@ -6,7 +6,7 @@ import Switch from "react-switch";
 class MidiPorts extends Component {
 
     isSelected = (port) => {
-        return this.props.enabledPorts.hasOwnProperty(port.id)
+        return this.props.enabledPort === port.id;
     };
 
     /**
@@ -25,7 +25,7 @@ class MidiPorts extends Component {
                         return (
                             <div key={port.id} className={this.isSelected(port) ? "port enabled" : "port"}>
                                 <div className={"port-description"}>
-                                    <div className="type">{port.type}</div>
+                                    <div className="type">{port.type} {port.type === 'input' ? 'from' : 'to'}</div>
                                     <div className="port-name">{port.name}</div>
                                     <div className={port.manufacturer ? "port-manufacturer" : "port-manufacturer unknown"}>{port.manufacturer ? port.manufacturer : "unknown manufacturer"}</div>
                                 </div>
@@ -38,7 +38,7 @@ class MidiPorts extends Component {
                                         height={20} width={42}
                                     />
                                     <span className={this.isSelected(port) ? "port-usage selected" : "port-usage"}
-                                          onClick={() => this.props.onToggle(port.id)}>{this.isSelected(port) ? "port is enabled" : "port is ignored"}</span>
+                                          onClick={() => this.props.onToggle(port.id)}>{this.isSelected(port) ? "enabled" : "disabled"}</span>
                                 </div>
                             </div>
                         );

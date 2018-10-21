@@ -22,8 +22,13 @@ function inputName(id) {
     return i ? i.name : null;
 }
 
+function outputFromId(id) {
+    return WebMidi.outputs.find(item => item.id === id);
+}
+
 export {
     portFromId,
     inputFromId,
-    inputName
+    inputName,
+    outputFromId
 }

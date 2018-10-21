@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import * as WebMidi from "webmidi";
 import './App.css';
-import {inputFromId, portFromId} from "./utils/ports";
+import {inputFromId, outputFromId, portFromId} from "./utils/ports";
 import Midi from "./components/Midi";
 import MidiPorts from "./components/MidiPorts";
 import {isSysexData, parseSysexData} from "./utils/sysex";
@@ -9,6 +9,7 @@ import Dropzone from "react-dropzone";
 import PresetSelectors from "./components/PresetSelectors";
 import Preset from "./components/Preset";
 import DumpSysex from "./components/DumpSysex";
+import {requestPreset, SYSEX_SIGNATURE} from "./pacer";
 
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
@@ -16,8 +17,8 @@ const MAX_FILE_SIZE = 5 * 1024*1024;
 class App extends Component {
 
     state = {
-        inputs: {},         // MIDI inputs
-        outputs: {},        // MIDI outputs
+        input: null,        // MIDI input ID / we support only one connected Pacer at a time
+        output: null,       // MIDI output ID
         currentPreset: "",  // preset name, like "B2",
         data: null
     };
@@ -88,7 +89,7 @@ class App extends Component {
         } else {
             console.log(`connectInput: input ${id} not found`);
         }
-        console.log('add input to state.connectedInputs');
+        // console.log('add input to state.connectedInputs');
         // this.setState({connectedInputs: [...this.state.connectedInputs, id]});
     };
 
@@ -107,8 +108,10 @@ class App extends Component {
     };
 
     toggleInputPort = (port_id) => {
-        let p = portFromId(port_id);
-        let ins = this.state.inputs;
+        if (this.state.input) this.disconnectInput(this.state.input);
+        this.connectInput(port_id);
+        this.setState({ input: port_id });
+/*
         if (ins.hasOwnProperty(p.id)) {
             this.disconnectInput(p.id);
             delete ins[p.id];
@@ -120,6 +123,33 @@ class App extends Component {
             };
         }
         this.setState({ inputs: ins });
+*/
+    };
+
+    connectOutput = id => {
+        const i = outputFromId(id);
+        if (i) {
+            // i.addListener('sysex', 'all', this.handleMidiOutputEvent);
+            console.log(`connectOutput: output ${id} connected`, i);
+        } else {
+            console.log(`connectOutput: output ${id} not found`);
+        }
+        // console.log('add output to state.connectedOutputs');
+        // this.setState({connectedOutputs: [...this.state.connectedOutputs, id]});
+    };
+
+    disconnectOutput = id => {
+        const i = outputFromId(id);
+        if (i) {
+            // i.removeListener();
+            console.log(`disconnectOutput: output ${id} disconnected`);
+        } else {
+            console.log(`disconnectOutput: output ${id} not found`);
+        }
+        // let current = this.state.connectedOutputs;
+        // current.splice(current.indexOf(id), 1);     // remove id from array
+        // console.log('remove output from state.connectedOutputs');
+        // this.setState({connectedOutputs: current});
     };
 
     /**
@@ -127,6 +157,10 @@ class App extends Component {
      * @param port_id
      */
     toggleOutputPort = (port_id) => {
+        if (this.state.output) this.disconnectOutput(this.state.output);
+        this.connectOutput(port_id);
+        this.setState({ output: port_id });
+/*
         let p = portFromId(port_id);
         let outs = this.state.outputs;
         if (outs.hasOwnProperty(p.id)) {
@@ -138,11 +172,24 @@ class App extends Component {
             };
         }
         this.setState({ outputs: outs });
+*/
     };
 
     selectPreset = (name) => {
         console.log(`onPresetSelection: ${name}`);
         this.setState({currentPreset: name});
+    };
+
+    sendSysex(msg) {
+        if (this.state.output) {
+            outputFromId(this.state.output).sendSysex(SYSEX_SIGNATURE, msg);
+        }
+    }
+
+    onTest = () => {
+        let msg = requestPreset(5, 0x0D);
+        console.log(msg);
+        this.sendSysex(msg);
     };
 
     /**
@@ -151,7 +198,7 @@ class App extends Component {
      */
     render() {
 
-        const { inputs, outputs, currentPreset, data } = this.state;
+        const { input, output, currentPreset, data } = this.state;
 
         return (
             <div className="App">
@@ -163,8 +210,8 @@ class App extends Component {
                 </header>
 
                 <div className="all-ports">
-                    <MidiPorts ports={WebMidi.inputs} enabledPorts={inputs} onToggle={this.toggleInputPort} />
-                    <MidiPorts ports={WebMidi.outputs} enabledPorts={outputs} onToggle={this.toggleOutputPort} />
+                    <MidiPorts ports={WebMidi.inputs} enabledPort={input} onToggle={this.toggleInputPort} />
+                    <MidiPorts ports={WebMidi.outputs} enabledPort={output} onToggle={this.toggleOutputPort} />
                 </div>
 
                 <Dropzone onDrop={this.onDrop} className="drop-zone">
@@ -172,6 +219,10 @@ class App extends Component {
                 </Dropzone>
 
                 <DumpSysex data={data} />
+
+                <button onClick={this.onTest}>test</button>
+
+
 
                 {/*<PresetSelectors currentPreset={currentPreset} onClick={this.selectPreset} />*/}
 
