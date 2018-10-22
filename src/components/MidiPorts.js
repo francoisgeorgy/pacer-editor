@@ -5,6 +5,10 @@ import Switch from "react-switch";
 
 class MidiPorts extends Component {
 
+    isPacer = (port) => {
+        return port.manufacturer.toLowerCase() === 'nektar';
+    };
+
     isSelected = (port) => {
         return this.props.enabledPort === port.id;
     };
@@ -22,7 +26,7 @@ class MidiPorts extends Component {
             <div id={"ports"}>
                 {this.props.ports.map(
                     port => {
-                        return (
+                        return this.isPacer(port) ? (
                             <div key={port.id} className={this.isSelected(port) ? "port enabled" : "port"}>
                                 <div className={"port-description"}>
                                     <div className="type">{port.type} {port.type === 'input' ? 'from' : 'to'}</div>
@@ -41,7 +45,7 @@ class MidiPorts extends Component {
                                           onClick={() => this.props.onToggle(port.id)}>{this.isSelected(port) ? "enabled" : "disabled"}</span>
                                 </div>
                             </div>
-                        );
+                        ) : null;
                     }
                 )}
             </div>

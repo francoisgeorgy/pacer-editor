@@ -1,12 +1,10 @@
 import React from "react";
 import "./DumpSysex.css";
-import {parseSysexDump} from "../utils/sysex";
-import {CONTROL_ELEMENT, MIDI_ELEMENT, OBJECT, TARGET} from "../pacer";
+import {CONTROL_ELEMENT, MIDI_ELEMENT, OBJECT, TARGET, TARGET_PRESET} from "../pacer";
 import {h, hs} from "../utils/hexstring";
-import * as _ from "underscore";
+import "./DumpSysex.css";
 
 const ControlElement = ({ data }) => {
-    // console.log('controlElement', data);
     if (data.element === undefined) return null;
     if (!(data.element in CONTROL_ELEMENT)) return null;
     return <div>{CONTROL_ELEMENT[data.element]} = {h(data.element_data)}</div>;
@@ -16,42 +14,104 @@ const MidiElement = ({ data }) => {
     return <span>midi element</span>;
 };
 
-const Preset = ({ name, data }) => {
-    // console.log(name, data );
-    let byObj = _.groupBy(data, e => `${OBJECT[e.obj]}`);
+const Midis = ({ midis }) => {
+    if (midis === null) return null;
+    return (
+        <div></div>
+    );
+};
+
+const Control = ({ obj, config }) => {
+    if (config === null) return null;
     return (
         <div>
-            <h2>{name}</h2>
-            {_.map(byObj, (value, key) =>
+            <h3>{OBJECT[obj]}</h3>
+            <div>
+                <h4>steps</h4>
                 <div>
-                    <h4>{key}</h4>
-                    {
-                        value.map(v =>
-                            <div>
-                                {v.elements.map(e => v.element_type === "control" ? <ControlElement data={e}/> : <MidiElement data={e}/>)}
-                            </div>
-                        )
-                    }
-                </div>)}
+                {Object.keys(config["steps"]).map(i =>
+                    <div key={`${obj}.${i}`}>
+                        <div>step #{i}</div>
+                        <ul>
+                            <li>MIDI channel: {h(config["steps"][i]["channel"])}</li>
+                            <li>message type: {h(config["steps"][i]["msg_type"])}</li>
+                            <li>data: {hs(config["steps"][i]["data"])}</li>
+                            <li>active: {config["steps"][i]["active"]}</li>
+                        </ul>
+                    </div>
+                )}
+                </div>
+                <h4>LED</h4>
+                <h4>control</h4>
+            </div>
         </div>
     );
 };
 
-// {"command":1,"target":1,"index":5,"elements":
-// [{"element":1,"element_data":15},{"element":2,"element_data":71},{"element":3,"element_data":68},{"element":4,"element_data":85},{"element":5,"element_data":102},{"element":6,"element_data":1}],"obj":17,"element_type":"control"}
+const ControlTable = ({ obj, config }) => {
+    if (config === null) return null;
+    return (
+        <div className="control">
+            <table>
+                <tbody>
+                    <tr>
+                        <td colSpan={5} className="name">{OBJECT[obj]}</td>
+                    </tr>
+                    {Object.keys(config["steps"]).map(i =>
+                        <tr key={`${obj}.${i}`}>
+                            <td>step #{i}</td>
+                            <td>ch. {h(config["steps"][i]["channel"])}</td>
+                            <td>msg {h(config["steps"][i]["msg_type"])}</td>
+                            <td>{hs(config["steps"][i]["data"])}</td>
+                            <td>active {config["steps"][i]["active"]}</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+    );
+};
+
+const Controls = ({ controls }) => {
+    if (controls === null) return null;
+    return (
+        <div className="controls">
+            {Object.keys(controls).map(obj => <ControlTable key={obj} obj={obj} config={controls[obj]} />)}
+        </div>
+    );
+};
+
+const Preset = ({ index, data }) => {
+    if (data === null) return null;
+    return (
+        <div>
+            <h2>Preset #{index}</h2>
+            <Controls controls={data["controls"]} />
+            <Midis controls={data["controls"]} />
+            {/*<pre>{JSON.stringify(data, null, 4)}</pre>*/}
+        </div>
+    );
+};
+
+const Presets = ({ presets }) => {
+    if (presets === null) return null;
+    return (
+        <div>
+            {Object.keys(presets).map(idx => <Preset key={idx} index={idx} data={presets[idx]} />)}
+        </div>
+    );
+};
 
 const DumpSysex = ({ data }) => {
-    let presets = _.groupBy(parseSysexDump(data), e => `${TARGET[e.target]} ${e.index}`);
-    if (presets === null) return null;
-    // console.log(presets);
     return (
         <div className="dump">
             {
-                _.map(presets, (value, key) => <Preset name={key} data={value} />)
+                // _.map(data, (value, key) => <Preset name={key} data={value} />)
+                data && <Presets presets={data[TARGET_PRESET]} />
             }
 {/*
             {
-                JSON.stringify(presets, null, 4)
+                JSON.stringify(data, null, 4)
             }
 */}
         </div>

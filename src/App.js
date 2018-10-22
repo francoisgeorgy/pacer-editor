@@ -10,6 +10,7 @@ import PresetSelectors from "./components/PresetSelectors";
 import Preset from "./components/Preset";
 import DumpSysex from "./components/DumpSysex";
 import {requestPreset, SYSEX_SIGNATURE} from "./pacer";
+import {produce} from "immer";
 
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
@@ -20,7 +21,8 @@ class App extends Component {
         input: null,        // MIDI input ID / we support only one connected Pacer at a time
         output: null,       // MIDI output ID
         currentPreset: "",  // preset name, like "B2",
-        data: null
+        data: null,
+        busy: false
     };
 
     /**
@@ -32,20 +34,16 @@ class App extends Component {
         await Promise.all(files.map(
             async file => {
                 if (file.size > MAX_FILE_SIZE) {
-                    console.log(`${file.name}: file too big, ${file.size}`);
+                    console.warn(`${file.name}: file too big, ${file.size}`);
                 } else {
                     const data = await new Response(file).arrayBuffer();
                     if (isSysexData(data)) {
-                        // this.setState({data});
-                        parseSysexDump(data);
-                        // let patches = parseSysexData(data);
-                        // let num_patches = patches.length;        // number of patches found in file
-                        /*
-                        patches.map(p => {
-                            p.rating = this.state.stars.hasOwnProperty(p.hash) ? this.state.stars[p.hash] : 0;
-                            return p;
-                        });
-                        */
+                        this.setState(
+                            produce(draft => {
+                                draft.data = parseSysexDump(data);
+                                draft.busy = false;
+                            })
+                        )
                     }
                     // non sysex files are ignored
                 }
@@ -60,6 +58,7 @@ class App extends Component {
      */
     onDrop = (files) => {
         console.log('drop', files);
+        this.setState({busy: true});
         this.readFiles(files);  // returned promise is ignored, this is normal.
     };
 
@@ -199,7 +198,7 @@ class App extends Component {
      */
     render() {
 
-        const { input, output, currentPreset, data } = this.state;
+        const { input, output, currentPreset, data, busy } = this.state;
 
         return (
             <div className="App">
@@ -207,6 +206,7 @@ class App extends Component {
                 <Midi onOutputChange={this.onOutputChange} />
 
                 <header className="App-header">
+                    {busy && <div className="busy">busy</div>}
                     <h1>Nektar Pacer Editor</h1>
                 </header>
 
@@ -216,10 +216,10 @@ class App extends Component {
                 </div>
 
                 <Dropzone onDrop={this.onDrop} className="drop-zone">
-                    Drop patch file here or click to open the file dialog
+                    Drop a binary sysex file here or click to open the file dialog
                 </Dropzone>
 
-                {/*<DumpSysex data={data} />*/}
+                <DumpSysex data={data} />
 
                 {/*<button onClick={this.onTest}>test</button>*/}
 

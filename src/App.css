@@ -24,3 +24,10 @@
 .all-ports > div {
     margin-right: 10px;
 }
+
+.busy {
+    float: right;
+    background-color: orangered;
+    color: white;
+    padding: 6px 12px;
+}

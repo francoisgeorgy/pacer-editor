@@ -205,7 +205,7 @@ function parseSysexMessage(data) {
             console.log('ALL');
 
         } else {
-            console.warn(`invalid element: ${h(e)}`);
+            console.warn(`unknown element: ${h(e)}`);
             return null;
         }
 
@@ -263,7 +263,7 @@ function parseSysexDump(data) {
 
     }
 
-    console.log(JSON.stringify(presets));
+    // console.log(JSON.stringify(presets));
 
     return presets;
 
