@@ -339,6 +339,11 @@ export const MIDI_ELEMENT = {
     0x7F: "ALL"
 };
 
+// message types:
+
+export const MSG_TYPE_CC = 0x40;
+export const MSG_TYPE_NOTE = 0x43;
+export const MSG_TYPE_PC = 0x45;
 
 
 

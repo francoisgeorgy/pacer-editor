@@ -75,7 +75,7 @@ function getControlStep(data) {
     // we ignore the first byte, which seems to always be 0x01
 
     return {
-        index: (data[0] - 1) / 6,
+        index: (data[0] - 1) / 6 + 1,
         config: {
             channel: data[2],
             msg_type: data[6],

@@ -8994,6 +8994,11 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
+tonal-note@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/tonal-note/-/tonal-note-2.0.0.tgz#f2ad20d8451479f678e957a600c50d62c22df0d9"
+  integrity sha512-ZUeAloZQE2L3lhobVn7yCX7tT0x+iim26EIkZt8P7f5i4LCxbw/NifS2MgdcCL0Dh+CnaoGD/YMH9QhRmX7Tig==
+
 topo@2.x.x:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/topo/-/topo-2.0.2.tgz#cd5615752539057c0dc0491a621c3bc6fbe1d182"

@@ -3,6 +3,15 @@ import "./DumpSysex.css";
 import {CONTROL_ELEMENT, MIDI_ELEMENT, OBJECT, TARGET, TARGET_PRESET} from "../pacer";
 import {h, hs} from "../utils/hexstring";
 import "./DumpSysex.css";
+import * as Note from "tonal-note";
+
+const presetCoord = index => {
+    if (index === 0) return "CUR";
+    // 23 => D5
+    let b = Math.floor((index - 1) / 6);
+    let i = (index - 1) % 6 + 1;
+    return String.fromCharCode(b + 65) + i.toString();
+};
 
 const ControlElement = ({ data }) => {
     if (data.element === undefined) return null;
@@ -31,7 +40,7 @@ const Control = ({ obj, config }) => {
                 <div>
                 {Object.keys(config["steps"]).map(i =>
                     <div key={`${obj}.${i}`}>
-                        <div>step #{i}</div>
+                        <div>step {i}</div>
                         <ul>
                             <li>MIDI channel: {h(config["steps"][i]["channel"])}</li>
                             <li>message type: {h(config["steps"][i]["msg_type"])}</li>
@@ -55,14 +64,15 @@ const ControlTable = ({ obj, config }) => {
             <table>
                 <tbody>
                     <tr>
-                        <td colSpan={5} className="name">{OBJECT[obj]}</td>
+                        <td colSpan={6} className="name">{OBJECT[obj]}</td>
                     </tr>
                     {Object.keys(config["steps"]).map(i =>
                         <tr key={`${obj}.${i}`}>
-                            <td>step #{i}</td>
+                            <td>step {i}</td>
                             <td>ch. {h(config["steps"][i]["channel"])}</td>
                             <td>msg {h(config["steps"][i]["msg_type"])}</td>
                             <td>{hs(config["steps"][i]["data"])}</td>
+                            <td>{config["steps"][i]["msg_type"] === 0x43 ? Note.fromMidi(config["steps"][i]["data"][0], true) : "  "}</td>
                             <td>active {config["steps"][i]["active"]}</td>
                         </tr>
                     )}
@@ -85,7 +95,7 @@ const Preset = ({ index, data }) => {
     if (data === null) return null;
     return (
         <div>
-            <h2>Preset #{index}</h2>
+            <h2>Preset #{index} {presetCoord(parseInt(index, 10))}</h2>
             <Controls controls={data["controls"]} />
             <Midis controls={data["controls"]} />
             {/*<pre>{JSON.stringify(data, null, 4)}</pre>*/}
