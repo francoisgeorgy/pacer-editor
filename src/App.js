@@ -4,7 +4,7 @@ import './App.css';
 import {inputFromId, outputFromId, portFromId} from "./utils/ports";
 import Midi from "./components/Midi";
 import MidiPorts from "./components/MidiPorts";
-import {isSysexData, parseSysexData} from "./utils/sysex";
+import {isSysexData, parseSysexDump} from "./utils/sysex";
 import Dropzone from "react-dropzone";
 import PresetSelectors from "./components/PresetSelectors";
 import Preset from "./components/Preset";
@@ -36,7 +36,8 @@ class App extends Component {
                 } else {
                     const data = await new Response(file).arrayBuffer();
                     if (isSysexData(data)) {
-                        this.setState({data});
+                        // this.setState({data});
+                        parseSysexDump(data);
                         // let patches = parseSysexData(data);
                         // let num_patches = patches.length;        // number of patches found in file
                         /*
@@ -218,11 +219,9 @@ class App extends Component {
                     Drop patch file here or click to open the file dialog
                 </Dropzone>
 
-                <DumpSysex data={data} />
+                {/*<DumpSysex data={data} />*/}
 
-                <button onClick={this.onTest}>test</button>
-
-
+                {/*<button onClick={this.onTest}>test</button>*/}
 
                 {/*<PresetSelectors currentPreset={currentPreset} onClick={this.selectPreset} />*/}
 

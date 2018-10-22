@@ -1,17 +1,50 @@
 import midi_name, {NEKTAR_TECHNOLOGY_INC} from "midi-manufacturers";
 import {h, hs} from "./hexstring";
-import {CONTROL_ELEMENT, MIDI_ELEMENT, OBJECT, TARGET} from "../pacer";
+import {OBJECT, TARGET} from "../pacer";
 
 export const SYSEX_START = 0xF0;
 export const SYSEX_END = 0xF7;
 
-// offset from start of sysex data, right after SYSEX_START
-
+// offsets from start of sysex data, right after SYSEX_START
 const CMD = 4;
 const TGT = 5;
 const IDX = 6;
 const OBJ = 7;
 const ELM = 8;
+
+/**
+ * https://stackoverflow.com/questions/27936772/how-to-deep-merge-instead-of-shallow-merge/34749873#34749873
+ * Simple object check.
+ * @param item
+ * @returns {boolean}
+ */
+function isObject(item) {
+    return (item && typeof item === 'object' && !Array.isArray(item));
+}
+
+/**
+ * https://stackoverflow.com/questions/27936772/how-to-deep-merge-instead-of-shallow-merge/34749873#34749873
+ * Deep merge two objects.
+ * @param target
+ * @param ...sources
+ */
+function mergeDeep(target, ...sources) {
+    if (!sources.length) return target;
+    const source = sources.shift();
+
+    if (isObject(target) && isObject(source)) {
+        for (const key in source) {
+            if (isObject(source[key])) {
+                if (!target[key]) Object.assign(target, { [key]: {} });
+                mergeDeep(target[key], source[key]);
+            } else {
+                Object.assign(target, { [key]: source[key] });
+            }
+        }
+    }
+
+    return mergeDeep(target, ...sources);
+}
 
 /**
  *
@@ -28,163 +61,177 @@ function getManufacturerName(id) {
     return id in midi_name ? midi_name[id] : "manufacturer unknown";
 }
 
-function getElement(data) {
-    // console.log("getElement", hs(data));
+function getControlStep(data) {
 
-    const e = {};
+    console.log("getControlStep", hs(data));
 
-    //e.element = CONTROL_ELEMENT[data[0]];
-    e.element = data[0];
+    // 01 01 0F 00      midi channel
+    // 02 01 47 00      message type
+    // 03 01 44 00      data 1
+    // 04 01 55 00      data 2
+    // 05 01 66 00      data 3
+    // 06 01 01         active
 
     // we ignore the first byte, which seems to always be 0x01
-    // we take only one byte
-    // e.element_data = data.slice(2, 3);
-    e.element_data = data[2];
 
-    return e;
+    return {
+        index: (data[0] - 1) / 6,
+        config: {
+            channel: data[2],
+            msg_type: data[6],
+            data: [data[10], data[14], data[18]],
+            active: data[22]
+        }
+    };
 }
 
-function parseData(data) {
 
-    const preset = {
-        command: null,
-        target: null,
-        index: null,
-        // element: null,
-        // data: null
-        elements: null
+function getControlLED(data) {
+
+    // console.log("getControlLED", hs(data));
+
+    // 01 01 0F 00      midi channel
+    // 02 01 47 00      message type
+    // 03 01 44 00      data 1
+    // 04 01 55 00      data 2
+    // 05 01 66 00      data 3
+    // 06 01 01         active
+
+    // we ignore the first byte, which seems to always be 0x01
+
+    return {
+        midi: data[2],
+        on_color: data[6],
+        off_color: data[10]
     };
+}
 
-    // console.log("parseData", hs(data));
+
+/**
+ * Parse a single sysex message
+ * @param data
+ * @returns {*}
+ */
+function parseSysexMessage(data) {
+
+    // console.log("parseSysex", hs(data));
+
+    const message = {};
 
     let cmd = data[CMD];
     let tgt = data[TGT];
     let idx = data[IDX];
     let obj = data[OBJ];
-    // let elm = data[ELM];    //TODO: delete
-
-    // console.log(h(cmd), h(tgt), h(idx), h(obj));
 
     switch (cmd) {
         case 0x01:
-            console.log("set data");
+            // console.log(`command is set_data (${h(cmd)})`);
             break;
         case 0x02:
-            console.log("get data");
+            // console.log(`command is get_data (${h(cmd)})`);
             break;
         default:
-            console.log("invalid cmd", cmd);
+            console.warn(`invalid command (${h(cmd)})`);
             return null;
     }
 
-    preset.command = cmd;
-
-    if (tgt in TARGET) {
-        console.log(`target is ${TARGET[tgt]}`);
-    } else {
-        console.log("invalid target", h(tgt));
+    if (!(tgt in TARGET)) {
+        console.warn("invalid target", h(tgt), tgt, TARGET);
         return null;
     }
 
-    preset.target = tgt;
-
-    //
-    // switch (tgt) {
-    //     case 0x01:
-    //         console.log("target is preset");
-    //         break;
-    //     case 0x05:
-    //         console.log("target is global");
-    //         break;
-    //     case 0x07:
-    //         console.log("target is full backup");
-    //         break;
-    //     default:
-    //         console.log("invalid target", tgt);
-    //         break;
-    // }
+    message[tgt] = {};
 
     if (idx >= 0x19 && idx <= 0x7E) {
-        console.log("invalid/ignored idx", idx);
+        console.warn("invalid/ignored idx", idx);
     }
 
-    console.log(`idx is ${idx}`);
+    message[tgt][idx] = {};
 
-    preset.index = idx;
-
-    if (obj in OBJECT) {
-        console.log(`target is ${OBJECT[obj]}`);
-    } else {
-        console.log("invalid/ignored object", h(obj));
+    if (!(obj in OBJECT)) {
+        console.warn("invalid/ignored object", h(obj));
         return null;
     }
 
-    preset.obj = obj;
+    let obj_type;
+    if ((obj >= 0x0D && obj <= 0x12) ||
+        (obj >= 0x14 && obj <= 0x1B) ||
+        (obj >= 0x36 && obj <= 0x37)) {
+        obj_type = "control";
+    } else if (obj === 0x7E) {
+        obj_type = "midi";
+    } else {
+        console.warn('invalid obj', obj);
+        return null;
+    }
 
-    let control_elm;
-    switch (true) {
-        case (obj >= 0x0D && obj <= 0x12) ||
-             (obj >= 0x14 && obj <= 0x1B) ||
-             (obj >= 0x36 && obj <= 0x37):
-            console.log('CONTROL');
-            control_elm = CONTROL_ELEMENT;
-            preset.element_type = "control";
-            break;
-        case obj === 0x7E:
-            console.log('MIDI');
-            control_elm = MIDI_ELEMENT;
-            preset.element_type = "MIDI";
-            break;
-        default:
-            console.log('invalid obj', obj);
+    // console.log(`target=${TARGET[tgt]} (${h(tgt)}), idx=${h(idx)}, object=${OBJECT[obj]} (${h(obj)}), type=${obj_type}`);
+    console.log(`${TARGET[tgt]} ${h(idx)} : ${OBJECT[obj]} ${obj_type}`);
+
+    if (obj_type === "control") {
+
+        message[tgt][idx]["controls"] = {
+            [obj]: {
+                steps: {}
+            }
+        };
+
+        // which element?
+        let e = data[ELM];
+        if (e >= 0x01 && e <= 0x24) {
+
+            // STEPS
+            if (data.length > ELM+22) {
+                let s = getControlStep(data.slice(ELM, ELM + 23));
+                message[tgt][idx]["controls"][obj]["steps"][s.index] = s.config;
+            } else {
+                console.warn(`data does not contains steps. data.length=${data.length}`, hs(data));
+            }
+
+        } else if (e === 0x60) {
+
+            // CONTROL MODE
+            console.log('CONTROL MODE');
+
+        } else if (e >= 0x61 && e <= 0x63) {
+
+            // LED
+            console.log('LED');
+            message[tgt][idx]["controls"][obj]["led"] = getControlLED(data.slice(ELM, ELM + 3));;
+
+        } else if (e === 0x7F) {
+
+            // ALL
+            console.log('ALL');
+
+        } else {
+            console.warn(`invalid element: ${h(e)}`);
             return null;
+        }
+
     }
 
-    // if (elm in control_elm) {
-    //     console.log(`element is ${control_elm[elm]}`);
-    // } else {
-    //     console.log("invalid/ignored element", h(elm));
-    // }
-    // preset.element = elm;
+    console.log('MESSAGE', message);
 
-    // preset.data = data.slice(ELM);
-    // console.log("data", hs(data.slice(ELM)));
+    return message;
 
-    // Elements:
-
-    // 01 0F 00   02 01 47 00   03 01 44 00   04 01 55 00   05 01 66 00   06 01 01
-
-    preset.elements = [];
-    if (preset.element_type === "control") {
-        preset.elements.push(getElement(data.slice(ELM,      ELM +  4)));
-        preset.elements.push(getElement(data.slice(ELM +  4, ELM +  8)));
-        preset.elements.push(getElement(data.slice(ELM +  8, ELM + 12)));
-        preset.elements.push(getElement(data.slice(ELM + 12, ELM + 16)));
-        preset.elements.push(getElement(data.slice(ELM + 16, ELM + 20)));
-        preset.elements.push(getElement(data.slice(ELM + 20, ELM + 23)));
-    }
-
-    return preset;
-
-} // parseData()
+} // parseSysex()
 
 
 /**
- * Return a array of patches.
+ * Parse a sysex dump. A dump can contains multiple sysex messages.
+ * Return a array of presets.
  * @param data ArrayBuffer
  */
-function parseSysexData(data) {
+function parseSysexDump(data) {
 
     // console.log(`parseSysexData`, data);
 
     if (data === null) return null;
 
     let d = new Uint8Array(data);
-    let patches = [];
-    // let patch = {};
-    // let offset = 0;
-    // let multi_bytes_id = false;
-    // let dd;
+    let presets = {};   // Collection of presets. The key is the preset's index. The value is the preset.
+    let global = {};    // global conf
 
     let i = 0;
     let cont = true;
@@ -197,8 +244,6 @@ function parseSysexData(data) {
 
         let k = d.indexOf(SYSEX_END, i);
 
-        // console.log(h(d[i]), h(d[k]), d.length);
-
         let manufacturer_id = (Array.from(d.slice(i, i+3)).map(n => h(n))).join(" ");    // Array.from() is necessary to get a non-typed array
         if (manufacturer_id !== NEKTAR_TECHNOLOGY_INC) {
             console.log("file does not contain a Nektar Pacer patch");
@@ -206,251 +251,27 @@ function parseSysexData(data) {
         }
 
         if (d[i+3] !== 0x7F) {
-            console.log(`invalid byte after manufacturer id: ${d[i+3]}`);
+            console.warn(`invalid byte after manufacturer id: ${d[i+3]}`);
             return null;
         }
 
-        //console.log(h(d[i+4]));
-        //cont = false;
+        let config = parseSysexMessage(d.slice(i, k));  // d.slice(i, k) are the data between SYSEX_START and SYSEX_END
 
-        let preset = parseData(d.slice(i, k));       // d.slice(i, k) are the data between SYSEX_START and SYSEX_END
-
-        if (preset) {
-            patches.push(preset);
+        if (config) {
+            mergeDeep(presets, config);
         }
 
     }
 
+    console.log(JSON.stringify(presets));
 
-
-    /*
-        let manufacturer_id = (Array.from(d.slice(1, 4)).map(n => n.toString(16).padStart(2, "0"))).join(" ");    // Array.from() is necessary to get a non-typed array
-
-        console.log(manufacturer_id);
-
-        if (manufacturer_id !== NEKTAR_TECHNOLOGY_INC) {
-            console.log("file does not contain a Nektar Pacer patch");
-            return [];
-        }
-
-        patches = manufacturer_id;
-
-        if (d[i] === SYSEX_START) {
-            patch = {};                     // new patch
-            dd = [];
-            offset = i;
-            continue;
-        }
-    */
-
-/*
-    for (let i = 0; i < d.length; i++) {
-
-
-
-        if (d[i] === SYSEX_START) {
-            patch = {};                     // new patch
-            dd = [];
-            offset = i;
-            continue;
-        }
-
-        let k = i - offset; // relative index (index for the current patch)
-
-        if (k === 1) {
-            if (patch === undefined) {
-                console.error("invalid sysex data");
-                break;
-            }
-            if (d[i] !== 0x00) {
-                patch.manufacturer_id = d[i].toString(16).padStart(2, "0");
-                patch.manufacturer = getManufacturerName(patch.manufacturer_id);
-            }
-            if (d[i] === 0x00) {
-                multi_bytes_id = true;
-                patch.manufacturer_id = "00";    //d[i].toString(16);   // todo: hardcode "00"
-            }
-            continue;
-        }
-
-        if (multi_bytes_id && (k === 2)) {
-            patch.manufacturer_id += " " + d[i].toString(16).padStart(2, "0");
-            continue;
-        }
-
-        if (multi_bytes_id && (k === 3)) {
-            patch.manufacturer_id += " " + d[i].toString(16).padStart(2, "0");
-            patch.manufacturer = getManufacturerName(patch.manufacturer_id);
-            multi_bytes_id = false;
-            continue;
-        }
-
-        if (d[i] === SYSEX_END) {
-
-            patch.manufacturer_id_bytes = patch.manufacturer_id.split(" ").map(n => parseInt(n,16));
-            // let hexString = (dd.map(function (n) {return n.toString(16).padStart(2, "0");})).join(" ");
-            // console.log(hexString);
-            patch.data = new Uint8Array(dd);
-
-            if (patch.manufacturer_id !== NEKTAR_TECHNOLOGY_INC) {
-                console.log("file does not contain a Nektar Pacer patch");
-                continue;
-            }
-
-            // let infos = getInfos(patch.data);
-            // //TODO: if no name, try to get name from file
-            // patch.name = infos.patch_name ? infos.patch_name : "no name";
-            // patch.number = infos.patch_number;
-
-            patches.push(patch);
-        }
-
-        if (k === 4) {
-            if (d[i] === 0x7F) {
-                continue;
-            } else {
-                console.log(`invalid byte after manufacturer id: ${d[i]}`);
-                return null;
-            }
-        }
-
-        let cmd = d[i];
-
-
-        dd.push(d[i]);
-
-    }
-*/
-    return patches;
+    return presets;
 
 }
 
-
-
-
-
-
-
-
-
-
-/**
- * Return a array of patches.
- * @param data ArrayBuffer
- */
-function parseSysexData2(data) {
-
-    let d = new Uint8Array(data);
-    let patches = [];
-    let patch = {};
-    let offset = 0;
-    let multi_bytes_id = false;
-    let dd;
-
-/*
-    let manufacturer_id = (Array.from(d.slice(1, 4)).map(n => n.toString(16).padStart(2, "0"))).join(" ");    // Array.from() is necessary to get a non-typed array
-
-    console.log(manufacturer_id);
-
-    if (manufacturer_id !== NEKTAR_TECHNOLOGY_INC) {
-        console.log("file does not contain a Nektar Pacer patch");
-        return [];
-    }
-
-    patches = manufacturer_id;
-
-    if (d[i] === SYSEX_START) {
-        patch = {};                     // new patch
-        dd = [];
-        offset = i;
-        continue;
-    }
-*/
-
-
-    for (let i = 0; i < d.length; i++) {
-
-
-
-        if (d[i] === SYSEX_START) {
-            patch = {};                     // new patch
-            dd = [];
-            offset = i;
-            continue;
-        }
-
-        let k = i - offset; // relative index (index for the current patch)
-
-        if (k === 1) {
-            if (patch === undefined) {
-                console.error("invalid sysex data");
-                break;
-            }
-            if (d[i] !== 0x00) {
-                patch.manufacturer_id = d[i].toString(16).padStart(2, "0");
-                patch.manufacturer = getManufacturerName(patch.manufacturer_id);
-            }
-            if (d[i] === 0x00) {
-                multi_bytes_id = true;
-                patch.manufacturer_id = "00";    //d[i].toString(16);   // todo: hardcode "00"
-            }
-            continue;
-        }
-
-        if (multi_bytes_id && (k === 2)) {
-            patch.manufacturer_id += " " + d[i].toString(16).padStart(2, "0");
-            continue;
-        }
-
-        if (multi_bytes_id && (k === 3)) {
-            patch.manufacturer_id += " " + d[i].toString(16).padStart(2, "0");
-            patch.manufacturer = getManufacturerName(patch.manufacturer_id);
-            multi_bytes_id = false;
-            continue;
-        }
-
-        if (d[i] === SYSEX_END) {
-
-            patch.manufacturer_id_bytes = patch.manufacturer_id.split(" ").map(n => parseInt(n,16));
-            // let hexString = (dd.map(function (n) {return n.toString(16).padStart(2, "0");})).join(" ");
-            // console.log(hexString);
-            patch.data = new Uint8Array(dd);
-
-            if (patch.manufacturer_id !== NEKTAR_TECHNOLOGY_INC) {
-                console.log("file does not contain a Nektar Pacer patch");
-                continue;
-            }
-
-            // let infos = getInfos(patch.data);
-            // //TODO: if no name, try to get name from file
-            // patch.name = infos.patch_name ? infos.patch_name : "no name";
-            // patch.number = infos.patch_number;
-
-            patches.push(patch);
-        }
-
-        if (k === 4) {
-            if (d[i] === 0x7F) {
-                continue;
-            } else {
-                console.log(`invalid byte after manufacturer id: ${d[i]}`);
-                return null;
-            }
-        }
-
-        let cmd = d[i];
-
-
-        dd.push(d[i]);
-
-    }
-
-    return patches;
-
-}
 
 export {
     isSysexData,
-    parseSysexData
+    parseSysexDump
 };
 

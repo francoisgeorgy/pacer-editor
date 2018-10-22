@@ -1,4 +1,3 @@
-//TODO
 
 export const SYSEX_SIGNATURE = [0x00, 0x01, 0x77];
 
@@ -19,10 +18,14 @@ export function requestPreset(index, obj) {
     return SYSEX_HEADER.concat(msg);
 }
 
+export const TARGET_PRESET = 0x01;
+export const TARGET_GLOBAL = 0x05;
+export const TARGET_BACKUP = 0x07;
+
 export const TARGET = {
-    0x01: "preset",
-    0x05: "global",
-    0x07: "full backup"
+    [TARGET_PRESET]: "preset",
+    [TARGET_GLOBAL]: "global",
+    [TARGET_BACKUP]: "full backup"
 };
 
 export const OBJECT = {
@@ -335,3 +338,7 @@ export const MIDI_ELEMENT = {
 
     0x7F: "ALL"
 };
+
+
+
+

@@ -1,6 +1,6 @@
 import React from "react";
 import "./DumpSysex.css";
-import {parseSysexData} from "../utils/sysex";
+import {parseSysexDump} from "../utils/sysex";
 import {CONTROL_ELEMENT, MIDI_ELEMENT, OBJECT, TARGET} from "../pacer";
 import {h, hs} from "../utils/hexstring";
 import * as _ from "underscore";
@@ -41,7 +41,7 @@ const Preset = ({ name, data }) => {
 // [{"element":1,"element_data":15},{"element":2,"element_data":71},{"element":3,"element_data":68},{"element":4,"element_data":85},{"element":5,"element_data":102},{"element":6,"element_data":1}],"obj":17,"element_type":"control"}
 
 const DumpSysex = ({ data }) => {
-    let presets = _.groupBy(parseSysexData(data), e => `${TARGET[e.target]} ${e.index}`);
+    let presets = _.groupBy(parseSysexDump(data), e => `${TARGET[e.target]} ${e.index}`);
     if (presets === null) return null;
     // console.log(presets);
     return (
