@@ -10,12 +10,13 @@ class Midi extends Component {
 
     constructor(props) {
         super(props);
+        this.onInputChange = props.onInputChange;
         this.onOutputChange = props.onOutputChange;
     }
 
-    handleMidiEvent = e => {
+    handleMidiConnectEvent = e => {
 
-        console.log(`handleMidiEvent: ${e.port.type} ${e.type}: ${e.port.name}`, e);
+        console.log(`handleMidiConnectEvent: ${e.port.type} ${e.type}: ${e.port.name}`, e);
 
         // is disconnect event, remove the existing input listeners
         /*
@@ -26,8 +27,9 @@ class Midi extends Component {
         */
 
         if (e.port.type === 'input') {
-            console.log(`ignore MIDI input`);
-            return;
+            // console.log(`ignore MIDI input connect event`);
+            console.log("call onInputChange");
+            this.onInputChange();
         }
 
         if (e.port.type === 'output') {
@@ -80,13 +82,31 @@ class Midi extends Component {
             console.warn("WebMidi could not be enabled.", err);
         } else {
             console.log("WebMidi enabled!");
-            WebMidi.addListener("connected", this.handleMidiEvent);
-            WebMidi.addListener("disconnected", this.handleMidiEvent);
+            WebMidi.addListener("connected", this.handleMidiConnectEvent);
+            WebMidi.addListener("disconnected", this.handleMidiConnectEvent);
+
+            /*
+            if (WebMidi.hasListener("connected", this.handleMidiConnectEvent)) {
+                console.log("MidiPorts.componentDidMount: handleMidiConnectEvent already set on 'connected' event");
+            } else {
+                WebMidi.addListener("connected", this.handleMidiConnectEvent);
+            }
+            if (WebMidi.hasListener("disconnected", this.handleMidiConnectEvent)) {
+                console.log("MidiPorts.componentDidMount: handleMidiConnectEvent already set on 'disconnected' event");
+            } else {
+                WebMidi.addListener("disconnected", this.handleMidiConnectEvent);
+            }
+            */
         }
     };
 
     componentDidMount() {
         WebMidi.enable(this.midiOn, true);  // true to enable sysex support
+        console.warn("Midi.componentDidUnmount");
+    }
+
+    componentWillUnmount() {
+        console.warn("Midi.componentWillUnmount");
     }
 
     render() {

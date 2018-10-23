@@ -1,19 +1,26 @@
-.App {
+h1 {
+    margin: 10px 0;
+}
+
+h2 {
+    margin: 0;
+}
+
+.app {
     padding: 0 10px;
 }
 
-.App-header {
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
 }
 
-.App-link {
-}
-
-
-.drop-zone {
-    margin: 8px 0 0 0;
-    padding: 20px;
-    border: 1px solid #aaa;
-    background-color: #eee;
+.header-link {
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: blue;
+    margin: 0 0 0 1rem;
 }
 
 .all-ports {
@@ -25,9 +32,30 @@
     margin-right: 10px;
 }
 
+.spacer {
+    flex-grow: 10;
+}
+
 .busy {
-    float: right;
     background-color: orangered;
     color: white;
-    padding: 6px 12px;
+    padding: 8px 24px;
+    margin-right: 6px;
+    font-size: 2rem;
+}
+.sub-header {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+.sub-header h2 {
+    /*color: #999;*/
+    margin-right: 1rem;
+    text-align: center;
+}
+
+.main {
+    margin: 2rem 0 0 0;
+    border-top: 1px solid #aaa;
 }

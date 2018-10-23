@@ -7,17 +7,23 @@
     border: 1px solid #aaa;
     display: flex;
     flex-direction: column;
+    margin-right: 5px;
 }
 
 .port-description {
     padding: 5px;
 }
 
+.port.enabled {
+    background-color: #A1EEA1;
+    border: 1px solid #00aa00;
+}
+
 .port.enabled .port-description {
 }
 
 .port-state {
-    padding: 5px;
+    padding: 0 5px 5px 5px;
 }
 
 .port.enabled .port-state {

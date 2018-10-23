@@ -27,4 +27,4 @@ export const h = v => {
     return padZero(v.toString(16).toUpperCase(), 2);
 };
 
-export const hs = data => (Array.from(data).map(n => h(n))).join(" ");    // Array.from() is necessary to get a non-typed array
+export const hs = data => data ? (Array.from(data).map(n => h(n))).join(" ") : "";    // Array.from() is necessary to get a non-typed array

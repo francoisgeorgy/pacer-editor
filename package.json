@@ -11,6 +11,7 @@
         "react": "^16.5.2",
         "react-dom": "^16.5.2",
         "react-dropzone": "^6.2.4",
+        "react-router-dom": "^4.3.1",
         "react-scripts": "2.0.5",
         "react-switch": "^3.0.4",
         "tonal-note": "^2.0.0",

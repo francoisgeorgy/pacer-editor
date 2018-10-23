@@ -12,11 +12,11 @@ const PresetSelectors = ({ currentPreset, onClick }) =>
             ['A', 'B', 'C', 'D'].map(
                 e => {
                     return (
-                        <div>{
+                        <div key={e}>{
                             Array.from(Array(6).keys()).map(
                                 i => {
                                     let id = e + (i + 1);
-                                    return <PresetSelector name={id} selected={id === currentPreset} onClick={onClick} />
+                                    return <PresetSelector name={id} selected={id === currentPreset} onClick={onClick} key={id} />
                                 })
                         }</div>)
                 }
