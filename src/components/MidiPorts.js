@@ -13,9 +13,8 @@ class MidiPorts extends Component {
     connectInput = id => {
         const i = inputFromId(id);
         if (i) {
-            // i.addListener('sysex', 'all', this.props.onMidiEvent);
-            i.addListener('noteon', 'all', this.props.onMidiEvent);
-            console.log(`connectInput: input ${id} connected`, i);
+            i.addListener('sysex', 'all', this.props.onMidiEvent);
+            // console.log(`connectInput: input ${id} connected`, i);
         } else {
             console.log(`connectInput: input ${id} not found`);
         }
@@ -27,7 +26,7 @@ class MidiPorts extends Component {
         const i = inputFromId(id);
         if (i) {
             i.removeListener();
-            console.log(`disconnectInput: input ${id} disconnected`);
+            // console.log(`disconnectInput: input ${id} disconnected`);
         } else {
             console.log(`disconnectInput: input ${id} not found`);
         }
@@ -159,9 +158,38 @@ class MidiPorts extends Component {
     }
 */
 
+    /**
+     * This is to provide the auto-connect feature
+     * @param props
+     * @param state
+     */
+    /*
+    static getDerivedStateFromProps(props, state) {
+        console.warn("MidiPorts.getDerivedStateFromProps", state, props.ports);
+        let s = {};
+        if (state.input === null) {
+            for (let p of props.ports) {
+                if (p.type === 'input' && p.manufacturer.toLowerCase() === 'nektar') {
+                    s.input = p.id;
+
+                    break;
+                }
+            }
+        }
+        if (state.output === null) {
+            for (let p of props.ports) {
+                if (p.type === 'output' && p.manufacturer.toLowerCase() === 'nektar') {
+                    s.output = p.id;
+                    break;
+                }
+            }
+        }
+        return Object.keys(s).length ? s : null;
+    }
+    */
 
     componentDidMount() {
-        console.warn("MidiPorts.componentDidMount", this.state);
+        console.warn("MidiPorts.componentDidMount", this.state, this.props.ports);
     }
 
     componentWillUnmount() {
@@ -185,7 +213,7 @@ class MidiPorts extends Component {
             <div id={"ports"}>
                 {this.props.ports.map(
                     port => {
-                        console.log("MidiPorts render port", port);
+                        // console.log("MidiPorts render port", port);
                         let isSelected = port.type === 'input' ? this.state.input === port.id : this.state.output === port.id;
                         return this.isPacer(port) ? (
                             <div key={port.id} className={isSelected ? "port enabled" : "port"}>

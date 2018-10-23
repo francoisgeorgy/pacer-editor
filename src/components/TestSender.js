@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {isSysexData} from "../utils/sysex";
 import MidiPorts from "./MidiPorts";
-import {requestPreset, SYSEX_SIGNATURE} from "../pacer";
+import {requestPreset, requestPresetObj, SYSEX_SIGNATURE} from "../pacer";
 import {outputFromId} from "../utils/ports";
 import {hs} from "../utils/hexstring";
 import "./TestSender.css";
@@ -11,7 +11,10 @@ class TestSender extends Component {
     state = {
         output: null,           // MIDI output port enabled
         data: null,
-        message: requestPreset(5, 0x0D)
+        messages: [
+            requestPreset(5),
+            requestPresetObj(5, 0x0D)
+        ]
     };
 
     handleMidiInputEvent = (event) => {
@@ -37,8 +40,7 @@ class TestSender extends Component {
         }
     }
 
-    onTest = () => {
-        let msg = requestPreset(5, 0x0D);
+    sendMessage = (msg) => {
         this.sendSysex(msg);
     };
 
@@ -71,12 +73,18 @@ class TestSender extends Component {
                 <div className="main">
 
                     <h4>message:</h4>
-                    <div className="message">
-                        {hs(message)}
-                    </div>
+                    {/*<div className="message">*/}
+                        {/*{hs(message)}*/}
+                    {/*</div>*/}
 
                     <div>
-                        <button onClick={this.onTest}>test</button>
+                        {this.state.messages.map((msg, i) =>
+                            <div key={i}>
+                                <div className="message">
+                                    <button onClick={() => this.sendMessage(msg)}>send</button> {hs(msg)}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <h4>response:</h4>

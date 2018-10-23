@@ -22,7 +22,8 @@ class Dumper extends Component {
         console.log("Dumper.handleMidiInputEvent", event, event.data);
         // if (event instanceof MIDIMessageEvent) {
         if (isSysexData(event.data)) {
-            this.setState({data: event.data});
+            console.log("Dumper.handleMidiInputEvent: data is SysEx");
+            this.setState({data: parseSysexDump(event.data)});
         } else {
             console.log("MIDI message is not a sysex message")
         }
@@ -80,9 +81,9 @@ class Dumper extends Component {
      */
     render() {
 
-        console.log("dumper.render", this.props);
-
         const { data } = this.state;
+
+        console.log("dumper.render", this.props);
 
         return (
             <div>

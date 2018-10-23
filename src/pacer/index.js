@@ -8,10 +8,21 @@ export function checksum(bytes) {
     return 128 - (sum % 128);
 }
 
+
 /**
  * return the sysex message to send to the Pacer to request some data
  */
-export function requestPreset(index, obj) {
+export function requestPreset(index) {
+    let msg = [0x02, 0x01, index];
+    let cs = checksum(msg);
+    msg.push(cs);
+    return SYSEX_HEADER.concat(msg);
+}
+
+/**
+ * return the sysex message to send to the Pacer to request some data
+ */
+export function requestPresetObj(index, obj) {
     let msg = [0x02, 0x01, index, obj];
     let cs = checksum(msg);
     msg.push(cs);

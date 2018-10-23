@@ -116,15 +116,15 @@ const Presets = ({ presets }) => {
 const DumpSysex = ({ data }) => {
     return (
         <div className="dump">
+{/*
             {
                 // _.map(data, (value, key) => <Preset name={key} data={value} />)
                 data && <Presets presets={data[TARGET_PRESET]} />
             }
-{/*
+*/}
             {
                 JSON.stringify(data, null, 4)
             }
-*/}
         </div>
     );
 };
