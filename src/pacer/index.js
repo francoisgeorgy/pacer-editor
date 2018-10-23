@@ -18,17 +18,26 @@ export function requestPreset(index, obj) {
     return SYSEX_HEADER.concat(msg);
 }
 
+// ============================================================================
+
+
+
+// ============================================================================
+
 export const TARGET_PRESET = 0x01;
 export const TARGET_GLOBAL = 0x05;
 export const TARGET_BACKUP = 0x07;
 
-export const TARGET = {
+export const TARGETS = {
     [TARGET_PRESET]: "preset",
     [TARGET_GLOBAL]: "global",
     [TARGET_BACKUP]: "full backup"
 };
 
-export const OBJECT = {
+// ============================================================================
+
+export const OBJECTS = {
+    0x01: "name",
     0x0D: "stompswitch 1",
     0x0E: "stompswitch 2",
     0x0F: "stompswitch 3",
@@ -49,6 +58,88 @@ export const OBJECT = {
     0x7E: "MIDI configuration",
     0x7F: "ALL"
 };
+
+// ============================================================================
+// message types:
+
+export const MSG_AD_MIDICC = 0x00;
+export const MSG_AD_NRPNC = 0x03;
+export const MSG_AD_NRPNF = 0x04;
+export const MSG_AD_PITCH = 0x01;
+export const MSG_AD_ATCHAN = 0x02;
+export const MSG_DAWFUNC = 0x7E;
+export const MSG_CTRL_OFF = 0x61;
+
+export const MSG_SW_MIDICC_TGGLE = 0x47;
+export const MSG_SW_MIDICC = 0x40;
+export const MSG_SW_MIDICC_STEP = 0x48;
+export const MSG_SW_NOTE = 0x43;
+export const MSG_SW_NOTE_TGGLE = 0x44;
+export const MSG_SW_PRGBANK = 0x45;
+export const MSG_SW_PRG_STEP = 0x46;
+export const MSG_SW_NRPNCOARSE = 0x57;
+export const MSG_SW_NRPNFINE = 0x58;
+export const MSG_SW_MMC = 0x55;
+export const MSG_SW_RELAY = 0x59;
+export const MSG_SW_PRESETSELECT = 0x62;
+export const MSG_SW_PRESETINCDEC = 0x56;
+export const MSG_SW_STEPSELECT = 0x63;
+export const MSG_SW_STEPINCDEC = 0x64;
+
+export const MSG_ENC_CC = 0x12;
+export const MSG_ENC_MIDICC_REL = 0x11;
+export const MSG_ENC_NRPNC = 0x15;
+export const MSG_ENC_NRPNF = 0x16;
+export const MSG_ENC_PITCH = 0x13;
+export const MSG_ENC_ATCHAN = 0x14;
+export const MSG_ENC_PROGRAM = 0x10;
+export const MSG_ENC_PRESETSELECT = 0x17;
+export const MSG_ENC_STEPSELECT = 0x18;
+
+export const MSG_LOAD_CC = 0x65;
+
+export const MSG_TYPES = {
+
+    [MSG_AD_MIDICC]: "CC",
+    [MSG_AD_NRPNC]: "NRPN C",
+    [MSG_AD_NRPNF]: "NRPN F",
+    [MSG_AD_PITCH]: "PITCH",
+    [MSG_AD_ATCHAN]: "AT CHAN",
+    [MSG_DAWFUNC]: "DAW FUNC",
+    [MSG_CTRL_OFF]: "CTRL_OFF",
+
+    [MSG_SW_MIDICC_TGGLE]: "CC TOGGLE",
+    [MSG_SW_MIDICC]: "CC",
+    [MSG_SW_MIDICC_STEP]: "CC STEP",
+    [MSG_SW_NOTE]: "NOTE",
+    [MSG_SW_NOTE_TGGLE]: "NOTE TOGGLE",
+    [MSG_SW_PRGBANK]: "PRG BANK",
+    [MSG_SW_PRG_STEP]: "PRG STEP",
+    [MSG_SW_NRPNCOARSE]: "NRPN COARSE",
+    [MSG_SW_NRPNFINE]: "NRPN FINE",
+    [MSG_SW_MMC]: "MMC",
+    [MSG_SW_RELAY]: "RELAY",
+    [MSG_SW_PRESETSELECT]: "PRESET SELECT",
+    [MSG_SW_PRESETINCDEC]: "PRESET INC DEC",
+    [MSG_SW_STEPSELECT]: "STEP SELECT",
+    [MSG_SW_STEPINCDEC]: "STEP INC DEC",
+
+    [MSG_ENC_CC]: "CC",
+    [MSG_ENC_MIDICC_REL]: "CC REL",
+    [MSG_ENC_NRPNC]: "NRPN C",
+    [MSG_ENC_NRPNF]: "NRPN F",
+    [MSG_ENC_PITCH]: "PITCH",
+    [MSG_ENC_ATCHAN]: "AT CHAN",
+    [MSG_ENC_PROGRAM]: "PRG",
+    [MSG_ENC_PRESETSELECT]: "PRESET SEL",
+    [MSG_ENC_STEPSELECT]: "STEP SEL",
+
+    [MSG_LOAD_CC]: "CC"
+
+};
+
+// ============================================================================
+
 
 export const CONTROL_ELEMENT = {
     // 0x00: "",
@@ -126,6 +217,12 @@ export const CONTROL_ELEMENT = {
     // 0x41: "",
     // 0x42: "",
     // 0x43: "",
+
+    0x40: "control mode",
+    0x41: "LED MIDI Ctrl",
+    0x42: "LED On Color",
+    0x43: "LED Off Color",
+
     // 0x44: "",
     // 0x45: "",
     // 0x46: "",
@@ -155,10 +252,10 @@ export const CONTROL_ELEMENT = {
     // 0x5E: "",
     // 0x5F: "",
 
-    0x60: "control mode",
-    0x61: "LED MIDI Ctrl",
-    0x62: "LED On Color",
-    0x63: "LED Off Color",
+    // 0x60: "control mode",
+    // 0x61: "LED MIDI Ctrl",
+    // 0x62: "LED On Color",
+    // 0x63: "LED Off Color",
 
     // 0x64: "",
     // 0x65: "",
@@ -338,12 +435,3 @@ export const MIDI_ELEMENT = {
 
     0x7F: "ALL"
 };
-
-// message types:
-
-export const MSG_TYPE_CC = 0x40;
-export const MSG_TYPE_NOTE = 0x43;
-export const MSG_TYPE_PC = 0x45;
-
-
-

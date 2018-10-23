@@ -1,7 +1,6 @@
 import midi_name, {NEKTAR_TECHNOLOGY_INC} from "midi-manufacturers";
 import {h, hs} from "./hexstring";
-import {OBJECT, TARGET} from "../pacer";
-
+import {TARGETS, OBJECTS} from "../pacer";
 export const SYSEX_START = 0xF0;
 export const SYSEX_END = 0xF7;
 
@@ -63,7 +62,7 @@ function getManufacturerName(id) {
 
 function getControlStep(data) {
 
-    console.log("getControlStep", hs(data));
+    // console.log("getControlStep", hs(data));
 
     // 01 01 0F 00      midi channel
     // 02 01 47 00      message type
@@ -72,7 +71,9 @@ function getControlStep(data) {
     // 05 01 66 00      data 3
     // 06 01 01         active
 
-    // we ignore the first byte, which seems to always be 0x01
+    // the second byte is the length of the data that follows
+
+    //FIXME: use length
 
     return {
         index: (data[0] - 1) / 6 + 1,
@@ -135,8 +136,8 @@ function parseSysexMessage(data) {
             return null;
     }
 
-    if (!(tgt in TARGET)) {
-        console.warn("invalid target", h(tgt), tgt, TARGET);
+    if (!(tgt in TARGETS)) {
+        console.warn("invalid target", h(tgt), tgt, TARGETS);
         return null;
     }
 
@@ -148,13 +149,15 @@ function parseSysexMessage(data) {
 
     message[tgt][idx] = {};
 
-    if (!(obj in OBJECT)) {
+    if (!(obj in OBJECTS)) {
         console.warn("invalid/ignored object", h(obj));
         return null;
     }
 
     let obj_type;
-    if ((obj >= 0x0D && obj <= 0x12) ||
+    if (obj === 0x01) {
+        obj_type = "name";
+    } else if ((obj >= 0x0D && obj <= 0x12) ||
         (obj >= 0x14 && obj <= 0x1B) ||
         (obj >= 0x36 && obj <= 0x37)) {
         obj_type = "control";
@@ -166,7 +169,11 @@ function parseSysexMessage(data) {
     }
 
     // console.log(`target=${TARGET[tgt]} (${h(tgt)}), idx=${h(idx)}, object=${OBJECT[obj]} (${h(obj)}), type=${obj_type}`);
-    console.log(`${TARGET[tgt]} ${h(idx)} : ${OBJECT[obj]} ${obj_type}`);
+    console.log(`${TARGETS[tgt]} ${h(idx)} : ${OBJECTS[obj]} ${obj_type}`);
+
+    if (obj_type === "name") {
+        //TODO: parse name
+    }
 
     if (obj_type === "control") {
 
@@ -193,11 +200,17 @@ function parseSysexMessage(data) {
             // CONTROL MODE
             console.log('CONTROL MODE');
 
-        } else if (e >= 0x61 && e <= 0x63) {
+        } else if (e === 0x40) {
+
+            // CONTROL MODE
+            console.log('LED MIDI CTRL');
+
+        // } else if (e >= 0x61 && e <= 0x63) {
+        } else if (e >= 0x41 && e <= 0x43) {
 
             // LED
-            console.log('LED');
-            message[tgt][idx]["controls"][obj]["led"] = getControlLED(data.slice(ELM, ELM + 3));;
+            console.error('LED');
+            message[tgt][idx]["controls"][obj]["led"] = getControlLED(data.slice(ELM, ELM + 3));
 
         } else if (e === 0x7F) {
 
@@ -211,7 +224,11 @@ function parseSysexMessage(data) {
 
     }
 
-    console.log('MESSAGE', message);
+    if (obj_type === "midi") {
+        //TODO: parse midi
+    }
+
+    // console.log('MESSAGE', message);
 
     return message;
 

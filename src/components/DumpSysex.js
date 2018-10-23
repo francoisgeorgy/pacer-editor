@@ -1,6 +1,6 @@
 import React from "react";
 import "./DumpSysex.css";
-import {CONTROL_ELEMENT, MIDI_ELEMENT, OBJECT, TARGET, TARGET_PRESET} from "../pacer";
+import {CONTROL_ELEMENT, MIDI_ELEMENT, MSG_SW_NOTE, OBJECTS, TARGETS, TARGET_PRESET, MSG_TYPES} from "../pacer";
 import {h, hs} from "../utils/hexstring";
 import "./DumpSysex.css";
 import * as Note from "tonal-note";
@@ -34,7 +34,7 @@ const Control = ({ obj, config }) => {
     if (config === null) return null;
     return (
         <div>
-            <h3>{OBJECT[obj]}</h3>
+            <h3>{OBJECTS[obj]}</h3>
             <div>
                 <h4>steps</h4>
                 <div>
@@ -64,15 +64,16 @@ const ControlTable = ({ obj, config }) => {
             <table>
                 <tbody>
                     <tr>
-                        <td colSpan={6} className="name">{OBJECT[obj]}</td>
+                        <td colSpan={7} className="name">{OBJECTS[obj]}</td>
                     </tr>
                     {Object.keys(config["steps"]).map(i =>
                         <tr key={`${obj}.${i}`}>
                             <td>step {i}</td>
                             <td>ch. {h(config["steps"][i]["channel"])}</td>
                             <td>msg {h(config["steps"][i]["msg_type"])}</td>
+                            <td>{MSG_TYPES[config["steps"][i]["msg_type"]]}</td>
                             <td>{hs(config["steps"][i]["data"])}</td>
-                            <td>{config["steps"][i]["msg_type"] === 0x43 ? Note.fromMidi(config["steps"][i]["data"][0], true) : "  "}</td>
+                            <td>{config["steps"][i]["msg_type"] === MSG_SW_NOTE ? Note.fromMidi(config["steps"][i]["data"][0], true) : "  "}</td>
                             <td>active {config["steps"][i]["active"]}</td>
                         </tr>
                     )}
