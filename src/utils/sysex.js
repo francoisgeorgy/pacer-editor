@@ -27,7 +27,7 @@ function isObject(item) {
  * @param target
  * @param ...sources
  */
-function mergeDeep(target, ...sources) {
+export function mergeDeep(target, ...sources) {
     if (!sources.length) return target;
     const source = sources.shift();
 
@@ -116,6 +116,8 @@ function getControlLED(data) {
 function parseSysexMessage(data) {
 
     // console.log("parseSysex", hs(data));
+
+    //TODO: verify checksum
 
     const message = {};
 
