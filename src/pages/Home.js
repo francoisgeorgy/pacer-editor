@@ -1,12 +1,11 @@
 import React, {Component} from 'react';
-import PresetSelectors from "./PresetSelectors";
-import Preset from "./Preset";
-import MidiPorts from "./MidiPorts";
+import PresetSelectors from "../components/PresetSelectors";
+import MidiPorts from "../components/MidiPorts";
 import {isSysexData} from "../utils/sysex";
-import "./Home.css";
-import Controls from "./Controls";
+import Controls from "../components/Controls";
 import {CONTROLS, presetIndexToXY, presetXYToIndex, requestPresetObj} from "../pacer";
 import {hs} from "../utils/hexstring";
+import "./Home.css";
 
 class Home extends Component {
 

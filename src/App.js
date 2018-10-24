@@ -2,12 +2,10 @@ import React, {Component} from 'react';
 import * as WebMidi from "webmidi";
 import './App.css';
 import Midi from "./components/Midi";
-// import MidiPorts from "./components/MidiPorts";
-// import { isSysexData } from "./utils/sysex";
 import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
-import Home from "./components/Home";
-import Dumper from "./components/Dumper";
-import TestSender from "./components/TestSender";
+import Home from "./pages/Home";
+import Dumper from "./pages/Dumper";
+import TestSender from "./pages/TestSender";
 
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (

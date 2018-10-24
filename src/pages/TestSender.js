@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {isSysexData} from "../utils/sysex";
-import MidiPorts from "./MidiPorts";
-import {requestPreset, requestPresetObj, SYSEX_SIGNATURE} from "../pacer";
+import MidiPorts from "../components/MidiPorts";
+import {requestPreset, requestPresetObj, SYSEX_SIGNATURE} from "../pacer/index";
 import {outputFromId} from "../utils/ports";
 import {hs} from "../utils/hexstring";
 import "./TestSender.css";

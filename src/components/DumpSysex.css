@@ -1,6 +1,7 @@
 .dump {
     margin-top: 1rem;
-    font-family: Courier New, Courier, monospace;
+    font-family: "Andale Mono", "Liberation Mono", monospace;
+    font-size: 0.8rem;
     white-space: pre;
 }
 

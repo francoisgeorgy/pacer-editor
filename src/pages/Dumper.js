@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import Dropzone from "react-dropzone";
 import {produce} from "immer";
 import {isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
-import DumpSysex from "./DumpSysex";
-import MidiPorts from "./MidiPorts";
+import DumpSysex from "../components/DumpSysex";
+import MidiPorts from "../components/MidiPorts";
 import './Dumper.css';
 // import * as WebMidi from "webmidi";
 
@@ -24,7 +24,13 @@ class Dumper extends Component {
         // if (event instanceof MIDIMessageEvent) {
         if (isSysexData(event.data)) {
             console.log("Dumper.handleMidiInputEvent: data is SysEx");
-            this.setState({data: parseSysexDump(event.data)});
+            // this.setState({data: parseSysexDump(event.data)});
+            this.setState(
+                produce(draft => {
+                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
+                    // this.props.onBusy(false);
+                })
+            )
         } else {
             console.log("MIDI message is not a sysex message")
         }

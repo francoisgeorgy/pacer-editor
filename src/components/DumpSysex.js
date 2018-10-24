@@ -42,7 +42,7 @@ const Midis = ({ midis }) => {
 };
 
 const Control = ({ obj, config }) => {
-    if (config === null) return null;
+    if (config === null || config === undefined) return null;
     return (
         <div>
             <h3>{CONTROLS[obj]}</h3>
@@ -69,7 +69,7 @@ const Control = ({ obj, config }) => {
 };
 
 const ControlTable = ({ obj, config }) => {
-    if (config === null) return null;
+    if (config === null || config === undefined) return null;
     return (
         <div className="dump-control">
             <table>
@@ -95,7 +95,7 @@ const ControlTable = ({ obj, config }) => {
 };
 
 const Controls = ({ controls }) => {
-    if (controls === null) return null;
+    if (controls === null || controls === undefined) return null;
     return (
         <div className="dump-controls">
             {Object.keys(controls).map(obj => <ControlTable key={obj} obj={obj} config={controls[obj]} />)}
@@ -104,7 +104,7 @@ const Controls = ({ controls }) => {
 };
 
 const Preset = ({ index, data }) => {
-    if (data === null) return null;
+    if (data === null || data === undefined) return null;
     return (
         <div>
             <h2>Preset #{index} {presetIndexToXY(parseInt(index, 10))}</h2>
@@ -116,7 +116,7 @@ const Preset = ({ index, data }) => {
 };
 
 const Presets = ({ presets }) => {
-    if (presets === null) return null;
+    if (presets === null || presets === undefined) return null;
     return (
         <div>
             {Object.keys(presets).map(idx => <Preset key={idx} index={idx} data={presets[idx]} />)}
@@ -127,15 +127,15 @@ const Presets = ({ presets }) => {
 const DumpSysex = ({ data }) => {
     return (
         <div className="dump">
-{/*
             {
                 // _.map(data, (value, key) => <Preset name={key} data={value} />)
                 data && <Presets presets={data[TARGET_PRESET]} />
             }
-*/}
+{/*
             {
                 JSON.stringify(data, null, 4)
             }
+*/}
         </div>
     );
 };
