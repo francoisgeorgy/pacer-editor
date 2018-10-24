@@ -44,6 +44,7 @@ class TestSender extends Component {
         this.sendSysex(msg);
     };
 
+/*
     componentDidMount() {
         console.warn("SendTester.componentDidMount");
     }
@@ -51,6 +52,7 @@ class TestSender extends Component {
     componentWillUnmount() {
         console.warn("SendTester.componentWillUnmount");
     }
+*/
 
     /**
      * @returns {*}

@@ -10,6 +10,16 @@ class MidiPorts extends Component {
         output: null        // MIDI output ID
     };
 
+    static conInput = (id, onMidiEvent) => {
+        const i = inputFromId(id);
+        if (i) {
+            // i.addListener('sysex', 'all', onMidiEvent);
+            i.addListener('noteon', 'all', onMidiEvent);
+        } else {
+            console.log(`connectInput: input ${id} not found`);
+        }
+    };
+
     connectInput = id => {
         const i = inputFromId(id);
         if (i) {
@@ -93,28 +103,6 @@ class MidiPorts extends Component {
         }
     };
 
-    /**
-     *
-     * @param port_id
-     */
-/*
-    toggleOutputPort = (port_id) => {
-        if (this.state.output) this.disconnectOutput(this.state.output);
-        this.connectOutput(port_id);
-        this.setState({ output: port_id });
-        // let p = portFromId(port_id);
-        // let outs = this.state.outputs;
-        // if (outs.hasOwnProperty(p.id)) {
-        //     delete outs[p.id];
-        // } else {
-        //     outs[p.id] = {
-        //         manufacturer: p.manufacturer,
-        //         name: p.name
-        //     };
-        // }
-        // this.setState({ outputs: outs });
-    };
-*/
 
     isPacer = (port) => {
         return true;
@@ -167,37 +155,40 @@ class MidiPorts extends Component {
      * @param props
      * @param state
      */
-    /*
+/*
     static getDerivedStateFromProps(props, state) {
-        console.warn("MidiPorts.getDerivedStateFromProps", state, props.ports);
+        // console.log("MidiPorts.getDerivedStateFromProps", state, props.ports);
         let s = {};
         if (state.input === null) {
             for (let p of props.ports) {
-                if (p.type === 'input' && p.manufacturer.toLowerCase() === 'nektar') {
+                if (p.type === 'input' && p.manufacturer.toLowerCase() === 'nektar') {  // TODO: check name too
+                    console.log(`MidiPorts.getDerivedStateFromProps: auto-connect ${p.name}`);
                     s.input = p.id;
-
+                    if (props.onMidiEvent) MidiPorts.conInput(p.id, props.onMidiEvent);
                     break;
                 }
             }
         }
-        if (state.output === null) {
-            for (let p of props.ports) {
-                if (p.type === 'output' && p.manufacturer.toLowerCase() === 'nektar') {
-                    s.output = p.id;
-                    break;
-                }
-            }
-        }
+        // if (state.output === null) {
+        //     for (let p of props.ports) {
+        //         if (p.type === 'output' && p.manufacturer.toLowerCase() === 'nektar') {
+        //             s.output = p.id;
+        //             break;
+        //         }
+        //     }
+        // }
         return Object.keys(s).length ? s : null;
     }
-    */
+*/
 
+/*
     componentDidMount() {
-        console.warn("MidiPorts.componentDidMount", this.state, this.props.ports);
+        console.log("MidiPorts.componentDidMount", this.state, this.props.ports);
     }
+*/
 
     componentWillUnmount() {
-        console.warn("MidiPorts.componentWillUnmount", this.state);
+        console.log("MidiPorts.componentWillUnmount", this.state);
         if (this.state.input) {
             this.disconnectInput(this.state.input);
         }

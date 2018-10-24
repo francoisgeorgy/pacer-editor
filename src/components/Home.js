@@ -34,13 +34,15 @@ class Home extends Component {
         this.setState({output: port_id});
     };
 
+/*
     componentDidMount() {
-        console.warn("Home.componentDidMount");
+        console.log("Home.componentDidMount");
     }
 
     componentWillUnmount() {
-        console.warn("Home.componentWillUnmount");
+        console.log("Home.componentWillUnmount");
     }
+*/
 
     render() {
         const { currentPreset } = this.state;

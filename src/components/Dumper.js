@@ -5,6 +5,7 @@ import {isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
 import DumpSysex from "./DumpSysex";
 import MidiPorts from "./MidiPorts";
 import './Dumper.css';
+// import * as WebMidi from "webmidi";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -68,13 +69,34 @@ class Dumper extends Component {
     };
 
 
+/*
     componentDidMount() {
-        console.warn("Dumper.componentDidMount");
+        console.log("Dumper.componentDidMount");
     }
 
     componentWillUnmount() {
-        console.warn("Dumper.componentWillUnmount");
+        console.log("Dumper.componentWillUnmount");
     }
+*/
+
+
+
+
+/*
+    midiOn = err => {
+        if (err) {
+            console.warn("Dumper: WebMidi could not be enabled.", err);
+        } else {
+            console.log("Dumper: WebMidi enabled!");
+        }
+    };
+    componentDidMount() {
+        console.log("Dumper.componentDidMount", WebMidi.enabled);
+        WebMidi.enable(this.midiOn, true);  // true to enable sysex support
+    }
+*/
+
+
 
     /**
      * @returns {*}
