@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Dropzone from "react-dropzone";
 import {produce} from "immer";
-import {isSysexData, parseSysexDump} from "../utils/sysex";
+import {isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
 import DumpSysex from "./DumpSysex";
 import MidiPorts from "./MidiPorts";
 import './Dumper.css';
@@ -45,7 +45,7 @@ class Dumper extends Component {
                     if (isSysexData(data)) {
                         this.setState(
                             produce(draft => {
-                                draft.data = parseSysexDump(data);
+                                draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
                                 this.props.onBusy(false);
                             })
                         )
@@ -88,7 +88,7 @@ class Dumper extends Component {
         return (
             <div>
                 <div className="sub-header">
-                    <h2>sysex<br />dumper</h2>
+                    {/*<h2>sysex<br />dumper</h2>*/}
                     {this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}
                 </div>
 

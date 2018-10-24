@@ -59,13 +59,13 @@ class TestSender extends Component {
 
         console.log("SendTester.render", this.props);
 
-        const { data, message } = this.state;
+        const { data, messages } = this.state;
 
         return (
             <div>
 
                 <div className="sub-header">
-                    <h2>test<br />sender</h2>
+                    {/*<h2>test<br />sender</h2>*/}
                     {this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}
                     {this.props.outputPorts && <MidiPorts ports={this.props.outputPorts} type="output" onPortSelection={this.enablePort} />}
                 </div>
@@ -78,7 +78,7 @@ class TestSender extends Component {
                     {/*</div>*/}
 
                     <div>
-                        {this.state.messages.map((msg, i) =>
+                        {messages.map((msg, i) =>
                             <div key={i}>
                                 <div className="message">
                                     <button onClick={() => this.sendMessage(msg)}>send</button> {hs(msg)}

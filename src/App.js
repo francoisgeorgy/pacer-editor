@@ -10,6 +10,19 @@ import Dumper from "./components/Dumper";
 import TestSender from "./components/TestSender";
 
 
+const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
+    <Route
+        path={to}
+        exact={activeOnlyWhenExact}
+        children={({ match }) => (
+            <span className={match ? "header-link active" : "header-link"}>
+                <Link to={to}>{label}</Link>
+            </span>
+        )}
+    />
+);
+
+
 class App extends Component {
 
     state = {
@@ -55,31 +68,34 @@ class App extends Component {
                     <Midi onInputChange={this.onInputChange} onOutputChange={this.onOutputChange} />
 
                     <header className="header">
-                        <h1>Nektar Pacer Editor</h1>
-                        <Link className="header-link" to="/">Home</Link>
-                        <Link className="header-link" to="/dumper">Dumper</Link>
-                        <Link className="header-link" to="/testsender">TestSender</Link>
-                        <div className="spacer"></div>
+                        {/*<h1>Nektar Pacer Editor</h1>*/}
+                        <MenuLink activeOnlyWhenExact={true} to="/" label="Home" />
+                        <MenuLink to="/dumper" label="Dumper" />
+                        <MenuLink to="/testsender" label="TestSender" />
+                        <div className="spacer">
+                        </div>
                         {busy && <div className="busy">busy</div>}
                     </header>
 
-                    <Switch>
-                        <Route exact={true} path="/" render={
-                            props => (
-                                <Home inputPorts={inputs} outputPorts={outputs} onBusy={this.onBusy} />
-                            )
-                        }/>
-                        <Route path="/dumper" render={
-                            props => (
-                                <Dumper inputPorts={inputs} onBusy={this.onBusy} />
-                            )
-                        }/>
-                        <Route path="/testsender" render={
-                            props => (
-                                <TestSender inputPorts={inputs} outputPorts={outputs} onBusy={this.onBusy} />
-                            )
-                        }/>
-                    </Switch>
+                    <div className="content">
+                        <Switch>
+                            <Route exact={true} path="/" render={
+                                props => (
+                                    <Home inputPorts={inputs} outputPorts={outputs} onBusy={this.onBusy} />
+                                )
+                            }/>
+                            <Route path="/dumper" render={
+                                props => (
+                                    <Dumper inputPorts={inputs} onBusy={this.onBusy} />
+                                )
+                            }/>
+                            <Route path="/testsender" render={
+                                props => (
+                                    <TestSender inputPorts={inputs} outputPorts={outputs} onBusy={this.onBusy} />
+                                )
+                            }/>
+                        </Switch>
+                    </div>
 
                 </div>
 

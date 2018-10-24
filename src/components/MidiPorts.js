@@ -67,21 +67,25 @@ class MidiPorts extends Component {
     togglePort = (port_id) => {
         let p = portFromId(port_id);
         if (p.type === 'input') {
+            let prev = this.state.input;
             if (this.state.input) {
                 this.disconnectInput(this.state.input);
                 this.setState({ input: null });
-            } else {
+            }
+            if (port_id !== prev) {
                 this.connectInput(port_id);
                 this.setState({ input: port_id });
             }
         } else {
             // There is nothing to "connect" for an output port since this type of port does not generate any event.
             // if (this.state.output) this.disconnectOutput(this.state.output);
+            let prev = this.state.output;
             if (this.state.output) {
                 // this.disconnectInput(this.state.input);
                 this.props.onPortSelection(null);
-                this.setState({ output: null });
-            } else {
+                this.setState({output: null});
+            }
+            if (port_id !== prev) {
                 // this.connectInput(port_id);
                 this.props.onPortSelection(port_id);
                 this.setState({ output: port_id });
@@ -216,7 +220,7 @@ class MidiPorts extends Component {
                         // console.log("MidiPorts render port", port);
                         let isSelected = port.type === 'input' ? this.state.input === port.id : this.state.output === port.id;
                         return this.isPacer(port) ? (
-                            <div key={port.id} className={isSelected ? "port enabled" : "port"}>
+                            <div key={port.id} className={isSelected ? `port ${port.type} enabled` : `port ${port.type}`}>
                                 <div className={"port-description"}>
                                     <div className="type">{port.type} {port.type === 'input' ? 'from' : 'to'}</div>
                                     <div className="port-name">{port.name}</div>

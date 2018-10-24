@@ -14,9 +14,14 @@
     padding: 5px;
 }
 
-.port.enabled {
+.port.input.enabled {
     background-color: #A1EEA1;
     border: 1px solid #00aa00;
+}
+
+.port.output.enabled {
+    background-color: #c4c4ea;
+    border: 1px solid #6666aa;
 }
 
 .port.enabled .port-description {

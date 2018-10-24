@@ -7,20 +7,40 @@ h2 {
 }
 
 .app {
-    padding: 0 10px;
+    padding: 0;
 }
 
 .header {
     display: flex;
     flex-direction: row;
     align-items: baseline;
+    border-bottom: 2px solid #b1b1b1;
+    margin: 10px 0 20px 0;
+    padding: 0 10px;
 }
 
 .header-link {
+    margin: 0 1rem 0 0;
+    padding: 3px 0.5rem;
+}
+
+.header-link a {
     font-size: 1.5rem;
     text-decoration: none;
     color: blue;
-    margin: 0 0 0 1rem;
+}
+
+.header-link.active {
+    background-color: #ddd;
+}
+
+.header-link.active a {
+    color: #000;
+    /*font-weight: bold;*/
+}
+
+.content {
+    padding: 0 10px;
 }
 
 .all-ports {
@@ -43,7 +63,11 @@ h2 {
     margin-right: 6px;
     font-size: 2rem;
 }
+
 .sub-header {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #aaa;
     display: flex;
     flex-direction: row;
     align-items: flex-end;
@@ -56,6 +80,7 @@ h2 {
 }
 
 .main {
-    margin: 2rem 0 0 0;
-    border-top: 1px solid #aaa;
+    /*margin: 2rem 0 0 0;*/
+    /*padding: 1rem 0;*/
+    /*border-top: 1px solid #aaa;*/
 }

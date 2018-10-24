@@ -48,7 +48,7 @@ class Home extends Component {
             <div>
 
                 <div className="sub-header">
-                    <h2>home</h2>
+                    {/*<h2>home</h2>*/}
                     {this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}
                     {this.props.outputPorts && <MidiPorts ports={this.props.outputPorts} type="output" onPortSelection={this.enablePort} />}
                 </div>
