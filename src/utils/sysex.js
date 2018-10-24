@@ -1,6 +1,6 @@
 import midi_name, {NEKTAR_TECHNOLOGY_INC} from "midi-manufacturers";
 import {h, hs} from "./hexstring";
-import {TARGETS, OBJECTS} from "../pacer";
+import {TARGETS, CONTROLS} from "../pacer";
 export const SYSEX_START = 0xF0;
 export const SYSEX_END = 0xF7;
 
@@ -151,7 +151,7 @@ function parseSysexMessage(data) {
 
     message[tgt][idx] = {};
 
-    if (!(obj in OBJECTS)) {
+    if (!(obj in CONTROLS)) {
         console.warn("invalid/ignored object", h(obj));
         return null;
     }
@@ -171,7 +171,7 @@ function parseSysexMessage(data) {
     }
 
     // console.log(`target=${TARGET[tgt]} (${h(tgt)}), idx=${h(idx)}, object=${OBJECT[obj]} (${h(obj)}), type=${obj_type}`);
-    console.log(`${TARGETS[tgt]} ${h(idx)} : ${OBJECTS[obj]} ${obj_type}`);
+    console.log(`${TARGETS[tgt]} ${h(idx)} : ${CONTROLS[obj]} ${obj_type}`);
 
     if (obj_type === "name") {
         //TODO: parse name

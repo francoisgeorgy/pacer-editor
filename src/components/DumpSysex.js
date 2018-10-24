@@ -1,10 +1,20 @@
 import React from "react";
 import "./DumpSysex.css";
-import {CONTROL_ELEMENT, MIDI_ELEMENT, MSG_SW_NOTE, OBJECTS, TARGETS, TARGET_PRESET, MSG_TYPES} from "../pacer";
+import {
+    CONTROL_ELEMENT,
+    MIDI_ELEMENT,
+    MSG_SW_NOTE,
+    CONTROLS,
+    TARGETS,
+    TARGET_PRESET,
+    MSG_TYPES,
+    presetIndexToXY
+} from "../pacer";
 import {h, hs} from "../utils/hexstring";
 import "./DumpSysex.css";
 import * as Note from "tonal-note";
 
+/*
 const presetCoord = index => {
     if (index === 0) return "CUR";
     // 23 => D5
@@ -12,6 +22,7 @@ const presetCoord = index => {
     let i = (index - 1) % 6 + 1;
     return String.fromCharCode(b + 65) + i.toString();
 };
+*/
 
 const ControlElement = ({ data }) => {
     if (data.element === undefined) return null;
@@ -34,7 +45,7 @@ const Control = ({ obj, config }) => {
     if (config === null) return null;
     return (
         <div>
-            <h3>{OBJECTS[obj]}</h3>
+            <h3>{CONTROLS[obj]}</h3>
             <div>
                 <h4>steps</h4>
                 <div>
@@ -60,11 +71,11 @@ const Control = ({ obj, config }) => {
 const ControlTable = ({ obj, config }) => {
     if (config === null) return null;
     return (
-        <div className="control">
+        <div className="dump-control">
             <table>
                 <tbody>
                     <tr>
-                        <td colSpan={7} className="name">{OBJECTS[obj]}</td>
+                        <td colSpan={7} className="name">{CONTROLS[obj]}</td>
                     </tr>
                     {Object.keys(config["steps"]).map(i =>
                         <tr key={`${obj}.${i}`}>
@@ -86,7 +97,7 @@ const ControlTable = ({ obj, config }) => {
 const Controls = ({ controls }) => {
     if (controls === null) return null;
     return (
-        <div className="controls">
+        <div className="dump-controls">
             {Object.keys(controls).map(obj => <ControlTable key={obj} obj={obj} config={controls[obj]} />)}
         </div>
     );
@@ -96,7 +107,7 @@ const Preset = ({ index, data }) => {
     if (data === null) return null;
     return (
         <div>
-            <h2>Preset #{index} {presetCoord(parseInt(index, 10))}</h2>
+            <h2>Preset #{index} {presetIndexToXY(parseInt(index, 10))}</h2>
             <Controls controls={data["controls"]} />
             <Midis controls={data["controls"]} />
             {/*<pre>{JSON.stringify(data, null, 4)}</pre>*/}

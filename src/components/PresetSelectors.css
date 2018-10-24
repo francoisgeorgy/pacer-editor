@@ -3,8 +3,12 @@
     /*justify-content: start;*/
     /*justify-items: stretch;*/
     /*align-items: stretch;*/
-    display: flex;
-    flex-wrap: wrap;
+    /*display: flex;*/
+    /*flex-wrap: wrap;*/
+    display: grid;
+    grid: repeat(2, 1fr) / repeat(2, auto);
+    justify-content: start;
+
 }
 
 .selectors > div {

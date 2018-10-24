@@ -9,24 +9,24 @@
     font-family: Courier New, Courier, monospace;
 }
 
-.controls {
+.dump-controls {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
 }
 
-.control table {
+.dump-control table {
     border-collapse: collapse;
     margin-right: 1rem;
     margin-bottom: 1rem;
 }
 
-.control td {
+.dump-control td {
     border: 1px solid #aaa;
     padding: 6px 6px 2px 6px;
 }
 
-.control td.name {
+.dump-control td.name {
     font-size: 1rem;
     font-weight: bold;
     padding-top: 0.5rem;

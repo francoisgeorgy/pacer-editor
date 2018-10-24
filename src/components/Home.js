@@ -4,18 +4,32 @@ import Preset from "./Preset";
 import MidiPorts from "./MidiPorts";
 import {isSysexData} from "../utils/sysex";
 import "./Home.css";
+import Controls from "./Controls";
+import {CONTROLS, presetIndexToXY, presetXYToIndex, requestPresetObj} from "../pacer";
+import {hs} from "../utils/hexstring";
 
 class Home extends Component {
 
     state = {
-        output: null,       // MIDI output port enabled
-        currentPreset: "",  // preset name, like "B2"
+        output: null,           // MIDI output port enabled
+        presetIndex: "",      // preset name, like "B2"
+        controlId: "",     //
+        message: null,
         data: null
     };
 
+
+
     selectPreset = (name) => {
-        console.log(`onPresetSelection: ${name}`);
-        this.setState({currentPreset: name});
+        this.setState({presetIndex: name});
+    };
+
+    selectControl = (id) => {
+        console.log(`selectControl ${id}`);
+        this.setState({
+            controlId: id,
+            message: requestPresetObj(this.state.presetIndex, id)
+        });
     };
 
     handleMidiInputEvent = (event) => {
@@ -45,7 +59,8 @@ class Home extends Component {
 */
 
     render() {
-        const { currentPreset } = this.state;
+        const { presetIndex, controlId, message } = this.state;
+
         return (
             <div>
 
@@ -57,9 +72,25 @@ class Home extends Component {
 
                 <div className="main">
 
-                    <PresetSelectors currentPreset={currentPreset} onClick={this.selectPreset}/>
+                    <div>
+                        <h2>Choose preset and control:</h2>
 
-                    {currentPreset && <Preset name={currentPreset}/>}
+                        <PresetSelectors currentPreset={presetIndex} onClick={this.selectPreset} />
+
+                        {presetIndex && <Controls currentControl={controlId} onClick={this.selectControl} />}
+                    </div>
+
+                    {presetIndex && controlId &&
+                    <div>
+                        <div>
+                            <h2>preset {presetIndexToXY(presetIndex)}, control {CONTROLS[controlId]}</h2>
+                        </div>
+
+                        <div>
+                            sysex message to request config: <span className="code">{hs(message)}</span>
+                        </div>
+                    </div>
+                    }
 
                 </div>
             </div>

@@ -31,7 +31,32 @@ export function requestPresetObj(index, obj) {
 
 // ============================================================================
 
+/**
+ * Example: 23 => "D5"
+ * @param index
+ * @returns {string}
+ */
+export const presetIndexToXY = index => {
+    if (index === 0) return "CUR";
+    //TODO: check valid range
+    let b = Math.floor((index - 1) / 6);
+    let i = (index - 1) % 6 + 1;
+    return String.fromCharCode(b + 65) + i.toString();
+};
 
+/**
+ * Exampe: "D5" => 23
+ * @param xy
+ * @returns {number}
+ */
+export const presetXYToIndex = xy => {
+    if (xy === "CUR") return 0;
+    //TODO: check valid range
+    //TODO: convert to uppercase before parsing
+    let bank = xy.charCodeAt(0) - 65;
+    let num = parseInt(xy[1], 10);
+    return bank * 6 + num;
+};
 
 // ============================================================================
 
@@ -47,28 +72,38 @@ export const TARGETS = {
 
 // ============================================================================
 
-export const OBJECTS = {
+// objects:
+export const CONTROLS = {
     0x01: "name",
-    0x0D: "stompswitch 1",
-    0x0E: "stompswitch 2",
-    0x0F: "stompswitch 3",
-    0x10: "stompswitch 4",
-    0x11: "stompswitch 5",
-    0x12: "stompswitch 6",
+    0x0D: "1",
+    0x0E: "2",
+    0x0F: "3",
+    0x10: "4",
+    0x11: "5",
+    0x12: "6",
     0x13: "RESERVED",
-    0x14: "stompswitch A",
-    0x15: "stompswitch B",
-    0x16: "stompswitch C",
-    0x17: "stompswitch D",
-    0x18: "footswitch 1",
-    0x19: "footswitch 2",
-    0x1A: "footswitch 3",
-    0x1B: "footswitch 4",
-    0x36: "expression pedal 1",
-    0x37: "expression pedal 2",
+    0x14: "A",
+    0x15: "B",
+    0x16: "C",
+    0x17: "D",
+    0x18: "FS 1",
+    0x19: "FS 2",
+    0x1A: "FS 3",
+    0x1B: "FS 4",
+    0x36: "EXP 1",
+    0x37: "EXP 2",
     0x7E: "MIDI configuration",
     0x7F: "ALL"
 };
+
+// subsets of CONTROLS keys:
+export const STOMPSWITCHES = [0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x14, 0x15, 0x16, 0x17];
+export const STOMPSWITCHES_TOP = [0x14, 0x15, 0x16, 0x17];
+export const STOMPSWITCHES_BOTTOM = [0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12];
+export const FOOTSWITCHES = [0x18, 0x19, 0x1A, 0x1B];
+export const EXPPEDALS = [0x36, 0x37];
+
+
 
 // ============================================================================
 // message types:
