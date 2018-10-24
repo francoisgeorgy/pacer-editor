@@ -1,9 +1,9 @@
 
-.message {
-    font-family: monospace;
-    margin: 1rem 0;
+.send-message {
+    margin: 0.5rem 0;
 }
 
 button {
+    margin-right: 1rem;
     padding: 5px 10px;
 }

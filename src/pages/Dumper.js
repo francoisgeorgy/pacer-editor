@@ -24,7 +24,6 @@ class Dumper extends Component {
         // if (event instanceof MIDIMessageEvent) {
         if (isSysexData(event.data)) {
             console.log("Dumper.handleMidiInputEvent: data is SysEx");
-            // this.setState({data: parseSysexDump(event.data)});
             this.setState(
                 produce(draft => {
                     draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
@@ -73,20 +72,6 @@ class Dumper extends Component {
         this.props.onBusy(true);
         this.readFiles(files);  // returned promise is ignored, this is normal.
     };
-
-
-/*
-    componentDidMount() {
-        console.log("Dumper.componentDidMount");
-    }
-
-    componentWillUnmount() {
-        console.log("Dumper.componentWillUnmount");
-    }
-*/
-
-
-
 
 /*
     midiOn = err => {

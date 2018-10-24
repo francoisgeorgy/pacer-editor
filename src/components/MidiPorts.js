@@ -10,15 +10,17 @@ class MidiPorts extends Component {
         output: null        // MIDI output ID
     };
 
+/*
     static conInput = (id, onMidiEvent) => {
         const i = inputFromId(id);
         if (i) {
-            // i.addListener('sysex', 'all', onMidiEvent);
-            i.addListener('noteon', 'all', onMidiEvent);
+            i.addListener('sysex', 'all', onMidiEvent);
+            // i.addListener('noteon', 'all', onMidiEvent);
         } else {
             console.log(`connectInput: input ${id} not found`);
         }
     };
+*/
 
     connectInput = id => {
         const i = inputFromId(id);
@@ -105,8 +107,8 @@ class MidiPorts extends Component {
 
 
     isPacer = (port) => {
-        return true;
-        // return port.manufacturer.toLowerCase() === 'nektar';
+        // return true;
+        return port.manufacturer.toLowerCase() === 'nektar' && port.name.toUpperCase() === "PACER MIDI1";
     };
 
     // isSelected = (port) => {

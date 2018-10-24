@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
-import {isSysexData} from "../utils/sysex";
+import {isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
 import MidiPorts from "../components/MidiPorts";
 import {requestPreset, requestPresetObj, SYSEX_SIGNATURE} from "../pacer/index";
 import {outputFromId} from "../utils/ports";
 import {hs} from "../utils/hexstring";
 import "./TestSender.css";
+import {produce} from "immer";
+import DumpSysex from "../components/DumpSysex";
 
 class TestSender extends Component {
 
@@ -18,10 +20,16 @@ class TestSender extends Component {
     };
 
     handleMidiInputEvent = (event) => {
-        console.log("Dumper.handleMidiInputEvent", event, event.data);
+        console.log("TestSender.handleMidiInputEvent", event, event.data);
         // if (event instanceof MIDIMessageEvent) {
         if (isSysexData(event.data)) {
-            this.setState({data: event.data});
+            console.log("TestSender.handleMidiInputEvent: update state");
+            this.setState(
+                produce(draft => {
+                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
+                    // this.props.onBusy(false);
+                })
+            )
         } else {
             console.log("MIDI message is not a sysex message")
         }
@@ -33,26 +41,19 @@ class TestSender extends Component {
         this.setState({output: port_id});
     };
 
-    sendSysex(msg) {
+    sendSysex = msg => {
         console.log("sendSysex", msg);
         if (this.state.output) {
-            outputFromId(this.state.output).sendSysex(SYSEX_SIGNATURE, msg);
+            this.setState(
+                {data: null},
+                () => outputFromId(this.state.output).sendSysex(SYSEX_SIGNATURE, msg)
+            );
         }
-    }
+    };
 
     sendMessage = (msg) => {
         this.sendSysex(msg);
     };
-
-/*
-    componentDidMount() {
-        console.warn("SendTester.componentDidMount");
-    }
-
-    componentWillUnmount() {
-        console.warn("SendTester.componentWillUnmount");
-    }
-*/
 
     /**
      * @returns {*}
@@ -67,31 +68,25 @@ class TestSender extends Component {
             <div>
 
                 <div className="sub-header">
-                    {/*<h2>test<br />sender</h2>*/}
                     {this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}
                     {this.props.outputPorts && <MidiPorts ports={this.props.outputPorts} type="output" onPortSelection={this.enablePort} />}
                 </div>
 
                 <div className="main">
 
-                    <h4>message:</h4>
-                    {/*<div className="message">*/}
-                        {/*{hs(message)}*/}
-                    {/*</div>*/}
-
+                    <h2>Messages:</h2>
                     <div>
                         {messages.map((msg, i) =>
-                            <div key={i}>
-                                <div className="message">
-                                    <button onClick={() => this.sendMessage(msg)}>send</button> {hs(msg)}
-                                </div>
+                            <div key={i} className="send-message">
+                                <button onClick={() => this.sendMessage(msg)}>send</button> <span className="code">{hs(msg)}</span>
                             </div>
                         )}
                     </div>
 
-                    <h4>response:</h4>
-                    <div className="message">
-                        {hs(data)}
+                    <h2>Response:</h2>
+                    <div className="message code">
+                        {JSON.stringify(data)}
+                        <DumpSysex data={data} />
                     </div>
 
                 </div>

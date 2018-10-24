@@ -245,6 +245,7 @@ function parseSysexMessage(data) {
 function parseSysexDump(data) {
 
     // console.log(`parseSysexData`, data);
+    console.log("parseSysexData");
 
     if (data === null) return null;
 

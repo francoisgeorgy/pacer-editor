@@ -126,7 +126,7 @@ const Presets = ({ presets }) => {
 
 const DumpSysex = ({ data }) => {
     return (
-        <div className="dump">
+        <div className="dump code">
             {
                 // _.map(data, (value, key) => <Preset name={key} data={value} />)
                 data && <Presets presets={data[TARGET_PRESET]} />
