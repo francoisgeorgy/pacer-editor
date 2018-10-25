@@ -82,11 +82,11 @@ h3 {
 
 .sub-header {
     /*margin-bottom: 1rem;*/
-    padding-bottom: 1rem;
+    /*padding-bottom: 1rem;*/
     /*border-bottom: 1px solid #aaa;*/
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
+    /*display: flex;*/
+    /*flex-direction: row;*/
+    /*align-items: flex-end;*/
 }
 
 .sub-header h2 {
@@ -105,4 +105,8 @@ h3 {
     /*font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;*/
     font-family: "Andale Mono", AndaleMono;
     font-size: 0.875rem;
+}
+
+.warning {
+    color: red;
 }

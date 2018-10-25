@@ -206,35 +206,45 @@ class MidiPorts extends Component {
         console.log("MidiPorts render", this.props.type, this.props.ports);
         // let ports = this.props.type === "input" ? WebMidi.inputs : WebMidi.outputs;
         // if (!ports) return <div id={"ports"}></div>;
+
+        let pacerPorts = this.props.ports && this.props.ports.filter(port => this.isPacer(port));
+
+        console.log("MidiPorts render pacer ports", pacerPorts);
+
         return (
-            <div id={"ports"}>
-                {this.props.ports.map(
-                    port => {
-                        // console.log("MidiPorts render port", port);
-                        let isSelected = port.type === 'input' ? this.state.input === port.id : this.state.output === port.id;
-                        return this.isPacer(port) ? (
-                            <div key={port.id} className={isSelected ? `port ${port.type} enabled` : `port ${port.type}`}>
-                                <div className={"port-description"}>
-                                    <div className="type">{port.type} {port.type === 'input' ? 'from' : 'to'}</div>
-                                    <div className="port-name">{port.name}</div>
-                                    {/*<div className={port.manufacturer ? "port-manufacturer" : "port-manufacturer unknown"}>{port.manufacturer ? port.manufacturer : "unknown manufacturer"}</div>*/}
-                                </div>
-                                <div className={"port-state"}>
-                                    <Switch
-                                        onChange={() => this.togglePort(port.id)}
-                                        checked={isSelected}
-                                        className="react-switch"
-                                        id="normal-switch"
-                                        height={20} width={42}
-                                    />
-                                    <span className={isSelected ? "port-usage selected" : "port-usage"}
-                                          onClick={() => this.togglePort(port.id)}>{isSelected ? "enabled" : "disabled"}</span>
-                                </div>
-                            </div>
-                        ) : null;
+            (pacerPorts && pacerPorts.length > 0) ?
+                <div id={"ports"}>
+                    {
+                        pacerPorts.map(
+                            port => {
+                                // console.log("MidiPorts render port", port);
+                                let isSelected = port.type === 'input' ? this.state.input === port.id : this.state.output === port.id;
+                                return (
+                                    <div key={port.id} className={isSelected ? `port ${port.type} enabled` : `port ${port.type}`}>
+                                        <div className={"port-description"}>
+                                            <div className="type">{port.type} {port.type === 'input' ? 'from' : 'to'}</div>
+                                            <div className="port-name">{port.name}</div>
+                                            {/*<div className={port.manufacturer ? "port-manufacturer" : "port-manufacturer unknown"}>{port.manufacturer ? port.manufacturer : "unknown manufacturer"}</div>*/}
+                                        </div>
+                                        <div className={"port-state"}>
+                                            <Switch
+                                                onChange={() => this.togglePort(port.id)}
+                                                checked={isSelected}
+                                                className="react-switch"
+                                                id="normal-switch"
+                                                height={20} width={42}
+                                            />
+                                            <span className={isSelected ? "port-usage selected" : "port-usage"}
+                                                  onClick={() => this.togglePort(port.id)}>{isSelected ? "enabled" : "disabled"}</span>
+                                        </div>
+                                    </div>
+                                );
+                            }
+                        )
                     }
-                )}
-            </div>
+                </div>
+            :
+                <div className="warning">No Pacer {this.props.type} port found.</div>
         );
     }
 
