@@ -4,6 +4,7 @@
     "author": "François Georgy <francois.georgy@gmail.com> (http://sysex.io)",
     "license": "GPL-3.0-or-later",
     "private": true,
+    "homepage": "https://francoisgeorgy.github.io/nektar-pacer-editor",
     "dependencies": {
         "immer": "^1.7.2",
         "midi-manufacturers": "^1.1.0",
@@ -22,7 +23,9 @@
         "start": "PORT=3001 react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "eject": "react-scripts eject",
+        "predeploy": "npm run build",
+        "deploy": "gh-pages -d build"
     },
     "eslintConfig": {
         "extends": "react-app"
@@ -33,5 +36,7 @@
         "not ie <= 11",
         "not op_mini all"
     ],
-    "devDependencies": {}
+    "devDependencies": {
+        "gh-pages": "^2.0.1"
+    }
 }
