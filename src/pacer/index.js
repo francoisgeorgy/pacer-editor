@@ -1,7 +1,7 @@
 
-export const SYSEX_SIGNATURE = [0x00, 0x01, 0x77];
-
 export const SYSEX_HEADER = [0x7F];
+
+export const SYSEX_SIGNATURE = [0x00, 0x01, 0x77];
 
 export function checksum(bytes) {
     let sum = Uint8Array.from(bytes).reduce((previousValue, currentValue) => previousValue + currentValue);

@@ -16,7 +16,9 @@ class TestSender extends Component {
         messages: [
             requestPreset(5),
             requestPresetObj(5, 0x0D)
-        ]
+        ],
+        customMessage: [],
+        checksum: null
     };
 
     handleMidiInputEvent = (event) => {
@@ -55,6 +57,14 @@ class TestSender extends Component {
         this.sendSysex(msg);
     };
 
+    updateCustomMessage = (event) => {
+        console.log(event.target.value);
+        this.setState({
+            customMessage: event.target.value,
+            checksum: 0x23
+        });
+    };
+
     /**
      * @returns {*}
      */
@@ -62,10 +72,14 @@ class TestSender extends Component {
 
         console.log("SendTester.render", this.props);
 
-        const { data, messages } = this.state;
+        const { data, messages, customMessage, checksum } = this.state;
+
+        console.log("SendTester.render", messages);
 
         return (
             <div>
+
+                <h2>1. Enable the input and output MIDI ports used with your Pacer:</h2>
 
                 <div className="sub-header">
                     {this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}
@@ -74,13 +88,25 @@ class TestSender extends Component {
 
                 <div className="main">
 
-                    <h2>Messages:</h2>
+
+                    <h2>Test messages:</h2>
                     <div>
                         {messages.map((msg, i) =>
                             <div key={i} className="send-message">
-                                <button onClick={() => this.sendMessage(msg)}>send</button> <span className="code">{hs(msg)}</span>
+                                <button onClick={() => this.sendMessage(msg)}>send</button>
+                                <span className="code">{hs(msg)}</span>
                             </div>
                         )}
+                    </div>
+
+                    <h2>Custom message:</h2>
+                    <div>
+                        <div className="send-message">
+                        <button onClick={() => this.sendMessage()}>send</button>
+                            <span className="code">{hs(SYSEX_SIGNATURE)} </span>
+                            <input type="text" value={customMessage} placeholder={"hex digits only"} onChange={this.updateCustomMessage} />
+                            <span className="code"> {hs([checksum])}</span>
+                        </div>
                     </div>
 
                     <h2>Response:</h2>

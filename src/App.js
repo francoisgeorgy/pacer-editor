@@ -4,7 +4,7 @@ import './App.css';
 import Midi from "./components/Midi";
 import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
 import Home from "./pages/Home";
-import Dumper from "./pages/Dumper";
+import DumpDecoder from "./pages/DumpDecoder";
 import TestSender from "./pages/TestSender";
 
 
@@ -68,35 +68,39 @@ class App extends Component {
                     <header className="header">
                         {/*<h1>Pacer Editor</h1>*/}
                         <MenuLink activeOnlyWhenExact={true} to="/" label="Home" />
-                        <MenuLink to="/dumper" label="Dumper" />
-                        <MenuLink to="/testsender" label="TestSender" />
+                        <MenuLink to="/dumpdecoder" label="Dump decoder" />
+                        <MenuLink to="/testsender" label="Debug message" />
                         <div className="spacer">
                         </div>
                         {busy && <div className="busy">busy</div>}
                     </header>
 
-                    <div className="content">
-                        <Switch>
-                            <Route exact={true} path="/" render={
-                                props => (
-                                    <Home inputPorts={inputs} outputPorts={outputs} onBusy={this.onBusy} />
-                                )
-                            }/>
-                            <Route path="/dumper" render={
-                                props => (
-                                    <Dumper inputPorts={inputs} onBusy={this.onBusy} />
-                                )
-                            }/>
-                            <Route path="/testsender" render={
-                                props => (
-                                    <TestSender inputPorts={inputs} outputPorts={outputs} onBusy={this.onBusy} />
-                                )
-                            }/>
-                        </Switch>
+                    <div className="wrapper">
+                        <div className="content">
+                            <Switch>
+                                <Route exact={true} path="/" render={
+                                    props => (
+                                        <Home inputPorts={inputs} outputPorts={outputs} onBusy={this.onBusy} />
+                                    )
+                                }/>
+                                <Route path="/dumpdecoder" render={
+                                    props => (
+                                        <DumpDecoder inputPorts={inputs} onBusy={this.onBusy} />
+                                    )
+                                }/>
+                                <Route path="/testsender" render={
+                                    props => (
+                                        <TestSender inputPorts={inputs} outputPorts={outputs} onBusy={this.onBusy} />
+                                    )
+                                }/>
+                            </Switch>
+                        </div>
+                        <div className="help">
+                            <h2>Help</h2>
+                        </div>
                     </div>
 
                 </div>
-
             </Router>
         );
     }

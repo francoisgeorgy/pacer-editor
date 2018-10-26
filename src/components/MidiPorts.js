@@ -203,13 +203,13 @@ class MidiPorts extends Component {
      * @constructor
      */
     render() {
-        console.log("MidiPorts render", this.props.type, this.props.ports);
+        // console.log("MidiPorts render", this.props.type, this.props.ports);
         // let ports = this.props.type === "input" ? WebMidi.inputs : WebMidi.outputs;
         // if (!ports) return <div id={"ports"}></div>;
 
         let pacerPorts = this.props.ports && this.props.ports.filter(port => this.isPacer(port));
 
-        console.log("MidiPorts render pacer ports", pacerPorts);
+        // console.log("MidiPorts render pacer ports", pacerPorts);
 
         return (
             (pacerPorts && pacerPorts.length > 0) ?

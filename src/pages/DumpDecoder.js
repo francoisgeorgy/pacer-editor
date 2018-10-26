@@ -4,12 +4,13 @@ import {produce} from "immer";
 import {isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
 import DumpSysex from "../components/DumpSysex";
 import MidiPorts from "../components/MidiPorts";
-import './Dumper.css';
+import './DumpDecoder.css';
+import {hs} from "../utils/hexstring";
 // import * as WebMidi from "webmidi";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
-class Dumper extends Component {
+class DumpDecoder extends Component {
 
     state = {
         // inputs: [],         // array of MIDI inputs (copied from WebMidi object)
@@ -20,10 +21,10 @@ class Dumper extends Component {
     };
 
     handleMidiInputEvent = (event) => {
-        console.log("Dumper.handleMidiInputEvent", event, event.data);
+        console.log("DumpDecoder.handleMidiInputEvent", event, event.data);
         // if (event instanceof MIDIMessageEvent) {
         if (isSysexData(event.data)) {
-            console.log("Dumper.handleMidiInputEvent: data is SysEx");
+            console.log("DumpDecoder.handleMidiInputEvent: data is SysEx");
             this.setState(
                 produce(draft => {
                     draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
@@ -47,7 +48,7 @@ class Dumper extends Component {
                 if (file.size > MAX_FILE_SIZE) {
                     console.warn(`${file.name}: file too big, ${file.size}`);
                 } else {
-                    const data = await new Response(file).arrayBuffer();
+                    const data = new Uint8Array(await new Response(file).arrayBuffer());
                     if (isSysexData(data)) {
                         this.setState(
                             produce(draft => {
@@ -55,6 +56,8 @@ class Dumper extends Component {
                                 this.props.onBusy(false);
                             })
                         )
+                    } else {
+                        console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
                     }
                     // non sysex files are ignored
                 }
@@ -76,13 +79,13 @@ class Dumper extends Component {
 /*
     midiOn = err => {
         if (err) {
-            console.warn("Dumper: WebMidi could not be enabled.", err);
+            console.warn("DumpDecoder: WebMidi could not be enabled.", err);
         } else {
-            console.log("Dumper: WebMidi enabled!");
+            console.log("DumpDecoder: WebMidi enabled!");
         }
     };
     componentDidMount() {
-        console.log("Dumper.componentDidMount", WebMidi.enabled);
+        console.log("DumpDecoder.componentDidMount", WebMidi.enabled);
         WebMidi.enable(this.midiOn, true);  // true to enable sysex support
     }
 */
@@ -96,16 +99,21 @@ class Dumper extends Component {
 
         const { data } = this.state;
 
-        console.log("dumper.render", this.props);
+        console.log("DumpDecoder.render", this.props);
 
         return (
             <div>
+
+                <h2>1. Enable the input MIDI port used with your Pacer:</h2>
+
                 <div className="sub-header">
-                    {/*<h2>sysex<br />dumper</h2>*/}
+                    {/*<h2>sysex<br />DumpDecoder</h2>*/}
                     {this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}
                 </div>
 
                 <div className="main">
+
+                    <h2>2. Send a dump from the Pacer or drop a dump file:</h2>
 
                     <Dropzone onDrop={this.onDrop} className="drop-zone">
                         Drop a binary sysex file here or click to open the file dialog
@@ -121,4 +129,4 @@ class Dumper extends Component {
     }
 }
 
-export default Dumper;
+export default DumpDecoder;

@@ -24,7 +24,8 @@ export const b7 = v => {
 };
 
 export const h = v => {
-    return padZero(v.toString(16).toUpperCase(), 2);
+    return (v === null || v === undefined) ? "" : padZero(v.toString(16).toUpperCase(), 2);
 };
 
-export const hs = data => data ? (Array.from(data).map(n => h(n))).join(" ") : "";    // Array.from() is necessary to get a non-typed array
+export const hs = data => (data === null || data === undefined) ? "" : (Array.from(data).map(n => h(n))).join(" ");    // Array.from() is necessary to get a non-typed array
+

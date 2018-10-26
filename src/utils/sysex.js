@@ -47,12 +47,14 @@ export function mergeDeep(target, ...sources) {
 
 /**
  *
- * @param data ArrayBuffer
+ * @param data Uint8Array
  */
 function isSysexData(data) {
-    let view = new Uint8Array(data);
-    if (view[0] !== SYSEX_START) return false;
-    if (view[view.byteLength - 1] !== SYSEX_END) return false;
+    // let view = new Uint8Array(data);
+    // if (view[0] !== SYSEX_START) return false;
+    // if (view[view.byteLength - 1] !== SYSEX_END) return false;
+    if (data[0] !== SYSEX_START) return false;
+    if (data[data.byteLength - 1] !== SYSEX_END) return false;
     return true;
 }
 
@@ -134,25 +136,25 @@ function parseSysexMessage(data) {
             // console.log(`command is get_data (${h(cmd)})`);
             break;
         default:
-            console.warn(`invalid command (${h(cmd)})`);
+            console.warn(`parseSysexMessage: invalid command (${h(cmd)})`);
             return null;
     }
 
     if (!(tgt in TARGETS)) {
-        console.warn("invalid target", h(tgt), tgt, TARGETS);
+        console.warn("parseSysexMessage: invalid target", h(tgt), tgt, TARGETS);
         return null;
     }
 
     message[tgt] = {};
 
     if (idx >= 0x19 && idx <= 0x7E) {
-        console.warn("invalid/ignored idx", idx);
+        console.warn("parseSysexMessage: invalid/ignored idx", idx);
     }
 
     message[tgt][idx] = {};
 
     if (!(obj in CONTROLS)) {
-        console.warn("invalid/ignored object", h(obj));
+        console.warn("parseSysexMessage: invalid/ignored object", h(obj));
         return null;
     }
 
@@ -166,7 +168,7 @@ function parseSysexMessage(data) {
     } else if (obj === 0x7E) {
         obj_type = "midi";
     } else {
-        console.warn('invalid obj', obj);
+        console.warn('parseSysexMessage: invalid obj', obj);
         return null;
     }
 
@@ -194,33 +196,33 @@ function parseSysexMessage(data) {
                 let s = getControlStep(data.slice(ELM, ELM + 23));
                 message[tgt][idx]["controls"][obj]["steps"][s.index] = s.config;
             } else {
-                console.warn(`data does not contains steps. data.length=${data.length}`, hs(data));
+                console.warn(`parseSysexMessage: data does not contains steps. data.length=${data.length}`, hs(data));
             }
 
         } else if (e === 0x60) {
 
             // CONTROL MODE
-            console.log('CONTROL MODE');
+            console.log('parseSysexMessage: CONTROL MODE');
 
         } else if (e === 0x40) {
 
             // CONTROL MODE
-            console.log('LED MIDI CTRL');
+            console.log('parseSysexMessage: LED MIDI CTRL');
 
         // } else if (e >= 0x61 && e <= 0x63) {
         } else if (e >= 0x41 && e <= 0x43) {
 
             // LED
-            console.error('LED');
+            console.error('parseSysexMessage: LED');
             message[tgt][idx]["controls"][obj]["led"] = getControlLED(data.slice(ELM, ELM + 3));
 
         } else if (e === 0x7F) {
 
             // ALL
-            console.log('ALL');
+            console.log('parseSysexMessage: ALL');
 
         } else {
-            console.warn(`unknown element: ${h(e)}`);
+            console.warn(`parseSysexMessage: unknown element: ${h(e)}`);
             return null;
         }
 
@@ -244,14 +246,16 @@ function parseSysexMessage(data) {
  */
 function parseSysexDump(data) {
 
-    // console.log(`parseSysexData`, data);
-    console.log("parseSysexData");
+    console.log("parseSysexDump", hs(data));
 
     if (data === null) return null;
 
-    let d = new Uint8Array(data);
+    // let d = new Uint8Array(data);
+    let d = data;   //TODO: use data variable
     let presets = {};   // Collection of presets. The key is the preset's index. The value is the preset.
     let global = {};    // global conf
+
+    // let k = data[0] === SYSEX_START ? 1 : 0;
 
     let i = 0;
     let cont = true;
@@ -266,12 +270,12 @@ function parseSysexDump(data) {
 
         let manufacturer_id = (Array.from(d.slice(i, i+3)).map(n => h(n))).join(" ");    // Array.from() is necessary to get a non-typed array
         if (manufacturer_id !== NEKTAR_TECHNOLOGY_INC) {
-            console.log("file does not contain a Nektar Pacer patch");
+            console.log("parseSysexDump: file does not contain a Nektar Pacer patch", i, k, manufacturer_id, "-", hs(d));
             return null;
         }
 
         if (d[i+3] !== 0x7F) {
-            console.warn(`invalid byte after manufacturer id: ${d[i+3]}`);
+            console.warn(`parseSysexDump: invalid byte after manufacturer id: ${d[i+1 +3]}`);
             return null;
         }
 
