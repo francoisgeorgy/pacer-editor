@@ -102,25 +102,31 @@ class DumpDecoder extends Component {
         console.log("DumpDecoder.render", this.props);
 
         return (
-            <div>
+            <div className="wrapper">
+                <div className="content">
 
-                <h2>1. Enable the input MIDI port used with your Pacer:</h2>
+                    <h2>1. Enable the input MIDI port used with your Pacer:</h2>
 
-                <div className="sub-header">
-                    {/*<h2>sysex<br />DumpDecoder</h2>*/}
-                    {this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}
+                    <div className="sub-header">
+                        {/*<h2>sysex<br />DumpDecoder</h2>*/}
+                        {this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}
+                    </div>
+
+                    <div className="main">
+
+                        <h2>2. Send a dump from the Pacer or drop a dump file:</h2>
+
+                        <Dropzone onDrop={this.onDrop} className="drop-zone">
+                            Drop a binary sysex file here or click to open the file dialog
+                        </Dropzone>
+
+                        <DumpSysex data={data} />
+
+                    </div>
                 </div>
 
-                <div className="main">
-
-                    <h2>2. Send a dump from the Pacer or drop a dump file:</h2>
-
-                    <Dropzone onDrop={this.onDrop} className="drop-zone">
-                        Drop a binary sysex file here or click to open the file dialog
-                    </Dropzone>
-
-                    <DumpSysex data={data} />
-
+                <div className="help">
+                    <h2>Help</h2>
                 </div>
 
             </div>

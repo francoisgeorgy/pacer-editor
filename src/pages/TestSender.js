@@ -88,46 +88,52 @@ class TestSender extends Component {
         console.log("SendTester.render", messages, customMessage.length % 2);
 
         return (
-            <div>
+            <div className="wrapper">
+                <div className="content">
 
-                <h2>1. Enable the input and output MIDI ports used with your Pacer:</h2>
+                    <h2>1. Enable the input and output MIDI ports used with your Pacer:</h2>
 
-                <div className="sub-header">
-                    {this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}
-                    {this.props.outputPorts && <MidiPorts ports={this.props.outputPorts} type="output" onPortSelection={this.enablePort} />}
+                    <div className="sub-header">
+                        {this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}
+                        {this.props.outputPorts && <MidiPorts ports={this.props.outputPorts} type="output" onPortSelection={this.enablePort} />}
+                    </div>
+
+                    <div className="main">
+
+
+                        <h2>Test messages:</h2>
+                        <div>
+                            {messages.map((msg, i) =>
+                                <div key={i} className="send-message">
+                                    <button onClick={() => this.sendMessage(msg)}>send</button>
+                                    <span className="code light">{hs(SYSEX_SIGNATURE)} </span>
+                                    <span className="code">{hs(msg)}</span>
+                                    <span className="code light"> {h(checksum(msg))}</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <h2>Custom message:</h2>
+                        <div>
+                            <div className="send-message">
+                                <button onClick={this.sendCustomMessage} disabled={customMessage.length === 0}>send</button>
+                                <span className="code light">{hs(SYSEX_SIGNATURE)} </span>
+                                <input type="text" className="code" size="30" value={customMessage} placeholder={"hex digits only"} onChange={this.updateCustomMessage} />
+                                <span className="code light"> {h(cs)}</span>
+                            </div>
+                        </div>
+
+                        <h2>Response:</h2>
+                        <div className="message code">
+                            {data && JSON.stringify(data)}
+                            <DumpSysex data={data} />
+                        </div>
+
+                    </div>
                 </div>
 
-                <div className="main">
-
-
-                    <h2>Test messages:</h2>
-                    <div>
-                        {messages.map((msg, i) =>
-                            <div key={i} className="send-message">
-                                <button onClick={() => this.sendMessage(msg)}>send</button>
-                                <span className="code light">{hs(SYSEX_SIGNATURE)} </span>
-                                <span className="code">{hs(msg)}</span>
-                                <span className="code light"> {h(checksum(msg))}</span>
-                            </div>
-                        )}
-                    </div>
-
-                    <h2>Custom message:</h2>
-                    <div>
-                        <div className="send-message">
-                            <button onClick={this.sendCustomMessage} disabled={customMessage.length === 0}>send</button>
-                            <span className="code light">{hs(SYSEX_SIGNATURE)} </span>
-                            <input type="text" className="code" size="30" value={customMessage} placeholder={"hex digits only"} onChange={this.updateCustomMessage} />
-                            <span className="code light"> {h(cs)}</span>
-                        </div>
-                    </div>
-
-                    <h2>Response:</h2>
-                    <div className="message code">
-                        {data && JSON.stringify(data)}
-                        <DumpSysex data={data} />
-                    </div>
-
+                <div className="help">
+                    <h2>Help</h2>
                 </div>
 
             </div>

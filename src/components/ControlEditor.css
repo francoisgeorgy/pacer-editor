@@ -1,0 +1,12 @@
+.control-editor {
+
+}
+
+.steps {
+    display: grid;
+    grid: repeat(6, 1fr) / repeat(5, auto);
+    justify-content: start;
+    grid-gap: 6px 18px;
+}
+
+.steps > div {}

@@ -6,6 +6,10 @@ import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
 import Home from "./pages/Home";
 import DumpDecoder from "./pages/DumpDecoder";
 import TestSender from "./pages/TestSender";
+import Global from "./pages/Global";
+import Presets from "./pages/Presets";
+import Monitor from "./pages/Monitor";
+import Footer from "./components/Footer";
 
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
@@ -68,6 +72,9 @@ class App extends Component {
                     <header className="header">
                         {/*<h1>Pacer Editor</h1>*/}
                         <MenuLink activeOnlyWhenExact={true} to="/" label="Home" />
+                        <MenuLink to="/presets" label="Presets" />
+                        <MenuLink to="/global" label="Global config" />
+                        <MenuLink to="/monitor" label="MIDI monitor" />
                         <MenuLink to="/dumpdecoder" label="Dump decoder" />
                         <MenuLink to="/testsender" label="Debug message" />
                         <div className="spacer">
@@ -75,12 +82,27 @@ class App extends Component {
                         {busy && <div className="busy">busy</div>}
                     </header>
 
-                    <div className="wrapper">
-                        <div className="content">
+                    {/*<div className="wrapper">*/}
+                        {/*<div className="content">*/}
                             <Switch>
                                 <Route exact={true} path="/" render={
                                     props => (
-                                        <Home inputPorts={inputs} outputPorts={outputs} onBusy={this.onBusy} />
+                                        <Home />
+                                    )
+                                }/>
+                                <Route path="/presets" render={
+                                    props => (
+                                        <Presets inputPorts={inputs} outputPorts={outputs} onBusy={this.onBusy} />
+                                    )
+                                }/>
+                                <Route path="/global" render={
+                                    props => (
+                                        <Global inputPorts={inputs} outputPorts={outputs} onBusy={this.onBusy} />
+                                    )
+                                }/>
+                                <Route path="/monitor" render={
+                                    props => (
+                                        <Monitor inputPorts={inputs} onBusy={this.onBusy} />
                                     )
                                 }/>
                                 <Route path="/dumpdecoder" render={
@@ -94,11 +116,10 @@ class App extends Component {
                                     )
                                 }/>
                             </Switch>
-                        </div>
-                        <div className="help">
-                            <h2>Help</h2>
-                        </div>
-                    </div>
+                        {/*</div>*/}
+                    {/*</div>*/}
+
+                    <Footer />
 
                 </div>
             </Router>

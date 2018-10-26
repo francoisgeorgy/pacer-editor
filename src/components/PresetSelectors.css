@@ -8,7 +8,6 @@
     display: grid;
     grid: repeat(2, 1fr) / repeat(2, auto);
     justify-content: start;
-
 }
 
 .selectors > div {

@@ -97,6 +97,29 @@ export const CONTROLS = {
     0x7F: "ALL"
 };
 
+export const CONTROLS_FULLNAME = {
+    0x01: "Preset Name",
+    0x0D: "Stompswitch 1",
+    0x0E: "Stompswitch 2",
+    0x0F: "Stompswitch 3",
+    0x10: "Stompswitch 4",
+    0x11: "Stompswitch 5",
+    0x12: "Stompswitch 6",
+    0x13: "RESERVED",
+    0x14: "Stompswitch A",
+    0x15: "Stompswitch B",
+    0x16: "Stompswitch C",
+    0x17: "Stompswitch D",
+    0x18: "Footswitch 1",
+    0x19: "Footswitch  2",
+    0x1A: "Footswitch  3",
+    0x1B: "Footswitch  4",
+    0x36: "Expression Pedal 1",
+    0x37: "Expression Pedal 2",
+    0x7E: "MIDI configuration",
+    0x7F: "ALL"
+};
+
 // subsets of CONTROLS keys:
 export const STOMPSWITCHES = [0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x14, 0x15, 0x16, 0x17];
 export const STOMPSWITCHES_TOP = [0x14, 0x15, 0x16, 0x17];
@@ -185,6 +208,45 @@ export const MSG_TYPES = {
 
 };
 
+export const MSG_TYPES_FULLNAME = {
+
+    [MSG_AD_MIDICC]: "MIDI CC",
+    [MSG_AD_NRPNC]: "MIDI NRPN Coarse",
+    [MSG_AD_NRPNF]: "MIDI NRPN Fine",
+    [MSG_AD_PITCH]: "Pitch Bend",
+    [MSG_AD_ATCHAN]: "AT CHAN",
+    [MSG_DAWFUNC]: "DAW FUNC",
+    [MSG_CTRL_OFF]: "CTRL_OFF",
+
+    [MSG_SW_MIDICC_TGGLE]: "MIDI CC Toggle",
+    [MSG_SW_MIDICC]: "CC",
+    [MSG_SW_MIDICC_STEP]: "CC STEP",
+    [MSG_SW_NOTE]: "MIDI Note",
+    [MSG_SW_NOTE_TGGLE]: "MIDI Note Toggle",
+    [MSG_SW_PRGBANK]: "PRG BANK",
+    [MSG_SW_PRG_STEP]: "PRG STEP",
+    [MSG_SW_NRPNCOARSE]: "MIDI NRPN Coarse",
+    [MSG_SW_NRPNFINE]: "MIDI NRPN Fine",
+    [MSG_SW_MMC]: "MMC",
+    [MSG_SW_RELAY]: "RELAY",
+    [MSG_SW_PRESETSELECT]: "PRESET SELECT",
+    [MSG_SW_PRESETINCDEC]: "PRESET INC DEC",
+    [MSG_SW_STEPSELECT]: "STEP SELECT",
+    [MSG_SW_STEPINCDEC]: "STEP INC DEC",
+
+    [MSG_ENC_CC]: "CC",
+    [MSG_ENC_MIDICC_REL]: "CC REL",
+    [MSG_ENC_NRPNC]: "MIDI NRPN Coarse",
+    [MSG_ENC_NRPNF]: "MIDI NRPN Fine",
+    [MSG_ENC_PITCH]: "Pitch Bend",
+    [MSG_ENC_ATCHAN]: "AT CHAN",
+    [MSG_ENC_PROGRAM]: "PRG",
+    [MSG_ENC_PRESETSELECT]: "PRESET SEL",
+    [MSG_ENC_STEPSELECT]: "STEP SEL",
+
+    [MSG_LOAD_CC]: "CC"
+
+};
 // ============================================================================
 
 
