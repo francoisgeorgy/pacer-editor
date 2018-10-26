@@ -29,3 +29,22 @@ export const h = v => {
 
 export const hs = data => (data === null || data === undefined) ? "" : (Array.from(data).map(n => h(n))).join(" ");    // Array.from() is necessary to get a non-typed array
 
+
+/**
+ *
+ * @param string
+ * @param sep
+ * @returns {*}
+ */
+export const fromHexString = function(string, sep) {
+    let s = sep ? string.replace(sep, '') : string;
+    if ((s.length % 2) > 0) {
+        return null;
+    }
+    if (s.length === 0) return null;
+    let a = new Uint8Array(s.length / 2);
+    for (let i=0; i < (s.length / 2); i++) {
+        a[i] = parseInt(s.substr(i * 2, 2), 16);
+    }
+    return a;
+};

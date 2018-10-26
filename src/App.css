@@ -132,6 +132,10 @@ h3 {
     font-size: 0.875rem;
 }
 
+.light {
+    color: #999;
+}
+
 .warning {
     color: red;
 }

@@ -107,9 +107,10 @@ const Preset = ({ index, data }) => {
     if (data === null || data === undefined) return null;
     return (
         <div>
-            <h2>Preset #{index} {presetIndexToXY(parseInt(index, 10))}</h2>
+            <h2>Preset {presetIndexToXY(parseInt(index, 10))} (#{index})</h2>
             <Controls controls={data["controls"]} />
             <Midis controls={data["controls"]} />
+            {/*<pre>{JSON.stringify(data, null, 4)}</pre>*/}
             {/*<pre>{JSON.stringify(data, null, 4)}</pre>*/}
         </div>
     );

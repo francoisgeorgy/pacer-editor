@@ -3,7 +3,7 @@ import PresetSelectors from "../components/PresetSelectors";
 import MidiPorts from "../components/MidiPorts";
 import {isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
 import Controls from "../components/Controls";
-import {CONTROLS, presetIndexToXY, presetXYToIndex, requestPresetObj, SYSEX_SIGNATURE} from "../pacer";
+import {CONTROLS, presetIndexToXY, requestPresetObj, SYSEX_SIGNATURE} from "../pacer";
 import {hs} from "../utils/hexstring";
 import "./Home.css";
 import {produce} from "immer";

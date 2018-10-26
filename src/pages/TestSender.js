@@ -3,10 +3,11 @@ import {isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
 import MidiPorts from "../components/MidiPorts";
 import {requestPreset, requestPresetObj, SYSEX_SIGNATURE} from "../pacer/index";
 import {outputFromId} from "../utils/ports";
-import {hs} from "../utils/hexstring";
+import {fromHexString, h, hs} from "../utils/hexstring";
 import "./TestSender.css";
 import {produce} from "immer";
 import DumpSysex from "../components/DumpSysex";
+import {checksum} from "../pacer";
 
 class TestSender extends Component {
 
@@ -17,7 +18,7 @@ class TestSender extends Component {
             requestPreset(5),
             requestPresetObj(5, 0x0D)
         ],
-        customMessage: [],
+        customMessage: "",
         checksum: null
     };
 
@@ -58,11 +59,21 @@ class TestSender extends Component {
     };
 
     updateCustomMessage = (event) => {
-        console.log(event.target.value);
+        let s = (event.target.value.match(/[0-9a-fA-F]+/g) || []).join('');
+        let h = '';
+        for (let i=0; i<s.length; i++) {
+            if ((i > 0) && (i % 2 === 0)) h += ' ';
+            h += s[i];
+        }
         this.setState({
-            customMessage: event.target.value,
-            checksum: 0x23
+            customMessage: h,
+            cs: checksum(fromHexString(h, / /g))
         });
+    };
+
+    sendCustomMessage = () => {
+        let data = fromHexString(this.state.customMessage, / /g);
+        if (data && data.length > 0) this.sendSysex(data);
     };
 
     /**
@@ -72,9 +83,9 @@ class TestSender extends Component {
 
         console.log("SendTester.render", this.props);
 
-        const { data, messages, customMessage, checksum } = this.state;
+        const { data, messages, customMessage, cs } = this.state;
 
-        console.log("SendTester.render", messages);
+        console.log("SendTester.render", messages, customMessage.length % 2);
 
         return (
             <div>
@@ -94,7 +105,9 @@ class TestSender extends Component {
                         {messages.map((msg, i) =>
                             <div key={i} className="send-message">
                                 <button onClick={() => this.sendMessage(msg)}>send</button>
+                                <span className="code light">{hs(SYSEX_SIGNATURE)} </span>
                                 <span className="code">{hs(msg)}</span>
+                                <span className="code light"> {h(checksum(msg))}</span>
                             </div>
                         )}
                     </div>
@@ -102,16 +115,16 @@ class TestSender extends Component {
                     <h2>Custom message:</h2>
                     <div>
                         <div className="send-message">
-                        <button onClick={() => this.sendMessage()}>send</button>
-                            <span className="code">{hs(SYSEX_SIGNATURE)} </span>
-                            <input type="text" value={customMessage} placeholder={"hex digits only"} onChange={this.updateCustomMessage} />
-                            <span className="code"> {hs([checksum])}</span>
+                            <button onClick={this.sendCustomMessage} disabled={customMessage.length === 0}>send</button>
+                            <span className="code light">{hs(SYSEX_SIGNATURE)} </span>
+                            <input type="text" className="code" size="30" value={customMessage} placeholder={"hex digits only"} onChange={this.updateCustomMessage} />
+                            <span className="code light"> {h(cs)}</span>
                         </div>
                     </div>
 
                     <h2>Response:</h2>
                     <div className="message code">
-                        {JSON.stringify(data)}
+                        {data && JSON.stringify(data)}
                         <DumpSysex data={data} />
                     </div>
 

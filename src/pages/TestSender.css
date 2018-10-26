@@ -3,6 +3,10 @@
     margin: 0.5rem 0;
 }
 
+.send-message input {
+
+}
+
 button {
     margin-right: 1rem;
     padding: 5px 10px;
