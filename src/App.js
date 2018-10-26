@@ -66,7 +66,7 @@ class App extends Component {
                     <Midi onInputChange={this.onInputChange} onOutputChange={this.onOutputChange} />
 
                     <header className="header">
-                        {/*<h1>Nektar Pacer Editor</h1>*/}
+                        {/*<h1>Pacer Editor</h1>*/}
                         <MenuLink activeOnlyWhenExact={true} to="/" label="Home" />
                         <MenuLink to="/dumper" label="Dumper" />
                         <MenuLink to="/testsender" label="TestSender" />

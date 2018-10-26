@@ -1,10 +1,10 @@
 {
-    "name": "nektar-pacer-editor",
+    "name": "pacer-editor",
     "version": "0.1.0",
     "author": "François Georgy <francois.georgy@gmail.com> (http://sysex.io)",
     "license": "GPL-3.0-or-later",
     "private": true,
-    "homepage": "https://francoisgeorgy.github.io/nektar-pacer-editor",
+    "homepage": "https://francoisgeorgy.github.io/pacer-editor",
     "dependencies": {
         "immer": "^1.7.2",
         "midi-manufacturers": "^1.1.0",

@@ -1,4 +1,4 @@
-# Nektar Pacer web editor
+# Pacer web editor
 
 Program your Nektar Pacer MIDI controler with your web browser. 
 
