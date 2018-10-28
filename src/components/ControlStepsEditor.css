@@ -4,7 +4,7 @@
 
 .steps {
     display: grid;
-    grid: repeat(6, 1fr) / repeat(5, auto);
+    grid: repeat(6, 1fr) / repeat(6, auto);
     justify-content: start;
     grid-gap: 6px 18px;
 }

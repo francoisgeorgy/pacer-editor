@@ -8,12 +8,12 @@ import {mergeDeep, parseSysexDump} from "../utils/sysex";
 const MidiNote = ({ note, onChange }) => {
     console.log(`MidiNote ${note}`, typeof note);
     return (
-        <select onChange={(event) => onChange(event.target.value)}>
+        <select onChange={(event) => onChange(event.target.value)} defaultValue={note}>
             {
                 Array.from(Array(127).keys()).map(
                     i => {
                         let n = Note.fromMidi(i, true);
-                        return <option value={i} selected={i === note}>{n}</option>
+                        return <option key={i} value={i}>{n}</option>
                     })
             }
         </select>
@@ -25,22 +25,39 @@ const Step = ({ index, config, updateCallback }) => {
     let d0, d1, d2;
     if (config.msg_type === MSG_SW_NOTE) {
         // d0 = `note ${Note.fromMidi(config.data[0], true)}`;
-        d0 = <MidiNote note={config.data[0]} onChange={(value) => updateCallback(0, value)} />;
-        d1 = <input type="text" value={config.data[1]} size="4" />;
+        d0 = <MidiNote note={config.data[0]} onChange={(value) => updateCallback("data", 0, value)} />;
+        d1 = <input type="text" value={config.data[1]} size="4" onChange={(event) => updateCallback("data", 1, event.target.value)} />;
         d2 = '';
     } else {
-        d0 = config.data[0];
-        d1 = config.data[1];
-        d2 = config.data[2];
+        d0 = <input type="text" value={config.data[0]} size="4" onChange={(event) => updateCallback("data", 0, event.target.value)} />;
+        d1 = <input type="text" value={config.data[1]} size="4" onChange={(event) => updateCallback("data", 1, event.target.value)} />;
+        d2 = <input type="text" value={config.data[2]} size="4" onChange={(event) => updateCallback("data", 2, event.target.value)} />;
     }
 
     return (
         <Fragment>
-            <div>{MSG_TYPES_FULLNAME[config.msg_type]}</div>
+            <div>step {index}:</div>
+            <div>
+                <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} defaultValue={config.msg_type}>
+                {
+                    Object.keys(MSG_TYPES_FULLNAME).map(
+                        key => {
+                            // let n = Note.fromMidi(i, true);
+                            return <option key={key} value={key}>{MSG_TYPES_FULLNAME[key]}</option>
+                        })
+                }
+                </select>
+            </div>
             <div>{d0}</div>
             <div>{d1}</div>
             <div>{d2}</div>
-            <div>{config.channel}</div>
+            <div>
+                <select onChange={(event) => updateCallback("channel", null, event.target.value)} defaultValue={config.channel}>
+                {
+                    Array.from(Array(16).keys()).map(i => <option key={i} value={i}>{i}</option>)
+                }
+                </select>
+            </div>
         </Fragment>
     );
 };
@@ -51,15 +68,15 @@ class ControlStepsEditor extends Component {
     //     config: this.props.config
     // };
 
-    onStepUpdate = (stepIndex, dataIndex, value) => {
-        console.log(`onStepUpdate`, stepIndex, dataIndex, value);
+    onStepUpdate = (stepIndex, dataType, dataIndex, value) => {
+        console.log(`ControlStepsEditor.onStepUpdate`, stepIndex, dataIndex, value);
         //
         // produce(draft => {
         //     draft.config.steps[stepIndex].data[dataIndex] = value;
         //     // this.props.onBusy(false);
         // });
         //
-        this.props.onUpdate(this.props.controlId, null);
+        this.props.onUpdate(stepIndex, dataType, dataIndex, value);    // stepIndex, dataIndex, value
     };
 
     render() {
@@ -85,13 +102,14 @@ class ControlStepsEditor extends Component {
 
         return (
                     <div className="steps">
+                        <div></div>
                         <div>Type</div>
                         <div>Data 1</div>
                         <div>Data 2</div>
                         <div>Data 3</div>
                         <div>MIDI Channel</div>
                         {Object.keys(steps).map(i =>
-                            <Step index={i} config={steps[i]} updateCallback={(dataIndex, value) => this.onStepUpdate(i, dataIndex, value)} />
+                            <Step key={i} index={i} config={steps[i]} updateCallback={(dataType, dataIndex, value) => this.onStepUpdate(i, dataType, dataIndex, value)} />
                         )}
                     </div>
 

@@ -108,8 +108,8 @@ h3 {
     /*margin-bottom: 1rem;*/
     /*padding-bottom: 1rem;*/
     /*border-bottom: 1px solid #aaa;*/
-    /*display: flex;*/
-    /*flex-direction: row;*/
+    display: flex;
+    flex-direction: row;
     /*align-items: flex-end;*/
 }
 

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PresetSelectors from "../components/PresetSelectors";
 import MidiPorts from "../components/MidiPorts";
-import {isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
+import {buildControlStepSysex, isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
 import Controls from "../components/Controls";
 import {CONTROLS, presetIndexToXY, requestPresetObj, SYSEX_SIGNATURE} from "../pacer";
 import {hs} from "../utils/hexstring";
@@ -62,15 +62,23 @@ class Presets extends Component {
     };
 
     enablePort = (port_id) => {
-        console.warn(`SendTester.componentDidMount.enablePort ${port_id}`);
+        console.warn(`Presets.componentDidMount.enablePort ${port_id}`);
         this.setState({output: port_id});
     };
 
-    controlStepsUpdate = (controlId, stepIndex, dataIndex, value) => {
-        console.log("controlStepsUpdate", controlId, stepIndex, dataIndex, value);
+    /**
+     * dataIndex is only used when dataType == "data"
+     */
+    controlStepsUpdate = (controlId, stepIndex, dataType, dataIndex, value) => {
+        console.log("Presets.controlStepsUpdate", controlId, stepIndex, dataIndex, value);
         this.setState(
             produce(draft => {
-                draft["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["data"][dataIndex] = value;
+                if (dataType === "data") {
+                    draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["data"][dataIndex] = parseInt(value, 10);
+                } else {
+                    draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = parseInt(value, 10);
+                }
+                draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
                 // this.props.onBusy(false);
             })
         );
@@ -86,27 +94,27 @@ class Presets extends Component {
             ok = true;
 
             if (!("1" in data)) {        // TODO: replace "1" by a constant
-                console.log(`invalid data`, data);
+                console.log(`Presets: invalid data`, data);
                 ok = false;
             }
 
             if (!(presetIndex in data["1"])) {        // TODO: replace "1" by a constant
-                console.log(`preset ${presetIndex} not found in data`);
+                console.log(`Presets: preset ${presetIndex} not found in data`);
                 ok = false;
             }
 
             if (!("controls" in data["1"][presetIndex])) {
-                console.log(`controls not found in data`);
+                console.log(`Presets: controls not found in data`);
                 ok = false;
             }
 
             if (!(controlId in data["1"][presetIndex]["controls"])) {
-                console.log(`control ${controlId} not found in data`);
+                console.log(`Presets: control ${controlId} not found in data`);
                 ok = false;
             }
 
             if (!("steps" in data["1"][presetIndex]["controls"][controlId])) {
-                console.log(`steps not found in data`);
+                console.log(`Presets: steps not found in data`);
                 ok = false;
             }
         }
@@ -120,6 +128,11 @@ class Presets extends Component {
         ok = ok && (Object.keys(data["1"][presetIndex]["controls"][controlId]["steps"]).length === 6);
 
         const showEditor = ok;  // && presetIndex && controlId;
+
+        let updateMessages;
+        if (ok) {
+            updateMessages = buildControlStepSysex(presetIndex, controlId, data["1"][presetIndex]["controls"][controlId]["steps"]);
+        }
 
         return (
             <div className="wrapper">
@@ -156,19 +169,19 @@ class Presets extends Component {
                         </div>
                         */}
 
-                        {/*{showEditor && <ControlEditor config={data} />}*/}
-
-                        {/*{JSON.stringify(data)}*/}
-
-                        {/*
-                            {"1":
-                                 {"5":{"controls":{"13":{"steps":{"1":{"channel":0,"msg_type":67,"data":[52,127,0],"active":1},"2":{"channel":0,"msg_type":67,"data":[28,127,0],"active":1},"3":{"channel":0,"msg_type":67,"data":[40,127,0],"active":1},"4":{"channel":0,"msg_type":67,"data":[64,127,0],"active":1},"5":{"channel":0,"msg_type":67,"data":[76,127,0],"active":1},"6":{"channel":0,"msg_type":97,"data":[0,127,0],"active":0}}}}}}}
-                        */}
-
                         {showEditor && <ControlStepsEditor controlId={controlId}
                                                            steps={data["1"][presetIndex]["controls"][controlId]["steps"]}
-                                                           onUpdate={(stepIndex, dataIndex, value) => this.controlStepsUpdate(controlId, stepIndex, dataIndex, value)} />}
+                                                           onUpdate={(stepIndex, dataType, dataIndex, value) => this.controlStepsUpdate(controlId, stepIndex, dataType, dataIndex, value)} />}
                         {/*<ControlEditor presetIndex={5} config={A5SW5["1"]["5"]["controls"]["17"]} />*/}
+
+                        {showEditor &&
+                        <div>
+                            Update message to send:
+                            {updateMessages.map(m => <pre>{hs(m)}</pre>)}
+                        </div>
+                        }
+
+                        <pre>{JSON.stringify(data, null, 4)}</pre>
 
                     </div>
                 </div>

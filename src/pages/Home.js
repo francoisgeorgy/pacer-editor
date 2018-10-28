@@ -12,6 +12,8 @@ class Home extends Component {
 
                 <h2>Requirements</h2>
 
+                <h2>Limitations</h2>
+
                 <h2>Usage</h2>
 
                 <h2>FAQ</h2>

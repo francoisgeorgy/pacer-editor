@@ -1,6 +1,6 @@
 import midi_name, {NEKTAR_TECHNOLOGY_INC} from "midi-manufacturers";
 import {h, hs} from "./hexstring";
-import {TARGETS, CONTROLS} from "../pacer";
+import {TARGETS, CONTROLS, checksum, SYSEX_HEADER} from "../pacer";
 export const SYSEX_START = 0xF0;
 export const SYSEX_END = 0xF7;
 
@@ -294,8 +294,64 @@ function parseSysexDump(data) {
 }
 
 
+/**
+ * Return an array of sysex messages to update a control's steps.
+ * @param presetIndex
+ * @param controlId
+ * @param steps
+ * @returns {*}
+ */
+function buildControlStepSysex(presetIndex, controlId, steps) {
+
+    // 00 01 77
+    // 7F SYSEX_HEADER
+    // 01 cmd
+    // 01 tgt
+    // 05 presetIndex
+    // 0D controlId
+    // 01 01 00 00      channel
+    // 02 01 43 00      msg type
+    // 03 01 34 00      data 1
+    // 04 01 7F 00      data 2
+    // 05 01 00 00      data 3
+    // 06 01 01         active
+
+    let msgs = [];
+
+    for (let i of Object.keys(steps)) {
+
+        let step = steps[i];
+
+        if (!step.changed) continue;
+
+        let msg = [
+            0x01,       // cmd                   // TODO: replace numbers by constants
+            0x01,       // tgt is preset
+            presetIndex,
+            controlId];
+
+        msg.push(i*6 + 0x01, 0x01, step.channel, 0x00);
+        msg.push(i*6 + 0x02, 0x01, step.msg_type, 0x00);
+        msg.push(i*6 + 0x03, 0x01, step.data[0], 0x00);
+        msg.push(i*6 + 0x04, 0x01, step.data[1], 0x00);
+        msg.push(i*6 + 0x05, 0x01, step.data[2], 0x00);
+        msg.push(i*6 + 0x06, 0x01, step.active);
+
+        let cs = checksum(msg);
+        msg.push(cs);
+
+        msgs.push(SYSEX_HEADER.concat(msg));
+    }
+
+    console.log(msgs);
+
+    return msgs;
+}
+
+
 export {
     isSysexData,
-    parseSysexDump
+    parseSysexDump,
+    buildControlStepSysex
 };
 

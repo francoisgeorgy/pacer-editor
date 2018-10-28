@@ -14,7 +14,7 @@ export function checksum(bytes) {
  * return the sysex message to send to the Pacer to request some data
  */
 export function requestPreset(index) {
-    let msg = [0x02, 0x01, index];
+    let msg = [0x02, 0x01, index];      // TODO: replace numbers by constants
     let cs = checksum(msg);
     msg.push(cs);
     return SYSEX_HEADER.concat(msg);
@@ -24,7 +24,7 @@ export function requestPreset(index) {
  * return the sysex message to send to the Pacer to request some data
  */
 export function requestPresetObj(index, obj) {
-    let msg = [0x02, 0x01, index, obj];
+    let msg = [0x02, 0x01, index, obj];             // TODO: replace numbers by constants
     let cs = checksum(msg);
     msg.push(cs);
     return SYSEX_HEADER.concat(msg);

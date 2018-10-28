@@ -15,14 +15,6 @@ export const padZero = (str, len, char) => {
     return s + str;
 };
 
-export const b = v => {
-    return padZero(v.toString(2), 8);
-};
-
-export const b7 = v => {
-    return padZero(v.toString(2), 7);    // 7 bits !!!
-};
-
 export const h = v => {
     return (v === null || v === undefined) ? "" : padZero(v.toString(16).toUpperCase(), 2);
 };
