@@ -13,7 +13,7 @@ import MidiPort from "../components/MidiPort";
 class TestSender extends Component {
 
     state = {
-        // output: null,           // MIDI output port enabled
+        output: null,           // MIDI output port used for output
         data: null,
         messages: [
             requestPreset(5),
@@ -103,10 +103,10 @@ class TestSender extends Component {
             <div className="wrapper">
                 <div className="content">
 
-                    <h2>1. Enable the input and output MIDI ports used with your Pacer:</h2>
+                    <h2>MIDI ports:</h2>
 
                     <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                          autoConnect={/Pacer/i} onMidiInputEvent={this.handleMidiInputEvent}
+                          autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
                           setOutput={this.setOutput}
                           className="sub-header" />
 

@@ -13,13 +13,28 @@ class MidiPorts extends Component {
         console.log("MidiPort.render", port.type, port.name, isSelected);
 
         //TODO: display MIDI channel when connected
+        return (
+            <div key={port.id} className={isSelected ? `port ${port.type} enabled` : `port ${port.type}`}>
+                <div className={"port-description"}>
+                    <span className="type">{port.type === 'input' ? 'in' : 'out'}: </span>
+                    <span className="port-name">{port.name} </span>
+                    <Switch
+                        onChange={() => clickHandler(port.id)}
+                        checked={isSelected}
+                        className="react-switch"
+                        id="normal-switch"
+                        height={20} width={42}
+                    />
+                </div>
+            </div>
+        );
 
+/*
         return (
             <div key={port.id} className={isSelected ? `port ${port.type} enabled` : `port ${port.type}`}>
                 <div className={"port-description"}>
                     <div className="type">{port.type} {port.type === 'input' ? 'from' : 'to'}</div>
                     <div className="port-name">{port.name}</div>
-                    {/*<div className={port.manufacturer ? "port-manufacturer" : "port-manufacturer unknown"}>{port.manufacturer ? port.manufacturer : "unknown manufacturer"}</div>*/}
                 </div>
                 <div className={"port-state"}>
                     <Switch
@@ -34,6 +49,7 @@ class MidiPorts extends Component {
                 </div>
             </div>
         );
+*/
     }
 
 }

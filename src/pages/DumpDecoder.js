@@ -13,11 +13,7 @@ const MAX_FILE_SIZE = 5 * 1024*1024;
 class DumpDecoder extends Component {
 
     state = {
-        // inputs: [],         // array of MIDI inputs (copied from WebMidi object)
-        // outputs: [],        // array of MIDI outputs (copied from WebMidi object)
-        // currentPreset: "",  // preset name, like "B2",
-        data: null  //,
-        // busy: false
+        data: null
     };
 
     /**
@@ -58,21 +54,6 @@ class DumpDecoder extends Component {
         this.props.onBusy(true);
         this.readFiles(files);  // returned promise is ignored, this is normal.
     };
-
-/*
-    midiOn = err => {
-        if (err) {
-            console.warn("DumpDecoder: WebMidi could not be enabled.", err);
-        } else {
-            console.log("DumpDecoder: WebMidi enabled!");
-        }
-    };
-    componentDidMount() {
-        console.log("DumpDecoder.componentDidMount", WebMidi.enabled);
-        WebMidi.enable(this.midiOn, true);  // true to enable sysex support
-    }
-*/
-
 
     handleMidiInputEvent = (event) => {
         console.log("DumpDecoder.handleMidiInputEvent", event, event.data);
@@ -116,7 +97,7 @@ class DumpDecoder extends Component {
 
                     {/* TODO: select only input port in Midi */}
                     <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                          autoConnect={"MidiMock"} onMidiInputEvent={this.handleMidiInputEvent}
+                          autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
                           className="sub-header" />
 
                     <div className="main">

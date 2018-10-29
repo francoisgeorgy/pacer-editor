@@ -1,46 +1,44 @@
 import React, {Component} from 'react';
 import PresetSelectors from "../components/PresetSelectors";
-// import MidiPorts from "../components/MidiPorts";
 import {buildControlStepSysex, isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
 import Controls from "../components/Controls";
-import {CONTROLS, presetIndexToXY, requestPresetObj, SYSEX_SIGNATURE} from "../pacer";
+import {requestPresetObj, SYSEX_SIGNATURE} from "../pacer";
 import {hs} from "../utils/hexstring";
 import {produce} from "immer";
-// import DumpSysex from "../components/DumpSysex";
 import {outputById} from "../utils/ports";
 import ControlStepsEditor from "../components/ControlStepsEditor";
-// import {A5SW5} from "../debug/A5.stompswitch-5";
 import Midi from "../components/Midi";
 import MidiPort from "../components/MidiPort";    // DEBUG ONLY  //TODO: remove after debug
 
 class Presets extends Component {
 
     state = {
-        // output: null,           // MIDI output port enabled
+        output: null,           // MIDI output port used for output
         presetIndex: "",      // preset name, like "B2"
         controlId: "",     //
-        message: null,
         data: null
     };
 
-    selectPreset = (name) => {
-        this.setState({presetIndex: name});
+    selectPreset = (id) => {
+        console.log(`selectPreset ${id}`);
+        this.setState({
+            presetIndex: id
+        });
+        if (id && this.state.controlId) {
+            this.sendSysex(requestPresetObj(id, this.state.controlId));
+        }
     };
 
     selectControl = (id) => {
         console.log(`selectControl ${id}`);
         let msg = requestPresetObj(this.state.presetIndex, id);
-        this.sendSysex(msg);
         this.setState({
-            controlId: id,
-            message: msg
+            controlId: id
         });
+        if (this.state.presetIndex && id) {
+            this.sendSysex(requestPresetObj(this.state.presetIndex, id));
+        }
     };
-
-    // enablePort = (port_id) => {
-    //     console.warn(`Presets.componentDidMount.enablePort ${port_id}`);
-    //     this.setState({output: port_id});
-    // };
 
     /**
      * dataIndex is only used when dataType == "data"
@@ -93,8 +91,28 @@ class Presets extends Component {
         )
     };
 
+    setOutput = (port_id) => {
+        console.log(`Page.setOutput ${port_id}`);
+        this.setState({output: port_id});
+    };
+
+    sendSysex = msg => {
+        console.log("sendSysex", msg);
+        if (!this.state.output) return;
+        let out = outputById(this.state.output);
+        if (!out) {
+            console.warn(`send: output ${this.state.output} not found`);
+            return;
+        }
+        this.setState(
+            {data: null},
+            () => out.sendSysex(SYSEX_SIGNATURE, msg)
+        );
+    };
+
+
     render() {
-        const { presetIndex, controlId, message, data } = this.state;
+        const { presetIndex, controlId, data } = this.state;
 
         let ok = false;
 
@@ -107,22 +125,22 @@ class Presets extends Component {
                 ok = false;
             }
 
-            if (!(presetIndex in data["1"])) {        // TODO: replace "1" by a constant
+            if (ok && !(presetIndex in data["1"])) {        // TODO: replace "1" by a constant
                 console.log(`Presets: preset ${presetIndex} not found in data`);
                 ok = false;
             }
 
-            if (!("controls" in data["1"][presetIndex])) {
+            if (ok && !("controls" in data["1"][presetIndex])) {
                 console.log(`Presets: controls not found in data`);
                 ok = false;
             }
 
-            if (!(controlId in data["1"][presetIndex]["controls"])) {
+            if (ok && !(controlId in data["1"][presetIndex]["controls"])) {
                 console.log(`Presets: control ${controlId} not found in data`);
                 ok = false;
             }
 
-            if (!("steps" in data["1"][presetIndex]["controls"][controlId])) {
+            if (ok && !("steps" in data["1"][presetIndex]["controls"][controlId])) {
                 console.log(`Presets: steps not found in data`);
                 ok = false;
             }
@@ -152,7 +170,8 @@ class Presets extends Component {
                     {/*<div className="sub-header">*/}
 
                         <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                              autoConnect={"Pacer"} onMidiInputEvent={this.handleMidiInputEvent}
+                              autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
+                              setOutput={this.setOutput}
                               className="sub-header" />
 
                         {/*{this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}*/}

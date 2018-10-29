@@ -1,15 +1,13 @@
 import React, {Component} from 'react';
-// import * as WebMidi from "webmidi";
 import './App.css';
-// import Midi from "./components/Midi";
 import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
 import Home from "./pages/Home";
-import DumpDecoder from "./pages/DumpDecoder";
 import TestSender from "./pages/TestSender";
-import Global from "./pages/Global";
 import Presets from "./pages/Presets";
 import Monitor from "./pages/Monitor";
 import Footer from "./components/Footer";
+import Global from "./pages/Global";
+import DumpDecoder from "./pages/DumpDecoder";
 
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
@@ -28,25 +26,8 @@ const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
 class App extends Component {
 
     state = {
-        // inputs: [],         // array of MIDI inputs (copied from WebMidi object)
-        // outputs: [],        // array of MIDI outputs (copied from WebMidi object)
-        // data: null,
         busy: false
     };
-
-    /**
-     * MIDI output port handler
-     */
-    // onInputChange = () => {
-    //     this.setState({ inputs: WebMidi.inputs });
-    // };
-
-    /**
-     * MIDI output port handler
-     */
-    // onOutputChange = () => {
-    //     this.setState({ outputs: WebMidi.outputs });
-    // };
 
     /**
      *
@@ -61,13 +42,11 @@ class App extends Component {
      * @returns {*}
      */
     render() {
-        const { inputs, outputs, busy } = this.state;
+        const { busy } = this.state;
 
         return (
             <Router>
                 <div className="app">
-
-                    {/*<Midi onInputChange={this.onInputChange} onOutputChange={this.onOutputChange} />*/}
 
                     <header className="header">
                         {/*<h1>Pacer Editor</h1>*/}
@@ -76,7 +55,7 @@ class App extends Component {
                         <MenuLink to="/global" label="Global config" />
                         <MenuLink to="/monitor" label="MIDI monitor" />
                         <MenuLink to="/dumpdecoder" label="Dump decoder" />
-                        <MenuLink to="/testsender" label="Debug message" />
+                        <MenuLink to="/testsender" label="Debug" />
                         <div className="spacer">
                         </div>
                         {busy && <div className="busy">busy</div>}
@@ -95,25 +74,21 @@ class App extends Component {
                                         <Presets onBusy={this.onBusy} />
                                     )
                                 }/>
-{/*
                                 <Route path="/global" render={
                                     props => (
-                                        <Global inputPorts={inputs} outputPorts={outputs} onBusy={this.onBusy} />
+                                        <Global onBusy={this.onBusy} />
                                     )
                                 }/>
-*/}
                                 <Route path="/monitor" render={
                                     props => (
-                                        <Monitor inputPorts={inputs} onBusy={this.onBusy} />
+                                        <Monitor onBusy={this.onBusy} />
                                     )
                                 }/>
-{/*
                                 <Route path="/dumpdecoder" render={
                                     props => (
-                                        <DumpDecoder inputPorts={inputs} onBusy={this.onBusy} />
+                                        <DumpDecoder onBusy={this.onBusy} />
                                     )
                                 }/>
-*/}
                                 <Route path="/testsender" render={
                                     props => (
                                         <TestSender onBusy={this.onBusy} />

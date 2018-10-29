@@ -1,4 +1,4 @@
-import midi_name, {NEKTAR_TECHNOLOGY_INC} from "midi-manufacturers";
+import {NEKTAR_TECHNOLOGY_INC} from "midi-manufacturers";
 import {h, hs} from "./hexstring";
 import {TARGETS, CONTROLS, checksum, SYSEX_HEADER} from "../pacer";
 export const SYSEX_START = 0xF0;
@@ -58,9 +58,11 @@ function isSysexData(data) {
     return true;
 }
 
+/*
 function getManufacturerName(id) {
     return id in midi_name ? midi_name[id] : "manufacturer unknown";
 }
+*/
 
 function getControlStep(data) {
 
@@ -253,7 +255,7 @@ function parseSysexDump(data) {
     // let d = new Uint8Array(data);
     let d = data;   //TODO: use data variable
     let presets = {};   // Collection of presets. The key is the preset's index. The value is the preset.
-    let global = {};    // global conf
+    // let global = {};    // global conf
 
     // let k = data[0] === SYSEX_START ? 1 : 0;
 

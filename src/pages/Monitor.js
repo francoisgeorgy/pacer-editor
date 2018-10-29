@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Midi from "../components/Midi";
 import {produce} from "immer";
 import MidiPort from "../components/MidiPort";
-import {hs} from "../utils/hexstring";
+import parseMidi from 'parse-midi';
 
 class Monitor extends Component {
 
@@ -35,7 +35,7 @@ class Monitor extends Component {
                     <div>
 
                         <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                              autoConnect={/Pacer/i} onMidiInputEvent={this.handleMidiInputEvent}
+                              autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
 
                               className="sub-header" />
 
@@ -44,7 +44,12 @@ class Monitor extends Component {
                                 <h2>2. MIDI messages:</h2>
                             </div>
                             <div>
-                                {this.state.messages.map((msg, i) => <pre key={i}>{hs(msg)}</pre>)}
+                                {this.state.messages.map((msg, i) => {
+                                    let m = parseMidi(msg);
+                                    console.log(m);
+                                    return <div key={i}>{Object.keys(m).map(k => <span>{`${k}: ${m[k]}`} </span>)}</div>
+                                    // return <pre key={i}>{hs(msg)} {parseMidi(msg)}</pre>
+                                })}
                             </div>
                         </div>
 

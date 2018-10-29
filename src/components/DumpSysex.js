@@ -1,11 +1,8 @@
 import React from "react";
 import "./DumpSysex.css";
 import {
-    CONTROL_ELEMENT,
-    MIDI_ELEMENT,
     MSG_SW_NOTE,
     CONTROLS,
-    TARGETS,
     TARGET_PRESET,
     MSG_TYPES,
     presetIndexToXY
@@ -24,15 +21,19 @@ const presetCoord = index => {
 };
 */
 
+/*
 const ControlElement = ({ data }) => {
     if (data.element === undefined) return null;
     if (!(data.element in CONTROL_ELEMENT)) return null;
     return <div>{CONTROL_ELEMENT[data.element]} = {h(data.element_data)}</div>;
 };
+*/
 
+/*
 const MidiElement = ({ data }) => {
     return <span>midi element</span>;
 };
+*/
 
 const Midis = ({ midis }) => {
     if (midis === null) return null;
@@ -41,6 +42,7 @@ const Midis = ({ midis }) => {
     );
 };
 
+/*
 const Control = ({ obj, config }) => {
     if (config === null || config === undefined) return null;
     return (
@@ -67,6 +69,7 @@ const Control = ({ obj, config }) => {
         </div>
     );
 };
+*/
 
 const ControlTable = ({ obj, config }) => {
     if (config === null || config === undefined) return null;

@@ -1,9 +1,8 @@
 import React, {Component, Fragment} from 'react';
-import {CONTROLS_FULLNAME, MSG_SW_NOTE, MSG_TYPES_FULLNAME, presetXYToIndex} from "../pacer";
+import {MSG_SW_NOTE, MSG_TYPES_FULLNAME} from "../pacer";
 import * as Note from "tonal-note";
 import "./ControlStepsEditor.css";
-import {produce} from "immer";
-import {mergeDeep, parseSysexDump} from "../utils/sysex";
+
 
 const MidiNote = ({ note, onChange }) => {
     console.log(`MidiNote ${note}`, typeof note);
