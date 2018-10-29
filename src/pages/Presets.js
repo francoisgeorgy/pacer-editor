@@ -1,20 +1,22 @@
 import React, {Component} from 'react';
 import PresetSelectors from "../components/PresetSelectors";
-import MidiPorts from "../components/MidiPorts";
+// import MidiPorts from "../components/MidiPorts";
 import {buildControlStepSysex, isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
 import Controls from "../components/Controls";
 import {CONTROLS, presetIndexToXY, requestPresetObj, SYSEX_SIGNATURE} from "../pacer";
 import {hs} from "../utils/hexstring";
 import {produce} from "immer";
-import DumpSysex from "../components/DumpSysex";
-import {outputFromId} from "../utils/ports";
+// import DumpSysex from "../components/DumpSysex";
+import {outputById} from "../utils/ports";
 import ControlStepsEditor from "../components/ControlStepsEditor";
-import {A5SW5} from "../debug/A5.stompswitch-5";    // DEBUG ONLY  //TODO: remove after debug
+// import {A5SW5} from "../debug/A5.stompswitch-5";
+import Midi from "../components/Midi";
+import MidiPort from "../components/MidiPort";    // DEBUG ONLY  //TODO: remove after debug
 
 class Presets extends Component {
 
     state = {
-        output: null,           // MIDI output port enabled
+        // output: null,           // MIDI output port enabled
         presetIndex: "",      // preset name, like "B2"
         controlId: "",     //
         message: null,
@@ -35,36 +37,10 @@ class Presets extends Component {
         });
     };
 
-    handleMidiInputEvent = (event) => {
-        console.log("Presets.handleMidiInputEvent", event, event.data);
-        // if (event instanceof MIDIMessageEvent) {
-        if (isSysexData(event.data)) {
-            this.setState(
-                produce(draft => {
-                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
-                    // this.props.onBusy(false);
-                })
-            )
-        } else {
-            console.log("MIDI message is not a sysex message")
-        }
-        // }
-    };
-
-    sendSysex = msg => {
-        console.log("sendSysex", msg);
-        if (this.state.output) {
-            this.setState(
-                {data: null},
-                () => outputFromId(this.state.output).sendSysex(SYSEX_SIGNATURE, msg)
-            );
-        }
-    };
-
-    enablePort = (port_id) => {
-        console.warn(`Presets.componentDidMount.enablePort ${port_id}`);
-        this.setState({output: port_id});
-    };
+    // enablePort = (port_id) => {
+    //     console.warn(`Presets.componentDidMount.enablePort ${port_id}`);
+    //     this.setState({output: port_id});
+    // };
 
     /**
      * dataIndex is only used when dataType == "data"
@@ -82,6 +58,39 @@ class Presets extends Component {
                 // this.props.onBusy(false);
             })
         );
+    };
+
+    sendSysex = msg => {
+        console.log("sendSysex", msg);
+        if (this.state.output) {
+            this.setState(
+                {data: null},
+                () => outputById(this.state.output).sendSysex(SYSEX_SIGNATURE, msg)
+            );
+        }
+    };
+
+    handleMidiInputEvent = (event) => {
+        console.log("Presets.handleMidiInputEvent", event, event.data);
+        // if (event instanceof MIDIMessageEvent) {
+        if (isSysexData(event.data)) {
+            this.setState(
+                produce(draft => {
+                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
+                    // this.props.onBusy(false);
+                })
+            )
+        } else {
+            console.log("MIDI message is not a sysex message")
+        }
+        // }
+    };
+
+    renderPort = (port, selected, clickHandler) => {
+        if (port === undefined || port === null) return null;
+        return (
+            <MidiPort key={port.id} port={port} selected={selected} clickHandler={clickHandler} />
+        )
     };
 
     render() {
@@ -140,10 +149,15 @@ class Presets extends Component {
 
                     <h2>1. Enable the input and output MIDI ports used with your Pacer:</h2>
 
-                    <div className="sub-header">
-                        {this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}
-                        {this.props.outputPorts && <MidiPorts ports={this.props.outputPorts} type="output" onPortSelection={this.enablePort} />}
-                    </div>
+                    {/*<div className="sub-header">*/}
+
+                        <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
+                              autoConnect={"Pacer"} onMidiInputEvent={this.handleMidiInputEvent}
+                              className="sub-header" />
+
+                        {/*{this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}*/}
+                        {/*{this.props.outputPorts && <MidiPorts ports={this.props.outputPorts} type="output" onPortSelection={this.enablePort} />}*/}
+                    {/*</div>*/}
 
                     <div className="main">
 

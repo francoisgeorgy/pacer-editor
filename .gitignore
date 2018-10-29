@@ -1,5 +1,6 @@
 .idea
 *.iml
+tmp/
 
 # Logs
 logs

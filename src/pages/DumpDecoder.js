@@ -3,10 +3,10 @@ import Dropzone from "react-dropzone";
 import {produce} from "immer";
 import {isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
 import DumpSysex from "../components/DumpSysex";
-import MidiPorts from "../components/MidiPorts";
 import './DumpDecoder.css';
 import {hs} from "../utils/hexstring";
-// import * as WebMidi from "webmidi";
+import Midi from "../components/Midi";
+import MidiPort from "../components/MidiPort";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -18,23 +18,6 @@ class DumpDecoder extends Component {
         // currentPreset: "",  // preset name, like "B2",
         data: null  //,
         // busy: false
-    };
-
-    handleMidiInputEvent = (event) => {
-        console.log("DumpDecoder.handleMidiInputEvent", event, event.data);
-        // if (event instanceof MIDIMessageEvent) {
-        if (isSysexData(event.data)) {
-            console.log("DumpDecoder.handleMidiInputEvent: data is SysEx");
-            this.setState(
-                produce(draft => {
-                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
-                    // this.props.onBusy(false);
-                })
-            )
-        } else {
-            console.log("MIDI message is not a sysex message")
-        }
-        // }
     };
 
     /**
@@ -91,6 +74,30 @@ class DumpDecoder extends Component {
 */
 
 
+    handleMidiInputEvent = (event) => {
+        console.log("DumpDecoder.handleMidiInputEvent", event, event.data);
+        // if (event instanceof MIDIMessageEvent) {
+        if (isSysexData(event.data)) {
+            console.log("DumpDecoder.handleMidiInputEvent: data is SysEx");
+            this.setState(
+                produce(draft => {
+                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
+                    // this.props.onBusy(false);
+                })
+            )
+        } else {
+            console.log("MIDI message is not a sysex message")
+        }
+        // }
+    };
+
+    renderPort = (port, selected, clickHandler) => {
+        if (port === undefined || port === null) return null;
+        return (
+            <MidiPort key={port.id} port={port} selected={selected} clickHandler={clickHandler} />
+        )
+    };
+
 
     /**
      * @returns {*}
@@ -107,10 +114,10 @@ class DumpDecoder extends Component {
 
                     <h2>1. Enable the input MIDI port used with your Pacer:</h2>
 
-                    <div className="sub-header">
-                        {/*<h2>sysex<br />DumpDecoder</h2>*/}
-                        {this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}
-                    </div>
+                    {/* TODO: select only input port in Midi */}
+                    <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
+                          autoConnect={"MidiMock"} onMidiInputEvent={this.handleMidiInputEvent}
+                          className="sub-header" />
 
                     <div className="main">
 

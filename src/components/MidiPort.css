@@ -1,7 +1,7 @@
-#ports {
-    display: flex;
-    flex-direction: row;
-}
+/*#ports {*/
+    /*display: flex;*/
+    /*flex-direction: row;*/
+/*}*/
 
 .port {
     border: 1px solid #aaa;

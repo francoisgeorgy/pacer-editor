@@ -1,6 +1,6 @@
 import WebMidi from "webmidi";
 
-function portFromId(id) {
+function portById(id) {
     let p = WebMidi.inputs.find(item => item.id === id);
     if (p) {
         return p;
@@ -9,7 +9,7 @@ function portFromId(id) {
     }
 }
 
-function inputFromId(id) {
+function inputById(id) {
     return WebMidi.inputs.find(item => item.id === id);
 }
 
@@ -22,13 +22,13 @@ function inputName(id) {
     return i ? i.name : null;
 }
 
-function outputFromId(id) {
+function outputById(id) {
     return WebMidi.outputs.find(item => item.id === id);
 }
 
 export {
-    portFromId,
-    inputFromId,
+    portById,
+    inputById,
     inputName,
-    outputFromId
+    outputById
 }
