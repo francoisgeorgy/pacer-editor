@@ -102,18 +102,30 @@ class TestSender extends Component {
         return (
             <div className="wrapper">
                 <div className="content">
-
-                    <h2>MIDI ports:</h2>
-
-                    <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                          autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
-                          setOutput={this.setOutput}
-                          className="sub-header" />
-
-                    <div className="main">
-
-                        <h2>Test messages:</h2>
-                        <div>
+                    <div className="content-row step-1">
+                        <div className="background">
+                            Connect
+                        </div>
+                        <div className="content-row-header">
+                            1
+                        </div>
+                        <div className="content-row-content row-middle-aligned">
+                            <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
+                                  autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
+                                  setOutput={this.setOutput}
+                                  className="sub-header" />
+                        </div>
+                    </div>
+                    <div className="content-row step-2">
+                        <div className="background">
+                            Send
+                        </div>
+                        <div className="content-row-header">
+                            2
+                        </div>
+                        <div className="content-row-content">
+                            <h2>Test messages:</h2>
+                            <div>
                             {messages.map((msg, i) =>
                                 <div key={i} className="send-message">
                                     <button onClick={() => this.sendMessage(msg)}>send</button>
@@ -122,24 +134,33 @@ class TestSender extends Component {
                                     <span className="code light"> {h(checksum(msg))}</span>
                                 </div>
                             )}
-                        </div>
+                            </div>
+                            <h2>Custom message:</h2>
+                            <div>
+                                <div className="send-message">
+                                    <button onClick={this.sendCustomMessage} disabled={customMessage.length === 0}>send</button>
+                                    <span className="code light">{hs(SYSEX_SIGNATURE)} </span>
+                                    <input type="text" className="code" size="30" value={customMessage} placeholder={"hex digits only"} onChange={this.updateCustomMessage} />
+                                    <span className="code light"> {h(cs)}</span>
+                                </div>
+                            </div>
 
-                        <h2>Custom message:</h2>
-                        <div>
-                            <div className="send-message">
-                                <button onClick={this.sendCustomMessage} disabled={customMessage.length === 0}>send</button>
-                                <span className="code light">{hs(SYSEX_SIGNATURE)} </span>
-                                <input type="text" className="code" size="30" value={customMessage} placeholder={"hex digits only"} onChange={this.updateCustomMessage} />
-                                <span className="code light"> {h(cs)}</span>
+                        </div>
+                    </div>
+                    <div className="content-row step-3">
+                        <div className="background">
+                            Receive
+                        </div>
+                        <div className="content-row-header">
+                            3
+                        </div>
+                        <div className="content-row-content">
+                            <h2>Response:</h2>
+                            <div className="message code">
+                                {data && JSON.stringify(data)}
+                                <DumpSysex data={data} />
                             </div>
                         </div>
-
-                        <h2>Response:</h2>
-                        <div className="message code">
-                            {data && JSON.stringify(data)}
-                            <DumpSysex data={data} />
-                        </div>
-
                     </div>
                 </div>
 

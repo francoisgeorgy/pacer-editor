@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import PresetSelector from "../components/PresetSelector";
 import {buildControlStepSysex, isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
 import ControlSelector from "../components/ControlSelector";
@@ -17,9 +17,10 @@ const MAX_FILE_SIZE = 5 * 1024*1024;
 class Presets extends Component {
 
     state = {
-        output: null,           // MIDI output port used for output
-        presetIndex: "",      // preset name, like "B2"
-        controlId: "",     //
+        output: null,       // MIDI output port used for output
+        presetIndex: "",    // preset name, like "B2"
+        controlId: "",      //
+        changed: false,     // true when the control has been edited
         data: null
     };
 
@@ -82,7 +83,6 @@ class Presets extends Component {
 
     selectControl = (id) => {
         console.log(`selectControl ${id}`);
-        let msg = requestPresetObj(this.state.presetIndex, id);
         this.setState({
             controlId: id
         });
@@ -104,6 +104,7 @@ class Presets extends Component {
                     draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = parseInt(value, 10);
                 }
                 draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
+                draft.changed = true;
                 // this.props.onBusy(false);
             })
         );
@@ -153,7 +154,7 @@ class Presets extends Component {
     };
 
     render() {
-        const { presetIndex, controlId, data } = this.state;
+        const { presetIndex, controlId, data, changed } = this.state;
 
         let showEditor = false;
 
@@ -195,8 +196,6 @@ class Presets extends Component {
 
         showEditor = showEditor && (Object.keys(data["1"][presetIndex]["controls"][controlId]["steps"]).length === 6);
 
-        // const showEditor = ok;  // && presetIndex && controlId;
-
         let updateMessages = [];
         if (showEditor) {
             updateMessages = buildControlStepSysex(presetIndex, controlId, data["1"][presetIndex]["controls"][controlId]["steps"]);
@@ -206,65 +205,85 @@ class Presets extends Component {
             <div className="wrapper">
                 <div className="content">
 
-                    {/*<h2>1. Enable the input and output MIDI ports used with your Pacer:</h2>*/}
-
-                    {/*<div className="sub-header">*/}
-
-                        <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                              autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
-                              setOutput={this.setOutput}
-                              className="sub-header" />
-
-                        {/*{this.props.inputPorts && <MidiPorts ports={this.props.inputPorts} type="input" onMidiEvent={this.handleMidiInputEvent} />}*/}
-                        {/*{this.props.outputPorts && <MidiPorts ports={this.props.outputPorts} type="output" onPortSelection={this.enablePort} />}*/}
-                    {/*</div>*/}
-
-                    <Dropzone onDrop={this.onDrop} className="drop-zone">
-                        Drop a binary sysex file here or click to open the file dialog
-                    </Dropzone>
-
-
-                    <div className="main">
-
-                        <h2>Choose the preset and the control to view/edit:</h2>
-
-                        <div className="selectors">
-
-                            <PresetSelector currentPreset={presetIndex} onClick={this.selectPreset} />
-
-                            {presetIndex && <ControlSelector currentControl={controlId} onClick={this.selectControl} />}
+                    <div className="content-row step-1">
+                        <div className="background">
+                            Connect
                         </div>
+                        <div className="content-row-header">
+                            1
+                        </div>
+                        <div className="content-row-content">
 
-                        {/* presetIndex && controlId &&
-                        <div>
-                            <h3>preset {presetIndexToXY(presetIndex)}, control {CONTROLS[controlId]}</h3>
-                            <div>
-                                sysex message to request config: <span className="code">{hs(message)}</span>
-                            </div>
+                            <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
+                                  autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
+                                  setOutput={this.setOutput}
+                                  className="sub-header" />
 
-                            <h3>Response:</h3>
-                            <div className="message code">
-                                <DumpSysex data={data} />
+                            <Dropzone onDrop={this.onDrop} className="drop-zone">
+                                Drop a binary sysex file here or click to open the file dialog
+                            </Dropzone>
+
+                        </div>
+                    </div>
+                    <div className="content-row step-2">
+                        <div className="background">
+                            Select
+                        </div>
+                        <div className="content-row-header">
+                            2
+                        </div>
+                        <div className="content-row-content">
+
+                            <h2>Choose the preset and the control to view/edit:</h2>
+
+                            <div className="selectors">
+
+                                <PresetSelector currentPreset={presetIndex} onClick={this.selectPreset} />
+
+                                {presetIndex && <ControlSelector currentControl={controlId} onClick={this.selectControl} />}
                             </div>
                         </div>
-                        */}
+                    </div>
 
-                        {showEditor &&
-                        <div>
-                            <h2>Edit the selected control:</h2>
-                            <ControlStepsEditor controlId={controlId}
-                               steps={data["1"][presetIndex]["controls"][controlId]["steps"]}
-                               onUpdate={(stepIndex, dataType, dataIndex, value) => this.controlStepsUpdate(controlId, stepIndex, dataType, dataIndex, value)} />
-                        </div>}
-                        {/*<ControlEditor presetIndex={5} config={A5SW5["1"]["5"]["controls"]["17"]} />*/}
-
-
-                        {showEditor &&
-                        <div className="actions">
-                            <button>Update Pacer config</button>
+                    <div className="content-row step-3">
+                        <div className="background">
+                            Edit
                         </div>
-                        }
+                        <div className="content-row-header">
+                            3
+                        </div>
+                        <div className="content-row-content">
+                            {showEditor &&
+                            <Fragment>
+                                <h2>Edit the selected control:</h2>
+                                <ControlStepsEditor controlId={controlId}
+                                                    steps={data["1"][presetIndex]["controls"][controlId]["steps"]}
+                                                    onUpdate={(stepIndex, dataType, dataIndex, value) => this.controlStepsUpdate(controlId, stepIndex, dataType, dataIndex, value)} />
+                            </Fragment>
+                            }
+                        </div>
+                    </div>
 
+                    <div className="content-row step-4">
+                        <div className="background">
+                            Write
+                        </div>
+                        <div className="content-row-header">
+                            4
+                        </div>
+                        <div className="content-row-content">
+                            {changed &&
+                            <Fragment>
+                                <h2>Send the updated config to the Pacer:</h2>
+                                <div className="actions">
+                                    <button>Update Pacer</button>
+                                </div>
+                            </Fragment>
+                            }
+                        </div>
+                    </div>
+
+                    <div>
                         {showEditor && <div className="debug">
                             <h4>[Debug] update message to send to Pacer:</h4>
                             <div className="message-to-send">

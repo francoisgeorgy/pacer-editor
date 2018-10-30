@@ -90,10 +90,66 @@ h3 {
     float: right;
     flex-grow: 1;
     width: 200px;
-    margin-left: 20px;
+    /*margin-left: 20px;*/
     border-left: 1px solid #aaa;
     padding: 10px;
     color: #666;
+}
+
+.content-row {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.background {
+    position: absolute;
+    top: 10px;
+    /*left: 0;*/
+    /*bottom: 0;*/
+    right: 10px;
+    /*z-index: -1;*/
+    overflow: hidden;
+    font-size: 3rem;
+    color: #fff;
+}
+
+.content-row-header {
+    width: 50px;
+    /*writing-mode: vertical-rl;*/
+    /*transform: rotate(-180deg);*/
+    font-size: 3rem;
+    color: #fff;
+}
+
+.content-row-content {
+    flex-grow: 10;
+}
+
+.row-middle-aligned {
+    align-self: center;
+}
+
+.step-1 {
+    /*background-color: #E8E8E8;*/
+    background-color: #E8E8E8;
+}
+
+.step-2 {
+    /*background-color: #FDE0E1;*/
+    background-color: #E0E0E0;
+}
+
+.step-3 {
+    /*background-color: #FCC2C5;*/
+    background-color: #D8D8D8;
+}
+
+.step-4 {
+    /*background-color: #FBA5A9;*/
+    background-color: #D0D0D0;
 }
 
 .all-ports {
@@ -118,13 +174,6 @@ h3 {
     /*color: #999;*/
     margin-right: 1rem;
     text-align: center;
-}
-
-
-.main {
-    /*margin: 2rem 0 0 0;*/
-    /*padding: 1rem 0;*/
-    /*border-top: 1px solid #aaa;*/
 }
 
 .code {

@@ -10,3 +10,8 @@
 }
 
 .steps > div {}
+
+.steps input[type='text'] {
+    padding: 0 4px;
+    text-align: right;
+}

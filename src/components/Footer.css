@@ -1,10 +1,31 @@
 .footer {
-    margin-top: 20px;
+    /*margin-top: 20px;*/
     padding: 10px;
     border-top: 1px solid #aaaaaa;
     width: 100%;
-    text-align: center;
+    /*text-align: center;*/
     color: #666;
     font-size: 0.875rem;
-
+    /*display: flex;*/
+    /*flex-direction: row;*/
+    /*flex-grow: 1;*/
 }
+
+.footer .gh {
+    /*flex-grow: 10;*/
+    float: right;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    opacity: 0.5;
+}
+
+.footer a {
+    fill: blue;
+}
+
+.footer svg {
+    margin: 0 0 0 10px;
+    /*fill: blue;*/
+}
+

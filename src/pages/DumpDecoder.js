@@ -92,24 +92,42 @@ class DumpDecoder extends Component {
         return (
             <div className="wrapper">
                 <div className="content">
-
-                    <h2>1. Enable the input MIDI port used with your Pacer:</h2>
-
-                    {/* TODO: select only input port in Midi */}
-                    <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                          autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
-                          className="sub-header" />
-
-                    <div className="main">
-
-                        <h2>2. Send a dump from the Pacer or drop a dump file:</h2>
-
-                        <Dropzone onDrop={this.onDrop} className="drop-zone">
-                            Drop a binary sysex file here or click to open the file dialog
-                        </Dropzone>
-
-                        <DumpSysex data={data} />
-
+                    <div className="content-row step-1">
+                        <div className="background">
+                            Connect
+                        </div>
+                        <div className="content-row-header">
+                            1
+                        </div>
+                        <div className="content-row-content row-middle-aligned">
+                            <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
+                                  autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
+                                  className="sub-header" />
+                        </div>
+                    </div>
+                    <div className="content-row step-2">
+                        <div className="background">
+                            Get dump
+                        </div>
+                        <div className="content-row-header">
+                            2
+                        </div>
+                        <div className="content-row-content">
+                            <Dropzone onDrop={this.onDrop} className="drop-zone">
+                                Drop a binary sysex file here or click to open the file dialog
+                            </Dropzone>
+                        </div>
+                    </div>
+                    <div className="content-row step-3">
+                        <div className="background">
+                            Decode
+                        </div>
+                        <div className="content-row-header">
+                            3
+                        </div>
+                        <div className="content-row-content">
+                            <DumpSysex data={data} />
+                        </div>
                     </div>
                 </div>
 

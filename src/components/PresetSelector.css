@@ -22,7 +22,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #eeeeee;
+    background-color: #f4f4f4;
     width: 40px;
     padding: 4px 0;
     cursor: pointer;
@@ -31,6 +31,7 @@
 
 .preset-selectors > div:hover {
     background-color: lightblue;
+    border: 1px solid #aaa;
 }
 
 .preset-selectors > div.selected {
