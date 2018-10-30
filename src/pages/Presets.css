@@ -3,3 +3,21 @@
     flex-direction: row;
 }
 
+.message-to-send {
+    margin-top: 10px;
+}
+
+.actions {
+    margin-top: 20px;
+}
+
+.debug {
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding: 10px 10px 0 10px;
+    color: #777;
+}
+
+.debug pre {
+    font-size: 0.85rem;
+}

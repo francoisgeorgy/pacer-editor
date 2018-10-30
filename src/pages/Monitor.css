@@ -1,0 +1,9 @@
+.messages {
+    margin-top: 20px;
+}
+
+.msg-channel,
+.msg-name,
+.msg-data {
+    margin-left: 2rem;
+}

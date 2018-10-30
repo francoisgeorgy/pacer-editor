@@ -10,6 +10,9 @@ import ControlStepsEditor from "../components/ControlStepsEditor";
 import Midi from "../components/Midi";
 import MidiPort from "../components/MidiPort";    // DEBUG ONLY  //TODO: remove after debug
 import "./Presets.css";
+import Dropzone from "react-dropzone";
+
+const MAX_FILE_SIZE = 5 * 1024*1024;
 
 class Presets extends Component {
 
@@ -18,6 +21,53 @@ class Presets extends Component {
         presetIndex: "",      // preset name, like "B2"
         controlId: "",     //
         data: null
+    };
+
+    /**
+     *
+     * @param files
+     * @returns {Promise<void>}
+     */
+    async readFiles(files) {
+        await Promise.all(files.map(
+            async file => {
+                if (file.size > MAX_FILE_SIZE) {
+                    console.warn(`${file.name}: file too big, ${file.size}`);
+                } else {
+                    const data = new Uint8Array(await new Response(file).arrayBuffer());
+                    if (isSysexData(data)) {
+                        this.setState(
+                            produce(draft => {
+                                // draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
+                                draft.data = parseSysexDump(data);
+                                // this.props.onBusy(false);
+                                // data["1"]
+                                let pId = Object.keys(draft.data["1"])[0];
+                                // console.log(pId);
+                                let cId = Object.keys(draft.data["1"][pId]["controls"])[0];
+                                // console.log(cId);
+                                draft.presetIndex = parseInt(pId, 10);
+                                draft.controlId = parseInt(cId, 10);
+                            })
+                        )
+                    } else {
+                        console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
+                    }
+                    // non sysex files are ignored
+                }
+                // too big files are ignored
+            }
+        ));
+    }
+
+    /**
+     * Drop Zone handler
+     * @param files
+     */
+    onDrop = (files) => {
+        console.log('drop', files);
+        // this.props.onBusy(true);
+        this.readFiles(files);  // returned promise is ignored, this is normal.
     };
 
     selectPreset = (id) => {
@@ -59,15 +109,6 @@ class Presets extends Component {
         );
     };
 
-    sendSysex = msg => {
-        console.log("sendSysex", msg);
-        if (this.state.output) {
-            this.setState(
-                {data: null},
-                () => outputById(this.state.output).sendSysex(SYSEX_SIGNATURE, msg)
-            );
-        }
-    };
 
     handleMidiInputEvent = (event) => {
         console.log("Presets.handleMidiInputEvent", event, event.data);
@@ -111,54 +152,53 @@ class Presets extends Component {
         );
     };
 
-
     render() {
         const { presetIndex, controlId, data } = this.state;
 
-        let ok = false;
+        let showEditor = false;
 
         if (data) {
 
-            ok = true;
+            showEditor = true;
 
             if (!("1" in data)) {        // TODO: replace "1" by a constant
                 console.log(`Presets: invalid data`, data);
-                ok = false;
+                showEditor = false;
             }
 
-            if (ok && !(presetIndex in data["1"])) {        // TODO: replace "1" by a constant
+            if (showEditor && !(presetIndex in data["1"])) {        // TODO: replace "1" by a constant
                 console.log(`Presets: preset ${presetIndex} not found in data`);
-                ok = false;
+                showEditor = false;
             }
 
-            if (ok && !("controls" in data["1"][presetIndex])) {
+            if (showEditor && !("controls" in data["1"][presetIndex])) {
                 console.log(`Presets: controls not found in data`);
-                ok = false;
+                showEditor = false;
             }
 
-            if (ok && !(controlId in data["1"][presetIndex]["controls"])) {
+            if (showEditor && !(controlId in data["1"][presetIndex]["controls"])) {
                 console.log(`Presets: control ${controlId} not found in data`);
-                ok = false;
+                showEditor = false;
             }
 
-            if (ok && !("steps" in data["1"][presetIndex]["controls"][controlId])) {
+            if (showEditor && !("steps" in data["1"][presetIndex]["controls"][controlId])) {
                 console.log(`Presets: steps not found in data`);
-                ok = false;
+                showEditor = false;
             }
         }
 
-        if (ok) {
-            console.log("Presets.render", ok, Object.keys(data["1"][presetIndex]["controls"][controlId]["steps"]).length, data);
-        } else {
-            console.log("Presets.render", ok);
-        }
+        // if (showEditor) {
+        //     console.log("Presets.render", showEditor, Object.keys(data["1"][presetIndex]["controls"][controlId]["steps"]).length, data);
+        // } else {
+            console.log("Presets.render", showEditor, presetIndex, controlId);
+        // }
 
-        ok = ok && (Object.keys(data["1"][presetIndex]["controls"][controlId]["steps"]).length === 6);
+        showEditor = showEditor && (Object.keys(data["1"][presetIndex]["controls"][controlId]["steps"]).length === 6);
 
-        const showEditor = ok;  // && presetIndex && controlId;
+        // const showEditor = ok;  // && presetIndex && controlId;
 
-        let updateMessages;
-        if (ok) {
+        let updateMessages = [];
+        if (showEditor) {
             updateMessages = buildControlStepSysex(presetIndex, controlId, data["1"][presetIndex]["controls"][controlId]["steps"]);
         }
 
@@ -179,9 +219,14 @@ class Presets extends Component {
                         {/*{this.props.outputPorts && <MidiPorts ports={this.props.outputPorts} type="output" onPortSelection={this.enablePort} />}*/}
                     {/*</div>*/}
 
+                    <Dropzone onDrop={this.onDrop} className="drop-zone">
+                        Drop a binary sysex file here or click to open the file dialog
+                    </Dropzone>
+
+
                     <div className="main">
 
-                        <h2>2. Choose the preset and the control to view/edit:</h2>
+                        <h2>Choose the preset and the control to view/edit:</h2>
 
                         <div className="selectors">
 
@@ -204,19 +249,33 @@ class Presets extends Component {
                         </div>
                         */}
 
-                        {showEditor && <ControlStepsEditor controlId={controlId}
-                                                           steps={data["1"][presetIndex]["controls"][controlId]["steps"]}
-                                                           onUpdate={(stepIndex, dataType, dataIndex, value) => this.controlStepsUpdate(controlId, stepIndex, dataType, dataIndex, value)} />}
-                        {/*<ControlEditor presetIndex={5} config={A5SW5["1"]["5"]["controls"]["17"]} />*/}
-
                         {showEditor &&
                         <div>
-                            Update message to send:
-                            {updateMessages.map(m => <pre>{hs(m)}</pre>)}
+                            <h2>Edit the selected control:</h2>
+                            <ControlStepsEditor controlId={controlId}
+                               steps={data["1"][presetIndex]["controls"][controlId]["steps"]}
+                               onUpdate={(stepIndex, dataType, dataIndex, value) => this.controlStepsUpdate(controlId, stepIndex, dataType, dataIndex, value)} />
+                        </div>}
+                        {/*<ControlEditor presetIndex={5} config={A5SW5["1"]["5"]["controls"]["17"]} />*/}
+
+
+                        {showEditor &&
+                        <div className="actions">
+                            <button>Update Pacer config</button>
                         </div>
                         }
 
-                        <pre>{JSON.stringify(data, null, 4)}</pre>
+                        {showEditor && <div className="debug">
+                            <h4>[Debug] update message to send to Pacer:</h4>
+                            <div className="message-to-send">
+                                {updateMessages.map(m => <div className="code">{hs(m)}</div>)}
+                            </div>
+                        </div>}
+
+                        {data && <div className="debug">
+                            <h4>[Debug] sysex data:</h4>
+                            <pre>{JSON.stringify(data, null, 4)}</pre>
+                        </div>}
 
                     </div>
                 </div>

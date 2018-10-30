@@ -27,6 +27,8 @@ const PresetSelectors = ({ currentPreset, onClick }) =>
     </div>;
 */
 
+//FIXME: allow the selection of preset #0 (CUR)
+
 const PresetSelector = ({ currentPreset, onClick }) =>
     <div className="preset-selectors">
     {

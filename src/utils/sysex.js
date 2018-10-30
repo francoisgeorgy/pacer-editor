@@ -305,6 +305,8 @@ function parseSysexDump(data) {
  */
 function buildControlStepSysex(presetIndex, controlId, steps) {
 
+    console.log(`buildControlStepSysex(${presetIndex}, ${controlId}, ...)`);
+
     // 00 01 77
     // 7F SYSEX_HEADER
     // 01 cmd
@@ -345,7 +347,7 @@ function buildControlStepSysex(presetIndex, controlId, steps) {
         msgs.push(SYSEX_HEADER.concat(msg));
     }
 
-    console.log(msgs);
+    console.log("buildControlStepSysex", msgs);
 
     return msgs;
 }

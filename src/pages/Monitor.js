@@ -6,6 +6,7 @@ import parseMidi from 'parse-midi';
 import {h, hs} from "../utils/hexstring";
 import {CONTROLER, MESSAGE} from "../utils/midi";
 import * as Note from "tonal-note";
+import "./Monitor.css";
 
 class Monitor extends Component {
 
@@ -19,7 +20,7 @@ class Monitor extends Component {
         this.setState(
             produce(draft => {
                 let len = draft.messages.unshift(event.data);
-                if (len > 50) draft.messages.pop();
+                if (len > 20) draft.messages.pop();
             })
         )
         // }
@@ -47,9 +48,10 @@ class Monitor extends Component {
 
                         <div className="main">
                             <div>
-                                <h2>2. MIDI messages:</h2>
+                                <h2>MIDI messages</h2>
+                                <p>The messages are displayed in reverse chronological order (the most recent on top). Only the last 20 messages are displayed.</p>
                             </div>
-                            <div>
+                            <div className="messages">
                                 {this.state.messages.map((msg, i) => {
                                     let m = parseMidi(msg);
 // {messageCode: 128, channel: 1, messageType: "noteoff", key: 93, velocity: 0}
@@ -66,6 +68,8 @@ class Monitor extends Component {
                                             info2 = Note.fromMidi(m.key);
                                             info3 = `velocity: ${m.velocity}`;
                                             break;
+                                        case 0xA0:  // "AfterTouch",
+                                            break;
                                         case 0xB0:
                                             info2 = CONTROLER[m.controlNumber];
                                             info3 = m.controlValue;
@@ -73,6 +77,8 @@ class Monitor extends Component {
                                         case 0xC0:          // {messageCode: 192, channel: 4, messageType: "programchange", program: 102} "C0"
                                             info2 = `program: ${m.program}`;
                                             info3 = '';
+                                            break;
+                                        case 0xD0:  // "Channel Pressure\",\n"
                                             break;
                                         case 0xE0:          // {messageCode: 224, channel: 1, messageType: "pitchbendchange", pitchBend: 8283, pitchBendMultiplier: 0.011109754608716884}
                                             info2 = `bend: ${m.pitchBend}`;
@@ -82,11 +88,10 @@ class Monitor extends Component {
                                     return (
                                         <div>
                                             <span className="code">[{hs(msg)}]</span>
-                                            {MESSAGE[m.messageCode]}
-                                            &nbsp;
-                                            {info2}
-                                            &nbsp;
-                                            {info3}
+                                            <span className="msg-channel">Channel {m.channel}</span>
+                                            <span className="msg-name">{MESSAGE[m.messageCode]}</span>
+                                            <span className="msg-data">{info2}</span>
+                                            <span className="msg-data">{info3}</span>
                                         </div>
                                     );
                                     // return <div key={i}>{Object.keys(m).map(k => <span>{`${k}: ${m[k]}`} </span>)}</div>
