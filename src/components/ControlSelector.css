@@ -34,7 +34,6 @@ div.preset {
     border: 1px solid red;
 }
 
-.controls > div.empty {
+.controls > div.no-control {
     background-color: transparent;
 }
-

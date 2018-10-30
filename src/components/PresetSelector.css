@@ -1,22 +1,10 @@
 .preset-selectors {
-    /*justify-content: start;*/
-    /*justify-items: stretch;*/
-    /*align-items: stretch;*/
-    /*display: flex;*/
-    /*flex-wrap: wrap;*/
     display: grid;
-    /*grid: repeat(6, 1fr) / repeat(4, auto);*/
     grid: repeat(4, 1fr) / repeat(6, auto);
     grid-gap: 6px;
     justify-content: start;
     margin: 10px 20px 10px 0;
 }
-
-/*.preset-selectors > div {*/
-    /*display: flex;*/
-    /*margin-right: 8px;*/
-    /*margin-bottom: 8px;*/
-/*}*/
 
 .preset-selectors > div {
     display: flex;
@@ -39,28 +27,3 @@
     border: 1px solid red;
 }
 
-/* GRID
-.selectors {
-    margin: 10px 0;
-    display: grid;
-    grid: repeat(4, 50px) / repeat(6, 50px);
-    grid-column-gap: 4px;
-    grid-row-gap: 10px;
-    justify-content: start;
-    justify-items: stretch;
-    align-items: stretch;
-}
-
-.selectors > div {
-    background-color: #eeeeee;
-    padding: 4px;
-}
-
-.selectors > div.selected {
-    background-color: orange;
-}
-
-.selectors > div:hover {
-    background-color: lightblue;
-}
-*/

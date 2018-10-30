@@ -8,9 +8,9 @@ import {produce} from "immer";
 import {outputById} from "../utils/ports";
 import ControlStepsEditor from "../components/ControlStepsEditor";
 import Midi from "../components/Midi";
-import MidiPort from "../components/MidiPort";    // DEBUG ONLY  //TODO: remove after debug
-import "./Presets.css";
+import MidiPort from "../components/MidiPort";
 import Dropzone from "react-dropzone";
+import "./Presets.css";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -195,6 +195,8 @@ class Presets extends Component {
         // }
 
         showEditor = showEditor && (Object.keys(data["1"][presetIndex]["controls"][controlId]["steps"]).length === 6);
+
+        console.log("Presets.render", showEditor, presetIndex, controlId);
 
         let updateMessages = [];
         if (showEditor) {
