@@ -1,36 +1,39 @@
-.selectors {
-    margin: 10px 0;
+.preset-selectors {
     /*justify-content: start;*/
     /*justify-items: stretch;*/
     /*align-items: stretch;*/
     /*display: flex;*/
     /*flex-wrap: wrap;*/
     display: grid;
-    grid: repeat(2, 1fr) / repeat(2, auto);
+    /*grid: repeat(6, 1fr) / repeat(4, auto);*/
+    grid: repeat(4, 1fr) / repeat(6, auto);
+    grid-gap: 6px;
     justify-content: start;
+    margin: 10px 20px 10px 0;
 }
 
-.selectors > div {
+/*.preset-selectors > div {*/
+    /*display: flex;*/
+    /*margin-right: 8px;*/
+    /*margin-bottom: 8px;*/
+/*}*/
+
+.preset-selectors > div {
     display: flex;
-    margin-right: 8px;
-    margin-bottom: 8px;
-}
-
-.selectors > div > div {
+    justify-content: center;
+    align-items: center;
     background-color: #eeeeee;
-    margin-right: 4px;
-    padding: 8px 0;
     width: 40px;
-    text-align: center;
+    padding: 4px 0;
     cursor: pointer;
     border: 1px solid #eeeeee;
 }
 
-.selectors > div > div:hover {
+.preset-selectors > div:hover {
     background-color: lightblue;
 }
 
-.selectors > div > div.selected {
+.preset-selectors > div.selected {
     background-color: orange;       /* present selected color overrides preset hover color */
     border: 1px solid red;
 }

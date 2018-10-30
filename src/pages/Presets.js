@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import PresetSelectors from "../components/PresetSelectors";
+import PresetSelector from "../components/PresetSelector";
 import {buildControlStepSysex, isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
-import Controls from "../components/Controls";
+import ControlSelector from "../components/ControlSelector";
 import {requestPresetObj, SYSEX_SIGNATURE} from "../pacer";
 import {hs} from "../utils/hexstring";
 import {produce} from "immer";
@@ -9,6 +9,7 @@ import {outputById} from "../utils/ports";
 import ControlStepsEditor from "../components/ControlStepsEditor";
 import Midi from "../components/Midi";
 import MidiPort from "../components/MidiPort";    // DEBUG ONLY  //TODO: remove after debug
+import "./Presets.css";
 
 class Presets extends Component {
 
@@ -165,7 +166,7 @@ class Presets extends Component {
             <div className="wrapper">
                 <div className="content">
 
-                    <h2>1. Enable the input and output MIDI ports used with your Pacer:</h2>
+                    {/*<h2>1. Enable the input and output MIDI ports used with your Pacer:</h2>*/}
 
                     {/*<div className="sub-header">*/}
 
@@ -180,12 +181,13 @@ class Presets extends Component {
 
                     <div className="main">
 
-                        <div>
-                            <h2>2. Choose the preset and the control to view/edit:</h2>
+                        <h2>2. Choose the preset and the control to view/edit:</h2>
 
-                            <PresetSelectors currentPreset={presetIndex} onClick={this.selectPreset} />
+                        <div className="selectors">
 
-                            {presetIndex && <Controls currentControl={controlId} onClick={this.selectControl} />}
+                            <PresetSelector currentPreset={presetIndex} onClick={this.selectPreset} />
+
+                            {presetIndex && <ControlSelector currentControl={controlId} onClick={this.selectControl} />}
                         </div>
 
                         {/* presetIndex && controlId &&

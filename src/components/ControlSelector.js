@@ -1,5 +1,5 @@
 import React from "react";
-import "./Controls.css";
+import "./ControlSelector.css";
 import {FOOTSWITCHES, STOMPSWITCHES_TOP, STOMPSWITCHES_BOTTOM, EXPPEDALS, CONTROLS} from "../pacer";
 
 const Control = ({ name, id, selected, onClick }) =>
@@ -8,7 +8,7 @@ const Control = ({ name, id, selected, onClick }) =>
     </div>;
 
 
-const Controls = ({ currentControl, onClick }) =>
+const ControlSelector = ({ currentControl, onClick }) =>
     <div className="controls">
         {
             FOOTSWITCHES.map(
@@ -35,4 +35,4 @@ const Controls = ({ currentControl, onClick }) =>
     </div>;
 
 
-export default Controls;
+export default ControlSelector;

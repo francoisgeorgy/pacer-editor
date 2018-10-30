@@ -14,11 +14,12 @@ div.preset {
 }
 
 .controls > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #eeeeee;
     margin-right: 4px;
-    padding: 8px 0;
-    width: 80px;
-    text-align: center;
+    width: 60px;
     cursor: pointer;
     border: 1px solid #eeeeee;
 }
