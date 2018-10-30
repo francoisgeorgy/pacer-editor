@@ -6,7 +6,7 @@ import {fromHexString, h, hs} from "../utils/hexstring";
 import "./TestSender.css";
 import {produce} from "immer";
 import DumpSysex from "../components/DumpSysex";
-import {checksum} from "../pacer";
+import {checksum, SYSEX_HEADER} from "../pacer";
 import Midi from "../components/Midi";
 import MidiPort from "../components/MidiPort";
 
@@ -19,8 +19,7 @@ class TestSender extends Component {
             requestPreset(5),
             requestPresetObj(5, 0x0D)
         ],
-        customMessage: "",
-        checksum: null
+        customMessage: ""
     };
 
     updateCustomMessage = (event) => {
@@ -31,14 +30,17 @@ class TestSender extends Component {
             h += s[i];
         }
         this.setState({
-            customMessage: h,
-            cs: checksum(fromHexString(h, / /g))
+            customMessage: h    //,
+            // cs: checksum(fromHexString(h, / /g))
         });
     };
 
     sendCustomMessage = () => {
-        let data = fromHexString(this.state.customMessage, / /g);
-        if (data && data.length > 0) this.sendSysex(data);
+        let data = Array.from(fromHexString(this.state.customMessage, / /g));
+        if (data && data.length > 0) {
+            data.push(checksum(data));
+            this.sendSysex(SYSEX_HEADER.concat(data));
+        }
     };
 
     handleMidiInputEvent = (event) => {
@@ -93,11 +95,13 @@ class TestSender extends Component {
      */
     render() {
 
-        console.log("SendTester.render", this.props);
+        // console.log("SendTester.render", this.props);
 
-        const { data, messages, customMessage, cs } = this.state;
+        const { data, messages, customMessage } = this.state;
 
-        console.log("SendTester.render", messages, customMessage.length % 2);
+        // console.log("SendTester.render", messages, customMessage.length % 2);
+
+        const cs = checksum(fromHexString(customMessage, / /g));
 
         return (
             <div className="wrapper">
@@ -129,9 +133,9 @@ class TestSender extends Component {
                             {messages.map((msg, i) =>
                                 <div key={i} className="send-message">
                                     <button onClick={() => this.sendMessage(msg)}>send</button>
-                                    <span className="code light">{hs(SYSEX_SIGNATURE)} </span>
-                                    <span className="code">{hs(msg)}</span>
-                                    <span className="code light"> {h(checksum(msg))}</span>
+                                    <span className="code light">{ hs(SYSEX_SIGNATURE.concat(msg.slice(0, 1))) } </span>
+                                    <span className="code">{ hs(msg.slice(1, -1)) } </span>
+                                    <span className="code light"> {hs(msg.slice(-1))}</span>
                                 </div>
                             )}
                             </div>
@@ -139,8 +143,9 @@ class TestSender extends Component {
                             <div>
                                 <div className="send-message">
                                     <button onClick={this.sendCustomMessage} disabled={customMessage.length === 0}>send</button>
-                                    <span className="code light">{hs(SYSEX_SIGNATURE)} </span>
-                                    <input type="text" className="code" size="30" value={customMessage} placeholder={"hex digits only"} onChange={this.updateCustomMessage} />
+                                    <span className="code light">{hs(SYSEX_SIGNATURE)} {hs(SYSEX_HEADER)} </span>
+                                    <input type="text" className="code" size="30" value={customMessage}
+                                           placeholder={"hex digits only"} onChange={this.updateCustomMessage} />
                                     <span className="code light"> {h(cs)}</span>
                                 </div>
                             </div>
@@ -157,7 +162,7 @@ class TestSender extends Component {
                         <div className="content-row-content">
                             <h2>Response:</h2>
                             <div className="message code">
-                                {data && JSON.stringify(data)}
+                                {/*{data && JSON.stringify(data)}*/}
                                 <DumpSysex data={data} />
                             </div>
                         </div>

@@ -10,7 +10,7 @@ class MidiPorts extends Component {
         let isSelected = this.props.selected;
         let clickHandler = this.props.clickHandler;
 
-        console.log("MidiPort.render", port.type, port.name, isSelected);
+        // console.log("MidiPort.render", port.type, port.name, isSelected);
 
         //TODO: display MIDI channel when connected
         return (

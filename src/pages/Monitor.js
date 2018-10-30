@@ -3,7 +3,7 @@ import Midi from "../components/Midi";
 import {produce} from "immer";
 import MidiPort from "../components/MidiPort";
 import parseMidi from 'parse-midi';
-import {h, hs} from "../utils/hexstring";
+import {hs} from "../utils/hexstring";
 import {CONTROLER, MESSAGE} from "../utils/midi";
 import * as Note from "tonal-note";
 import "./Monitor.css";

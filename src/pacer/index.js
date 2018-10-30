@@ -1,7 +1,7 @@
 
-export const SYSEX_HEADER = [0x7F];
-
 export const SYSEX_SIGNATURE = [0x00, 0x01, 0x77];
+
+export const SYSEX_HEADER = [0x7F];
 
 export function checksum(bytes) {
     if (bytes === null || bytes === undefined || bytes.length === 0) return 128;
@@ -24,7 +24,13 @@ export function requestPreset(index) {
  * return the sysex message to send to the Pacer to request some data
  */
 export function requestPresetObj(index, obj) {
-    let msg = [0x02, 0x01, index, obj];             // TODO: replace numbers by constants
+    // TODO: replace numbers by constants
+    let msg = [
+        0x02,       // cmd = Get
+        0x01,       // target = preset
+        index,      // preset #
+        obj         // (control)
+    ];
     let cs = checksum(msg);
     msg.push(cs);
     return SYSEX_HEADER.concat(msg);
