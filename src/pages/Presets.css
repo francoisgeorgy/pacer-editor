@@ -4,15 +4,6 @@ h2 {
     margin-bottom: 0.25rem
 }
 
-.drop-zone {
-    margin: 8px 0 0 0;
-    padding: 20px;
-    border: 1px solid #aaa;
-    background-color: #f4f4f4;
-    text-align: center;
-    width: 600px;
-}
-
 .selectors {
     display: flex;
     flex-direction: row;

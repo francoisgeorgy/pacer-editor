@@ -134,22 +134,26 @@ h3 {
 
 .step-1 {
     /*background-color: #E8E8E8;*/
-    background-color: #E8E8E8;
+    /*background-color: #E8E8E8;*/
+    background-color: #f0f0f0;
 }
 
 .step-2 {
     /*background-color: #FDE0E1;*/
-    background-color: #E0E0E0;
+    /*background-color: #E0E0E0;*/
+    background-color: #f0e8e8;
 }
 
 .step-3 {
     /*background-color: #FCC2C5;*/
-    background-color: #D8D8D8;
+    /*background-color: #D8D8D8;*/
+    background-color: #f0e0e0;
 }
 
 .step-4 {
     /*background-color: #FBA5A9;*/
-    background-color: #D0D0D0;
+    /*background-color: #D0D0D0;*/
+    background-color: #f0dada;
 }
 
 .all-ports {
@@ -162,16 +166,11 @@ h3 {
 }
 
 .sub-header {
-    /*margin-bottom: 1rem;*/
-    /*padding-bottom: 1rem;*/
-    /*border-bottom: 1px solid #aaa;*/
     display: flex;
     flex-direction: row;
-    /*align-items: flex-end;*/
 }
 
 .sub-header h2 {
-    /*color: #999;*/
     margin-right: 1rem;
     text-align: center;
 }
@@ -188,4 +187,14 @@ h3 {
 
 .warning {
     color: red;
+}
+
+
+.drop-zone {
+    /*margin: 8px 0 0 0;*/
+    padding: 20px 10px;
+    border: 1px solid #ddddf0;
+    background-color: #f4f4ff;
+    text-align: center;
+    /*width: 600px;*/
 }

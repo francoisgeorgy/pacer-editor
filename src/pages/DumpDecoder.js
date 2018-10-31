@@ -112,10 +112,11 @@ class DumpDecoder extends Component {
                         <div className="content-row-header">
                             2
                         </div>
-                        <div className="content-row-content">
-                            <Dropzone onDrop={this.onDrop} className="drop-zone">
-                                Drop a binary sysex file here or click to open the file dialog
-                            </Dropzone>
+                        <div className="content-row-content row-middle-aligned">
+                            {/*<Dropzone onDrop={this.onDrop} className="drop-zone">*/}
+                                {/*Drop a binary sysex file here or click to open the file dialog*/}
+                            {/*</Dropzone>*/}
+                            Send a dump from your Pacer or drop a binary sysex file onto the drop zone on the right.
                         </div>
                     </div>
                     <div className="content-row step-3">
@@ -132,7 +133,11 @@ class DumpDecoder extends Component {
                 </div>
 
                 <div className="help">
-                    <h2>Help</h2>
+                    <Dropzone onDrop={this.onDrop} className="drop-zone">
+                        Drop a binary sysex file here<br />or click to open the file dialog
+                    </Dropzone>
+
+                    {/*<h2>Help</h2>*/}
                 </div>
 
             </div>

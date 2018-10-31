@@ -214,17 +214,11 @@ class Presets extends Component {
                         <div className="content-row-header">
                             1
                         </div>
-                        <div className="content-row-content">
-
+                        <div className="content-row-content row-middle-aligned">
                             <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
                                   autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
                                   setOutput={this.setOutput}
                                   className="sub-header" />
-
-                            <Dropzone onDrop={this.onDrop} className="drop-zone">
-                                Drop a binary sysex file here or click to open the file dialog
-                            </Dropzone>
-
                         </div>
                     </div>
                     <div className="content-row step-2">
@@ -302,7 +296,12 @@ class Presets extends Component {
                 </div>
 
                 <div className="help">
-                    <h2>Help</h2>
+
+                    <Dropzone onDrop={this.onDrop} className="drop-zone">
+                        Drop a binary sysex file here<br />or click to open the file dialog
+                    </Dropzone>
+
+                    {/*<h2>Help</h2>*/}
                 </div>
 
             </div>
