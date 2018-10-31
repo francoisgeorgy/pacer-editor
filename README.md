@@ -19,12 +19,12 @@ Still under active development. Feel free to log bugs/issues. This is a developm
 
 # Usage
 
-1. Open https://sysex.io/pacer/
+1. Open https://francoisgeorgy.github.io/pacer-editor
 2. Allow the browser to use your MIDI devices
 3. If it's not already done, connect your Nektar Pacer to your computer.
-4. When the Pacer is connected the application logo will glow.
+~~4. When the Pacer is connected the application logo will glow.~~
 
-The logo glows when the Pacer is connected and recognized by the application:
+~~The logo glows when the Pacer is connected and recognized by the application:~~
 
 TODO: image
 
