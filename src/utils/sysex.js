@@ -93,22 +93,133 @@ function getControlStep(data) {
 
 function getControlLED(data) {
 
-    // console.log("getControlLED", hs(data));
+    console.log("getControlLED", hs(data));
 
-    // 01 01 0F 00      midi channel
-    // 02 01 47 00      message type
-    // 03 01 44 00      data 1
-    // 04 01 55 00      data 2
-    // 05 01 66 00      data 3
-    // 06 01 01         active
+    // 54 01 00     54 == LED, 01 == 1 byte of data, 00 = data itself
 
-    // we ignore the first byte, which seems to always be 0x01
+    //
+    // 40 01 00 00
+    // 41 01 7F 00
+    // 42 01 7F 00
+    // 43 01 00
+    // 68 F7
 
-    return {
-        midi: data[2],
-        on_color: data[6],
-        off_color: data[10]
-    };
+    // 0x40	<data>-MIDICtrl	Step 1: LED MIDI Ctrl
+    // 0x41	<data>-Color	Step 1: LED Active Color
+    // 0x42	<data>-Color	Step 1: LED Inactive Color
+    // 0x43	<data>-LEDNum	Step 1: LED num
+
+    let cfg = {steps:{}};
+
+    let data_len;
+    let bytes;
+    let step;
+
+    let i = 0;
+    while (i<data.length) {
+        let d = data[i];
+        // let step = "" + ((d - 0x40) / 4 + 1);
+        // if (i===0) console.log(`getControlLED: [${h(d)}], step ${step}`);
+        if (i===0) {
+            step = "" + ((d - 0x40) / 4 + 1);
+            console.log(`getControlLED: [${h(d)}], step ${step}`);
+        }
+        // if (!(step in cfg.steps)) cfg.steps[step] = {led:{}};
+        if (!(step in cfg.steps)) cfg.steps[step] = {};
+        switch (d) {
+            case 0x40:
+            case 0x44:
+            case 0x48:
+            case 0x4C:
+            case 0x50:
+            case 0x54:
+                i++;
+                data_len = data[i];
+                // console.log(`getControlLED: ${data_len} data byte(s)`);
+                i++;
+                if (data_len === 1) {
+                    bytes = data[i];
+                } else {
+                    bytes = Array.from(data.slice(i, i + data_len));
+                }
+                // console.log(`getControlLED: data bytes=[${hs(bytes)}]`);
+                i += data_len;
+                // cfg.steps[step]["led"].midi_ctrl = bytes;
+                cfg.steps[step]["led_midi_ctrl"] = bytes;
+                break;
+            case 0x41:
+            case 0x45:
+            case 0x49:
+            case 0x4D:
+            case 0x51:
+            case 0x55:
+                i++;
+                data_len = data[i];
+                // console.log(`getControlLED: ${data_len} data byte(s)`);
+                i++;
+                if (data_len === 1) {
+                    bytes = data[i];
+                } else {
+                    bytes = Array.from(data.slice(i, i + data_len));
+                }
+                // console.log(`getControlLED: data bytes=[${hs(bytes)}]`);
+                i += data_len;
+                // cfg.steps[step]["led"].active_color = bytes;
+                cfg.steps[step]["led_active_color"] = bytes;
+                break;
+            case 0x42:
+            case 0x46:
+            case 0x4A:
+            case 0x4E:
+            case 0x52:
+            case 0x56:
+                i++;
+                data_len = data[i];
+                // console.log(`getControlLED: ${data_len} data byte(s)`);
+                i++;
+                if (data_len === 1) {
+                    bytes = data[i];
+                } else {
+                    bytes = Array.from(data.slice(i, i + data_len));
+                }
+                // console.log(`getControlLED: data bytes=[${hs(bytes)}]`);
+                i += data_len;
+                // cfg.steps[step]["led"].inactive_color = bytes;
+                cfg.steps[step]["led_inactive_color"] = bytes;
+                break;
+            case 0x43:
+            case 0x47:
+            case 0x4B:
+            case 0x4F:
+            case 0x53:
+            case 0x57:
+                i++;
+                data_len = data[i];
+                // console.log(`getControlLED: ${data_len} data byte(s)`);
+                i++;
+                if (data_len === 1) {
+                    bytes = data[i];
+                } else {
+                    bytes = Array.from(data.slice(i, i + data_len));
+                }
+                // console.log(`getControlLED: data bytes=[${hs(bytes)}]`);
+                i += data_len;
+                // cfg.steps[step]["led"].num = bytes;
+                cfg.steps[step]["led_num"] = bytes;
+                break;
+            case 0x7F:
+                // console.log(`getControlLED: end if data`);
+                i = data.length;
+                break;
+            default:
+                // console.log(`getControlLED: ignore byte ${h(d)}`);
+                i++;
+                break;
+        }
+    }
+
+    console.log("getControlLED", cfg);
+    return cfg;
 }
 
 
@@ -191,6 +302,9 @@ function parseSysexMessage(data) {
 
         // which element?
         let e = data[ELM];
+
+        // console.log("LEM", e, h(e));
+
         if (e >= 0x01 && e <= 0x24) {
 
             // STEPS
@@ -206,17 +320,21 @@ function parseSysexMessage(data) {
             // CONTROL MODE
             console.log('parseSysexMessage: CONTROL MODE');
 
-        } else if (e === 0x40) {
-
-            // CONTROL MODE
-            console.log('parseSysexMessage: LED MIDI CTRL');
+        // } else if (e === 0x40) {
+        //
+        //     // CONTROL MODE
+        //     console.log('parseSysexMessage: LED MIDI CTRL');
 
         // } else if (e >= 0x61 && e <= 0x63) {
-        } else if (e >= 0x41 && e <= 0x43) {
+        } else if (e >= 0x40 && e <= 0x57) {
 
             // LED
-            console.error('parseSysexMessage: LED');
-            message[tgt][idx]["controls"][obj]["led"] = getControlLED(data.slice(ELM, ELM + 3));
+            console.log('parseSysexMessage: LED');
+            //message[tgt][idx]["controls"][obj]["led"] = getControlLED(data.slice(ELM, data.length-1 /*, ELM + 3*/ ));
+            let led_cfg = getControlLED(data.slice(ELM, data.length-1));
+
+            message[tgt][idx]["controls"][obj] = mergeDeep(message[tgt][idx]["controls"][obj], led_cfg);
+            // message[tgt][idx]["controls"][obj]["steps"] = led_cfg;
 
         } else if (e === 0x7F) {
 

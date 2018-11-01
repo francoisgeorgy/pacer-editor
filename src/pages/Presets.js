@@ -283,7 +283,7 @@ class Presets extends Component {
                         {showEditor && <div className="debug">
                             <h4>[Debug] update message to send to Pacer:</h4>
                             <div className="message-to-send">
-                                {updateMessages.map(m => <div className="code">{hs(m)}</div>)}
+                                {updateMessages.map((m, i) => <div key={i} className="code">{hs(m)}</div>)}
                             </div>
                         </div>}
 

@@ -1,8 +1,55 @@
 import React, {Component, Fragment} from 'react';
-import {MSG_SW_NOTE, MSG_TYPES_FULLNAME} from "../pacer";
+import {COLORS, MSG_SW_NOTE, MSG_TYPES_FULLNAME} from "../pacer";
 import * as Note from "tonal-note";
 import "./ControlStepsEditor.css";
 
+const LEDMidi = ({ current_value, onChange }) => {
+    return (
+        <select defaultValue={current_value} onChange={(event) => onChange(event.target.value)}>
+            <option value="0">0</option>
+            <option value="1">1</option>
+        </select>
+    );
+};
+
+const LEDColor = ({ current_value, onChange }) => {
+    return (
+        <select defaultValue={current_value} onChange={(event) => onChange(event.target.value)}>
+            {
+                Object.keys(COLORS).map(
+                    key => {
+                        // let n = Note.fromMidi(i, true);
+                        return <option key={key} value={key}>{COLORS[key]}</option>
+                    })
+            }
+        </select>
+    );
+};
+
+const LEDNum = ({ current_value, onChange }) => {
+    return (
+        <select defaultValue={current_value} onChange={(event) => onChange(event.target.value)}>
+            <option value="0">default</option>
+            <option value="1">bottom</option>
+            <option value="2">middle</option>
+            <option value="3">top</option>
+        </select>
+    );
+};
+
+/*
+const LED = ({ config, onChange }) => {
+    if ((config === undefined) || (config === null)) return <div> </div>;
+    return (
+        <div>
+            <input name="" type="checkbox" checked={config.midi_ctrl} onChange={(event) => onChange(event.target.value)} />
+            <LEDColor current_value={config.active_color} />
+            <LEDColor current_value={config.inactive_color} />
+            <LEDNum current_value={config.num} />
+        </div>
+    );
+};
+*/
 
 const MidiNote = ({ note, onChange }) => {
     console.log(`MidiNote ${note}`, typeof note);
@@ -20,6 +67,26 @@ const MidiNote = ({ note, onChange }) => {
 };
 
 const Step = ({ index, config, updateCallback }) => {
+
+    // updateCallnack(dataType, dataIndex, value)
+    //
+    // "steps": {
+    //     "1": {
+    //         "channel": 0,
+    //         "msg_type": 69,
+    //         "data": [
+    //             0,
+    //             0,
+    //             0
+    //         ],
+    //         "active": 1,
+    //         "led": {
+    //             "midi_ctrl": 0,
+    //             "active_color": 127,
+    //             "inactive_color": 127,
+    //             "num": 0
+    //         }
+    //     },
 
     let d0, d1, d2;
     if (config.msg_type === MSG_SW_NOTE) {
@@ -57,6 +124,26 @@ const Step = ({ index, config, updateCallback }) => {
                 }
                 </select>
             </div>
+            {/*<div><LED config={ config["led"] } onChange={(value) => updateCallback("led", 0, value)} /></div>*/}
+            <div>
+{/*
+                <input type="checkbox" checked={config.led_midi_ctrl} onChange={(event) => {
+                        console.log("led_midi_ctrl", event.target.value);
+                        updateCallback("led_midi_ctrl", null, event.target.value === 'on' ? 1 : 0)
+                    }
+                } />
+*/}
+                <LEDMidi current_value={config.led_midi_ctrl} onChange={(value) => updateCallback("led_midi_ctrl", null, value)} />
+            </div>
+            <div>
+                <LEDColor current_value={config.led_active_color} onChange={(value) => updateCallback("led_active_color", null, value)} />
+            </div>
+            <div>
+                <LEDColor current_value={config.led_inactive_color} onChange={(value) => updateCallback("led_inactive_color", null, value)} />
+            </div>
+            <div>
+                <LEDNum current_value={config.led_num} onChange={(value) => updateCallback("led_num", null, value)} />
+            </div>
         </Fragment>
     );
 };
@@ -68,7 +155,7 @@ class ControlStepsEditor extends Component {
     // };
 
     onStepUpdate = (stepIndex, dataType, dataIndex, value) => {
-        console.log(`ControlStepsEditor.onStepUpdate`, stepIndex, dataIndex, value);
+        console.log(`ControlStepsEditor.onStepUpdate`, stepIndex, dataType, dataIndex, value);
         //
         // produce(draft => {
         //     draft.config.steps[stepIndex].data[dataIndex] = value;
@@ -100,22 +187,21 @@ class ControlStepsEditor extends Component {
 */
 
         return (
-                    <div className="steps">
-                        <div></div>
-                        <div>Type</div>
-                        <div>Data 1</div>
-                        <div>Data 2</div>
-                        <div>Data 3</div>
-                        <div>MIDI Channel</div>
-                        {Object.keys(steps).map(i =>
-                            <Step key={i} index={i} config={steps[i]} updateCallback={(dataType, dataIndex, value) => this.onStepUpdate(i, dataType, dataIndex, value)} />
-                        )}
-                    </div>
-
-/*
-                </div>
+            <div className="steps">
+                <div></div>
+                <div>Type</div>
+                <div>Data 1</div>
+                <div>Data 2</div>
+                <div>Data 3</div>
+                <div>MIDI Ch.</div>
+                <div>LED MIDI</div>
+                <div>LED On</div>
+                <div>LED Off</div>
+                <div>LED Num</div>
+                {Object.keys(steps).map(i =>
+                    <Step key={i} index={i} config={steps[i]} updateCallback={(dataType, dataIndex, value) => this.onStepUpdate(i, dataType, dataIndex, value)} />
+                )}
             </div>
-*/
         );
     }
 }
