@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import {COLORS, MSG_SW_NOTE, MSG_TYPES_FULLNAME} from "../pacer";
+import {COLORS, MSG_CTRL_OFF, MSG_SW_NOTE, MSG_TYPES_FULLNAME} from "../pacer";
 import * as Note from "tonal-note";
 import "./ControlStepsEditor.css";
 
@@ -87,6 +87,43 @@ const Step = ({ index, config, updateCallback }) => {
     //             "num": 0
     //         }
     //     },
+
+    let inactive = config.msg_type === MSG_CTRL_OFF;
+
+    if (inactive) {
+        return (
+            <Fragment>
+                <div>step {index}:</div>
+                <div>
+                    <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} defaultValue={config.msg_type}>
+                        {
+                            Object.keys(MSG_TYPES_FULLNAME).map(
+                                key => {
+                                    // let n = Note.fromMidi(i, true);
+                                    return <option key={key} value={key}>{MSG_TYPES_FULLNAME[key]}</option>
+                                })
+                        }
+                    </select>
+                </div>
+                <div>
+                </div>
+                <div>
+                </div>
+                <div>
+                </div>
+                <div>
+                </div>
+                <div>
+                </div>
+                <div>
+                </div>
+                <div>
+                </div>
+                <div>
+                </div>
+            </Fragment>
+        );
+    }
 
     let d0, d1, d2;
     if (config.msg_type === MSG_SW_NOTE) {

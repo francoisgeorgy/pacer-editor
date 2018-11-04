@@ -452,12 +452,14 @@ function buildControlStepSysex(presetIndex, controlId, steps) {
             presetIndex,
             controlId];
 
-        msg.push(i*6 + 0x01, 0x01, step.channel, 0x00);
-        msg.push(i*6 + 0x02, 0x01, step.msg_type, 0x00);
-        msg.push(i*6 + 0x03, 0x01, step.data[0], 0x00);
-        msg.push(i*6 + 0x04, 0x01, step.data[1], 0x00);
-        msg.push(i*6 + 0x05, 0x01, step.data[2], 0x00);
-        msg.push(i*6 + 0x06, 0x01, step.active);
+        console.log(`buildControlStepSysex: i=${i}, ${h(i*6 + 1)}`);
+
+        msg.push((i-1)*6 + 0x01, 0x01, step.channel, 0x00);
+        msg.push((i-1)*6 + 0x02, 0x01, step.msg_type, 0x00);
+        msg.push((i-1)*6 + 0x03, 0x01, step.data[0], 0x00);
+        msg.push((i-1)*6 + 0x04, 0x01, step.data[1], 0x00);
+        msg.push((i-1)*6 + 0x05, 0x01, step.data[2], 0x00);
+        msg.push((i-1)*6 + 0x06, 0x01, step.active);
 
         let cs = checksum(msg);
         msg.push(cs);

@@ -99,4 +99,15 @@ Other example:
     00 57 01 00 00 58 01 00
     00 59 01 00 66 F7
     
-    
+Message to change preset:
+
+Global
+0xF0 0x00 0x01 0x77 0x7F <cmd> 0x05 <idx> <obj> <elm> <data> <cs> <0xF7>
+
+select preset C5 (0x10) :
+
+    01 05 00 
+    01              obj
+    1E              elm
+    01 10           1 byte data, data = 10
+        

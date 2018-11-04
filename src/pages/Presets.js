@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react';
 import PresetSelector from "../components/PresetSelector";
 import {buildControlStepSysex, isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
 import ControlSelector from "../components/ControlSelector";
-import {requestPresetObj, SYSEX_SIGNATURE} from "../pacer";
+import {MSG_CTRL_OFF, requestPresetObj, SYSEX_SIGNATURE} from "../pacer";
 import {hs} from "../utils/hexstring";
 import {produce} from "immer";
 import {outputById} from "../utils/ports";
@@ -96,12 +96,23 @@ class Presets extends Component {
      */
     controlStepsUpdate = (controlId, stepIndex, dataType, dataIndex, value) => {
         console.log("Presets.controlStepsUpdate", controlId, stepIndex, dataIndex, value);
+        let v = parseInt(value, 10);
         this.setState(
             produce(draft => {
                 if (dataType === "data") {
-                    draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["data"][dataIndex] = parseInt(value, 10);
+                    draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["data"][dataIndex] = v;
                 } else {
-                    draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = parseInt(value, 10);
+                    draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
+                }
+                if (dataType === "msg_type") {
+                    console.log('msg_type', dataType, value);
+                    if (v === MSG_CTRL_OFF) {
+                        console.log('set active 0');
+                        draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 0;
+                    } else {
+                        console.log('set active 1');
+                        draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 1;
+                    }
                 }
                 draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
                 draft.changed = true;
@@ -151,6 +162,12 @@ class Presets extends Component {
             {data: null},
             () => out.sendSysex(SYSEX_SIGNATURE, msg)
         );
+    };
+
+    updatePacer = (messages) => {
+        for (let m of messages) {
+            this.sendSysex(m);
+        }
     };
 
     render() {
@@ -272,7 +289,7 @@ class Presets extends Component {
                             <Fragment>
                                 <h2>Send the updated config to the Pacer:</h2>
                                 <div className="actions">
-                                    <button>Update Pacer</button>
+                                    <button onClick={() => this.updatePacer(updateMessages)}>Update Pacer</button>
                                 </div>
                             </Fragment>
                             }
