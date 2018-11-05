@@ -90,6 +90,15 @@ a {
 select, input {
     font-family: futura-pt, Arial, "Helvetica Neue", Helvetica, sans-serif;
     font-weight: 400;
+    font-size: 1rem;
+    font-style: normal;
+}
+
+
+button {
+    font-family: futura-pt, Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
     font-style: normal;
 }
 

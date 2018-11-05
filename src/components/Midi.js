@@ -235,13 +235,23 @@ class Midi extends Component {
     }
 
     render() {
+
         let {inputs, outputs} = this.state;
-        return (
-            <div className={this.props.className}>
-                {inputs.map(port => this.props.inputRenderer(port, port.id === this.state.input, this.togglePort))}
-                {outputs.map(port => this.props.outputRenderer(port, port.id === this.state.output, this.togglePort))}
-            </div>
-        );
+
+        if (inputs.length === 0 && outputs.length === 0) {
+            return (
+                <div className={this.props.className}>
+                    {this.props.children}
+                </div>
+            );
+        } else {
+            return (
+                <div className={this.props.className}>
+                    {inputs.map(port => this.props.inputRenderer(port, port.id === this.state.input, this.togglePort))}
+                    {outputs.map(port => this.props.outputRenderer(port, port.id === this.state.output, this.togglePort))}
+                </div>
+            );
+        }
     }
 
 }

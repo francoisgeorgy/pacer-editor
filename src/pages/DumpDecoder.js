@@ -102,7 +102,9 @@ class DumpDecoder extends Component {
                         <div className="content-row-content row-middle-aligned">
                             <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
                                   autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
-                                  className="sub-header" />
+                                  className="sub-header" >
+                                <div>Please connect your Pacer to your computer.</div>
+                            </Midi>
                         </div>
                     </div>
                     <div className="content-row step-2">

@@ -2,6 +2,14 @@
 
 }
 
+.steps select, .steps input {
+    min-width: 64px;
+}
+
+.steps input {
+    width: 64px;
+}
+
 .steps {
     display: grid;
     grid: repeat(6, 1fr) / repeat(10, auto);
@@ -14,4 +22,9 @@
 .steps input[type='text'] {
     padding: 0 4px;
     text-align: right;
+}
+
+.step-col-header {
+    align-self: center;
+    padding-left: 7px;
 }

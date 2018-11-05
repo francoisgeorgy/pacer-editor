@@ -15,7 +15,6 @@ class Global extends Component {
                             1
                         </div>
                         <div className="content-row-content">
-                            <h2>Sorry, this feature is not implemented yet.</h2>
                         </div>
                     </div>
                     <div className="content-row step-2">
@@ -25,7 +24,8 @@ class Global extends Component {
                         <div className="content-row-header">
                             2
                         </div>
-                        <div className="content-row-content">
+                        <div className="content-row-content row-middle-aligned">
+                            <h2>Sorry, this feature is not implemented yet.</h2>
                         </div>
                     </div>
                     <div className="content-row step-3">

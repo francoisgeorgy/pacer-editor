@@ -532,6 +532,19 @@ export const COLORS = {
 };
 
 
+export const CONTROL_MODE_ELEMENT = 0x60;
+
+export const CONTROL_MODE_ALL = 0x00;
+export const CONTROL_MODE_EXT_STEP = 0x01;
+export const CONTROL_MODE_SEQUENCE = 0x02;
+
+export const CONTROL_MODES = {
+    [CONTROL_MODE_ALL]: "All",
+    [CONTROL_MODE_EXT_STEP]: "External Step Select",
+    [CONTROL_MODE_SEQUENCE]: "Sequence",
+};
+
+
 export function checksum(bytes) {
     if (bytes === null || bytes === undefined || bytes.length === 0) return 128;
     let sum = Uint8Array.from(bytes).reduce((previousValue, currentValue) => previousValue + currentValue);

@@ -1,6 +1,11 @@
 import React, {Component, Fragment} from 'react';
 import PresetSelector from "../components/PresetSelector";
-import {buildControlStepSysex, isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
+import {
+    getControlUpdateSysexMessages,
+    isSysexData,
+    mergeDeep,
+    parseSysexDump
+} from "../utils/sysex";
 import ControlSelector from "../components/ControlSelector";
 import {MSG_CTRL_OFF, requestPresetObj, SYSEX_SIGNATURE} from "../pacer";
 import {hs} from "../utils/hexstring";
@@ -11,6 +16,7 @@ import Midi from "../components/Midi";
 import MidiPort from "../components/MidiPort";
 import Dropzone from "react-dropzone";
 import "./Presets.css";
+import ControlModeEditor from "../components/ControlModeEditor";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -121,6 +127,21 @@ class Presets extends Component {
     };
 
     /**
+     * dataIndex is only used when dataType == "data"
+     */
+    updateControlMode = (controlId, value) => {
+        console.log("Presets.updateControlMode", controlId, value);
+        let v = parseInt(value, 10);
+        this.setState(
+            produce(draft => {
+                draft.data["1"][draft.presetIndex]["controls"][controlId]["control_mode"] = v;
+                draft.data["1"][draft.presetIndex]["controls"][controlId]["changed"] = true;
+                draft.changed = true;
+            })
+        );
+    };
+
+    /**
      *
      */
     handleMidiInputEvent = (event) => {
@@ -210,7 +231,7 @@ class Presets extends Component {
 
         let updateMessages = [];
         if (showEditor) {
-            updateMessages = buildControlStepSysex(presetIndex, controlId, data["1"][presetIndex]["controls"][controlId]["steps"]);
+            updateMessages = getControlUpdateSysexMessages(presetIndex, controlId, data);
         }
 
         console.log("Presets.render", showEditor, presetIndex, controlId);
@@ -230,7 +251,9 @@ class Presets extends Component {
                             <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
                                   autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
                                   setOutput={this.setOutput}
-                                  className="sub-header" />
+                                  className="sub-header" >
+                                <div>Please connect your Pacer to your computer.</div>
+                            </Midi>
                         </div>
                     </div>
                     <div className="content-row step-2">
@@ -267,6 +290,9 @@ class Presets extends Component {
                                 <ControlStepsEditor controlId={controlId}
                                                     steps={data["1"][presetIndex]["controls"][controlId]["steps"]}
                                                     onUpdate={(stepIndex, dataType, dataIndex, value) => this.updateControlStep(controlId, stepIndex, dataType, dataIndex, value)} />
+                                <ControlModeEditor controlId={controlId}
+                                                   mode={data["1"][presetIndex]["controls"][controlId]["control_mode"]}
+                                                   onUpdate={(value) => this.updateControlMode(controlId, value)} />
                             </Fragment>
                             }
                         </div>

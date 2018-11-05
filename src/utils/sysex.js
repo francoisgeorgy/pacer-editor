@@ -13,7 +13,7 @@ import {
     CONTROL_EXPRESSION_PEDAL_1,
     CONTROL_MIDI,
     CONTROL_STOMPSWITCH_6,
-    CONTROL_FOOTSWITCH_4, CONTROL_EXPRESSION_PEDAL_2, TARGET_PRESET
+    CONTROL_FOOTSWITCH_4, CONTROL_EXPRESSION_PEDAL_2, TARGET_PRESET, CONTROL_MODE_ELEMENT
 } from "../pacer";
 export const SYSEX_START = 0xF0;
 export const SYSEX_END = 0xF7;
@@ -237,6 +237,13 @@ function getControlLED(data) {
 }
 
 
+function getControlMode(data) {
+    return {
+        control_mode: data[1]
+    };
+}
+
+
 /**
  * Parse a single sysex message
  * @param data
@@ -325,10 +332,13 @@ function parseSysexMessage(data) {
                 console.warn(`parseSysexMessage: data does not contains steps. data.length=${data.length}`, hs(data));
             }
 
-        } else if (e === 0x60) {
+        } else if (e === CONTROL_MODE_ELEMENT) {
 
             // CONTROL MODE
             console.log('parseSysexMessage: CONTROL MODE');
+
+            let mode_cfg = getControlMode(data.slice(ELM, data.length-1));
+            message[tgt][idx]["controls"][obj] = mergeDeep(message[tgt][idx]["controls"][obj], mode_cfg);
 
         } else if (e >= 0x40 && e <= 0x57) {
 
@@ -451,8 +461,41 @@ function buildControlStepSysex(presetIndex, controlId, steps) {
         msgs.push(SYSEX_HEADER.concat(msg));
     }
 
-    console.log("buildControlStepSysex", msgs);
+    // console.log("buildControlStepSysex", msgs);
 
+    return msgs;
+}
+
+function buildControlModeSysex(presetIndex, controlId, mode) {
+
+    console.log(`buildControlStepMode(${presetIndex}, ${controlId}, ...)`);
+
+    // start with command and target:
+    let msg = [
+        COMMAND_SET,
+        TARGET_PRESET,
+        presetIndex,
+        controlId,
+        CONTROL_MODE_ELEMENT,
+        0x01,   // 1 byte of data
+        mode
+    ];
+
+    // add checksum:
+    msg.push(checksum(msg));
+
+    // console.log("buildControlModeSysex", msg);
+
+    // inject header and return the result:
+    return SYSEX_HEADER.concat(msg);
+}
+
+
+function getControlUpdateSysexMessages(presetIndex, controlId, data) {
+    let msgs = buildControlStepSysex(presetIndex, controlId, data["1"][presetIndex]["controls"][controlId]["steps"]);
+    if (data["1"][presetIndex]["controls"][controlId]["changed"]) {
+        msgs.push(buildControlModeSysex(presetIndex, controlId, data["1"][presetIndex]["controls"][controlId]["control_mode"]));
+    }
     return msgs;
 }
 
@@ -460,6 +503,6 @@ function buildControlStepSysex(presetIndex, controlId, steps) {
 export {
     isSysexData,
     parseSysexDump,
-    buildControlStepSysex
+    getControlUpdateSysexMessages
 };
 
