@@ -1,71 +1,9 @@
 
 export const SYSEX_SIGNATURE = [0x00, 0x01, 0x77];
-
 export const SYSEX_HEADER = [0x7F];
 
-export function checksum(bytes) {
-    if (bytes === null || bytes === undefined || bytes.length === 0) return 128;
-    let sum = Uint8Array.from(bytes).reduce((previousValue, currentValue) => previousValue + currentValue);
-    return 128 - (sum % 128);
-}
-
-
-/**
- * return the sysex message to send to the Pacer to request some data
- */
-export function requestPreset(index) {
-    let msg = [0x02, 0x01, index];      // TODO: replace numbers by constants
-    let cs = checksum(msg);
-    msg.push(cs);
-    return SYSEX_HEADER.concat(msg);
-}
-
-/**
- * return the sysex message to send to the Pacer to request some data
- */
-export function requestPresetObj(index, obj) {
-    // TODO: replace numbers by constants
-    let msg = [
-        0x02,       // cmd = Get
-        0x01,       // target = preset
-        index,      // preset #
-        obj         // (control)
-    ];
-    let cs = checksum(msg);
-    msg.push(cs);
-    return SYSEX_HEADER.concat(msg);
-}
-
-// ============================================================================
-
-/**
- * Example: 23 => "D5"
- * @param index
- * @returns {string}
- */
-export const presetIndexToXY = index => {
-    if (index === 0) return "CUR";
-    //TODO: check valid range
-    let b = Math.floor((index - 1) / 6);
-    let i = (index - 1) % 6 + 1;
-    return String.fromCharCode(b + 65) + i.toString();
-};
-
-/**
- * Exampe: "D5" => 23
- * @param xy
- * @returns {number}
- */
-export const presetXYToIndex = xy => {
-    if (xy === "CUR") return 0;
-    //TODO: check valid range
-    //TODO: convert to uppercase before parsing
-    let bank = xy.charCodeAt(0) - 65;
-    let num = parseInt(xy[1], 10);
-    return bank * 6 + num;
-};
-
-// ============================================================================
+export const COMMAND_SET = 0x01;
+export const COMMAND_GET = 0x02;
 
 export const TARGET_PRESET = 0x01;
 export const TARGET_GLOBAL = 0x05;
@@ -77,30 +15,51 @@ export const TARGETS = {
     [TARGET_BACKUP]: "full backup"
 };
 
-// ============================================================================
+
+export const CONTROL_NAME = 0x01;
+export const CONTROL_STOMPSWITCH_1 = 0x0D;
+export const CONTROL_STOMPSWITCH_2 = 0x0E;
+export const CONTROL_STOMPSWITCH_3 = 0x0F;
+export const CONTROL_STOMPSWITCH_4 = 0x10;
+export const CONTROL_STOMPSWITCH_5 = 0x11;
+export const CONTROL_STOMPSWITCH_6 = 0x12;
+export const CONTROL_RESERVED = 0x13;
+export const CONTROL_STOMPSWITCH_A = 0x14;
+export const CONTROL_STOMPSWITCH_B = 0x15;
+export const CONTROL_STOMPSWITCH_C = 0x16;
+export const CONTROL_STOMPSWITCH_D = 0x17;
+export const CONTROL_FOOTSWITCH_1 = 0x18;
+export const CONTROL_FOOTSWITCH_2 = 0x19;
+export const CONTROL_FOOTSWITCH_3 = 0x1A;
+export const CONTROL_FOOTSWITCH_4 = 0x1B;
+export const CONTROL_EXPRESSION_PEDAL_1 = 0x36;
+export const CONTROL_EXPRESSION_PEDAL_2 = 0x37;
+export const CONTROL_MIDI = 0x7E;
+export const CONTROL_ALL = 0x7F;
+
 
 // objects:
 export const CONTROLS = {
-    0x01: "name",
-    0x0D: "1",
-    0x0E: "2",
-    0x0F: "3",
-    0x10: "4",
-    0x11: "5",
-    0x12: "6",
-    0x13: "RESERVED",
-    0x14: "A",
-    0x15: "B",
-    0x16: "C",
-    0x17: "D",
-    0x18: "FS 1",
-    0x19: "FS 2",
-    0x1A: "FS 3",
-    0x1B: "FS 4",
-    0x36: "EXP 1",
-    0x37: "EXP 2",
-    0x7E: "MIDI configuration",
-    0x7F: "ALL"
+    [CONTROL_NAME]: "name",
+    [CONTROL_STOMPSWITCH_1]: "1",
+    [CONTROL_STOMPSWITCH_2]: "2",
+    [CONTROL_STOMPSWITCH_3]: "3",
+    [CONTROL_STOMPSWITCH_4]: "4",
+    [CONTROL_STOMPSWITCH_5]: "5",
+    [CONTROL_STOMPSWITCH_6]: "6",
+    [CONTROL_RESERVED]: "RESERVED",
+    [CONTROL_STOMPSWITCH_A]: "A",
+    [CONTROL_STOMPSWITCH_B]: "B",
+    [CONTROL_STOMPSWITCH_C]: "C",
+    [CONTROL_STOMPSWITCH_D]: "D",
+    [CONTROL_FOOTSWITCH_1]: "FS 1",
+    [CONTROL_FOOTSWITCH_2]: "FS 2",
+    [CONTROL_FOOTSWITCH_3]: "FS 3",
+    [CONTROL_FOOTSWITCH_4]: "FS 4",
+    [CONTROL_EXPRESSION_PEDAL_1]: "EXP 1",
+    [CONTROL_EXPRESSION_PEDAL_2]: "EXP 2",
+    [CONTROL_MIDI]: "MIDI configuration",
+    [CONTROL_ALL]: "ALL"
 };
 
 export const CONTROLS_FULLNAME = {
@@ -133,11 +92,7 @@ export const STOMPSWITCHES_BOTTOM = [0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12];
 export const FOOTSWITCHES = [0x18, 0x19, 0x1A, 0x1B];
 export const EXPPEDALS = [0x36, 0x37];
 
-
-
-// ============================================================================
 // message types:
-
 export const MSG_AD_MIDICC = 0x00;
 export const MSG_AD_NRPNC = 0x03;
 export const MSG_AD_NRPNF = 0x04;
@@ -211,7 +166,6 @@ export const MSG_TYPES = {
     [MSG_ENC_STEPSELECT]: "STEP SEL",
 
     [MSG_LOAD_CC]: "CC"
-
 };
 
 export const MSG_TYPES_FULLNAME = {
@@ -253,8 +207,6 @@ export const MSG_TYPES_FULLNAME = {
     [MSG_LOAD_CC]: "CC"
 
 };
-// ============================================================================
-
 
 export const CONTROL_ELEMENT = {
     // 0x00: "",
@@ -577,4 +529,67 @@ export const COLORS = {
     0x16 : "11B Dim Purple",
     0x17 : "12A White",
     0x18 : "12B Dim White",
+};
+
+
+export function checksum(bytes) {
+    if (bytes === null || bytes === undefined || bytes.length === 0) return 128;
+    let sum = Uint8Array.from(bytes).reduce((previousValue, currentValue) => previousValue + currentValue);
+    return 128 - (sum % 128);
+}
+
+
+/**
+ * return the sysex message to send to the Pacer to request some data
+ */
+export function requestPreset(index) {
+    let msg = [COMMAND_GET, TARGET_PRESET, index];      // TODO: replace numbers by constants
+    let cs = checksum(msg);
+    msg.push(cs);
+    return SYSEX_HEADER.concat(msg);
+}
+
+/**
+ * return the sysex message to send to the Pacer to request some data
+ */
+export function requestPresetObj(index, obj) {
+    // TODO: replace numbers by constants
+    let msg = [
+        COMMAND_GET,
+        TARGET_PRESET,
+        index,      // preset #
+        obj         // (control)
+    ];
+    let cs = checksum(msg);
+    msg.push(cs);
+    return SYSEX_HEADER.concat(msg);
+}
+
+// ============================================================================
+
+/**
+ * Example: 23 => "D5"
+ * @param index
+ * @returns {string}
+ */
+export const presetIndexToXY = index => {
+    if (index === 0) return "CUR";
+    //TODO: check valid range
+    let b = Math.floor((index - 1) / 6);
+    let i = (index - 1) % 6 + 1;
+    return String.fromCharCode(b + 65) + i.toString();
+};
+
+/**
+ * Exampe: "D5" => 23
+ * @param xy
+ * @returns {number}
+ */
+export const presetXYToIndex = xy => {
+    if (xy === "CUR") return 0;
+    //TODO: check valid range
+    //TODO: convert to uppercase before parsing
+    let bank = xy.charCodeAt(0) - 65;
+    let num = parseInt(xy[1], 10);
+    return bank * 6 + num;
 };

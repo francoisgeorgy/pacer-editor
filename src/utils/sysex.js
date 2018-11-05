@@ -1,6 +1,20 @@
 import {NEKTAR_TECHNOLOGY_INC} from "midi-manufacturers";
 import {h, hs} from "./hexstring";
-import {TARGETS, CONTROLS, checksum, SYSEX_HEADER} from "../pacer";
+import {
+    TARGETS,
+    CONTROLS,
+    checksum,
+    SYSEX_HEADER,
+    COMMAND_SET,
+    COMMAND_GET,
+    CONTROL_NAME,
+    CONTROL_STOMPSWITCH_1,
+    CONTROL_STOMPSWITCH_A,
+    CONTROL_EXPRESSION_PEDAL_1,
+    CONTROL_MIDI,
+    CONTROL_STOMPSWITCH_6,
+    CONTROL_FOOTSWITCH_4, CONTROL_EXPRESSION_PEDAL_2, TARGET_PRESET
+} from "../pacer";
 export const SYSEX_START = 0xF0;
 export const SYSEX_END = 0xF7;
 
@@ -242,11 +256,9 @@ function parseSysexMessage(data) {
     let obj = data[OBJ];
 
     switch (cmd) {
-        case 0x01:
-            // console.log(`command is set_data (${h(cmd)})`);
+        case COMMAND_SET:
             break;
-        case 0x02:
-            // console.log(`command is get_data (${h(cmd)})`);
+        case COMMAND_GET:
             break;
         default:
             console.warn(`parseSysexMessage: invalid command (${h(cmd)})`);
@@ -272,13 +284,13 @@ function parseSysexMessage(data) {
     }
 
     let obj_type;
-    if (obj === 0x01) {
+    if (obj === CONTROL_NAME) {
         obj_type = "name";
-    } else if ((obj >= 0x0D && obj <= 0x12) ||
-        (obj >= 0x14 && obj <= 0x1B) ||
-        (obj >= 0x36 && obj <= 0x37)) {
+    } else if ((obj >= CONTROL_STOMPSWITCH_1 && obj <= CONTROL_STOMPSWITCH_6) ||
+        (obj >= CONTROL_STOMPSWITCH_A && obj <= CONTROL_FOOTSWITCH_4) ||
+        (obj >= CONTROL_EXPRESSION_PEDAL_1 && obj <= CONTROL_EXPRESSION_PEDAL_2)) {
         obj_type = "control";
-    } else if (obj === 0x7E) {
+    } else if (obj === CONTROL_MIDI) {
         obj_type = "midi";
     } else {
         console.warn('parseSysexMessage: invalid obj', obj);
@@ -303,8 +315,6 @@ function parseSysexMessage(data) {
         // which element?
         let e = data[ELM];
 
-        // console.log("LEM", e, h(e));
-
         if (e >= 0x01 && e <= 0x24) {
 
             // STEPS
@@ -320,21 +330,13 @@ function parseSysexMessage(data) {
             // CONTROL MODE
             console.log('parseSysexMessage: CONTROL MODE');
 
-        // } else if (e === 0x40) {
-        //
-        //     // CONTROL MODE
-        //     console.log('parseSysexMessage: LED MIDI CTRL');
-
-        // } else if (e >= 0x61 && e <= 0x63) {
         } else if (e >= 0x40 && e <= 0x57) {
 
             // LED
             console.log('parseSysexMessage: LED');
-            //message[tgt][idx]["controls"][obj]["led"] = getControlLED(data.slice(ELM, data.length-1 /*, ELM + 3*/ ));
-            let led_cfg = getControlLED(data.slice(ELM, data.length-1));
 
+            let led_cfg = getControlLED(data.slice(ELM, data.length-1));
             message[tgt][idx]["controls"][obj] = mergeDeep(message[tgt][idx]["controls"][obj], led_cfg);
-            // message[tgt][idx]["controls"][obj]["steps"] = led_cfg;
 
         } else if (e === 0x7F) {
 
@@ -353,7 +355,6 @@ function parseSysexMessage(data) {
     }
 
     // console.log('MESSAGE', message);
-
     return message;
 
 } // parseSysex()
@@ -370,47 +371,42 @@ function parseSysexDump(data) {
 
     if (data === null) return null;
 
-    // let d = new Uint8Array(data);
-    let d = data;   //TODO: use data variable
     let presets = {};   // Collection of presets. The key is the preset's index. The value is the preset.
     // let global = {};    // global conf
-
-    // let k = data[0] === SYSEX_START ? 1 : 0;
 
     let i = 0;
     let cont = true;
     while (cont) {
 
-        i = d.indexOf(SYSEX_START, i);
+        i = data.indexOf(SYSEX_START, i);
         if (i < 0) break;
 
         i++;
 
-        let k = d.indexOf(SYSEX_END, i);
+        let k = data.indexOf(SYSEX_END, i);
 
-        let manufacturer_id = (Array.from(d.slice(i, i+3)).map(n => h(n))).join(" ");    // Array.from() is necessary to get a non-typed array
+        let manufacturer_id = (Array.from(data.slice(i, i+3)).map(n => h(n))).join(" ");    // Array.from() is necessary to get a non-typed array
         if (manufacturer_id !== NEKTAR_TECHNOLOGY_INC) {
-            console.log("parseSysexDump: file does not contain a Nektar Pacer patch", i, k, manufacturer_id, "-", hs(d));
+            console.log("parseSysexDump: file does not contain a Nektar Pacer patch", i, k, manufacturer_id, "-", hs(data));
             return null;
         }
 
-        if (d[i+3] !== 0x7F) {
-            console.warn(`parseSysexDump: invalid byte after manufacturer id: ${d[i+1 +3]}`);
+        if (data[i+3] !== 0x7F) {
+            console.warn(`parseSysexDump: invalid byte after manufacturer id: ${data[i+1 +3]}`);
             return null;
         }
 
-        let config = parseSysexMessage(d.slice(i, k));  // d.slice(i, k) are the data between SYSEX_START and SYSEX_END
+        let config = parseSysexMessage(data.slice(i, k));  // data.slice(i, k) are the data between SYSEX_START and SYSEX_END
 
         if (config) {
             mergeDeep(presets, config);
         }
 
-    }
+    } // while
 
     // console.log(JSON.stringify(presets));
 
     return presets;
-
 }
 
 
@@ -425,19 +421,6 @@ function buildControlStepSysex(presetIndex, controlId, steps) {
 
     console.log(`buildControlStepSysex(${presetIndex}, ${controlId}, ...)`);
 
-    // 00 01 77
-    // 7F SYSEX_HEADER
-    // 01 cmd
-    // 01 tgt
-    // 05 presetIndex
-    // 0D controlId
-    // 01 01 00 00      channel
-    // 02 01 43 00      msg type
-    // 03 01 34 00      data 1
-    // 04 01 7F 00      data 2
-    // 05 01 00 00      data 3
-    // 06 01 01         active
-
     let msgs = [];
 
     for (let i of Object.keys(steps)) {
@@ -446,24 +429,25 @@ function buildControlStepSysex(presetIndex, controlId, steps) {
 
         if (!step.changed) continue;
 
+        // start with command and target:
         let msg = [
-            0x01,       // cmd                   // TODO: replace numbers by constants
-            0x01,       // tgt is preset
+            COMMAND_SET,
+            TARGET_PRESET,
             presetIndex,
             controlId];
 
-        console.log(`buildControlStepSysex: i=${i}, ${h(i*6 + 1)}`);
+        // add data:
+        msg.push((i-1)*6 + 1, 1, step.channel, 0x00);
+        msg.push((i-1)*6 + 2, 1, step.msg_type, 0x00);
+        msg.push((i-1)*6 + 3, 1, step.data[0], 0x00);
+        msg.push((i-1)*6 + 4, 1, step.data[1], 0x00);
+        msg.push((i-1)*6 + 5, 1, step.data[2], 0x00);
+        msg.push((i-1)*6 + 6, 1, step.active);
 
-        msg.push((i-1)*6 + 0x01, 0x01, step.channel, 0x00);
-        msg.push((i-1)*6 + 0x02, 0x01, step.msg_type, 0x00);
-        msg.push((i-1)*6 + 0x03, 0x01, step.data[0], 0x00);
-        msg.push((i-1)*6 + 0x04, 0x01, step.data[1], 0x00);
-        msg.push((i-1)*6 + 0x05, 0x01, step.data[2], 0x00);
-        msg.push((i-1)*6 + 0x06, 0x01, step.active);
+        // add checksum:
+        msg.push(checksum(msg));
 
-        let cs = checksum(msg);
-        msg.push(cs);
-
+        // inject header and add to list of messages:
         msgs.push(SYSEX_HEADER.concat(msg));
     }
 

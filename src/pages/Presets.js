@@ -94,8 +94,8 @@ class Presets extends Component {
     /**
      * dataIndex is only used when dataType == "data"
      */
-    controlStepsUpdate = (controlId, stepIndex, dataType, dataIndex, value) => {
-        console.log("Presets.controlStepsUpdate", controlId, stepIndex, dataIndex, value);
+    updateControlStep = (controlId, stepIndex, dataType, dataIndex, value) => {
+        console.log("Presets.updateControlStep", controlId, stepIndex, dataIndex, value);
         let v = parseInt(value, 10);
         this.setState(
             produce(draft => {
@@ -116,12 +116,13 @@ class Presets extends Component {
                 }
                 draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
                 draft.changed = true;
-                // this.props.onBusy(false);
             })
         );
     };
 
-
+    /**
+     *
+     */
     handleMidiInputEvent = (event) => {
         console.log("Presets.handleMidiInputEvent", event, event.data);
         // if (event instanceof MIDIMessageEvent) {
@@ -205,20 +206,14 @@ class Presets extends Component {
             }
         }
 
-        // if (showEditor) {
-        //     console.log("Presets.render", showEditor, Object.keys(data["1"][presetIndex]["controls"][controlId]["steps"]).length, data);
-        // } else {
-            console.log("Presets.render", showEditor, presetIndex, controlId);
-        // }
-
         showEditor = showEditor && (Object.keys(data["1"][presetIndex]["controls"][controlId]["steps"]).length === 6);
-
-        console.log("Presets.render", showEditor, presetIndex, controlId);
 
         let updateMessages = [];
         if (showEditor) {
             updateMessages = buildControlStepSysex(presetIndex, controlId, data["1"][presetIndex]["controls"][controlId]["steps"]);
         }
+
+        console.log("Presets.render", showEditor, presetIndex, controlId);
 
         return (
             <div className="wrapper">
@@ -271,7 +266,7 @@ class Presets extends Component {
                                 <h2>Edit the selected control:</h2>
                                 <ControlStepsEditor controlId={controlId}
                                                     steps={data["1"][presetIndex]["controls"][controlId]["steps"]}
-                                                    onUpdate={(stepIndex, dataType, dataIndex, value) => this.controlStepsUpdate(controlId, stepIndex, dataType, dataIndex, value)} />
+                                                    onUpdate={(stepIndex, dataType, dataIndex, value) => this.updateControlStep(controlId, stepIndex, dataType, dataIndex, value)} />
                             </Fragment>
                             }
                         </div>
