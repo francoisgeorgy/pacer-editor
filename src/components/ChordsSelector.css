@@ -1,5 +1,5 @@
 
-.controls {
+.chords {
     margin: 10px 0;
     display: grid;
     grid: repeat(3, 1fr) / repeat(6, auto);
@@ -10,7 +10,7 @@
     align-items: stretch;
 }
 
-.controls > div {
+.chords > div {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -21,16 +21,16 @@
     border: 1px solid #eeeeee;
 }
 
-.controls > div:hover {
+.chords > div:hover {
     background-color: lightblue;
     border: 1px solid #aaa;
 }
 
-.controls > div.selected {
+.chords > div.selected {
     background-color: orange;       /* present selected color overrides preset hover color */
     border: 1px solid red;
 }
 
-.controls > div.no-control {
+.chords > div.no-chord {
     background-color: transparent;
 }

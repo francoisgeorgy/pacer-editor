@@ -194,20 +194,20 @@ export const MSG_TYPES_FULLNAME_SW = {
     [MSG_CTRL_OFF]: "OFF",
 
     [MSG_SW_MIDI_CC_TGGLE]: "CC Toggle",
-    [MSG_SW_MIDI_CC]: "CC",
+    [MSG_SW_MIDI_CC]: "CC Trigger",
     [MSG_SW_MIDI_CC_STEP]: "CC Step",
     [MSG_SW_NOTE]: "Note",
     [MSG_SW_NOTE_TGGLE]: "Note Toggle",
-    [MSG_SW_PRG_BANK]: "Prg Bank",
-    [MSG_SW_PRG_STEP]: "Prg Step",
+    [MSG_SW_PRG_BANK]: "Program & Bank",
+    [MSG_SW_PRG_STEP]: "Program Step",
     [MSG_SW_NRPN_COARSE]: "NRPN Coarse",
     [MSG_SW_NRPN_FINE]: "NRPN Fine",
-    [MSG_SW_MMC]: "MMC",
-    [MSG_SW_RELAY]: "Relay",
+    [MSG_SW_MMC]: "MIDI Machine Control",
+    [MSG_SW_RELAY]: "Relay Outputs",
     [MSG_SW_PRESET_SELECT]: "Preset Select",
-    [MSG_SW_PRESET_INC_DEC]: "Preset Inc Dec",
+    [MSG_SW_PRESET_INC_DEC]: "Preset Inc/Dec",
     [MSG_SW_STEP_SELECT]: "Step Select",
-    [MSG_SW_STEP_INC_DEC]: "Step Inc Dec",
+    [MSG_SW_STEP_INC_DEC]: "Step Inc/Dec",
 
     // [MSG_ENC_CC]: "CC",
     // [MSG_ENC_MIDICC_REL]: "CC REL",
@@ -225,7 +225,6 @@ export const MSG_TYPES_FULLNAME_SW = {
 
 export const MSG_TYPES_FULLNAME_SW_SORTED = sortObject(MSG_TYPES_FULLNAME_SW);
 
-console.log(MSG_TYPES_FULLNAME_SW_SORTED);
 
 export const MSG_TYPES_FULLNAME_ENC = {
 

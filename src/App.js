@@ -8,6 +8,7 @@ import Monitor from "./pages/Monitor";
 import Footer from "./components/Footer";
 import Global from "./pages/Global";
 import DumpDecoder from "./pages/DumpDecoder";
+import Chords from "./pages/Chords";
 
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
@@ -53,6 +54,7 @@ class App extends Component {
                         <MenuLink activeOnlyWhenExact={true} to="/" label="Home" />
                         <MenuLink to="/presets" label="Presets" />
                         <MenuLink to="/global" label="Global config" />
+                        <MenuLink to="/chords" label="Chords" />
                         <MenuLink to="/monitor" label="MIDI monitor" />
                         <MenuLink to="/dumpdecoder" label="Dump decoder" />
                         <MenuLink to="/testsender" label="Debug" />
@@ -77,6 +79,11 @@ class App extends Component {
                                 <Route path="/global" render={
                                     props => (
                                         <Global onBusy={this.onBusy} />
+                                    )
+                                }/>
+                                <Route path="/chords" render={
+                                    props => (
+                                        <Chords onBusy={this.onBusy} />
                                     )
                                 }/>
                                 <Route path="/monitor" render={

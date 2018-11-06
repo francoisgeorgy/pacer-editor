@@ -16,7 +16,9 @@
         "react-router-dom": "^4.3.1",
         "react-scripts": "2.0.5",
         "react-switch": "^3.0.4",
+        "tonal-dictionary": "^2.1.0",
         "tonal-note": "^2.0.0",
+        "tonal-scale": "^2.1.0",
         "underscore": "^1.9.1",
         "webmidi": "^2.2.0"
     },

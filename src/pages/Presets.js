@@ -239,6 +239,7 @@ class Presets extends Component {
     };
 
     render() {
+
         const { presetIndex, controlId, data, changed } = this.state;
 
         let showEditor = false;
