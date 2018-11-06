@@ -13,22 +13,29 @@ function inputById(id) {
     return WebMidi.inputs.find(item => item.id === id);
 }
 
+function outputById(id) {
+    return WebMidi.outputs.find(item => item.id === id);
+}
+
 /**
  * Return webmidi input name from input id
  * @param id
  */
 function inputName(id) {
-    let i = WebMidi.inputs.find(item => item.id === id);
+    let i = inputById(id);
     return i ? i.name : null;
 }
 
-function outputById(id) {
-    return WebMidi.outputs.find(item => item.id === id);
+function outputName(id) {
+    let i = outputById(id);
+    return i ? i.name : null;
 }
+
 
 export {
     portById,
     inputById,
     inputName,
+    outputName,
     outputById
 }

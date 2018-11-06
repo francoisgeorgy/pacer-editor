@@ -1,0 +1,12 @@
+.status-info {
+
+}
+
+.status-warning {
+    color: red;
+}
+
+.status-error {
+    color: red;
+    font-weight: bold;
+}

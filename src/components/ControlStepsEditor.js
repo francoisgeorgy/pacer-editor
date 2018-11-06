@@ -68,7 +68,7 @@ const MidiNote = ({ note, onChange }) => {
 
 const Step = ({ index, config, updateCallback }) => {
 
-    // updateCallnack(dataType, dataIndex, value)
+    // updateCallback(dataType, dataIndex, value)
     //
     // "steps": {
     //     "1": {

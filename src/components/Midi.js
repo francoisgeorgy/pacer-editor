@@ -1,13 +1,34 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import * as WebMidi from "webmidi";
 import {inputById, portById} from "../utils/ports";
+
+
+const propTypes = {
+    classname: PropTypes.string,
+    autoConnect: PropTypes.string,
+    inputRenderer: PropTypes.func,
+    outputRenderer: PropTypes.func,
+    onMidiInputEvent: PropTypes.func,
+    onMidiOutputEvent: PropTypes.func,
+    onInputConnection: PropTypes.func,      // callback with port.id as parameter
+    onOutputConnection: PropTypes.func,     // callback with port.id as parameter
+    onInputDisconnection: PropTypes.func,   // callback with port.id as parameter
+    onOutputDisconnection: PropTypes.func,  // callback with port.id as parameter
+    setOutput: PropTypes.func,              // callback with port.id as parameter
+    children: PropTypes.node
+};
+
+const defaultProps = {
+    classname: '',
+};
 
 /**
  *
  * @param props
  * @constructor
  */
-class Midi extends Component {
+export default class Midi extends Component {
 
     //TODO: allow specification of channel and message types to listen to
 
@@ -19,12 +40,17 @@ class Midi extends Component {
     };
 
     connectInput = port => {
-        if (port) {
-            if (port.hasListener('midimessage', 'all', this.props.onMidiInputEvent)) {
-                console.warn(`Midi.connectInput: sysex messages on all channels listener already connected`);
-            } else {
-                console.log(`Midi.connectInput: add listener for sysex messages on all channels`);
-                port.addListener('midimessage', 'all', this.props.onMidiInputEvent);
+        if (this.props.onMidiInputEvent) {
+            if (port) {
+                if (port.hasListener('midimessage', 'all', this.props.onMidiInputEvent)) {
+                    console.warn(`Midi.connectInput: sysex messages on all channels listener already connected`);
+                } else {
+                    console.log(`Midi.connectInput: add listener for sysex messages on all channels`);
+                    port.addListener('midimessage', 'all', this.props.onMidiInputEvent);
+                    if (this.props.onInputConnection) {
+                        this.props.onInputConnection(port.id);
+                    }
+                }
             }
         }
     };
@@ -33,27 +59,32 @@ class Midi extends Component {
         if (port) {
             port.removeListener();
             console.log(`disconnectInput: input ${port.id} disconnected`);
+            if (this.props.onInputDisconnection) {
+                this.props.onInputDisconnection(port.id);
+            }
         }
     };
 
     connectOutput = port => {
         if (port) {
             this.setState({output: port.id});
-            console.log(`connectOutput: input ${port.id} connected`);
-            if (this.props.setOutput) {
-                this.props.setOutput(port.id);
+            console.log(`connectOutput: output ${port.id} connected`);
+            if (this.props.onOutputConnection) {
+                this.props.onOutputConnection(port.id);
             }
         }
     };
 
     disconnectOutput = () => {
-        // if (port) {
+        if (this.state.output) {
+            let port_id = this.state.output;
             this.setState({output: null});
-            console.log(`disconnectInput: output disconnected`);
-            if (this.props.setOutput) {
-                this.props.setOutput(null);
-            // }
+            console.log(`disconnectOutput: output ${port_id} disconnected`);
+            if (this.props.onOutputDisconnection) {
+                this.props.onOutputDisconnection(port_id);
+            }
         }
+
     };
 
     autoConnectInput = () => {
@@ -174,7 +205,7 @@ class Midi extends Component {
     togglePort = (port_id) => {
         let p = portById(port_id);
         if (p.type === 'input') {
-            console.log("toggle input");
+            console.log("toggle input", port_id);
             let prev = this.state.input;
             if (this.state.input) {
                 this.disconnectInput(portById(this.state.input));
@@ -186,10 +217,15 @@ class Midi extends Component {
             }
             this.setState({ input: port_id === prev ? null : port_id });
         } else {
-            console.log("toggle output");
+            console.log("toggle output", port_id);
             // There is nothing to "connect" for an output port since this type of port does not generate any event.
             // if (this.state.output) this.disconnectOutput(this.state.output);
-            this.setState({ output: port_id === this.state.output ? null : port_id });
+            if (this.state.output) {
+                this.disconnectOutput();
+            } else {
+                this.connectOutput(portById(port_id));
+            }
+            // this.setState({ output: port_id === this.state.output ? null : port_id });
         }
     };
 
@@ -256,5 +292,5 @@ class Midi extends Component {
 
 }
 
-export default Midi;
-
+Midi.propTypes = propTypes;
+Midi.defaultProps = defaultProps;

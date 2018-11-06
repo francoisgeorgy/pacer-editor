@@ -7,18 +7,21 @@ import {
     parseSysexDump
 } from "../utils/sysex";
 import ControlSelector from "../components/ControlSelector";
-import {MSG_CTRL_OFF, requestPresetObj, SYSEX_SIGNATURE} from "../pacer";
+import {MSG_CTRL_OFF, requestPresetObj, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer";
 import {hs} from "../utils/hexstring";
 import {produce} from "immer";
-import {outputById} from "../utils/ports";
+import {inputName, outputById, outputName} from "../utils/ports";
 import ControlStepsEditor from "../components/ControlStepsEditor";
 import Midi from "../components/Midi";
 import MidiPort from "../components/MidiPort";
 import Dropzone from "react-dropzone";
 import "./Presets.css";
 import ControlModeEditor from "../components/ControlModeEditor";
+import Status from "../components/Status";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
+
+const MAX_STATUS_MESSAGES = 40;
 
 class Presets extends Component {
 
@@ -27,7 +30,32 @@ class Presets extends Component {
         presetIndex: "",    // preset name, like "B2"
         controlId: "",      //
         changed: false,     // true when the control has been edited
-        data: null
+        data: null,
+        statusMessages: []
+    };
+
+    addStatusMessage = (type, message) => {
+        this.setState(
+            produce(draft => {
+                let m = { type, message };
+                // let len = draft.statusMessages.unshift(m);
+                // if (len > MAX_STATUS_MESSAGES) draft.statusMessages.pop();
+                let len = draft.statusMessages.push(m);
+                if (len > MAX_STATUS_MESSAGES) draft.statusMessages.shift();
+            })
+        );
+    };
+
+    addInfoMessage= message => {
+        this.addStatusMessage("info", message);
+    };
+
+    addWarningMessage= message => {
+        this.addStatusMessage("warning", message);
+    };
+
+    addErrorMessage= message => {
+        this.addStatusMessage("error", message);
     };
 
     /**
@@ -39,7 +67,8 @@ class Presets extends Component {
         await Promise.all(files.map(
             async file => {
                 if (file.size > MAX_FILE_SIZE) {
-                    console.warn(`${file.name}: file too big, ${file.size}`);
+                    console.warn(`readFiles: ${file.name}: file too big, ${file.size}`);
+                    this.addWarningMessage("file too big");
                 } else {
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
                     if (isSysexData(data)) {
@@ -48,16 +77,15 @@ class Presets extends Component {
                                 // draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
                                 draft.data = parseSysexDump(data);
                                 // this.props.onBusy(false);
-                                // data["1"]
-                                let pId = Object.keys(draft.data["1"])[0];
-                                // console.log(pId);
-                                let cId = Object.keys(draft.data["1"][pId]["controls"])[0];
-                                // console.log(cId);
+                                let pId = Object.keys(draft.data[TARGET_PRESET])[0];
+                                let cId = Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0];
                                 draft.presetIndex = parseInt(pId, 10);
                                 draft.controlId = parseInt(cId, 10);
                             })
-                        )
+                        );
+                        this.addInfoMessage("sysfile decoded");
                     } else {
+                        this.addWarningMessage("not a sysfile");
                         console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
                     }
                     // non sysex files are ignored
@@ -153,7 +181,8 @@ class Presets extends Component {
                     draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
                     // this.props.onBusy(false);
                 })
-            )
+            );
+            this.addInfoMessage(`sysex received (${event.data.length} bytes)`);
         } else {
             console.log("MIDI message is not a sysex message")
         }
@@ -167,9 +196,25 @@ class Presets extends Component {
         )
     };
 
-    setOutput = (port_id) => {
-        console.log(`Page.setOutput ${port_id}`);
-        this.setState({output: port_id});
+    onInputConnection = (port_id) => {
+        this.addInfoMessage(`input ${inputName(port_id)} connected`);
+    };
+
+    onInputDisconnection = (port_id) => {
+        this.addInfoMessage(`input ${inputName(port_id)} disconnected`);
+    };
+
+    onOutputConnection = (port_id) => {
+        this.setState(
+            produce(draft => {
+                draft.output = port_id;
+            })
+        );
+        this.addInfoMessage(`output ${outputName(port_id)} connected`);
+    };
+
+    onOutputDisconnection = (port_id) => {
+        this.addInfoMessage(`output ${outputName(port_id)} disconnected`);
     };
 
     sendSysex = msg => {
@@ -180,7 +225,7 @@ class Presets extends Component {
             console.warn(`send: output ${this.state.output} not found`);
             return;
         }
-        this.setState(
+         this.setState(
             {data: null},
             () => out.sendSysex(SYSEX_SIGNATURE, msg)
         );
@@ -190,6 +235,7 @@ class Presets extends Component {
         for (let m of messages) {
             this.sendSysex(m);
         }
+        this.addInfoMessage(`update${messages.length > 1 ? 's' : ''} sent to Pacer`);
     };
 
     render() {
@@ -249,8 +295,11 @@ class Presets extends Component {
                         </div>
                         <div className="content-row-content row-middle-aligned">
                             <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                                  autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
-                                  setOutput={this.setOutput}
+                                  autoConnect={/.*/i} onMidiInputEvent={this.handleMidiInputEvent}
+                                  onInputConnection={this.onInputConnection}
+                                  onInputDisconnection={this.onInputDisconnection}
+                                  onOutputConnection={this.onOutputConnection}
+                                  onOutputDisconnection={this.onOutputDisconnection}
                                   className="sub-header" >
                                 <div>Please connect your Pacer to your computer.</div>
                             </Midi>
@@ -339,7 +388,9 @@ class Presets extends Component {
                         Drop a binary sysex file here<br />or click to open the file dialog
                     </Dropzone>
 
-                    {/*<h2>Help</h2>*/}
+                    <h3>Log:</h3>
+                    <Status messages={this.state.statusMessages} />
+
                 </div>
 
             </div>

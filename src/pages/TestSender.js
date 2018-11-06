@@ -116,7 +116,7 @@ class TestSender extends Component {
                         <div className="content-row-content row-middle-aligned">
                             <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
                                   autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
-                                  setOutput={this.setOutput}
+                                  onOutputConnection={this.setOutput}
                                   className="sub-header" />
                         </div>
                     </div>

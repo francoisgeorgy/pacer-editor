@@ -492,9 +492,9 @@ function buildControlModeSysex(presetIndex, controlId, mode) {
 
 
 function getControlUpdateSysexMessages(presetIndex, controlId, data) {
-    let msgs = buildControlStepSysex(presetIndex, controlId, data["1"][presetIndex]["controls"][controlId]["steps"]);
+    let msgs = buildControlStepSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]);
     if (data["1"][presetIndex]["controls"][controlId]["changed"]) {
-        msgs.push(buildControlModeSysex(presetIndex, controlId, data["1"][presetIndex]["controls"][controlId]["control_mode"]));
+        msgs.push(buildControlModeSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex]["controls"][controlId]["control_mode"]));
     }
     return msgs;
 }
