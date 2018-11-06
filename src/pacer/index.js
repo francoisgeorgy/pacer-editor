@@ -1,4 +1,18 @@
 
+function sortObject(obj) {
+    let arr = [];
+    for (let prop in obj) {
+        if (obj.hasOwnProperty(prop)) {
+            arr.push({
+                'key': prop,
+                'value': obj[prop]
+            });
+        }
+    }
+    arr.sort((a, b) => a.value.localeCompare(b.value));
+    return arr;
+}
+
 export const SYSEX_SIGNATURE = [0x00, 0x01, 0x77];
 export const SYSEX_HEADER = [0x7F];
 
@@ -101,21 +115,21 @@ export const MSG_AD_ATCHAN = 0x02;
 export const MSG_DAWFUNC = 0x7E;
 export const MSG_CTRL_OFF = 0x61;
 
-export const MSG_SW_MIDICC_TGGLE = 0x47;
-export const MSG_SW_MIDICC = 0x40;
-export const MSG_SW_MIDICC_STEP = 0x48;
+export const MSG_SW_MIDI_CC_TGGLE = 0x47;
+export const MSG_SW_MIDI_CC = 0x40;
+export const MSG_SW_MIDI_CC_STEP = 0x48;
 export const MSG_SW_NOTE = 0x43;
 export const MSG_SW_NOTE_TGGLE = 0x44;
-export const MSG_SW_PRGBANK = 0x45;
+export const MSG_SW_PRG_BANK = 0x45;
 export const MSG_SW_PRG_STEP = 0x46;
-export const MSG_SW_NRPNCOARSE = 0x57;
-export const MSG_SW_NRPNFINE = 0x58;
+export const MSG_SW_NRPN_COARSE = 0x57;
+export const MSG_SW_NRPN_FINE = 0x58;
 export const MSG_SW_MMC = 0x55;
 export const MSG_SW_RELAY = 0x59;
-export const MSG_SW_PRESETSELECT = 0x62;
-export const MSG_SW_PRESETINCDEC = 0x56;
-export const MSG_SW_STEPSELECT = 0x63;
-export const MSG_SW_STEPINCDEC = 0x64;
+export const MSG_SW_PRESET_SELECT = 0x62;
+export const MSG_SW_PRESET_INC_DEC = 0x56;
+export const MSG_SW_STEP_SELECT = 0x63;
+export const MSG_SW_STEP_INC_DEC = 0x64;
 
 export const MSG_ENC_CC = 0x12;
 export const MSG_ENC_MIDICC_REL = 0x11;
@@ -139,21 +153,21 @@ export const MSG_TYPES = {
     [MSG_DAWFUNC]: "DAW FUNC",
     [MSG_CTRL_OFF]: "CTRL_OFF",
 
-    [MSG_SW_MIDICC_TGGLE]: "CC TOGGLE",
-    [MSG_SW_MIDICC]: "CC",
-    [MSG_SW_MIDICC_STEP]: "CC STEP",
+    [MSG_SW_MIDI_CC_TGGLE]: "CC TOGGLE",
+    [MSG_SW_MIDI_CC]: "CC",
+    [MSG_SW_MIDI_CC_STEP]: "CC STEP",
     [MSG_SW_NOTE]: "NOTE",
     [MSG_SW_NOTE_TGGLE]: "NOTE TOGGLE",
-    [MSG_SW_PRGBANK]: "PRG BANK",
+    [MSG_SW_PRG_BANK]: "PRG BANK",
     [MSG_SW_PRG_STEP]: "PRG STEP",
-    [MSG_SW_NRPNCOARSE]: "NRPN COARSE",
-    [MSG_SW_NRPNFINE]: "NRPN FINE",
+    [MSG_SW_NRPN_COARSE]: "NRPN COARSE",
+    [MSG_SW_NRPN_FINE]: "NRPN FINE",
     [MSG_SW_MMC]: "MMC",
     [MSG_SW_RELAY]: "RELAY",
-    [MSG_SW_PRESETSELECT]: "PRESET SELECT",
-    [MSG_SW_PRESETINCDEC]: "PRESET INC DEC",
-    [MSG_SW_STEPSELECT]: "STEP SELECT",
-    [MSG_SW_STEPINCDEC]: "STEP INC DEC",
+    [MSG_SW_PRESET_SELECT]: "PRESET SELECT",
+    [MSG_SW_PRESET_INC_DEC]: "PRESET INC DEC",
+    [MSG_SW_STEP_SELECT]: "STEP SELECT",
+    [MSG_SW_STEP_INC_DEC]: "STEP INC DEC",
 
     [MSG_ENC_CC]: "CC",
     [MSG_ENC_MIDICC_REL]: "CC REL",
@@ -168,43 +182,129 @@ export const MSG_TYPES = {
     [MSG_LOAD_CC]: "CC"
 };
 
-export const MSG_TYPES_FULLNAME = {
+// Message types for stompswitches
+export const MSG_TYPES_FULLNAME_SW = {
 
-    [MSG_AD_MIDICC]: "MIDI CC",
-    [MSG_AD_NRPNC]: "MIDI NRPN Coarse",
-    [MSG_AD_NRPNF]: "MIDI NRPN Fine",
-    [MSG_AD_PITCH]: "Pitch Bend",
-    [MSG_AD_ATCHAN]: "AT CHAN",
-    [MSG_DAWFUNC]: "DAW FUNC",
-    [MSG_CTRL_OFF]: "CTRL_OFF",
+    // [MSG_AD_MIDICC]: "MIDI CC",
+    // [MSG_AD_NRPNC]: "MIDI NRPN Coarse",
+    // [MSG_AD_NRPNF]: "MIDI NRPN Fine",
+    // [MSG_AD_PITCH]: "Pitch Bend",
+    // [MSG_AD_ATCHAN]: "AT CHAN",
+    // [MSG_DAWFUNC]: "DAW FUNC",
+    [MSG_CTRL_OFF]: "OFF",
 
-    [MSG_SW_MIDICC_TGGLE]: "MIDI CC Toggle",
-    [MSG_SW_MIDICC]: "CC",
-    [MSG_SW_MIDICC_STEP]: "CC STEP",
-    [MSG_SW_NOTE]: "MIDI Note",
-    [MSG_SW_NOTE_TGGLE]: "MIDI Note Toggle",
-    [MSG_SW_PRGBANK]: "PRG BANK",
-    [MSG_SW_PRG_STEP]: "PRG STEP",
-    [MSG_SW_NRPNCOARSE]: "MIDI NRPN Coarse",
-    [MSG_SW_NRPNFINE]: "MIDI NRPN Fine",
+    [MSG_SW_MIDI_CC_TGGLE]: "CC Toggle",
+    [MSG_SW_MIDI_CC]: "CC",
+    [MSG_SW_MIDI_CC_STEP]: "CC Step",
+    [MSG_SW_NOTE]: "Note",
+    [MSG_SW_NOTE_TGGLE]: "Note Toggle",
+    [MSG_SW_PRG_BANK]: "Prg Bank",
+    [MSG_SW_PRG_STEP]: "Prg Step",
+    [MSG_SW_NRPN_COARSE]: "NRPN Coarse",
+    [MSG_SW_NRPN_FINE]: "NRPN Fine",
     [MSG_SW_MMC]: "MMC",
-    [MSG_SW_RELAY]: "RELAY",
-    [MSG_SW_PRESETSELECT]: "PRESET SELECT",
-    [MSG_SW_PRESETINCDEC]: "PRESET INC DEC",
-    [MSG_SW_STEPSELECT]: "STEP SELECT",
-    [MSG_SW_STEPINCDEC]: "STEP INC DEC",
+    [MSG_SW_RELAY]: "Relay",
+    [MSG_SW_PRESET_SELECT]: "Preset Select",
+    [MSG_SW_PRESET_INC_DEC]: "Preset Inc Dec",
+    [MSG_SW_STEP_SELECT]: "Step Select",
+    [MSG_SW_STEP_INC_DEC]: "Step Inc Dec",
+
+    // [MSG_ENC_CC]: "CC",
+    // [MSG_ENC_MIDICC_REL]: "CC REL",
+    // [MSG_ENC_NRPNC]: "MIDI NRPN Coarse",
+    // [MSG_ENC_NRPNF]: "MIDI NRPN Fine",
+    // [MSG_ENC_PITCH]: "Pitch Bend",
+    // [MSG_ENC_ATCHAN]: "AT CHAN",
+    // [MSG_ENC_PROGRAM]: "PRG",
+    // [MSG_ENC_PRESETSELECT]: "PRESET SEL",
+    // [MSG_ENC_STEPSELECT]: "STEP SEL",
+    //
+    // [MSG_LOAD_CC]: "CC"
+
+};
+
+export const MSG_TYPES_FULLNAME_SW_SORTED = sortObject(MSG_TYPES_FULLNAME_SW);
+
+console.log(MSG_TYPES_FULLNAME_SW_SORTED);
+
+export const MSG_TYPES_FULLNAME_ENC = {
+
+    // [MSG_AD_MIDICC]: "MIDI CC",
+    // [MSG_AD_NRPNC]: "MIDI NRPN Coarse",
+    // [MSG_AD_NRPNF]: "MIDI NRPN Fine",
+    // [MSG_AD_PITCH]: "Pitch Bend",
+    // [MSG_AD_ATCHAN]: "AT CHAN",
+    // [MSG_DAWFUNC]: "DAW FUNC",
+    [MSG_CTRL_OFF]: "OFF",
+    //
+    // [MSG_SW_MIDICC_TGGLE]: "MIDI CC Toggle",
+    // [MSG_SW_MIDICC]: "CC",
+    // [MSG_SW_MIDICC_STEP]: "CC STEP",
+    // [MSG_SW_NOTE]: "MIDI Note",
+    // [MSG_SW_NOTE_TGGLE]: "MIDI Note Toggle",
+    // [MSG_SW_PRGBANK]: "PRG BANK",
+    // [MSG_SW_PRG_STEP]: "PRG STEP",
+    // [MSG_SW_NRPNCOARSE]: "MIDI NRPN Coarse",
+    // [MSG_SW_NRPNFINE]: "MIDI NRPN Fine",
+    // [MSG_SW_MMC]: "MMC",
+    // [MSG_SW_RELAY]: "RELAY",
+    // [MSG_SW_PRESETSELECT]: "PRESET SELECT",
+    // [MSG_SW_PRESETINCDEC]: "PRESET INC DEC",
+    // [MSG_SW_STEPSELECT]: "STEP SELECT",
+    // [MSG_SW_STEPINCDEC]: "STEP INC DEC",
 
     [MSG_ENC_CC]: "CC",
     [MSG_ENC_MIDICC_REL]: "CC REL",
-    [MSG_ENC_NRPNC]: "MIDI NRPN Coarse",
-    [MSG_ENC_NRPNF]: "MIDI NRPN Fine",
+    [MSG_ENC_NRPNC]: "NRPN Coarse",
+    [MSG_ENC_NRPNF]: "NRPN Fine",
     [MSG_ENC_PITCH]: "Pitch Bend",
-    [MSG_ENC_ATCHAN]: "AT CHAN",
-    [MSG_ENC_PROGRAM]: "PRG",
-    [MSG_ENC_PRESETSELECT]: "PRESET SEL",
-    [MSG_ENC_STEPSELECT]: "STEP SEL",
+    [MSG_ENC_ATCHAN]: "AT Chan.",
+    [MSG_ENC_PROGRAM]: "Program",
+    [MSG_ENC_PRESETSELECT]: "Preset Sel",
+    [MSG_ENC_STEPSELECT]: "Step Sel",
 
-    [MSG_LOAD_CC]: "CC"
+    // [MSG_LOAD_CC]: "CC"
+
+};
+
+
+export const MSG_TYPES_FULLNAME_OTHER = {
+
+    [MSG_AD_MIDICC]: "CC",
+    [MSG_AD_NRPNC]: "NRPN Coarse",
+    [MSG_AD_NRPNF]: "NRPN Fine",
+    [MSG_AD_PITCH]: "Pitch Bend",
+    [MSG_AD_ATCHAN]: "AT Chan.",
+    [MSG_DAWFUNC]: "DAW Func.",
+    [MSG_CTRL_OFF]: "OFF",
+    //
+    // [MSG_SW_MIDICC_TGGLE]: "MIDI CC Toggle",
+    // [MSG_SW_MIDICC]: "CC",
+    // [MSG_SW_MIDICC_STEP]: "CC STEP",
+    // [MSG_SW_NOTE]: "MIDI Note",
+    // [MSG_SW_NOTE_TGGLE]: "MIDI Note Toggle",
+    // [MSG_SW_PRGBANK]: "PRG BANK",
+    // [MSG_SW_PRG_STEP]: "PRG STEP",
+    // [MSG_SW_NRPNCOARSE]: "MIDI NRPN Coarse",
+    // [MSG_SW_NRPNFINE]: "MIDI NRPN Fine",
+    // [MSG_SW_MMC]: "MMC",
+    // [MSG_SW_RELAY]: "RELAY",
+    // [MSG_SW_PRESETSELECT]: "PRESET SELECT",
+    // [MSG_SW_PRESETINCDEC]: "PRESET INC DEC",
+    // [MSG_SW_STEPSELECT]: "STEP SELECT",
+    // [MSG_SW_STEPINCDEC]: "STEP INC DEC",
+
+    // [MSG_ENC_CC]: "CC",
+    // [MSG_ENC_MIDICC_REL]: "CC REL",
+    // [MSG_ENC_NRPNC]: "MIDI NRPN Coarse",
+    // [MSG_ENC_NRPNF]: "MIDI NRPN Fine",
+    // [MSG_ENC_PITCH]: "Pitch Bend",
+    // [MSG_ENC_ATCHAN]: "AT CHAN",
+    // [MSG_ENC_PROGRAM]: "PRG",
+    // [MSG_ENC_PRESETSELECT]: "PRESET SEL",
+    // [MSG_ENC_STEPSELECT]: "STEP SEL",
+
+    [MSG_LOAD_CC]: "Load CC"
 
 };
 

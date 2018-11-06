@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import {COLORS, MSG_CTRL_OFF, MSG_SW_NOTE, MSG_TYPES_FULLNAME} from "../pacer";
+import {COLORS, MSG_CTRL_OFF, MSG_SW_NOTE, MSG_TYPES_FULLNAME_SW, MSG_TYPES_FULLNAME_SW_SORTED} from "../pacer";
 import * as Note from "tonal-note";
 import "./ControlStepsEditor.css";
 
@@ -97,10 +97,10 @@ const Step = ({ index, config, updateCallback }) => {
                 <div>
                     <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} defaultValue={config.msg_type}>
                         {
-                            Object.keys(MSG_TYPES_FULLNAME).map(
+                            Object.keys(MSG_TYPES_FULLNAME_SW).map(
                                 key => {
                                     // let n = Note.fromMidi(i, true);
-                                    return <option key={key} value={key}>{MSG_TYPES_FULLNAME[key]}</option>
+                                    return <option key={key} value={key}>{MSG_TYPES_FULLNAME_SW[key]}</option>
                                 })
                         }
                     </select>
@@ -143,9 +143,9 @@ const Step = ({ index, config, updateCallback }) => {
             <div>
                 <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} defaultValue={config.msg_type}>
                 {
-                    Object.keys(MSG_TYPES_FULLNAME).map(
-                        key => {
-                            return <option key={key} value={key}>{MSG_TYPES_FULLNAME[key]}</option>
+                    MSG_TYPES_FULLNAME_SW_SORTED.map(
+                        v => {
+                            return <option key={v.key} value={v.key}>{v.value}</option>
                         })
                 }
                 </select>
