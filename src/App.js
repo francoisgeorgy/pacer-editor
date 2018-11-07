@@ -3,12 +3,13 @@ import './App.css';
 import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
 import Home from "./pages/Home";
 import TestSender from "./pages/TestSender";
-import Presets from "./pages/Presets";
+import Preset from "./pages/Preset";
 import Monitor from "./pages/Monitor";
 import Footer from "./components/Footer";
 import Global from "./pages/Global";
 import DumpDecoder from "./pages/DumpDecoder";
 import Chords from "./pages/Chords";
+import PresetMidi from "./pages/PresetMidi";
 
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
@@ -52,7 +53,8 @@ class App extends Component {
                     <header className="header">
                         {/*<h1>Pacer Editor</h1>*/}
                         <MenuLink activeOnlyWhenExact={true} to="/" label="Home" />
-                        <MenuLink to="/presets" label="Presets" />
+                        <MenuLink to="/preset" label="Preset Controls" />
+                        <MenuLink to="/presetmidi" label="Preset MIDI" />
                         <MenuLink to="/global" label="Global config" />
                         <MenuLink to="/chords" label="Chords" />
                         <MenuLink to="/monitor" label="MIDI monitor" />
@@ -71,9 +73,14 @@ class App extends Component {
                                         <Home />
                                     )
                                 }/>
-                                <Route path="/presets" render={
+                                <Route path="/preset" render={
                                     props => (
-                                        <Presets onBusy={this.onBusy} />
+                                        <Preset onBusy={this.onBusy} />
+                                    )
+                                }/>
+                                <Route path="/presetmidi" render={
+                                    props => (
+                                        <PresetMidi onBusy={this.onBusy} />
                                     )
                                 }/>
                                 <Route path="/global" render={

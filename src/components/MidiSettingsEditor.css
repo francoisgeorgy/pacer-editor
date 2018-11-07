@@ -1,0 +1,27 @@
+
+.settings select, .settings input {
+    min-width: 64px;
+}
+
+.settings input {
+    width: 64px;
+}
+
+.settings {
+    display: grid;
+    grid: repeat(6, 1fr) / repeat(6, auto);
+    justify-content: start;
+    grid-gap: 6px 18px;
+}
+
+.settings > div {}
+
+.settings input[type='text'] {
+    padding: 0 4px;
+    text-align: right;
+}
+
+.setting-col-header {
+    align-self: center;
+    padding-left: 7px;
+}

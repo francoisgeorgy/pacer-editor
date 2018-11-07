@@ -306,9 +306,12 @@ export const MSG_TYPES_FULLNAME_MIDI = {
     // [MSG_ENC_PROGRAM]: "PRG",
     // [MSG_ENC_PRESETSELECT]: "PRESET SEL",
     // [MSG_ENC_STEPSELECT]: "STEP SEL",
-
-
 };
+
+
+export const MSG_TYPES_FULLNAME_MIDI_SORTED = sortObject(MSG_TYPES_FULLNAME_MIDI);
+
+
 
 export const CONTROL_ELEMENT = {
     // 0x00: "",

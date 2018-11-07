@@ -326,7 +326,7 @@ function parseSysexMessage(data) {
     }
 
     // console.log(`target=${TARGET[tgt]} (${h(tgt)}), idx=${h(idx)}, object=${OBJECT[obj]} (${h(obj)}), type=${obj_type}`);
-    console.log(`${TARGETS[tgt]} ${h(idx)} : ${CONTROLS[obj]} ${obj_type}`);
+    // console.log(`${TARGETS[tgt]} ${h(idx)} : ${CONTROLS[obj]} ${obj_type}`);
 
     if (obj_type === "name") {
         //TODO: parse name
@@ -356,7 +356,7 @@ function parseSysexMessage(data) {
         } else if (e === CONTROL_MODE_ELEMENT) {
 
             // CONTROL MODE
-            console.log('parseSysexMessage: CONTROL MODE');
+            // console.log('parseSysexMessage: CONTROL MODE');
 
             let mode_cfg = getControlMode(data.slice(ELM, data.length-1));
             message[tgt][idx]["controls"][obj] = mergeDeep(message[tgt][idx]["controls"][obj], mode_cfg);
@@ -364,7 +364,7 @@ function parseSysexMessage(data) {
         } else if (e >= 0x40 && e <= 0x57) {
 
             // LED
-            console.log('parseSysexMessage: LED');
+            // console.log('parseSysexMessage: LED');
 
             let led_cfg = getControlLED(data.slice(ELM, data.length-1));
             message[tgt][idx]["controls"][obj] = mergeDeep(message[tgt][idx]["controls"][obj], led_cfg);
@@ -372,7 +372,7 @@ function parseSysexMessage(data) {
         } else if (e === 0x7F) {
 
             // ALL
-            console.log('parseSysexMessage: ALL');
+            // console.log('parseSysexMessage: ALL');
 
         } else {
             console.warn(`parseSysexMessage: unknown element: ${h(e)}`);
@@ -562,16 +562,62 @@ function buildControlModeSysex(presetIndex, controlId, mode) {
 
 function getControlUpdateSysexMessages(presetIndex, controlId, data) {
     let msgs = buildControlStepSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]);
-    if (data["1"][presetIndex]["controls"][controlId]["changed"]) {
+    if (data[TARGET_PRESET][presetIndex]["controls"][controlId]["changed"]) {
         msgs.push(buildControlModeSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex]["controls"][controlId]["control_mode"]));
     }
     return msgs;
 }
 
 
+
+function buildMidiSettingStepSysex(presetIndex, settings) {
+
+    console.log(`buildMidiSettingStepSysex(${presetIndex}, ...)`);
+
+    let msgs = [];
+
+    for (let i of Object.keys(settings)) {
+
+        let setting = settings[i];
+
+        if (!setting.changed) continue;
+
+        // start with command and target:
+        let msg = [
+            COMMAND_SET,
+            TARGET_PRESET,
+            presetIndex,
+            CONTROL_MIDI];
+
+        // add data:
+        msg.push((i-1)*6 + 1, 1, setting.channel, 0x00);
+        msg.push((i-1)*6 + 2, 1, setting.msg_type, 0x00);
+        msg.push((i-1)*6 + 3, 1, setting.data[0], 0x00);
+        msg.push((i-1)*6 + 4, 1, setting.data[1], 0x00);
+        msg.push((i-1)*6 + 5, 1, setting.data[2], 0x00);
+        msg.push((i-1)*6 + 6, 1, setting.active);
+
+        // add checksum:
+        msg.push(checksum(msg));
+
+        // inject header and add to list of messages:
+        msgs.push(SYSEX_HEADER.concat(msg));
+    }
+
+    // console.log("buildControlStepSysex", msgs);
+
+    return msgs;
+}
+
+
+function getMidiSettingUpdateSysexMessages(presetIndex, data) {
+    return buildMidiSettingStepSysex(presetIndex, data[TARGET_PRESET][presetIndex]["midi"]);
+}
+
 export {
     isSysexData,
     parseSysexDump,
-    getControlUpdateSysexMessages
+    getControlUpdateSysexMessages,
+    getMidiSettingUpdateSysexMessages
 };
 

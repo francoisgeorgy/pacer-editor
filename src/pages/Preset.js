@@ -15,7 +15,7 @@ import ControlStepsEditor from "../components/ControlStepsEditor";
 import Midi from "../components/Midi";
 import MidiPort from "../components/MidiPort";
 import Dropzone from "react-dropzone";
-import "./Presets.css";
+import "./Preset.css";
 import ControlModeEditor from "../components/ControlModeEditor";
 import Status from "../components/Status";
 
@@ -23,7 +23,7 @@ const MAX_FILE_SIZE = 5 * 1024*1024;
 
 const MAX_STATUS_MESSAGES = 40;
 
-class Presets extends Component {
+class Preset extends Component {
 
     state = {
         output: null,       // MIDI output port used for output
@@ -134,21 +134,21 @@ class Presets extends Component {
         this.setState(
             produce(draft => {
                 if (dataType === "data") {
-                    draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["data"][dataIndex] = v;
+                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["data"][dataIndex] = v;
                 } else {
-                    draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
+                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
                 }
                 if (dataType === "msg_type") {
                     console.log('msg_type', dataType, value);
                     if (v === MSG_CTRL_OFF) {
                         console.log('set active 0');
-                        draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 0;
+                        draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 0;
                     } else {
                         console.log('set active 1');
-                        draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 1;
+                        draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 1;
                     }
                 }
-                draft.data["1"][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
+                draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
                 draft.changed = true;
             })
         );
@@ -162,8 +162,8 @@ class Presets extends Component {
         let v = parseInt(value, 10);
         this.setState(
             produce(draft => {
-                draft.data["1"][draft.presetIndex]["controls"][controlId]["control_mode"] = v;
-                draft.data["1"][draft.presetIndex]["controls"][controlId]["changed"] = true;
+                draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["control_mode"] = v;
+                draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["changed"] = true;
                 draft.changed = true;
             })
         );
@@ -248,33 +248,33 @@ class Presets extends Component {
 
             showEditor = true;
 
-            if (!("1" in data)) {        // TODO: replace "1" by a constant
+            if (!(TARGET_PRESET in data)) {
                 console.log(`Presets: invalid data`, data);
                 showEditor = false;
             }
 
-            if (showEditor && !(presetIndex in data["1"])) {        // TODO: replace "1" by a constant
+            if (showEditor && !(presetIndex in data[TARGET_PRESET])) {
                 console.log(`Presets: preset ${presetIndex} not found in data`);
                 showEditor = false;
             }
 
-            if (showEditor && !("controls" in data["1"][presetIndex])) {
+            if (showEditor && !("controls" in data[TARGET_PRESET][presetIndex])) {
                 console.log(`Presets: controls not found in data`);
                 showEditor = false;
             }
 
-            if (showEditor && !(controlId in data["1"][presetIndex]["controls"])) {
+            if (showEditor && !(controlId in data[TARGET_PRESET][presetIndex]["controls"])) {
                 console.log(`Presets: control ${controlId} not found in data`);
                 showEditor = false;
             }
 
-            if (showEditor && !("steps" in data["1"][presetIndex]["controls"][controlId])) {
+            if (showEditor && !("steps" in data[TARGET_PRESET][presetIndex]["controls"][controlId])) {
                 console.log(`Presets: steps not found in data`);
                 showEditor = false;
             }
         }
 
-        showEditor = showEditor && (Object.keys(data["1"][presetIndex]["controls"][controlId]["steps"]).length === 6);
+        showEditor = showEditor && (Object.keys(data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]).length === 6);
 
         let updateMessages = [];
         if (showEditor) {
@@ -315,7 +315,7 @@ class Presets extends Component {
                         </div>
                         <div className="content-row-content">
 
-                            <h2>Choose the preset and the control to view/edit:</h2>
+                            <h2>Choose the preset and the control to edit:</h2>
 
                             <div className="selectors">
 
@@ -338,10 +338,10 @@ class Presets extends Component {
                             <Fragment>
                                 <h2>Edit the selected control:</h2>
                                 <ControlStepsEditor controlId={controlId}
-                                                    steps={data["1"][presetIndex]["controls"][controlId]["steps"]}
+                                                    steps={data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]}
                                                     onUpdate={(stepIndex, dataType, dataIndex, value) => this.updateControlStep(controlId, stepIndex, dataType, dataIndex, value)} />
                                 <ControlModeEditor controlId={controlId}
-                                                   mode={data["1"][presetIndex]["controls"][controlId]["control_mode"]}
+                                                   mode={data[TARGET_PRESET][presetIndex]["controls"][controlId]["control_mode"]}
                                                    onUpdate={(value) => this.updateControlMode(controlId, value)} />
                             </Fragment>
                             }
@@ -400,4 +400,4 @@ class Presets extends Component {
 
 }
 
-export default Presets;
+export default Preset;
