@@ -23,8 +23,18 @@ class Home extends Component {
                 <h1>Limitations</h1>
 
                 <div className="doc">
-                    <p>The current version only allows you to edit the Controls' Steps.</p>
+                    <p>The current version of this editor isn't able to edit the Global configuration of the Pacer.
+                        This editor does not offer patches management either.</p>
+{/*
+                    <p>The current version only allows you to edit:</p>
+                    <p>
+                        <ul>
+                            <li>The steps associated with a preset control</li>
+                            <li>The MIDI settings of a preset</li>
+                        </ul>
+                    </p>
                     <p><i>To be completed...</i></p>
+*/}
                 </div>
 
 {/*
@@ -36,6 +46,19 @@ class Home extends Component {
                     </ol>
                 </div>
 */}
+
+                <h1>MIDI in your browser</h1>
+
+                <div className="doc">
+                    <div>
+                        <p>You need to allow your browser to use your MIDI device:</p>
+                        <img src="help-01.png" />
+                    </div>
+                    <div>
+                        <p>In case you didn't allow the use of MIDI device and want to change that, you can right-click on the URL icon and change the setting:</p>
+                        <img src="help-02.png" />
+                    </div>
+                </div>
 
                 <h1>FAQ</h1>
 
