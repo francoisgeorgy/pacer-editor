@@ -1,11 +1,12 @@
 .footer {
     /*margin-top: 20px;*/
     padding: 10px;
-    border-top: 1px solid #aaaaaa;
+    /*background-color: #333;*/
+    border-top: 1px solid #000;
     width: 100%;
     /*text-align: center;*/
-    color: #666;
-    font-size: 0.875rem;
+    color: #aaa;
+    font-size: 0.75rem;
     /*display: flex;*/
     /*flex-direction: row;*/
     /*flex-grow: 1;*/
@@ -17,11 +18,13 @@
     text-align: right;
     display: flex;
     align-items: center;
-    opacity: 0.5;
+    /*opacity: 0.5;*/
+    /*color: #222;*/
 }
 
 .footer a {
-    fill: blue;
+    fill: #7777ff;
+    color: #7777ff;
 }
 
 .footer svg {

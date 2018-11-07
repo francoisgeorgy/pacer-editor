@@ -93,12 +93,14 @@ class DumpDecoder extends Component {
             <div className="wrapper">
                 <div className="content">
                     <div className="content-row step-1">
+{/*
                         <div className="background">
                             Connect
                         </div>
                         <div className="content-row-header">
                             1
                         </div>
+*/}
                         <div className="content-row-content row-middle-aligned">
                             <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
                                   autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
@@ -108,13 +110,18 @@ class DumpDecoder extends Component {
                         </div>
                     </div>
                     <div className="content-row step-2">
+{/*
                         <div className="background">
                             Get dump
                         </div>
                         <div className="content-row-header">
                             2
                         </div>
-                        <div className="content-row-content row-middle-aligned">
+*/}
+
+
+                        <div className="content-row-content">
+                            <h2>Dump:</h2>
                             {/*<Dropzone onDrop={this.onDrop} className="drop-zone">*/}
                                 {/*Drop a binary sysex file here or click to open the file dialog*/}
                             {/*</Dropzone>*/}
@@ -122,18 +129,22 @@ class DumpDecoder extends Component {
                         </div>
                     </div>
                     <div className="content-row step-3">
+{/*
                         <div className="background">
                             Decode
                         </div>
                         <div className="content-row-header">
                             3
                         </div>
+*/}
                         <div className="content-row-content">
                             <DumpSysex data={data} />
 
+{/*
                             <div className="debug">
                                 <pre>{JSON.stringify(data, null, 4)}</pre>
                             </div>
+*/}
 
                         </div>
                     </div>
@@ -144,7 +155,7 @@ class DumpDecoder extends Component {
                         Drop a binary sysex file here<br />or click to open the file dialog
                     </Dropzone>
 
-                    {/*<h2>Help</h2>*/}
+                    {/*<h3>Help</h3>*/}
                 </div>
 
             </div>

@@ -1,0 +1,14 @@
+.selector {
+    background-color: #eeeeff;
+    border: 1px solid #bbbbff;
+}
+
+.selector:hover {
+    background-color: lightblue;
+    border: 1px solid #aaa;
+}
+
+.selector.selected {
+    background-color: orange;       /* present selected color overrides preset hover color */
+    border: 1px solid red;
+}

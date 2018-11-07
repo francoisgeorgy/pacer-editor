@@ -65,17 +65,19 @@ html {
     -webkit-text-size-adjust: 100%;
 }
 body {
-    font-family: futura-pt, Arial, "Helvetica Neue", Helvetica, sans-serif;
+    /*font-family: futura-pt, Arial, "Helvetica Neue", Helvetica, sans-serif;*/
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 400;
     font-style: normal;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.2;
     color: #000;
-    background-color: #FFF;
+    /*background-color: #FFF;*/
     margin: 0;
     padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: #333;
 }
 
 h1, h2, h3, h4, strong {
@@ -88,17 +90,19 @@ a {
 }
 
 select, input {
-    font-family: futura-pt, Arial, "Helvetica Neue", Helvetica, sans-serif;
+    /*font-family: futura-pt, Arial, "Helvetica Neue", Helvetica, sans-serif;*/
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 400;
-    font-size: 1rem;
+    /*font-size: 1rem;*/
     font-style: normal;
 }
 
 
 button {
-    font-family: futura-pt, Arial, "Helvetica Neue", Helvetica, sans-serif;
+    /*font-family: futura-pt, Arial, "Helvetica Neue", Helvetica, sans-serif;*/
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 400;
-    font-size: 1rem;
+    /*font-size: 1rem;*/
     font-style: normal;
 }
 
@@ -108,4 +112,10 @@ button {
 
 .strong {
     font-weight: bold;
+}
+
+button.update {
+    background-image: linear-gradient(to bottom, #ffdd99, #ffaa00);
+    border: 1px solid #999;
+    font-size: 1rem;
 }

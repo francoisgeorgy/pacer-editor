@@ -1,9 +1,10 @@
 import React, {Fragment} from "react";
 import "./PresetSelector.css";
+import "./selector.css";
 import {presetXYToIndex} from "../pacer";
 
 const Selector = ({ name, id, selected, onClick }) =>
-    <div className={selected ? "selected" : ""} onClick={() => onClick(id)}>{name}</div>;
+    <div className={selected ? "selector selected" : "selector"} onClick={() => onClick(id)}>{name}</div>;
 
 
 /*

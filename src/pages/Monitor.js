@@ -8,6 +8,8 @@ import {CONTROLER, MESSAGE} from "../utils/midi";
 import * as Note from "tonal-note";
 import "./Monitor.css";
 
+const MAX_MESSAGES = 40;
+
 class Monitor extends Component {
 
     state = {
@@ -20,7 +22,7 @@ class Monitor extends Component {
         this.setState(
             produce(draft => {
                 let len = draft.messages.unshift(event.data);
-                if (len > 20) draft.messages.pop();
+                if (len > MAX_MESSAGES) draft.messages.pop();
             })
         )
         // }
@@ -41,12 +43,14 @@ class Monitor extends Component {
                 <div className="content">
                     <div>
                         <div className="content-row step-1">
+{/*
                             <div className="background">
                                 Connect
                             </div>
                             <div className="content-row-header">
                                 1
                             </div>
+*/}
                             <div className="content-row-content row-middle-aligned">
                                 <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
                                       autoConnect={/.*/i} onMidiInputEvent={this.handleMidiInputEvent}
@@ -56,12 +60,14 @@ class Monitor extends Component {
                             </div>
                         </div>
                         <div className="content-row step-2">
+{/*
                             <div className="background">
                                 View
                             </div>
                             <div className="content-row-header">
                                 2
                             </div>
+*/}
                             <div className="content-row-content">
                                 <div>
                                     <h2>MIDI messages</h2>
@@ -113,10 +119,12 @@ class Monitor extends Component {
                         </div>
                     </div>
                 </div>
+{/*
 
                 <div className="help">
-                    <h2>Help</h2>
+                    <h3>Help</h3>
                 </div>
+*/}
             </div>
         );
     }

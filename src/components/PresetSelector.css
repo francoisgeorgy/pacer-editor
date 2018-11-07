@@ -10,20 +10,23 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f4f4f4;
     width: 40px;
     padding: 4px 0;
     cursor: pointer;
-    border: 1px solid #eeeeee;
+    /*border: 1px solid #eeeeee;*/
 }
 
+/*
 .preset-selectors > div:hover {
     background-color: lightblue;
     border: 1px solid #aaa;
 }
+*/
 
+/*
 .preset-selectors > div.selected {
-    background-color: orange;       /* present selected color overrides preset hover color */
+    background-color: orange;       !* present selected color overrides preset hover color *!
     border: 1px solid red;
 }
+*/
 

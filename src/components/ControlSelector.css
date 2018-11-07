@@ -14,22 +14,26 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f4f4f4;
+    /*background-color: #f4f4f4;*/
     margin-right: 4px;
     width: 50px;
     cursor: pointer;
-    border: 1px solid #eeeeee;
+    /*border: 1px solid #eeeeee;*/
 }
 
+/*
 .controls > div:hover {
     background-color: lightblue;
     border: 1px solid #aaa;
 }
+*/
 
+/*
 .controls > div.selected {
-    background-color: orange;       /* present selected color overrides preset hover color */
+    background-color: orange;       !* present selected color overrides preset hover color *!
     border: 1px solid red;
 }
+*/
 
 .controls > div.no-control {
     background-color: transparent;

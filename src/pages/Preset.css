@@ -1,8 +1,8 @@
 
-h2 {
-    margin-top: 0;
-    margin-bottom: 0.25rem
-}
+/*h2 {*/
+    /*margin-top: 0;*/
+    /*margin-bottom: 0.25rem*/
+/*}*/
 
 .selectors {
     display: flex;
@@ -17,10 +17,6 @@ h2 {
     margin-top: 20px;
 }
 
-div.status {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-}
 
 .debug {
     margin: 20px 0;

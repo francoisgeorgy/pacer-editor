@@ -107,12 +107,14 @@ class TestSender extends Component {
             <div className="wrapper">
                 <div className="content">
                     <div className="content-row step-1">
+{/*
                         <div className="background">
                             Connect
                         </div>
                         <div className="content-row-header">
                             1
                         </div>
+*/}
                         <div className="content-row-content row-middle-aligned">
                             <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
                                   autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
@@ -121,12 +123,14 @@ class TestSender extends Component {
                         </div>
                     </div>
                     <div className="content-row step-2">
+{/*
                         <div className="background">
                             Send
                         </div>
                         <div className="content-row-header">
                             2
                         </div>
+*/}
                         <div className="content-row-content">
                             <h2>Test messages:</h2>
                             <div>
@@ -153,12 +157,14 @@ class TestSender extends Component {
                         </div>
                     </div>
                     <div className="content-row step-3">
+{/*
                         <div className="background">
                             Receive
                         </div>
                         <div className="content-row-header">
                             3
                         </div>
+*/}
                         <div className="content-row-content">
                             <h2>Response:</h2>
                             <div className="message code">
@@ -170,7 +176,7 @@ class TestSender extends Component {
                 </div>
 
                 <div className="help">
-                    <h2>Help</h2>
+                    <h3>Help</h3>
                 </div>
 
             </div>

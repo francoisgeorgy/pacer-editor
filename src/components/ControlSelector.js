@@ -3,7 +3,7 @@ import {FOOTSWITCHES, STOMPSWITCHES_TOP, STOMPSWITCHES_BOTTOM, EXPPEDALS, CONTRO
 import "./ControlSelector.css";
 
 const Control = ({ name, id, selected, onClick }) =>
-    <div className={selected ? "selected" : ""} onClick={() => onClick(id)}>
+    <div className={selected ? "selector selected" : "selector"} onClick={() => onClick(id)}>
         <div className="name">{name}</div>
     </div>;
 

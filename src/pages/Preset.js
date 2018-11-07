@@ -288,12 +288,14 @@ class Preset extends Component {
                 <div className="content">
 
                     <div className="content-row step-1">
+{/*
                         <div className="background">
                             Connect
                         </div>
                         <div className="content-row-header">
                             1
                         </div>
+*/}
                         <div className="content-row-content row-middle-aligned">
                             <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
                                   autoConnect={/.*/i} onMidiInputEvent={this.handleMidiInputEvent}
@@ -307,12 +309,14 @@ class Preset extends Component {
                         </div>
                     </div>
                     <div className="content-row step-2">
+{/*
                         <div className="background">
                             Select
                         </div>
                         <div className="content-row-header">
                             2
                         </div>
+*/}
                         <div className="content-row-content">
 
                             <h2>Choose the preset and the control to edit:</h2>
@@ -327,12 +331,14 @@ class Preset extends Component {
                     </div>
 
                     <div className="content-row step-3">
+{/*
                         <div className="background">
                             Edit
                         </div>
                         <div className="content-row-header">
                             3
                         </div>
+*/}
                         <div className="content-row-content">
                             {showEditor &&
                             <Fragment>
@@ -349,18 +355,20 @@ class Preset extends Component {
                     </div>
 
                     <div className="content-row step-4">
+{/*
                         <div className="background">
                             Write
                         </div>
                         <div className="content-row-header">
                             4
                         </div>
+*/}
                         <div className="content-row-content">
                             {changed &&
                             <Fragment>
                                 <h2>Send the updated config to the Pacer:</h2>
                                 <div className="actions">
-                                    <button onClick={() => this.updatePacer(updateMessages)}>Update Pacer</button>
+                                    <button className="update" onClick={() => this.updatePacer(updateMessages)}>Update Pacer</button>
                                 </div>
                             </Fragment>
                             }
@@ -375,10 +383,12 @@ class Preset extends Component {
                             </div>
                         </div>}
 
+{/*
                         {data && <div className="debug">
                             <h4>[Debug] sysex data:</h4>
                             <pre>{JSON.stringify(data, null, 4)}</pre>
                         </div>}
+*/}
 
                     </div>
                 </div>

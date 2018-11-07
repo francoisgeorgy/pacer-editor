@@ -31,23 +31,27 @@ class Chords extends Component {
             <div className="wrapper">
                 <div className="content">
                     <div className="content-row step-1">
+{/*
                         <div className="background">
                             Connect
                         </div>
                         <div className="content-row-header">
                             1
                         </div>
+*/}
                         <div className="content-row-content row-middle-aligned">
-                            <h2>Sorry, this feature is not implemented yet.</h2>
+                            <div className="sorry">Sorry, this feature is not implemented yet.</div>
                         </div>
                     </div>
                     <div className="content-row step-2">
+{/*
                         <div className="background">
                             Select
                         </div>
                         <div className="content-row-header">
                             2
                         </div>
+*/}
                         <div className="content-row-content">
                             <h2>Choose the preset:</h2>
                             <div className="selectors">
@@ -56,12 +60,14 @@ class Chords extends Component {
                         </div>
                     </div>
                     <div className="content-row step-3">
+{/*
                         <div className="background">
                             Edit
                         </div>
                         <div className="content-row-header">
                             3
                         </div>
+*/}
                         <div className="content-row-content">
                             <p>Choose six chords, with up to six notes per chords, and assign them to the stompswitches 1-6.</p>
                             <p>Choose if you want the notes to be played in one shot (like a regular chord) or in sequence (like an arpeggio).</p>
@@ -85,18 +91,20 @@ class Chords extends Component {
                         </div>
                     </div>
                     <div className="content-row step-4">
+{/*
                         <div className="background">
                             Write
                         </div>
                         <div className="content-row-header">
                             4
                         </div>
+*/}
                         <div className="content-row-content">
                         </div>
                     </div>
                 </div>
                 <div className="help">
-                    <h2>Help</h2>
+                    <h3>Help</h3>
                 </div>
             </div>
         );

@@ -93,7 +93,7 @@ const Step = ({ index, config, updateCallback }) => {
     if (inactive) {
         return (
             <Fragment>
-                <div>step {index}:</div>
+                <div className="step-row-header">Step {index}:</div>
                 <div>
                     <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} defaultValue={config.msg_type}>
                         {
@@ -139,7 +139,7 @@ const Step = ({ index, config, updateCallback }) => {
 
     return (
         <Fragment>
-            <div>step {index}:</div>
+            <div className="step-row-header">Step {index}:</div>
             <div>
                 <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} defaultValue={config.msg_type}>
                 {

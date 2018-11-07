@@ -24,7 +24,12 @@
     text-align: right;
 }
 
+.step-row-header {
+    font-weight: bold;
+}
+
 .step-col-header {
     align-self: center;
-    padding-left: 7px;
+    /*padding-left: 7px;*/
+    font-weight: bold;
 }
