@@ -267,31 +267,35 @@ export const MSG_TYPES_FULLNAME_ENC = {
 };
 
 
-export const MSG_TYPES_FULLNAME_OTHER = {
+// Preset Midi Settings
+export const MSG_TYPES_FULLNAME_MIDI = {
 
-    [MSG_AD_MIDICC]: "CC",
-    [MSG_AD_NRPNC]: "NRPN Coarse",
-    [MSG_AD_NRPNF]: "NRPN Fine",
-    [MSG_AD_PITCH]: "Pitch Bend",
-    [MSG_AD_ATCHAN]: "AT Chan.",
+    [MSG_LOAD_CC]: "Load CC",
+    [MSG_SW_NOTE]: "MIDI Note",
+    [MSG_SW_PRG_BANK]: "Program & Bank",
+    [MSG_SW_NRPN_COARSE]: "NRPN Coarse",
+    [MSG_SW_NRPN_FINE]: "NRPN Fine",
+    [MSG_SW_MMC]: "MIDI Machine Control",
+    [MSG_SW_RELAY]: "Relay Outputs",
     [MSG_DAWFUNC]: "DAW Func.",
-    [MSG_CTRL_OFF]: "OFF",
+    [MSG_CTRL_OFF]: "OFF"
+
+    // [MSG_AD_MIDICC]: "CC",
+    // [MSG_AD_NRPNC]: "NRPN Coarse",
+    // [MSG_AD_NRPNF]: "NRPN Fine",
+    // [MSG_AD_PITCH]: "Pitch Bend",
+    // [MSG_AD_ATCHAN]: "AT Chan.",
     //
     // [MSG_SW_MIDICC_TGGLE]: "MIDI CC Toggle",
     // [MSG_SW_MIDICC]: "CC",
     // [MSG_SW_MIDICC_STEP]: "CC STEP",
-    // [MSG_SW_NOTE]: "MIDI Note",
     // [MSG_SW_NOTE_TGGLE]: "MIDI Note Toggle",
-    // [MSG_SW_PRGBANK]: "PRG BANK",
     // [MSG_SW_PRG_STEP]: "PRG STEP",
-    // [MSG_SW_NRPNCOARSE]: "MIDI NRPN Coarse",
-    // [MSG_SW_NRPNFINE]: "MIDI NRPN Fine",
-    // [MSG_SW_MMC]: "MMC",
-    // [MSG_SW_RELAY]: "RELAY",
     // [MSG_SW_PRESETSELECT]: "PRESET SELECT",
     // [MSG_SW_PRESETINCDEC]: "PRESET INC DEC",
     // [MSG_SW_STEPSELECT]: "STEP SELECT",
     // [MSG_SW_STEPINCDEC]: "STEP INC DEC",
+
 
     // [MSG_ENC_CC]: "CC",
     // [MSG_ENC_MIDICC_REL]: "CC REL",
@@ -303,7 +307,6 @@ export const MSG_TYPES_FULLNAME_OTHER = {
     // [MSG_ENC_PRESETSELECT]: "PRESET SEL",
     // [MSG_ENC_STEPSELECT]: "STEP SEL",
 
-    [MSG_LOAD_CC]: "Load CC"
 
 };
 

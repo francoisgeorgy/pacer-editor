@@ -130,6 +130,11 @@ class DumpDecoder extends Component {
                         </div>
                         <div className="content-row-content">
                             <DumpSysex data={data} />
+
+                            <div className="debug">
+                                <pre>{JSON.stringify(data, null, 4)}</pre>
+                            </div>
+
                         </div>
                     </div>
                 </div>

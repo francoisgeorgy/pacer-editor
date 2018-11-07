@@ -35,10 +35,38 @@ const MidiElement = ({ data }) => {
 };
 */
 
-const Midis = ({ midis }) => {
-    if (midis === null) return null;
+const MidiTable = ({ settings }) => {
+    if (settings === null || settings === undefined) return null;
     return (
-        <div></div>
+        <div className="dump-control">
+            <table>
+                <tbody>
+                <tr>
+                    <td colSpan={7} className="name">MIDI settings</td>
+                </tr>
+                {Object.keys(settings).map(i =>
+                    <tr key={i}>
+                        <td>settings {i}</td>
+                        <td>ch. {h(settings[i]["channel"])}</td>
+                        <td>msg {h(settings[i]["msg_type"])}</td>
+                        <td>{MSG_TYPES[settings[i]["msg_type"]]}</td>
+                        <td>{hs(settings[i]["data"])}</td>
+                        <td>{settings[i]["msg_type"] === MSG_SW_NOTE ? Note.fromMidi(settings[i]["data"][0], true) : "  "}</td>
+                        <td>active {settings[i]["active"]}</td>
+                    </tr>
+                )}
+                </tbody>
+            </table>
+        </div>
+    );
+};
+
+const MidiSettings = ({ settings }) => {
+    if (settings === null) return null;
+    return (
+        <div>
+            <MidiTable settings={settings} />
+        </div>
     );
 };
 
@@ -112,7 +140,7 @@ const Preset = ({ index, data }) => {
         <div>
             <h2>Preset {presetIndexToXY(parseInt(index, 10))} (#{index})</h2>
             <Controls controls={data["controls"]} />
-            <Midis controls={data["controls"]} />
+            <MidiSettings settings={data["midi"]} />
             {/*<pre>{JSON.stringify(data, null, 4)}</pre>*/}
             {/*<pre>{JSON.stringify(data, null, 4)}</pre>*/}
         </div>

@@ -105,6 +105,13 @@ function getControlStep(data) {
 }
 
 
+function getControlMode(data) {
+    return {
+        control_mode: data[1]
+    };
+}
+
+
 function getControlLED(data) {
 
     console.log("getControlLED", hs(data));
@@ -237,9 +244,23 @@ function getControlLED(data) {
 }
 
 
-function getControlMode(data) {
+function getMidiSetting(data) {
+
+    console.log("getMidiSetting", hs(data));
+
+    // 01 01 00 00
+    // 02 01 61 00
+    // 03 01 00 00
+    // 04 01 00 00
+    // 05 01 00 0A
+
     return {
-        control_mode: data[1]
+        index: (data[0] - 1) / 6 + 1,       // e.g.: 7 --> 1, ..., 0x2B 43 --> 8
+        config: {
+            channel: data[2],
+            msg_type: data[6],
+            data: [data[10], data[14], data[18]]
+        }
     };
 }
 
@@ -361,7 +382,55 @@ function parseSysexMessage(data) {
     }
 
     if (obj_type === "midi") {
-        //TODO: parse midi
+
+        // F0 00 01 77 7F 01 01 01
+        // 7E
+        //
+        // 25 01 00 00
+        // 26 01 61 00
+        // 27 01 00 00
+        // 28 01 00 00
+        // 29 01 00 56
+        //
+        // F7
+
+        // F0 00 01 77 7F 01 01 05
+        // 7E
+        //
+        // 07 01 02 00
+        // 08 01 65 00
+        // 09 01 7B 00
+        // 0A 01 7F 00
+        // 0B 01 00 68
+        //
+        // F7
+
+        message[tgt][idx]["midi"] = {
+            // settings: {}
+        };
+
+        // which element?
+        let e = data[ELM];
+
+        if (e >= 0x01 && e <= 0x60) {
+
+            // if (e === 0x06 || e === 0x06 || e === 0x06 || e === 0x06 || e === 0x06 || )
+
+            // console.log(ELM, data.length);  // ELM == 8
+
+            // SETTINGS
+            if (data.length > ELM+19) {
+                let s = getMidiSetting(data.slice(ELM, ELM + 20));
+                message[tgt][idx]["midi"][s.index] = s.config;
+            } else {
+                console.warn(`parseSysexMessage: data does not contains steps. data.length=${data.length}`, hs(data));
+            }
+
+        } else {
+            console.warn(`parseSysexMessage: unknown element: ${h(e)}`);
+            return null;
+        }
+
     }
 
     // console.log('MESSAGE', message);
