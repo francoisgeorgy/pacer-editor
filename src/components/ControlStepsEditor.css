@@ -33,3 +33,10 @@
     /*padding-left: 7px;*/
     font-weight: bold;
 }
+
+.data-help {
+    font-size: 0.66rem;
+    text-align: right;
+    color: #665;
+    margin-top: 1px;
+}

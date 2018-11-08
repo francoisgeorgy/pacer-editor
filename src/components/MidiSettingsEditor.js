@@ -1,5 +1,11 @@
 import React, {Component, Fragment} from 'react';
-import {MSG_CTRL_OFF, MSG_SW_NOTE, MSG_TYPES_FULLNAME_SW, MSG_TYPES_FULLNAME_MIDI_SORTED} from "../pacer";
+import {
+    MSG_CTRL_OFF,
+    MSG_SW_NOTE,
+    MSG_TYPES_FULLNAME_SW,
+    MSG_TYPES_FULLNAME_MIDI_SORTED,
+    MSG_TYPES_DATA_HELP
+} from "../pacer";
 import * as Note from "tonal-note";
 import "./MidiSettingsEditor.css";
 
@@ -74,9 +80,9 @@ const Setting = ({ index, config, updateCallback }) => {
                 }
                 </select>
             </div>
-            <div>{d0}</div>
-            <div>{d1}</div>
-            <div>{d2}</div>
+            <div>{d0}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type][0]}</div></div>
+            <div>{d1}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type][1]}</div></div>
+            <div>{d2}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type][2]}</div></div>
             <div>
                 <select onChange={(event) => updateCallback("channel", null, event.target.value)} defaultValue={config.channel}>
                     {

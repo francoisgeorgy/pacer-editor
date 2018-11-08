@@ -54,7 +54,7 @@ class App extends Component {
                         {/*<h1>Pacer Editor</h1>*/}
                         <MenuLink activeOnlyWhenExact={true} to="/" label="Home" />
                         <MenuLink to="/preset" label="Preset Controls" />
-                        <MenuLink to="/presetmidi" label="Preset MIDI" />
+                        <MenuLink to="/presetmidi" label="Preset Name & MIDI" />
                         <MenuLink to="/global" label="Global config" />
                         <MenuLink to="/chords" label="Chords" />
                         <MenuLink to="/monitor" label="MIDI monitor" />

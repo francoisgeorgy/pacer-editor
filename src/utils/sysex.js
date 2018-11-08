@@ -114,7 +114,7 @@ function getControlMode(data) {
 
 function getControlLED(data) {
 
-    console.log("getControlLED", hs(data));
+    // console.log("getControlLED", hs(data));
 
     // 54 01 00     54 == LED, 01 == 1 byte of data, 00 = data itself
 
@@ -143,7 +143,7 @@ function getControlLED(data) {
         // if (i===0) console.log(`getControlLED: [${h(d)}], step ${step}`);
         if (i===0) {
             step = "" + ((d - 0x40) / 4 + 1);
-            console.log(`getControlLED: [${h(d)}], step ${step}`);
+            // console.log(`getControlLED: [${h(d)}], step ${step}`);
         }
         // if (!(step in cfg.steps)) cfg.steps[step] = {led:{}};
         if (!(step in cfg.steps)) cfg.steps[step] = {};
@@ -239,14 +239,14 @@ function getControlLED(data) {
         }
     }
 
-    console.log("getControlLED", cfg);
+    // console.log("getControlLED", cfg);
     return cfg;
 }
 
 
 function getMidiSetting(data) {
 
-    console.log("getMidiSetting", hs(data));
+    // console.log("getMidiSetting", hs(data));
 
     // 01 01 00 00
     // 02 01 61 00
@@ -262,6 +262,29 @@ function getMidiSetting(data) {
             data: [data[10], data[14], data[18]]
         }
     };
+}
+
+
+function getPresetName(data) {
+
+    console.log("getPresetName", hs(data));
+
+    // 01 05 4E 4F 54 45 53 69
+
+    const len = data[1];
+
+    return String.fromCharCode.apply(null, data.slice(2, 2 + len));
+
+/*
+    return {
+        index: (data[0] - 1) / 6 + 1,       // e.g.: 7 --> 1, ..., 0x2B 43 --> 8
+        config: {
+            channel: data[2],
+            msg_type: data[6],
+            data: [data[10], data[14], data[18]]
+        }
+    };
+*/
 }
 
 
@@ -329,7 +352,10 @@ function parseSysexMessage(data) {
     // console.log(`${TARGETS[tgt]} ${h(idx)} : ${CONTROLS[obj]} ${obj_type}`);
 
     if (obj_type === "name") {
-        //TODO: parse name
+
+        // NAME
+        message[tgt][idx]["name"] = getPresetName(data.slice(ELM));
+
     }
 
     if (obj_type === "control") {
@@ -446,7 +472,7 @@ function parseSysexMessage(data) {
  */
 function parseSysexDump(data) {
 
-    console.log("parseSysexDump", hs(data));
+    // console.log("parseSysexDump", hs(data));
 
     if (data === null) return null;
 
@@ -498,7 +524,7 @@ function parseSysexDump(data) {
  */
 function buildControlStepSysex(presetIndex, controlId, steps) {
 
-    console.log(`buildControlStepSysex(${presetIndex}, ${controlId}, ...)`);
+    // console.log(`buildControlStepSysex(${presetIndex}, ${controlId}, ...)`);
 
     let msgs = [];
 
@@ -537,7 +563,7 @@ function buildControlStepSysex(presetIndex, controlId, steps) {
 
 function buildControlModeSysex(presetIndex, controlId, mode) {
 
-    console.log(`buildControlStepMode(${presetIndex}, ${controlId}, ...)`);
+    // console.log(`buildControlStepMode(${presetIndex}, ${controlId}, ...)`);
 
     // start with command and target:
     let msg = [
@@ -572,7 +598,7 @@ function getControlUpdateSysexMessages(presetIndex, controlId, data) {
 
 function buildMidiSettingStepSysex(presetIndex, settings) {
 
-    console.log(`buildMidiSettingStepSysex(${presetIndex}, ...)`);
+    // console.log(`buildMidiSettingStepSysex(${presetIndex}, ...)`);
 
     let msgs = [];
 
@@ -610,14 +636,43 @@ function buildMidiSettingStepSysex(presetIndex, settings) {
 }
 
 
+function buildPresetNameSysex(presetIndex, data) {
+
+    if (!data[TARGET_PRESET][presetIndex].changed) return null;
+
+    // start with command and target:
+    let msg = [
+        COMMAND_SET,
+        TARGET_PRESET,
+        presetIndex,
+        CONTROL_NAME];
+
+    const s = data[TARGET_PRESET][presetIndex]["name"];
+
+    // add data:
+    msg.push(s.length);
+
+    for (let i=0; i < s.length; i++) {
+        msg.push(s.charCodeAt(i));
+    }
+
+    // add checksum:
+    msg.push(checksum(msg));
+
+    return msg;
+}
+
+
 function getMidiSettingUpdateSysexMessages(presetIndex, data) {
     return buildMidiSettingStepSysex(presetIndex, data[TARGET_PRESET][presetIndex]["midi"]);
 }
+
 
 export {
     isSysexData,
     parseSysexDump,
     getControlUpdateSysexMessages,
-    getMidiSettingUpdateSysexMessages
+    getMidiSettingUpdateSysexMessages,
+    buildPresetNameSysex
 };
 

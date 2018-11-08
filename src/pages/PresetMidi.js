@@ -1,6 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import PresetSelector from "../components/PresetSelector";
 import {
+    buildPresetNameSysex,
     getMidiSettingUpdateSysexMessages,
     isSysexData,
     mergeDeep,
@@ -16,6 +17,7 @@ import {MSG_CTRL_OFF, PACER_MIDI_PORT_NAME, SYSEX_SIGNATURE, TARGET_PRESET} from
 import {hs} from "../utils/hexstring";
 import MidiSettingsEditor from "../components/MidiSettingsEditor";
 import {inputName, outputById, outputName} from "../utils/ports";
+import PresetNameEditor from "../components/PresetNameEditor";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -100,7 +102,8 @@ class PresetMidi extends Component {
     onDrop = (files) => {
         console.log('drop', files);
         // this.props.onBusy(true);
-        this.readFiles(files);  // returned promise is ignored, this is normal.
+        this.setState({data: null}, () => {this.readFiles(files)});
+        // this.readFiles(files);  // returned promise is ignored, this is normal.
     };
 
     selectPreset = (id) => {
@@ -139,6 +142,22 @@ class PresetMidi extends Component {
                     }
                 }
                 draft.data[TARGET_PRESET][draft.presetIndex]["midi"][settingIndex]["changed"] = true;
+                draft.changed = true;
+            })
+        );
+    };
+
+    updatePresetName = (name) => {
+        console.log("PresetMidi.updateName", name);
+        if (name === undefined || name === null) return;
+        if (name.length > 5) {
+            console.warn(`PresetMidi.updateName: name too long: ${name}`);
+            return;
+        }
+        this.setState(
+            produce(draft => {
+                draft.data[TARGET_PRESET][draft.presetIndex]["name"] = name;    // TODO : buld update message
+                draft.data[TARGET_PRESET][draft.presetIndex]["changed"] = true;
                 draft.changed = true;
             })
         );
@@ -247,6 +266,10 @@ class PresetMidi extends Component {
         let updateMessages = [];
         if (showEditor) {
             updateMessages = getMidiSettingUpdateSysexMessages(presetIndex, data);
+            let n = buildPresetNameSysex(presetIndex, data);
+            if (n) {
+                updateMessages.push(n);
+            }
         }
 
         console.log("PresetMidi.render", showEditor, presetIndex);
@@ -308,7 +331,10 @@ class PresetMidi extends Component {
                         <div className="content-row-content">
                             {showEditor &&
                             <Fragment>
-                                <h2>Edit the selected control:</h2>
+                                <h2>Preset name:</h2>
+                                <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]}
+                                                    onUpdate={(name) => this.updatePresetName(name)} />
+                                <h2>Preset MIDI settings:</h2>
                                 <MidiSettingsEditor settings={data[TARGET_PRESET][presetIndex]["midi"]}
                                                     onUpdate={(settingIndex, dataType, dataIndex, value) => this.updateMidiSettings(settingIndex, dataType, dataIndex, value)} />
                             </Fragment>
@@ -330,7 +356,7 @@ class PresetMidi extends Component {
                             <Fragment>
                                 <h2>Send the updated config to the Pacer:</h2>
                                 <div className="actions">
-                                    <button onClick={() => this.updatePacer(updateMessages)}>Update Pacer</button>
+                                    <button className="update" onClick={() => this.updatePacer(updateMessages)}>Update Pacer</button>
                                 </div>
                             </Fragment>
                             }

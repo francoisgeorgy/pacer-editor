@@ -102,7 +102,8 @@ class Preset extends Component {
     onDrop = (files) => {
         console.log('drop', files);
         // this.props.onBusy(true);
-        this.readFiles(files);  // returned promise is ignored, this is normal.
+        this.setState({data: null}, () => {this.readFiles(files)});
+        // this.readFiles(files);  // returned promise is ignored, this is normal.
     };
 
     selectPreset = (id) => {

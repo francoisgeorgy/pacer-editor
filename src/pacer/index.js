@@ -317,6 +317,48 @@ export const MSG_TYPES_FULLNAME_MIDI_SORTED = sortObject(MSG_TYPES_FULLNAME_MIDI
 
 
 
+
+export const MSG_TYPES_DATA_HELP = {
+
+    [MSG_AD_MIDICC]: ["", "", ""],
+    [MSG_AD_NRPNC]: ["", "", ""],
+    [MSG_AD_NRPNF]: ["", "", ""],
+    [MSG_AD_PITCH]: ["", "", ""],
+    [MSG_AD_ATCHAN]: ["", "", ""],
+    [MSG_DAWFUNC]: ["function", "not used", "not used"],
+    [MSG_CTRL_OFF]: ["", "", ""],
+
+    [MSG_SW_MIDI_CC_TGGLE]: ["controller", "value 1", "value 2"],
+    [MSG_SW_MIDI_CC]: ["controller", "down", "up"],
+    [MSG_SW_MIDI_CC_STEP]: ["controller", "start", "end"],
+    [MSG_SW_NOTE]: ["note", "velocity", "not used"],
+    [MSG_SW_NOTE_TGGLE]: ["note", "velocity", "not used"],
+    [MSG_SW_PRG_BANK]: ["program", "bank LSB", "bank MSB"],
+    [MSG_SW_PRG_STEP]: ["not used", "start", "end"],
+    [MSG_SW_NRPN_COARSE]: ["value", "NRPN LSB", "NRPN MSB"],
+    [MSG_SW_NRPN_FINE]: ["value", "NRPN LSB", "NRPN MSB"],
+    [MSG_SW_MMC]: ["device", "command", "not used"],
+    [MSG_SW_RELAY]: ["mode", "relay #", "not used"],
+    [MSG_SW_PRESET_SELECT]: ["preset", "not used", "not used"],
+    [MSG_SW_PRESET_INC_DEC]: ["inc/dec", "not used", "not used"],
+    [MSG_SW_STEP_SELECT]: ["target", "step", "not used"],
+    [MSG_SW_STEP_INC_DEC]: ["target", "inc/dec", "not used"],
+
+    [MSG_ENC_CC]: ["", "", ""],
+    [MSG_ENC_MIDICC_REL]: ["", "", ""],
+    [MSG_ENC_NRPNC]: ["", "", ""],
+    [MSG_ENC_NRPNF]: ["", "", ""],
+    [MSG_ENC_PITCH]: ["", "", ""],
+    [MSG_ENC_ATCHAN]: ["", "", ""],
+    [MSG_ENC_PROGRAM]: ["", "", ""],
+    [MSG_ENC_PRESETSELECT]: ["", "", ""],
+    [MSG_ENC_STEPSELECT]: ["", "", ""],
+
+    [MSG_LOAD_CC]: ["controller", "value", "not used"]
+};
+
+
+
 export const CONTROL_ELEMENT = {
     // 0x00: "",
 

@@ -1,5 +1,12 @@
 import React, {Component, Fragment} from 'react';
-import {COLORS, MSG_CTRL_OFF, MSG_SW_NOTE, MSG_TYPES_FULLNAME_SW, MSG_TYPES_FULLNAME_SW_SORTED} from "../pacer";
+import {
+    COLORS,
+    MSG_CTRL_OFF,
+    MSG_SW_NOTE,
+    MSG_SW_NOTE_TGGLE, MSG_TYPES_DATA_HELP,
+    MSG_TYPES_FULLNAME_SW,
+    MSG_TYPES_FULLNAME_SW_SORTED
+} from "../pacer";
 import * as Note from "tonal-note";
 import "./ControlStepsEditor.css";
 
@@ -126,7 +133,7 @@ const Step = ({ index, config, updateCallback }) => {
     }
 
     let d0, d1, d2;
-    if (config.msg_type === MSG_SW_NOTE) {
+    if ((config.msg_type === MSG_SW_NOTE) || (config.msg_type === MSG_SW_NOTE_TGGLE)) {
         // d0 = `note ${Note.fromMidi(config.data[0], true)}`;
         d0 = <MidiNote note={config.data[0]} onChange={(value) => updateCallback("data", 0, value)} />;
         d1 = <input type="text" value={config.data[1]} onChange={(event) => updateCallback("data", 1, event.target.value)} />;
@@ -150,9 +157,9 @@ const Step = ({ index, config, updateCallback }) => {
                 }
                 </select>
             </div>
-            <div>{d0}</div>
-            <div>{d1}</div>
-            <div>{d2}</div>
+            <div>{d0}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type][0]}</div></div>
+            <div>{d1}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type][1]}</div></div>
+            <div>{d2}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type][2]}</div></div>
             <div>
                 <LEDColor current_value={config.led_active_color} onChange={(value) => updateCallback("led_active_color", null, value)} />
             </div>
