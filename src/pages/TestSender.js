@@ -6,7 +6,7 @@ import {fromHexString, h, hs} from "../utils/hexstring";
 import "./TestSender.css";
 import {produce} from "immer";
 import DumpSysex from "../components/DumpSysex";
-import {checksum, SYSEX_HEADER} from "../pacer";
+import {checksum, PACER_MIDI_PORT_NAME, SYSEX_HEADER} from "../pacer";
 import Midi from "../components/Midi";
 import MidiPort from "../components/MidiPort";
 
@@ -116,10 +116,12 @@ class TestSender extends Component {
                         </div>
 */}
                         <div className="content-row-content row-middle-aligned">
-                            <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                                  autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
+                            <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
+                                  inputRenderer={this.renderPort} outputRenderer={this.renderPort}
+                                  onMidiInputEvent={this.handleMidiInputEvent}
                                   onOutputConnection={this.setOutput}
                                   className="sub-header" />
+                            <div className="no-midi">Please connect your Pacer to your computer.</div>
                         </div>
                     </div>
                     <div className="content-row step-2">

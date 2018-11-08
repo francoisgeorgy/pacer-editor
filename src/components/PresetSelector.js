@@ -31,23 +31,30 @@ const PresetSelectors = ({ currentPreset, onClick }) =>
 //FIXME: allow the selection of preset #0 (CUR)
 
 const PresetSelector = ({ currentPreset, onClick }) =>
-    <div className="preset-selectors">
-    {
-        ['A', 'B', 'C', 'D'].map(
-            letter => {
-                return (
-                    <Fragment key={letter}>{
-                        Array.from(Array(6).keys()).map(
-                            digit => {
-                                let name = letter + (digit + 1);
-                                let id = presetXYToIndex(name);
-                                return <Selector name={name} id={id} selected={id === currentPreset} onClick={onClick} key={id} />
-                            })
-                    }</Fragment>)
-            }
-        )
-    }
-    </div>;
+    <Fragment>
+        <div className="preset-selectors">
+            <Selector name={"0"} id={0} selected={0 === currentPreset} onClick={onClick} key={0} />
+        {
+            ['A', 'B', 'C', 'D'].map(
+                letter => {
+                    return (
+                        <Fragment key={letter}>
+                        {
+                            (letter !== 'A') && <div></div>
+                        }
+                        {
+                            Array.from(Array(6).keys()).map(
+                                digit => {
+                                    let name = letter + (digit + 1);
+                                    let id = presetXYToIndex(name);
+                                    return <Selector name={name} id={id} selected={id === currentPreset} onClick={onClick} key={id} />
+                                })
+                        }</Fragment>)
+                }
+            )
+        }
+        </div>
+    </Fragment>;
 
 /*
 

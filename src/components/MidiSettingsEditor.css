@@ -23,5 +23,10 @@
 
 .setting-col-header {
     align-self: center;
-    padding-left: 7px;
+    /*padding-left: 7px;*/
+    font-weight: bold;
+}
+
+.setting-row-header {
+    font-weight: bold;
 }

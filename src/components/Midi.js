@@ -6,7 +6,8 @@ import {inputById, portById} from "../utils/ports";
 
 const propTypes = {
     classname: PropTypes.string,
-    autoConnect: PropTypes.string,
+    only: PropTypes.string,                 // regex applied to port.name
+    autoConnect: PropTypes.string,          // regex applied to port.name
     inputRenderer: PropTypes.func,
     outputRenderer: PropTypes.func,
     onMidiInputEvent: PropTypes.func,
@@ -21,6 +22,7 @@ const propTypes = {
 
 const defaultProps = {
     classname: '',
+    only: ".*"
 };
 
 /**
@@ -153,23 +155,25 @@ export default class Midi extends Component {
     };
 
     registerInputs = () => {
-        console.log("Midi.registerInputs");
-        this.setState({ inputs: WebMidi.inputs }, () => this.autoConnectInput());
+        const r = new RegExp(this.props.only, 'i');
+        console.log(`Midi.registerInputs matching /${this.props.only}/i`, WebMidi.inputs, WebMidi.inputs.filter(port => port.name.match(r)));
+        this.setState({ inputs: WebMidi.inputs.filter(port => port.name.match(r)) }, () => this.autoConnectInput());
     };
 
     registerOutputs = () => {
-        console.log("Midi.registerOutputs");
-        this.setState({ outputs: WebMidi.outputs }, () => this.autoConnectOutput());
+        const r = new RegExp(this.props.only, 'i');
+        console.log(`Midi.registerOutputs matching /${this.props.only}/i`, WebMidi.outputs, WebMidi.outputs.filter(port => port.name.match(r)));
+        this.setState({ outputs: WebMidi.outputs.filter(port => port.name.match(r)) }, () => this.autoConnectOutput());
     };
 
     unRegisterInputs = () => {
-        console.log("Midi.registerInputs");
+        console.log("Midi.unRegisterInputs");
         this.disconnectInput(portById(this.state.input));
         this.setState({ inputs: [], input: null });
     };
 
     unRegisterOutputs = () => {
-        console.log("Midi.registerOutputs");
+        console.log("Midi.unRegisterOutputs");
         this.setState({ outputs: [], output: null });
     };
 
@@ -185,15 +189,23 @@ export default class Midi extends Component {
         }
         */
 
-        if (e.port.type === 'input') {
-            // console.log(`ignore MIDI input connect event`);
-            console.log("Midi: call registerInputs");
-            this.registerInputs();
-        }
+        if (e.port.name.match(new RegExp(this.props.only, 'i'))) {
 
-        if (e.port.type === 'output') {
-            console.log("Midi: call registerOutputs");
-            this.registerOutputs();
+            if (e.port.type === 'input') {
+                // console.log(`ignore MIDI input connect event`);
+                console.log("Midi.handleMidiConnectEvent: call registerInputs");
+                this.registerInputs();
+            }
+
+            if (e.port.type === 'output') {
+                console.log("Midi.handleMidiConnectEvent: call registerOutputs");
+                this.registerOutputs();
+            }
+
+        } else {
+
+            console.log(`Midi.handleMidiConnectEvent: port ignored: ${e.port.name}`);
+
         }
 
         // Note: if we don't display the events, than the UI will not be updated if we don't update the state.

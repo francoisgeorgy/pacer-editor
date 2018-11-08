@@ -7,6 +7,7 @@ import './DumpDecoder.css';
 import {hs} from "../utils/hexstring";
 import Midi from "../components/Midi";
 import MidiPort from "../components/MidiPort";
+import {PACER_MIDI_PORT_NAME} from "../pacer";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -52,7 +53,8 @@ class DumpDecoder extends Component {
     onDrop = (files) => {
         console.log('drop', files);
         this.props.onBusy(true);
-        this.readFiles(files);  // returned promise is ignored, this is normal.
+        this.setState({data: null}, () => {this.readFiles(files)});
+        // this.readFiles(files);  // returned promise is ignored, this is normal.
     };
 
     handleMidiInputEvent = (event) => {
@@ -102,10 +104,11 @@ class DumpDecoder extends Component {
                         </div>
 */}
                         <div className="content-row-content row-middle-aligned">
-                            <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                                  autoConnect={/Pacer midi1/i} onMidiInputEvent={this.handleMidiInputEvent}
+                            <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
+                                  inputRenderer={this.renderPort} outputRenderer={this.renderPort}
+                                  onMidiInputEvent={this.handleMidiInputEvent}
                                   className="sub-header" >
-                                <div>Please connect your Pacer to your computer.</div>
+                                <div className="no-midi">Please connect your Pacer to your computer.</div>
                             </Midi>
                         </div>
                     </div>

@@ -52,10 +52,11 @@ class Monitor extends Component {
                             </div>
 */}
                             <div className="content-row-content row-middle-aligned">
-                                <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                                      autoConnect={/.*/i} onMidiInputEvent={this.handleMidiInputEvent}
+                                <Midi only=".*" autoConnect=".*"
+                                      inputRenderer={this.renderPort} outputRenderer={this.renderPort}
+                                      onMidiInputEvent={this.handleMidiInputEvent}
                                       className="sub-header" >
-                                    <div>Please connect your Pacer or any other MIDI device to your computer.</div>
+                                    <div className="no-midi">Please connect your Pacer or any other MIDI device to your computer.</div>
                                 </Midi>
                             </div>
                         </div>

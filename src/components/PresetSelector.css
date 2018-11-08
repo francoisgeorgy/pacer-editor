@@ -1,6 +1,6 @@
 .preset-selectors {
     display: grid;
-    grid: repeat(4, 1fr) / repeat(6, auto);
+    grid: repeat(4, 1fr) / repeat(7, auto);
     grid-gap: 6px;
     justify-content: start;
     margin: 10px 20px 10px 0;
@@ -15,18 +15,3 @@
     cursor: pointer;
     /*border: 1px solid #eeeeee;*/
 }
-
-/*
-.preset-selectors > div:hover {
-    background-color: lightblue;
-    border: 1px solid #aaa;
-}
-*/
-
-/*
-.preset-selectors > div.selected {
-    background-color: orange;       !* present selected color overrides preset hover color *!
-    border: 1px solid red;
-}
-*/
-

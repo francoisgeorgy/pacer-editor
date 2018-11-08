@@ -25,7 +25,7 @@ const Setting = ({ index, config, updateCallback }) => {
     if (inactive) {
         return (
             <Fragment>
-                <div>setting {index}:</div>
+                <div className="setting-row-header">setting {index}:</div>
                 <div>
                     <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} defaultValue={config.msg_type}>
                         {
@@ -63,7 +63,7 @@ const Setting = ({ index, config, updateCallback }) => {
 
     return (
         <Fragment>
-            <div>setting {index}:</div>
+            <div className="setting-row-header">Setting {index}:</div>
             <div>
                 <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} defaultValue={config.msg_type}>
                 {

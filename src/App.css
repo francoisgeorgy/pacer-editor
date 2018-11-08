@@ -41,14 +41,11 @@ h3 {
     flex-direction: row;
     align-items: baseline;
     background-color: #333;
-    /*border-bottom: 1px solid #aaa;*/
     border: none;
-    /*padding: 0 0 0 4px;*/
 }
 
 .header-link {
-    /*margin: 10px 1rem 0 0;*/
-    padding: 14px 16px;
+    padding: 14px 0;
     margin: 0;
 }
 
@@ -57,14 +54,13 @@ h3 {
 }
 
 .header-link a {
+    padding: 14px 16px;
     margin: 0;
-    /*font-size: 1.25rem;*/
     text-decoration: none;
     color: #fff;
 }
 
 .header-link.active {
-    /*background-color: #4caf50;*/
     background-color: #0030ff;
 }
 
@@ -161,6 +157,15 @@ h3 {
     /*background-color: #FBA5A9;*/
     /*background-color: #D0D0D0;*/
     /*background-color: #f0dada;*/
+}
+
+.no-midi {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #fbea00c9;
+    /*border: 1px solid #000;*/
+    color: #000;
 }
 
 .all-ports {

@@ -7,7 +7,7 @@ import {
     parseSysexDump
 } from "../utils/sysex";
 import ControlSelector from "../components/ControlSelector";
-import {MSG_CTRL_OFF, requestPresetObj, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer";
+import {MSG_CTRL_OFF, PACER_MIDI_PORT_NAME, requestPresetObj, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer";
 import {hs} from "../utils/hexstring";
 import {produce} from "immer";
 import {inputName, outputById, outputName} from "../utils/ports";
@@ -120,7 +120,7 @@ class Preset extends Component {
         this.setState({
             controlId: id
         });
-        if (this.state.presetIndex && id) {
+        if ((this.state.presetIndex !== undefined) && (this.state.presetIndex !== null) && id) {
             this.sendSysex(requestPresetObj(this.state.presetIndex, id));
         }
     };
@@ -297,14 +297,15 @@ class Preset extends Component {
                         </div>
 */}
                         <div className="content-row-content row-middle-aligned">
-                            <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                                  autoConnect={/.*/i} onMidiInputEvent={this.handleMidiInputEvent}
+                            <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
+                                  inputRenderer={this.renderPort} outputRenderer={this.renderPort}
+                                  onMidiInputEvent={this.handleMidiInputEvent}
                                   onInputConnection={this.onInputConnection}
                                   onInputDisconnection={this.onInputDisconnection}
                                   onOutputConnection={this.onOutputConnection}
                                   onOutputDisconnection={this.onOutputDisconnection}
                                   className="sub-header" >
-                                <div>Please connect your Pacer to your computer.</div>
+                                <div className="no-midi">Please connect your Pacer to your computer.</div>
                             </Midi>
                         </div>
                     </div>

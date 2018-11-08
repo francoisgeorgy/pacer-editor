@@ -13,6 +13,10 @@ function sortObject(obj) {
     return arr;
 }
 
+export const PACER_MIDI_PORT_NAME = "Pacer midi1";          // can be a regex
+export const PACER_MIDI_INPUT_PORT_NAME = "Pacer midi1";
+export const PACER_MIDI_OUTPUT_PORT_NAME = "Pacer midi1";
+
 export const SYSEX_SIGNATURE = [0x00, 0x01, 0x77];
 export const SYSEX_HEADER = [0x7F];
 
@@ -691,7 +695,7 @@ export function requestPresetObj(index, obj) {
  * @returns {string}
  */
 export const presetIndexToXY = index => {
-    if (index === 0) return "CUR";
+    // if (index === 0) return "CUR";
     //TODO: check valid range
     let b = Math.floor((index - 1) / 6);
     let i = (index - 1) % 6 + 1;
@@ -704,9 +708,8 @@ export const presetIndexToXY = index => {
  * @returns {number}
  */
 export const presetXYToIndex = xy => {
-    if (xy === "CUR") return 0;
+    // if (xy === "CUR") return 0;
     //TODO: check valid range
-    //TODO: convert to uppercase before parsing
     let bank = xy.charCodeAt(0) - 65;
     let num = parseInt(xy[1], 10);
     return bank * 6 + num;

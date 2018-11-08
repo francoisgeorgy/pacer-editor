@@ -23,8 +23,8 @@ class Home extends Component {
                 <h1>Limitations</h1>
 
                 <div className="doc">
-                    <p>The current version of this editor isn't able to edit the Global configuration of the Pacer.
-                        This editor does not offer patches management either.</p>
+                    <p>The current version of this editor isn't able to edit the Global configuration of the Pacer.</p>
+                    <p>This editor does not offer patches management either.</p>
 {/*
                     <p>The current version only allows you to edit:</p>
                     <p>
@@ -52,11 +52,11 @@ class Home extends Component {
                 <div className="doc">
                     <div>
                         <p>You need to allow your browser to use your MIDI device:</p>
-                        <img src="help-01.png" />
+                        <img src="help-01.png" alt="" />
                     </div>
                     <div>
                         <p>In case you didn't allow the use of MIDI device and want to change that, you can right-click on the URL icon and change the setting:</p>
-                        <img src="help-02.png" />
+                        <img src="help-02.png" alt="" />
                     </div>
                 </div>
 
@@ -78,7 +78,7 @@ class Home extends Component {
                 <h1>Thanks</h1>
 
                 <div className="doc">
-                    Thank you to the Nektar support service for having provided precious informations regarding the SysEx data format of the Pacer.<br />
+                    Thank you to the Nektar support service for having provided precious informations regarding the SysEx data format of the Pacer.
                     This editor would not have been possible without their support.
                 </div>
 

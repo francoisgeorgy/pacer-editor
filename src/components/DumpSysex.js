@@ -11,30 +11,6 @@ import {h, hs} from "../utils/hexstring";
 import "./DumpSysex.css";
 import * as Note from "tonal-note";
 
-/*
-const presetCoord = index => {
-    if (index === 0) return "CUR";
-    // 23 => D5
-    let b = Math.floor((index - 1) / 6);
-    let i = (index - 1) % 6 + 1;
-    return String.fromCharCode(b + 65) + i.toString();
-};
-*/
-
-/*
-const ControlElement = ({ data }) => {
-    if (data.element === undefined) return null;
-    if (!(data.element in CONTROL_ELEMENT)) return null;
-    return <div>{CONTROL_ELEMENT[data.element]} = {h(data.element_data)}</div>;
-};
-*/
-
-/*
-const MidiElement = ({ data }) => {
-    return <span>midi element</span>;
-};
-*/
-
 const MidiTable = ({ settings }) => {
     if (settings === null || settings === undefined) return null;
     return (
@@ -42,18 +18,24 @@ const MidiTable = ({ settings }) => {
             <table>
                 <tbody>
                 <tr>
-                    <td colSpan={7} className="name">MIDI settings</td>
+                    <td colSpan={6} className="name">MIDI settings</td>
                 </tr>
-                {Object.keys(settings).map(i =>
-                    <tr key={i}>
-                        <td>settings {i}</td>
-                        <td>ch. {h(settings[i]["channel"])}</td>
-                        <td>msg {h(settings[i]["msg_type"])}</td>
-                        <td>{MSG_TYPES[settings[i]["msg_type"]]}</td>
-                        <td>{hs(settings[i]["data"])}</td>
-                        <td>{settings[i]["msg_type"] === MSG_SW_NOTE ? Note.fromMidi(settings[i]["data"][0], true) : "  "}</td>
-                        <td>active {settings[i]["active"]}</td>
-                    </tr>
+                {Object.keys(settings).map(i => {
+                    let t = MSG_TYPES[settings[i]["msg_type"]];
+                    if (settings[i]["msg_type"] === MSG_SW_NOTE) {
+                        t = t + ' ' + Note.fromMidi(settings[i]["data"][0], true) + ' vel. ' + settings[i]["data"][1];
+                    }
+                    return (
+                        <tr key={i}>
+                            <td>settings {i}</td>
+                            <td>ch. {h(settings[i]["channel"])}</td>
+                            <td>msg {h(settings[i]["msg_type"])}</td>
+                            <td>{t}</td>
+                            <td>{hs(settings[i]["data"])}</td>
+                            {/*<td>{settings[i]["msg_type"] === MSG_SW_NOTE ? Note.fromMidi(settings[i]["data"][0], true) : "  "}</td>*/}
+                            <td>{settings[i]["active"] ? "active" : "OFF"}</td>
+                        </tr>
+                    )}
                 )}
                 </tbody>
             </table>
@@ -70,35 +52,6 @@ const MidiSettings = ({ settings }) => {
     );
 };
 
-/*
-const Control = ({ obj, config }) => {
-    if (config === null || config === undefined) return null;
-    return (
-        <div>
-            <h3>{CONTROLS[obj]}</h3>
-            <div>
-                <h4>steps</h4>
-                <div>
-                {Object.keys(config["steps"]).map(i =>
-                    <div key={`${obj}.${i}`}>
-                        <div>step {i}</div>
-                        <ul>
-                            <li>MIDI channel: {h(config["steps"][i]["channel"])}</li>
-                            <li>message type: {h(config["steps"][i]["msg_type"])}</li>
-                            <li>data: {hs(config["steps"][i]["data"])}</li>
-                            <li>active: {config["steps"][i]["active"]}</li>
-                        </ul>
-                    </div>
-                )}
-                </div>
-                <h4>LED</h4>
-                <h4>control</h4>
-            </div>
-        </div>
-    );
-};
-*/
-
 const ControlTable = ({ obj, config }) => {
     if (config === null || config === undefined) return null;
     return (
@@ -106,18 +59,24 @@ const ControlTable = ({ obj, config }) => {
             <table>
                 <tbody>
                     <tr>
-                        <td colSpan={7} className="name">{CONTROLS[obj]}</td>
+                        <td colSpan={6} className="name">{CONTROLS[obj]}</td>
                     </tr>
-                    {Object.keys(config["steps"]).map(i =>
-                        <tr key={`${obj}.${i}`}>
-                            <td>step {i}</td>
-                            <td>ch. {h(config["steps"][i]["channel"])}</td>
-                            <td>msg {h(config["steps"][i]["msg_type"])}</td>
-                            <td>{MSG_TYPES[config["steps"][i]["msg_type"]]}</td>
-                            <td>{hs(config["steps"][i]["data"])}</td>
-                            <td>{config["steps"][i]["msg_type"] === MSG_SW_NOTE ? Note.fromMidi(config["steps"][i]["data"][0], true) : "  "}</td>
-                            <td>active {config["steps"][i]["active"]}</td>
-                        </tr>
+                    {Object.keys(config["steps"]).map(i => {
+                        let t = MSG_TYPES[config["steps"][i]["msg_type"]];
+                        if (config["steps"][i]["msg_type"] === MSG_SW_NOTE) {
+                            t = t + ' ' + Note.fromMidi(config["steps"][i]["data"][0], true) + ' vel. ' + config["steps"][i]["data"][1];
+                        }
+                        return (
+                            <tr key={`${obj}.${i}`}>
+                                <td>step {i}</td>
+                                <td>ch. {h(config["steps"][i]["channel"])}</td>
+                                <td>msg {h(config["steps"][i]["msg_type"])}</td>
+                                <td>{t}</td>
+                                <td>{hs(config["steps"][i]["data"])}</td>
+                                {/*<td>{config["steps"][i]["msg_type"] === MSG_SW_NOTE ? Note.fromMidi(config["steps"][i]["data"][0], true) : "  "}</td>*/}
+                                <td>{config["steps"][i]["active"] ? "active" : "OFF"}</td>
+                            </tr>
+                        )}
                     )}
                 </tbody>
             </table>

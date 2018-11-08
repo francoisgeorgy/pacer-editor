@@ -12,7 +12,7 @@ import Dropzone from "react-dropzone";
 import "./Preset.css";
 import Status from "../components/Status";
 import {produce} from "immer";
-import {MSG_CTRL_OFF, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer";
+import {MSG_CTRL_OFF, PACER_MIDI_PORT_NAME, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer";
 import {hs} from "../utils/hexstring";
 import MidiSettingsEditor from "../components/MidiSettingsEditor";
 import {inputName, outputById, outputName} from "../utils/ports";
@@ -265,14 +265,15 @@ class PresetMidi extends Component {
                         </div>
 */}
                         <div className="content-row-content row-middle-aligned">
-                            <Midi inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                                  autoConnect={/.*/i} onMidiInputEvent={this.handleMidiInputEvent}
+                            <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
+                                  inputRenderer={this.renderPort} outputRenderer={this.renderPort}
+                                  onMidiInputEvent={this.handleMidiInputEvent}
                                   onInputConnection={this.onInputConnection}
                                   onInputDisconnection={this.onInputDisconnection}
                                   onOutputConnection={this.onOutputConnection}
                                   onOutputDisconnection={this.onOutputDisconnection}
                                   className="sub-header" >
-                                <div>Please connect your Pacer to your computer.</div>
+                                <div className="no-midi">Please connect your Pacer to your computer.</div>
                             </Midi>
                         </div>
                     </div>
