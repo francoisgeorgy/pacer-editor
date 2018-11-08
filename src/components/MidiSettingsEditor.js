@@ -10,7 +10,7 @@ import * as Note from "tonal-note";
 import "./MidiSettingsEditor.css";
 
 const MidiNote = ({ note, onChange }) => {
-    console.log(`MidiNote ${note}`, typeof note);
+    // console.log(`MidiNote ${note}`, typeof note);
     return (
         <select onChange={(event) => onChange(event.target.value)} defaultValue={note}>
             {
@@ -97,7 +97,7 @@ const Setting = ({ index, config, updateCallback }) => {
 class MidiSettingsEditor extends Component {
 
     onSettingUpdate = (settingIndex, dataType, dataIndex, value) => {
-        console.log(`MidiSettingsEditor.onSettingUpdate`, settingIndex, dataType, dataIndex, value);
+        // console.log(`MidiSettingsEditor.onSettingUpdate`, settingIndex, dataType, dataIndex, value);
         this.props.onUpdate(settingIndex, dataType, dataIndex, value);
     };
 
@@ -105,7 +105,7 @@ class MidiSettingsEditor extends Component {
 
         const settings = this.props.settings;
 
-        console.log("MidiSettingsEditor.render", settings);
+        // console.log("MidiSettingsEditor.render", settings);
 
         return (
             <div className="settings">

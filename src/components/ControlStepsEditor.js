@@ -59,7 +59,7 @@ const LED = ({ config, onChange }) => {
 */
 
 const MidiNote = ({ note, onChange }) => {
-    console.log(`MidiNote ${note}`, typeof note);
+    // console.log(`MidiNote ${note}`, typeof note);
     return (
         <select onChange={(event) => onChange(event.target.value)} defaultValue={note}>
             {
@@ -74,26 +74,6 @@ const MidiNote = ({ note, onChange }) => {
 };
 
 const Step = ({ index, config, updateCallback }) => {
-
-    // updateCallback(dataType, dataIndex, value)
-    //
-    // "steps": {
-    //     "1": {
-    //         "channel": 0,
-    //         "msg_type": 69,
-    //         "data": [
-    //             0,
-    //             0,
-    //             0
-    //         ],
-    //         "active": 1,
-    //         "led": {
-    //             "midi_ctrl": 0,
-    //             "active_color": 127,
-    //             "inactive_color": 127,
-    //             "num": 0
-    //         }
-    //     },
 
     let inactive = config.msg_type === MSG_CTRL_OFF;
 
@@ -134,7 +114,6 @@ const Step = ({ index, config, updateCallback }) => {
 
     let d0, d1, d2;
     if ((config.msg_type === MSG_SW_NOTE) || (config.msg_type === MSG_SW_NOTE_TGGLE)) {
-        // d0 = `note ${Note.fromMidi(config.data[0], true)}`;
         d0 = <MidiNote note={config.data[0]} onChange={(value) => updateCallback("data", 0, value)} />;
         d1 = <input type="text" value={config.data[1]} onChange={(event) => updateCallback("data", 1, event.target.value)} />;
         d2 = '';
@@ -201,7 +180,7 @@ class ControlStepsEditor extends Component {
 
         const steps = this.props.steps;
 
-        console.log("ControlStepsEditor.render", steps);
+        // console.log("ControlStepsEditor.render", steps);
 
         return (
             <div className="steps">

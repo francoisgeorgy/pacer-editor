@@ -101,7 +101,7 @@ export default class Midi extends Component {
 
                     console.log(`Midi.autoConnectInput: port ${port.name} ${port.id}`);
 
-                    if (port.type === 'input' && port.name.match(this.props.autoConnect)) {  // TODO: check manufacturer too; TODO: match case insensitive
+                    if (port.type === 'input' && port.name.match(new RegExp(this.props.autoConnect, 'i'))) {
 
                         console.log(`Midi.autoConnectInput: connect ${port.name}`);
 
@@ -137,7 +137,7 @@ export default class Midi extends Component {
 
                     console.log(`Midi.autoConnectOutput: port ${port.name} ${port.id}`);
 
-                    if (port.type === 'output' && port.name.match(this.props.autoConnect)) {  // TODO: check manufacturer too; TODO: match case insensitive
+                    if (port.type === 'output' && port.name.match(new RegExp(this.props.autoConnect, 'i'))) {
 
                         console.log(`Midi.autoConnectOutput: autoConnect: auto-connect ${port.name}`);
 

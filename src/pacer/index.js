@@ -707,7 +707,7 @@ export function checksum(bytes) {
  * return the sysex message to send to the Pacer to request some data
  */
 export function requestPreset(index) {
-    let msg = [COMMAND_GET, TARGET_PRESET, index];      // TODO: replace numbers by constants
+    let msg = [COMMAND_GET, TARGET_PRESET, index];
     let cs = checksum(msg);
     msg.push(cs);
     return SYSEX_HEADER.concat(msg);

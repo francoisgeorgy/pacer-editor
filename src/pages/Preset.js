@@ -23,12 +23,16 @@ const MAX_FILE_SIZE = 5 * 1024*1024;
 
 const MAX_STATUS_MESSAGES = 40;
 
+function isVal(v) {
+    return v !== undefined && v !== null && v !== '';
+}
+
 class Preset extends Component {
 
     state = {
         output: null,       // MIDI output port used for output
-        presetIndex: "",    // preset name, like "B2"
-        controlId: "",      //
+        presetIndex: null,
+        controlId: null,      //
         changed: false,     // true when the control has been edited
         data: null,
         statusMessages: []
@@ -107,21 +111,37 @@ class Preset extends Component {
     };
 
     selectPreset = (id) => {
-        console.log(`selectPreset ${id}`);
-        this.setState({
-            presetIndex: id
-        });
-        if (id && this.state.controlId) {
+        // console.log(`selectPreset ${id}`);
+        // if the user selects another preset or control, then clear the data in the state
+        if (id !== this.state.presetIndex) {
+            this.setState({
+                presetIndex: id,
+                data: null
+            });
+        } else {
+            this.setState({
+                presetIndex: id
+            });
+        }
+        if (isVal(id) && this.state.controlId) {
             this.sendSysex(requestPresetObj(id, this.state.controlId));
         }
     };
 
     selectControl = (id) => {
-        console.log(`selectControl ${id}`);
-        this.setState({
-            controlId: id
-        });
-        if ((this.state.presetIndex !== undefined) && (this.state.presetIndex !== null) && id) {
+        // console.log(`selectControl ${id}`);
+        // if the user selects another preset or control, then clear the data in the state
+        if (id !== this.state.presetIndex) {
+            this.setState({
+                controlId: id,
+                data: null
+            });
+        } else {
+            this.setState({
+                controlId: id
+            });
+        }
+        if (isVal(this.state.presetIndex) && id) {
             this.sendSysex(requestPresetObj(this.state.presetIndex, id));
         }
     };
@@ -174,12 +194,19 @@ class Preset extends Component {
      *
      */
     handleMidiInputEvent = (event) => {
-        console.log("Presets.handleMidiInputEvent", event, event.data);
+        // console.log("Presets.handleMidiInputEvent", event, event.data);
         // if (event instanceof MIDIMessageEvent) {
         if (isSysexData(event.data)) {
             this.setState(
                 produce(draft => {
                     draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
+
+                    //TODO: factorise this code:
+                    let pId = Object.keys(draft.data[TARGET_PRESET])[0];
+                    let cId = Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0];
+                    draft.presetIndex = parseInt(pId, 10);
+                    draft.controlId = parseInt(cId, 10);
+
                     // this.props.onBusy(false);
                 })
             );
@@ -227,7 +254,7 @@ class Preset extends Component {
             return;
         }
          this.setState(
-            {data: null},
+            // {data: null},
             () => out.sendSysex(SYSEX_SIGNATURE, msg)
         );
     };
@@ -282,7 +309,7 @@ class Preset extends Component {
             updateMessages = getControlUpdateSysexMessages(presetIndex, controlId, data);
         }
 
-        console.log("Presets.render", showEditor, presetIndex, controlId);
+        // console.log("Presets.render", showEditor, presetIndex, controlId);
 
         return (
             <div className="wrapper">
@@ -327,7 +354,7 @@ class Preset extends Component {
 
                                 <PresetSelector currentPreset={presetIndex} onClick={this.selectPreset} />
 
-                                {presetIndex && <ControlSelector currentControl={controlId} onClick={this.selectControl} />}
+                                {isVal(presetIndex) && <ControlSelector currentControl={controlId} onClick={this.selectControl} />}
                             </div>
                         </div>
                     </div>

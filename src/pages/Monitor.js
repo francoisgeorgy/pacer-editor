@@ -75,7 +75,7 @@ class Monitor extends Component {
                                     <p>The messages are displayed in reverse chronological order (the most recent on top). Only the last 20 messages are displayed.</p>
                                 </div>
                                 <div className="messages">
-                                    {this.state.messages.map((msg, i) => {
+                                    {this.state.messages.map((msg, i) => {      //TODO: display timestamp
                                         let m = parseMidi(msg);
                                         // console.log(m, h(m.messageCode));
                                         let info2 = '';

@@ -13,7 +13,13 @@ import Dropzone from "react-dropzone";
 import "./Preset.css";
 import Status from "../components/Status";
 import {produce} from "immer";
-import {MSG_CTRL_OFF, PACER_MIDI_PORT_NAME, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer";
+import {
+    MSG_CTRL_OFF,
+    PACER_MIDI_PORT_NAME,
+    requestPreset,
+    SYSEX_SIGNATURE,
+    TARGET_PRESET
+} from "../pacer";
 import {hs} from "../utils/hexstring";
 import MidiSettingsEditor from "../components/MidiSettingsEditor";
 import {inputName, outputById, outputName} from "../utils/ports";
@@ -27,7 +33,7 @@ class PresetMidi extends Component {
 
     state = {
         output: null,       // MIDI output port used for output
-        presetIndex: "",    // preset name, like "B2"
+        presetIndex: null,  //
         // controlId: "",      //
         changed: false,     // true when the control has been edited
         data: null,
@@ -80,6 +86,7 @@ class PresetMidi extends Component {
                                 let pId = Object.keys(draft.data[TARGET_PRESET])[0];
                                 // let cId = Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0];
                                 draft.presetIndex = parseInt(pId, 10);
+                                // console.log("PresetMidi.readFiles: preset index", pId, draft.presetIndex);
                                 // draft.controlId = parseInt(cId, 10);
                             })
                         );
@@ -108,14 +115,17 @@ class PresetMidi extends Component {
 
     selectPreset = (id) => {
         console.log(`selectPreset ${id}`);
-        this.setState({
-            presetIndex: id
-        });
-/*
-        if (id && this.state.controlId) {
-            this.sendSysex(requestPresetObj(id, this.state.controlId));
+        if (id !== this.state.presetIndex) {
+            this.setState({
+                presetIndex: id,
+                data: null
+            });
+        } else {
+            this.setState({
+                presetIndex: id
+            });
         }
-*/
+        this.sendSysex(requestPreset(id));
     };
 
     /**
@@ -167,12 +177,15 @@ class PresetMidi extends Component {
      *
      */
     handleMidiInputEvent = (event) => {
-        console.log("PresetMidi.handleMidiInputEvent", event, event.data);
+        // console.log("PresetMidi.handleMidiInputEvent", event, event.data);
         // if (event instanceof MIDIMessageEvent) {
         if (isSysexData(event.data)) {
             this.setState(
                 produce(draft => {
                     draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
+                    let pId = Object.keys(draft.data[TARGET_PRESET])[0];
+                    draft.presetIndex = parseInt(pId, 10);
+                    // console.log(`PresetMidi.handleMidiInputEvent, preset Id from data is ${draft.presetIndex}`);
                     // this.props.onBusy(false);
                 })
             );
@@ -220,7 +233,7 @@ class PresetMidi extends Component {
             return;
         }
          this.setState(
-            {data: null},
+            // {data: null},
             () => out.sendSysex(SYSEX_SIGNATURE, msg)
         );
     };
@@ -236,11 +249,13 @@ class PresetMidi extends Component {
 
         const { presetIndex, data, changed } = this.state;
 
+        // console.log("PresetMidi.render: ", presetIndex);
+
         let showEditor = false;
 
         if (data) {
 
-            console.log("data length", Object.keys(data[TARGET_PRESET][presetIndex]["midi"]).length);
+            // console.log("data length", Object.keys(data[TARGET_PRESET][presetIndex]["midi"]).length);
 
             showEditor = true;
 
@@ -272,7 +287,7 @@ class PresetMidi extends Component {
             }
         }
 
-        console.log("PresetMidi.render", showEditor, presetIndex);
+        // console.log("PresetMidi.render", showEditor, presetIndex);
 
         return (
             <div className="wrapper">

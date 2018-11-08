@@ -44,10 +44,9 @@ class TestSender extends Component {
     };
 
     handleMidiInputEvent = (event) => {
-        console.log("TestSender.handleMidiInputEvent", event, event.data);
+        // console.log("TestSender.handleMidiInputEvent", event, event.data);
         // if (event instanceof MIDIMessageEvent) {
         if (isSysexData(event.data)) {
-            console.log("TestSender.handleMidiInputEvent: update state");
             this.setState(
                 produce(draft => {
                     draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
@@ -68,7 +67,6 @@ class TestSender extends Component {
     };
 
     setOutput = (port_id) => {
-        console.log(`Page.setOutput ${port_id}`);
         this.setState({output: port_id});
     };
 
