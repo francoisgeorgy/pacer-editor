@@ -23,15 +23,14 @@ class TestSender extends Component {
     };
 
     updateCustomMessage = (event) => {
-        let s = (event.target.value.match(/[0-9a-fA-F]+/g) || []).join('');
-        let h = '';
-        for (let i=0; i<s.length; i++) {
-            if ((i > 0) && (i % 2 === 0)) h += ' ';
-            h += s[i];
-        }
+        let s = (event.target.value.toUpperCase().match(/[0-9A-F ]+/g) || []).join('');
+        // let h = '';
+        // for (let i=0; i<s.length; i++) {
+        //     if ((i > 0) && (i % 2 === 0)) h += ' ';
+        //     h += s[i];
+        // }
         this.setState({
-            customMessage: h    //,
-            // cs: checksum(fromHexString(h, / /g))
+            customMessage: s
         });
     };
 
