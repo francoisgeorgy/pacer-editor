@@ -111,3 +111,22 @@ select preset C5 (0x10) :
     1E              elm
     01 10           1 byte data, data = 10
         
+
+message to update name:
+
+    01                  set
+    01                  preset
+    01                  preset #1
+    01                  obj is name
+    05                  5 bytes 
+    50 41 50 41 50      data = PAPAP
+    
+    
+    01 01 01 01 01 05 41 42 43 44 45    ABCDE
+    
+    01 01 01 01 01 05 41 41 41 41 41    AAAAA
+    
+    01 01 01 01 01 05 43 43 43 43 43 
+    
+    01 01 01 01 00 05 42 41 42 45 45 
+    

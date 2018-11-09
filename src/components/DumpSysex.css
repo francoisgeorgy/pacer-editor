@@ -10,6 +10,10 @@
     font-family: Courier New, Courier, monospace;
 }
 
+.dump-preset-name {
+    margin: 1rem 0;
+}
+
 .dump-controls {
     display: flex;
     flex-direction: row;

@@ -16,7 +16,7 @@ class TestSender extends Component {
         output: null,           // MIDI output port used for output
         data: null,
         messages: [
-            requestPreset(5),
+            requestPreset(0),
             requestPresetObj(5, 0x0D)
         ],
         customMessage: ""

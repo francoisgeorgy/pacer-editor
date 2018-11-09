@@ -596,7 +596,7 @@ function getControlUpdateSysexMessages(presetIndex, controlId, data) {
 
 
 
-function buildMidiSettingStepSysex(presetIndex, settings) {
+function buildMidiSettingsSysex(presetIndex, settings) {
 
     // console.log(`buildMidiSettingStepSysex(${presetIndex}, ...)`);
 
@@ -645,7 +645,9 @@ function buildPresetNameSysex(presetIndex, data) {
         COMMAND_SET,
         TARGET_PRESET,
         presetIndex,
-        CONTROL_NAME];
+        CONTROL_NAME,
+        0x00            // when setting the name this byte can be anything
+    ];
 
     const s = data[TARGET_PRESET][presetIndex]["name"];
 
@@ -659,12 +661,13 @@ function buildPresetNameSysex(presetIndex, data) {
     // add checksum:
     msg.push(checksum(msg));
 
-    return msg;
+    // inject header and return result:
+    return SYSEX_HEADER.concat(msg)
 }
 
 
 function getMidiSettingUpdateSysexMessages(presetIndex, data) {
-    return buildMidiSettingStepSysex(presetIndex, data[TARGET_PRESET][presetIndex]["midi"]);
+    return buildMidiSettingsSysex(presetIndex, data[TARGET_PRESET][presetIndex]["midi"]);
 }
 
 

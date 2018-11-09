@@ -17,7 +17,7 @@ class PresetNameEditor extends Component {
         return (
             <div className="preset-name">
                 <p>The preset name is limited to 5 characters.</p>
-                <span className="strong">Name:</span> <input value={name} onChange={this.onNameUpdate} size={5} />
+                <span className="strong">Name:</span> <input value={name} onChange={this.onNameUpdate} size={8} />
             </div>
         );
     }

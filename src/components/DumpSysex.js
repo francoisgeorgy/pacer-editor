@@ -11,6 +11,14 @@ import {h, hs} from "../utils/hexstring";
 import "./DumpSysex.css";
 import * as Note from "tonal-note";
 
+const PresetName = ({ name }) => {
+    console.log("presetname", name);
+    return (
+    <div className="dump-preset-name">Preset name: {name}</div>
+    );
+};
+
+
 const MidiTable = ({ settings }) => {
     if (settings === null || settings === undefined) return null;
     return (
@@ -97,7 +105,8 @@ const Preset = ({ index, data }) => {
     if (data === null || data === undefined) return null;
     return (
         <div>
-            <h2>Preset {presetIndexToXY(parseInt(index, 10))} (#{index})</h2>
+            <h3>Preset {presetIndexToXY(parseInt(index, 10))} (#{index})</h3>
+            <PresetName name={data["name"]} />
             <Controls controls={data["controls"]} />
             <MidiSettings settings={data["midi"]} />
             {/*<pre>{JSON.stringify(data, null, 4)}</pre>*/}

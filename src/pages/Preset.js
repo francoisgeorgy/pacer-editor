@@ -106,7 +106,10 @@ class Preset extends Component {
     onDrop = (files) => {
         console.log('drop', files);
         // this.props.onBusy(true);
-        this.setState({data: null}, () => {this.readFiles(files)});
+        this.setState(
+            {data: null},
+            () => {this.readFiles(files)}
+        );
         // this.readFiles(files);  // returned promise is ignored, this is normal.
     };
 
@@ -253,10 +256,11 @@ class Preset extends Component {
             console.warn(`send: output ${this.state.output} not found`);
             return;
         }
-         this.setState(
-            // {data: null},
-            () => out.sendSysex(SYSEX_SIGNATURE, msg)
-        );
+        // this.setState(
+        //     // {data: null},
+        //     () => out.sendSysex(SYSEX_SIGNATURE, msg)
+        // );
+        out.sendSysex(SYSEX_SIGNATURE, msg);
     };
 
     updatePacer = (messages) => {

@@ -707,7 +707,7 @@ export function checksum(bytes) {
  * return the sysex message to send to the Pacer to request some data
  */
 export function requestPreset(index) {
-    let msg = [COMMAND_GET, TARGET_PRESET, index];
+    let msg = [COMMAND_GET, TARGET_PRESET, index, CONTROL_ALL];
     let cs = checksum(msg);
     msg.push(cs);
     return SYSEX_HEADER.concat(msg);
@@ -737,7 +737,7 @@ export function requestPresetObj(index, obj) {
  * @returns {string}
  */
 export const presetIndexToXY = index => {
-    // if (index === 0) return "CUR";
+    if (index === 0) return "CUR";
     //TODO: check valid range
     let b = Math.floor((index - 1) / 6);
     let i = (index - 1) % 6 + 1;

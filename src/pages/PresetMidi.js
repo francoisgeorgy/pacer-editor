@@ -82,12 +82,12 @@ class PresetMidi extends Component {
                             produce(draft => {
                                 // draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
                                 draft.data = parseSysexDump(data);
-                                // this.props.onBusy(false);
                                 let pId = Object.keys(draft.data[TARGET_PRESET])[0];
                                 // let cId = Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0];
                                 draft.presetIndex = parseInt(pId, 10);
                                 // console.log("PresetMidi.readFiles: preset index", pId, draft.presetIndex);
                                 // draft.controlId = parseInt(cId, 10);
+                                // this.props.onBusy(false);
                             })
                         );
                         this.addInfoMessage("sysfile decoded");
@@ -125,6 +125,7 @@ class PresetMidi extends Component {
                 presetIndex: id
             });
         }
+        // this.props.onBusy(true);
         this.sendSysex(requestPreset(id));
     };
 
@@ -180,6 +181,7 @@ class PresetMidi extends Component {
         // console.log("PresetMidi.handleMidiInputEvent", event, event.data);
         // if (event instanceof MIDIMessageEvent) {
         if (isSysexData(event.data)) {
+            // this.props.onBusy(true);
             this.setState(
                 produce(draft => {
                     draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
@@ -226,19 +228,25 @@ class PresetMidi extends Component {
 
     sendSysex = msg => {
         console.log("sendSysex", msg);
-        if (!this.state.output) return;
+        if (!this.state.output) {
+            console.warn("no output enabled to send the message", this.state);
+            return;
+        }
         let out = outputById(this.state.output);
         if (!out) {
             console.warn(`send: output ${this.state.output} not found`);
             return;
         }
-         this.setState(
-            // {data: null},
-            () => out.sendSysex(SYSEX_SIGNATURE, msg)
-        );
+        // this.setState(
+        //     // {data: null},
+        //     () => out.sendSysex(SYSEX_SIGNATURE, msg)
+        // );
+        // console.log(`PresetMidi: call out.sendSysex()`, hs(msg));
+        out.sendSysex(SYSEX_SIGNATURE, msg);
     };
 
     updatePacer = (messages) => {
+        console.log("PresetMidi.updatePacer");
         for (let m of messages) {
             this.sendSysex(m);
         }
@@ -260,17 +268,17 @@ class PresetMidi extends Component {
             showEditor = true;
 
             if (!(TARGET_PRESET in data)) {
-                console.log(`Presets: invalid data`, data);
+                console.log(`PresetMidi: invalid data`, data);
                 showEditor = false;
             }
 
             if (showEditor && !(presetIndex in data[TARGET_PRESET])) {
-                console.log(`Presets: preset ${presetIndex} not found in data`);
+                // console.log(`PresetMid: preset ${presetIndex} not found in data`);
                 showEditor = false;
             }
 
             if (showEditor && !("midi" in data[TARGET_PRESET][presetIndex])) {
-                console.log(`Presets: midi not found in data`);
+                // console.log(`PresetMidi: midi not found in data`);
                 showEditor = false;
             }
 
@@ -386,10 +394,12 @@ class PresetMidi extends Component {
                             </div>
                         </div>}
 
+{/*
                         {data && <div className="debug">
                             <h4>[Debug] sysex data:</h4>
                             <pre>{JSON.stringify(data, null, 4)}</pre>
                         </div>}
+*/}
 
                     </div>
                 </div>
