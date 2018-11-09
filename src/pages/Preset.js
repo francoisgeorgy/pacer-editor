@@ -32,7 +32,7 @@ class Preset extends Component {
     state = {
         output: null,       // MIDI output port used for output
         presetIndex: null,
-        controlId: null,      //
+        controlId: null,
         changed: false,     // true when the control has been edited
         data: null,
         statusMessages: []

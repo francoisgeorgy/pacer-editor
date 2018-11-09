@@ -117,8 +117,9 @@ class TestSender extends Component {
                                   inputRenderer={this.renderPort} outputRenderer={this.renderPort}
                                   onMidiInputEvent={this.handleMidiInputEvent}
                                   onOutputConnection={this.setOutput}
-                                  className="sub-header" />
-                            <div className="no-midi">Please connect your Pacer to your computer.</div>
+                                  className="sub-header" >
+                                <div className="no-midi">Please connect your Pacer to your computer.</div>
+                            </Midi>
                         </div>
                     </div>
                     <div className="content-row step-2">

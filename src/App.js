@@ -8,7 +8,7 @@ import Monitor from "./pages/Monitor";
 import Footer from "./components/Footer";
 import Global from "./pages/Global";
 import DumpDecoder from "./pages/DumpDecoder";
-import Chords from "./pages/Chords";
+// import Chords from "./pages/Chords";
 import PresetMidi from "./pages/PresetMidi";
 
 
@@ -56,7 +56,7 @@ class App extends Component {
                         <MenuLink to="/preset" label="Preset Controls" />
                         <MenuLink to="/presetmidi" label="Preset Name & MIDI" />
                         <MenuLink to="/global" label="Global config" />
-                        <MenuLink to="/chords" label="Chords" />
+                        {/*<MenuLink to="/chords" label="Chords" />*/}
                         <MenuLink to="/monitor" label="MIDI monitor" />
                         <MenuLink to="/dumpdecoder" label="Dump decoder" />
                         <MenuLink to="/testsender" label="Debug" />
@@ -88,11 +88,13 @@ class App extends Component {
                                         <Global onBusy={this.onBusy} />
                                     )
                                 }/>
+{/*
                                 <Route path="/chords" render={
                                     props => (
                                         <Chords onBusy={this.onBusy} />
                                     )
                                 }/>
+*/}
                                 <Route path="/monitor" render={
                                     props => (
                                         <Monitor onBusy={this.onBusy} />

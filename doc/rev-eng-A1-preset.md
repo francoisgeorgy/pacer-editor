@@ -122,11 +122,23 @@ message to update name:
     50 41 50 41 50      data = PAPAP
     
     
-    01 01 01 01 01 05 41 42 43 44 45    ABCDE
+    01 01 01 01 00 05 41 42 43 44 45    ABCDE
     
-    01 01 01 01 01 05 41 41 41 41 41    AAAAA
+    01 01 01 01 00 05 41 41 41 41 41    AAAAA
     
-    01 01 01 01 01 05 43 43 43 43 43 
+    01 01 01 01 00 05 43 43 43 43 43 
     
     01 01 01 01 00 05 42 41 42 45 45 
+    
+    
+Message to select preset
+
+    01  set
+    05  global
+    00  cur preset
+    01  global elm
+    1E  cur user preset
+    04  preset A5
+    
+    01 05 00 01 1E 04   DOES NOT WORK. DO NOT SEND. NEED RESET AFTER.
     
