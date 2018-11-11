@@ -142,3 +142,19 @@ Message to select preset
     
     01 05 00 01 1E 04   DOES NOT WORK. DO NOT SEND. NEED RESET AFTER.
     
+Preset control:
+
+    F0 00 01 77 7F 
+    01 
+    01 
+    07 
+    0E      control 2 
+    01 01 00 00 
+    02 01 47 00 
+    03 01 2B 00 
+    04 01 7F 00 
+    05 01 00 00 
+    06 01 01 5C 
+    F7    
+    
+    

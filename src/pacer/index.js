@@ -706,8 +706,13 @@ export function checksum(bytes) {
 /**
  * return the sysex message to send to the Pacer to request some data
  */
-export function requestPreset(index) {
-    let msg = [COMMAND_GET, TARGET_PRESET, index, CONTROL_ALL];
+export function requestPreset(presetIndex) {
+    let msg = [
+        COMMAND_GET,
+        TARGET_PRESET,
+        presetIndex,
+        CONTROL_ALL
+    ];
     let cs = checksum(msg);
     msg.push(cs);
     return SYSEX_HEADER.concat(msg);
@@ -716,17 +721,22 @@ export function requestPreset(index) {
 /**
  * return the sysex message to send to the Pacer to request some data
  */
-export function requestPresetObj(index, obj) {
-    // TODO: replace numbers by constants
+export function requestPresetObj(presetIndex, controlId) {
+
+    // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
+    return requestPreset(presetIndex);
+
+/*
     let msg = [
         COMMAND_GET,
         TARGET_PRESET,
-        index,      // preset #
-        obj         // (control)
+        presetIndex,      // preset #
+        controlId         // (control)
     ];
     let cs = checksum(msg);
     msg.push(cs);
     return SYSEX_HEADER.concat(msg);
+*/
 }
 
 // ============================================================================

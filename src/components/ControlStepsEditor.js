@@ -20,12 +20,17 @@ const LEDMidi = ({ current_value, onChange }) => {
 };
 
 const LEDColor = ({ current_value, onChange }) => {
+    console.log("LEDColor", current_value, typeof current_value);
+    // let v = (typeof current_value === 'number') ? current_value.toString() : null;
+    let v = current_value ? 3 : null;
+    // let v = current_value;
     return (
-        <select defaultValue={current_value} onChange={(event) => onChange(event.target.value)}>
+        <select defaultValue={v} onChange={(event) => onChange(event.target.value)}>
             {
                 Object.keys(COLORS).map(
                     key => {
                         // let n = Note.fromMidi(i, true);
+                        // console.log("LEDColor v key", v, key, typeof v, typeof key);
                         return <option key={key} value={key}>{COLORS[key]}</option>
                     })
             }
@@ -74,6 +79,8 @@ const MidiNote = ({ note, onChange }) => {
 };
 
 const Step = ({ index, config, updateCallback }) => {
+
+    console.log("Step", index, config);
 
     let inactive = config.msg_type === MSG_CTRL_OFF;
 
@@ -194,9 +201,13 @@ class ControlStepsEditor extends Component {
                 <div className="step-col-header">LED Num</div>
                 <div className="step-col-header">LED MIDI</div>
                 <div className="step-col-header">MIDI Ch.</div>
+
+                <Step key={1} index={1} config={steps[1]} updateCallback={(dataType, dataIndex, value) => this.onStepUpdate(1, dataType, dataIndex, value)} />
+{/*
                 {Object.keys(steps).map(i =>
                     <Step key={i} index={i} config={steps[i]} updateCallback={(dataType, dataIndex, value) => this.onStepUpdate(i, dataType, dataIndex, value)} />
                 )}
+*/}
             </div>
         );
     }

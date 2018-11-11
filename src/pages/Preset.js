@@ -64,6 +64,38 @@ class Preset extends Component {
 
     /**
      *
+     */
+    handleMidiInputEvent = (event) => {
+        // console.log("Presets.handleMidiInputEvent", hs(event.data));
+        // if (event instanceof MIDIMessageEvent) {
+        if (isSysexData(event.data)) {
+            this.setState(
+                produce(draft => {
+                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
+
+                    // When requesting a config via MIDI (and not via a file drag&drop), we do not
+                    // update the preset and control ID from the MIDI sysex received.
+                    // This is important because to get the LED data we need to request the complete
+                    // preset data instead of just the selected control's config.
+
+                    //TODO: factorise this code:
+                    // let pId = Object.keys(draft.data[TARGET_PRESET])[0];
+                    // let cId = Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0];
+                    // draft.presetIndex = parseInt(pId, 10);
+                    // draft.controlId = parseInt(cId, 10);
+
+                    // this.props.onBusy(false);
+                })
+            );
+            this.addInfoMessage(`sysex received (${event.data.length} bytes)`);
+        } else {
+            console.log("MIDI message is not a sysex message")
+        }
+        // }
+    };
+
+    /**
+     *
      * @param files
      * @returns {Promise<void>}
      */
@@ -163,12 +195,12 @@ class Preset extends Component {
                     draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
                 }
                 if (dataType === "msg_type") {
-                    console.log('msg_type', dataType, value);
+                    // console.log('msg_type', dataType, value);
                     if (v === MSG_CTRL_OFF) {
-                        console.log('set active 0');
+                        // console.log('set active 0');
                         draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 0;
                     } else {
-                        console.log('set active 1');
+                        // console.log('set active 1');
                         draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 1;
                     }
                 }
@@ -182,7 +214,7 @@ class Preset extends Component {
      * dataIndex is only used when dataType == "data"
      */
     updateControlMode = (controlId, value) => {
-        console.log("Presets.updateControlMode", controlId, value);
+        // console.log("Presets.updateControlMode", controlId, value);
         let v = parseInt(value, 10);
         this.setState(
             produce(draft => {
@@ -191,33 +223,6 @@ class Preset extends Component {
                 draft.changed = true;
             })
         );
-    };
-
-    /**
-     *
-     */
-    handleMidiInputEvent = (event) => {
-        // console.log("Presets.handleMidiInputEvent", event, event.data);
-        // if (event instanceof MIDIMessageEvent) {
-        if (isSysexData(event.data)) {
-            this.setState(
-                produce(draft => {
-                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
-
-                    //TODO: factorise this code:
-                    let pId = Object.keys(draft.data[TARGET_PRESET])[0];
-                    let cId = Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0];
-                    draft.presetIndex = parseInt(pId, 10);
-                    draft.controlId = parseInt(cId, 10);
-
-                    // this.props.onBusy(false);
-                })
-            );
-            this.addInfoMessage(`sysex received (${event.data.length} bytes)`);
-        } else {
-            console.log("MIDI message is not a sysex message")
-        }
-        // }
     };
 
     renderPort = (port, selected, clickHandler) => {
@@ -416,12 +421,10 @@ class Preset extends Component {
                             </div>
                         </div>}
 
-{/*
                         {data && <div className="debug">
                             <h4>[Debug] sysex data:</h4>
                             <pre>{JSON.stringify(data, null, 4)}</pre>
                         </div>}
-*/}
 
                     </div>
                 </div>

@@ -267,7 +267,7 @@ function getMidiSetting(data) {
 
 function getPresetName(data) {
 
-    console.log("getPresetName", hs(data));
+    // console.log("getPresetName", hs(data));
 
     // 01 05 4E 4F 54 45 53 69
 
@@ -368,6 +368,8 @@ function parseSysexMessage(data) {
 
         // which element?
         let e = data[ELM];
+
+        // console.log(h(e));
 
         if (e >= 0x01 && e <= 0x24) {
 

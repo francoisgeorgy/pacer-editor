@@ -10,6 +10,35 @@ import {checksum, PACER_MIDI_PORT_NAME, SYSEX_HEADER} from "../pacer";
 import Midi from "../components/Midi";
 import MidiPort from "../components/MidiPort";
 
+
+function debounce(func, wait) {
+    let timeout;
+    return function() {
+        const context = this;
+        const args = arguments;
+        console.log("cleatTimeout");
+        clearTimeout(timeout);
+        // let later = function() {
+        //     timeout = null;
+        //     func.apply(context, args);
+        // };
+        // timeout = setTimeout(later, wait);
+        timeout = setTimeout(() => {
+            timeout = null;
+            console.log("func.apply");
+            func.apply(context, args);
+        }, wait);
+    };
+}
+/*
+const debounce = (func, delay) => {
+  return function() {
+    inDebounce = setTimeout(() => func.apply(context, args), delay)
+  }
+}
+
+*/
+
 class TestSender extends Component {
 
     state = {
@@ -42,6 +71,7 @@ class TestSender extends Component {
         }
     };
 
+    /*
     handleMidiInputEvent = (event) => {
         // console.log("TestSender.handleMidiInputEvent", event, event.data);
         // if (event instanceof MIDIMessageEvent) {
@@ -57,6 +87,26 @@ class TestSender extends Component {
         }
         // }
     };
+
+    debouncedMidi = debounce(handleMessage, 1000);
+    */
+
+    handleMidiInputEvent = debounce((event) => {
+        console.log("TestSender.handleMidiInputEvent", event, event.data);
+        // if (event instanceof MIDIMessageEvent) {
+        if (isSysexData(event.data)) {
+            this.setState(
+                produce(draft => {
+                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
+                    // this.props.onBusy(false);
+                })
+            )
+        } else {
+            console.log("MIDI message is not a sysex message")
+        }
+        // }
+    }, 1000);
+
 
     renderPort = (port, selected, clickHandler) => {
         if (port === undefined || port === null) return null;
@@ -152,6 +202,11 @@ class TestSender extends Component {
                                            placeholder={"hex digits only"} onChange={this.updateCustomMessage} />
                                     <span className="code light"> {h(cs)}</span>
                                 </div>
+{/*
+                                <div>
+                                    {hs(SYSEX_SIGNATURE)} {hs(SYSEX_HEADER)} {hs(customMessage)} {h(cs)}
+                                </div>
+*/}
                             </div>
 
                         </div>
@@ -171,7 +226,14 @@ class TestSender extends Component {
                                 {/*{data && JSON.stringify(data)}*/}
                                 <DumpSysex data={data} />
                             </div>
+
+                            {data && <div className="debug">
+                                <h4>[Debug] sysex data:</h4>
+                                <pre>{JSON.stringify(data, null, 4)}</pre>
+                            </div>}
+
                         </div>
+
                     </div>
                 </div>
 
