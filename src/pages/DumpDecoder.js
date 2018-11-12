@@ -18,6 +18,15 @@ class DumpDecoder extends Component {
     };
 
     /**
+     * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
+     */
+    showBusy = () =>  {
+        // let context = this;
+        setTimeout(() => this.props.onBusy(false), 20000);
+        this.props.onBusy(true);
+    };
+
+    /**
      *
      * @param files
      * @returns {Promise<void>}
@@ -28,6 +37,7 @@ class DumpDecoder extends Component {
                 if (file.size > MAX_FILE_SIZE) {
                     console.warn(`${file.name}: file too big, ${file.size}`);
                 } else {
+                    this.showBusy();
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
                     if (isSysexData(data)) {
                         this.setState(
@@ -35,10 +45,12 @@ class DumpDecoder extends Component {
                                 draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
                                 this.props.onBusy(false);
                             })
-                        )
+                        );
+                        // this.addInfoMessage("sysfile decoded");
                     } else {
                         console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
                     }
+                    this.props.onBusy(false);
                     // non sysex files are ignored
                 }
                 // too big files are ignored
@@ -52,9 +64,7 @@ class DumpDecoder extends Component {
      */
     onDrop = (files) => {
         console.log('drop', files);
-        this.props.onBusy(true);
-        this.setState({data: null}, () => {this.readFiles(files)});
-        // this.readFiles(files);  // returned promise is ignored, this is normal.
+        this.setState({ data: null }, () => {this.readFiles(files)});
     };
 
     handleMidiInputEvent = (event) => {

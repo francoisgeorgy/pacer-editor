@@ -29,15 +29,63 @@ const MAX_FILE_SIZE = 5 * 1024*1024;
 
 const MAX_STATUS_MESSAGES = 40;
 
+function batchMessages(callback, wait) {
+
+    let messages = [];  // array of data arrays
+
+    let timeout;
+
+    return function() {
+        console.log("func enter", arguments);
+
+        // first, reset the timeout
+        clearTimeout(timeout);
+
+        // const context = this;
+
+        let event = arguments[0];
+        // console.log(event.type);
+
+        //TODO: filter by type, name, port, ...
+
+        // channel: 1
+        // data: Uint8Array(3) [144, 47, 115]
+        // note: {number: 47, name: "B", octave: 2}
+        // rawVelocity: 115
+        // target: Input {_userHandlers: {…}, _midiInput: MIDIInput, …}
+        // timestamp: 9612.800000000789
+        // type: "noteon"
+        // velocity: 0.905511811023622
+
+        messages.push(event.data);
+        console.log("messages", messages);
+
+        timeout = setTimeout(() => {
+            console.log("timeout elapsed");
+            timeout = null;
+            callback(messages);
+        }, wait);
+    };
+
+}
+
 class PresetMidi extends Component {
 
     state = {
         output: null,       // MIDI output port used for output
         presetIndex: null,  //
-        // controlId: "",      //
         changed: false,     // true when the control has been edited
         data: null,
         statusMessages: []
+    };
+
+    /**
+     * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
+     */
+    showBusy = () =>  {
+        // let context = this;
+        setTimeout(() => this.props.onBusy(false), 20000);
+        this.props.onBusy(true);
     };
 
     addStatusMessage = (type, message) => {
@@ -64,6 +112,53 @@ class PresetMidi extends Component {
         this.addStatusMessage("error", message);
     };
 
+/*
+     handleMidiInputEvent = (event) => {
+        // console.log("PresetMidi.handleMidiInputEvent", event, event.data);
+        // if (event instanceof MIDIMessageEvent) {
+        if (isSysexData(event.data)) {
+            // this.props.onBusy(true);
+            this.setState(
+                produce(draft => {
+                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
+                    let pId = Object.keys(draft.data[TARGET_PRESET])[0];
+                    draft.presetIndex = parseInt(pId, 10);
+                    // console.log(`PresetMidi.handleMidiInputEvent, preset Id from data is ${draft.presetIndex}`);
+                    // this.props.onBusy(false);
+                })
+            );
+            this.addInfoMessage(`sysex received (${event.data.length} bytes)`);
+        } else {
+            console.log("MIDI message is not a sysex message")
+        }
+        // }
+    };
+ */
+
+    handleMidiInputEvent = batchMessages(
+        messages => {
+            this.setState(
+                produce(
+                    draft => {
+                        for (let m of messages) {
+                            if (isSysexData(m)) {
+                                draft.data = mergeDeep(m || {}, parseSysexDump(m));
+                            } else {
+                                console.log("MIDI message is not a sysex message")
+                            }
+                        }
+                        let pId = Object.keys(draft.data[TARGET_PRESET])[0];
+                        draft.presetIndex = parseInt(pId, 10);
+                    }
+                )
+            );
+            let bytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
+            this.addInfoMessage(`${messages.length} messages received (${bytes} bytes)`);
+            this.props.onBusy(false);
+        },
+        2000
+    );
+
     /**
      *
      * @param files
@@ -78,19 +173,18 @@ class PresetMidi extends Component {
                 } else {
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
                     if (isSysexData(data)) {
+                        //this.props.onBusy(true);
+                        this.showBusy();
                         this.setState(
                             produce(draft => {
                                 // draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
                                 draft.data = parseSysexDump(data);
                                 let pId = Object.keys(draft.data[TARGET_PRESET])[0];
-                                // let cId = Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0];
                                 draft.presetIndex = parseInt(pId, 10);
-                                // console.log("PresetMidi.readFiles: preset index", pId, draft.presetIndex);
-                                // draft.controlId = parseInt(cId, 10);
-                                // this.props.onBusy(false);
                             })
                         );
                         this.addInfoMessage("sysfile decoded");
+                        this.props.onBusy(false);
                     } else {
                         this.addWarningMessage("not a sysfile");
                         console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
@@ -108,13 +202,20 @@ class PresetMidi extends Component {
      */
     onDrop = (files) => {
         console.log('drop', files);
-        // this.props.onBusy(true);
-        this.setState({data: null}, () => {this.readFiles(files)});
-        // this.readFiles(files);  // returned promise is ignored, this is normal.
+        this.setState(
+            {
+                data: null,
+                changed: false
+            },
+            () => {this.readFiles(files)}   // returned promise from readFiles() is ignored, this is normal.
+        );
     };
 
     selectPreset = (id) => {
-        console.log(`selectPreset ${id}`);
+        // console.log(`selectPreset ${id}`);
+        // if the user selects another preset or control, then clear the data in the state
+
+/* TODO: delete after test new implementation.
         if (id !== this.state.presetIndex) {
             this.setState({
                 presetIndex: id,
@@ -125,7 +226,16 @@ class PresetMidi extends Component {
                 presetIndex: id
             });
         }
-        // this.props.onBusy(true);
+*/
+        this.setState(
+            produce(draft => {
+                draft.presetIndex = id;
+                if (id !== this.state.presetIndex) {
+                    draft.data = null;
+                    draft.data = null;
+                }
+            })
+        );
         this.sendSysex(requestPreset(id));
     };
 
@@ -174,30 +284,6 @@ class PresetMidi extends Component {
         );
     };
 
-    /**
-     *
-     */
-    handleMidiInputEvent = (event) => {
-        // console.log("PresetMidi.handleMidiInputEvent", event, event.data);
-        // if (event instanceof MIDIMessageEvent) {
-        if (isSysexData(event.data)) {
-            // this.props.onBusy(true);
-            this.setState(
-                produce(draft => {
-                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
-                    let pId = Object.keys(draft.data[TARGET_PRESET])[0];
-                    draft.presetIndex = parseInt(pId, 10);
-                    // console.log(`PresetMidi.handleMidiInputEvent, preset Id from data is ${draft.presetIndex}`);
-                    // this.props.onBusy(false);
-                })
-            );
-            this.addInfoMessage(`sysex received (${event.data.length} bytes)`);
-        } else {
-            console.log("MIDI message is not a sysex message")
-        }
-        // }
-    };
-
     renderPort = (port, selected, clickHandler) => {
         if (port === undefined || port === null) return null;
         return (
@@ -229,7 +315,7 @@ class PresetMidi extends Component {
     sendSysex = msg => {
         console.log("sendSysex", msg);
         if (!this.state.output) {
-            console.warn("no output enabled to send the message", this.state);
+            console.warn("no output enabled to send the message");
             return;
         }
         let out = outputById(this.state.output);
@@ -237,11 +323,12 @@ class PresetMidi extends Component {
             console.warn(`send: output ${this.state.output} not found`);
             return;
         }
+        // this.props.onBusy(true);
+        this.showBusy();
         // this.setState(
         //     // {data: null},
         //     () => out.sendSysex(SYSEX_SIGNATURE, msg)
         // );
-        // console.log(`PresetMidi: call out.sendSysex()`, hs(msg));
         out.sendSysex(SYSEX_SIGNATURE, msg);
     };
 
@@ -262,8 +349,6 @@ class PresetMidi extends Component {
         let showEditor = false;
 
         if (data) {
-
-            // console.log("data length", Object.keys(data[TARGET_PRESET][presetIndex]["midi"]).length);
 
             showEditor = true;
 

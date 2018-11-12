@@ -36,7 +36,7 @@ class App extends Component {
      * @param busy boolean
      */
     onBusy = (busy) => {
-        this.setState({ busy });
+        if (busy !== this.state.busy) this.setState({ busy });
     };
 
     /**

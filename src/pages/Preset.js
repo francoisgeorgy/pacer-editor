@@ -1,13 +1,21 @@
 import React, {Component, Fragment} from 'react';
 import PresetSelector from "../components/PresetSelector";
 import {
+    buildPresetNameSysex,
     getControlUpdateSysexMessages,
     isSysexData,
     mergeDeep,
     parseSysexDump
 } from "../utils/sysex";
 import ControlSelector from "../components/ControlSelector";
-import {MSG_CTRL_OFF, PACER_MIDI_PORT_NAME, requestPresetObj, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer";
+import {
+    CONTROLS_FULLNAME,
+    MSG_CTRL_OFF,
+    PACER_MIDI_PORT_NAME,
+    requestPresetObj,
+    SYSEX_SIGNATURE,
+    TARGET_PRESET
+} from "../pacer";
 import {hs} from "../utils/hexstring";
 import {produce} from "immer";
 import {inputName, outputById, outputName} from "../utils/ports";
@@ -18,6 +26,7 @@ import Dropzone from "react-dropzone";
 import "./Preset.css";
 import ControlModeEditor from "../components/ControlModeEditor";
 import Status from "../components/Status";
+import PresetNameEditor from "../components/PresetNameEditor";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -25,6 +34,46 @@ const MAX_STATUS_MESSAGES = 40;
 
 function isVal(v) {
     return v !== undefined && v !== null && v !== '';
+}
+
+function batchMessages(callback, wait) {
+
+    let messages = [];  // array of data arrays
+
+    let timeout;
+
+    return function() {
+        console.log("func enter", arguments);
+
+        // first, reset the timeout
+        clearTimeout(timeout);
+
+        // const context = this;
+
+        let event = arguments[0];
+        // console.log(event.type);
+
+        //TODO: filter by type, name, port, ...
+
+        // channel: 1
+        // data: Uint8Array(3) [144, 47, 115]
+        // note: {number: 47, name: "B", octave: 2}
+        // rawVelocity: 115
+        // target: Input {_userHandlers: {…}, _midiInput: MIDIInput, …}
+        // timestamp: 9612.800000000789
+        // type: "noteon"
+        // velocity: 0.905511811023622
+
+        messages.push(event.data);
+        console.log("messages", messages);
+
+        timeout = setTimeout(() => {
+            console.log("timeout elapsed");
+            timeout = null;
+            callback(messages);
+        }, wait);
+    };
+
 }
 
 class Preset extends Component {
@@ -36,6 +85,15 @@ class Preset extends Component {
         changed: false,     // true when the control has been edited
         data: null,
         statusMessages: []
+    };
+
+    /**
+     * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
+     */
+    showBusy = () =>  {
+        // let context = this;
+        setTimeout(() => this.props.onBusy(false), 20000);
+        this.props.onBusy(true);
     };
 
     addStatusMessage = (type, message) => {
@@ -62,9 +120,7 @@ class Preset extends Component {
         this.addStatusMessage("error", message);
     };
 
-    /**
-     *
-     */
+/*
     handleMidiInputEvent = (event) => {
         // console.log("Presets.handleMidiInputEvent", hs(event.data));
         // if (event instanceof MIDIMessageEvent) {
@@ -93,6 +149,39 @@ class Preset extends Component {
         }
         // }
     };
+*/
+
+    handleMidiInputEvent = batchMessages(
+        messages => {
+            this.setState(
+                produce(
+                    draft => {
+
+                        for (let m of messages) {
+                            if (isSysexData(m)) {
+                                draft.data = mergeDeep(m || {}, parseSysexDump(m));
+                            } else {
+                                console.log("MIDI message is not a sysex message")
+                            }
+                        }
+
+                        // When requesting a config via MIDI (and not via a file drag&drop), we do not
+                        // update the preset and control ID from the MIDI sysex received.
+                        // This is important because to get the LED data we need to request the complete
+                        // preset data instead of just the selected control's config.
+
+                        // let pId = Object.keys(draft.data[TARGET_PRESET])[0];
+                        // draft.presetIndex = parseInt(pId, 10);
+                        // draft.controlId = parseInt(Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0], 10);
+                    }
+                )
+            );
+            let bytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
+            this.addInfoMessage(`${messages.length} messages received (${bytes} bytes)`);
+            this.props.onBusy(false);
+        },
+        2000
+    );
 
     /**
      *
@@ -106,13 +195,14 @@ class Preset extends Component {
                     console.warn(`readFiles: ${file.name}: file too big, ${file.size}`);
                     this.addWarningMessage("file too big");
                 } else {
+                    this.showBusy();
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
                     if (isSysexData(data)) {
+                        //this.props.onBusy(true);
                         this.setState(
                             produce(draft => {
                                 // draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
                                 draft.data = parseSysexDump(data);
-                                // this.props.onBusy(false);
                                 let pId = Object.keys(draft.data[TARGET_PRESET])[0];
                                 let cId = Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0];
                                 draft.presetIndex = parseInt(pId, 10);
@@ -124,6 +214,7 @@ class Preset extends Component {
                         this.addWarningMessage("not a sysfile");
                         console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
                     }
+                    this.props.onBusy(false);
                     // non sysex files are ignored
                 }
                 // too big files are ignored
@@ -137,17 +228,20 @@ class Preset extends Component {
      */
     onDrop = (files) => {
         console.log('drop', files);
-        // this.props.onBusy(true);
         this.setState(
-            {data: null},
-            () => {this.readFiles(files)}
+            {
+                data: null,
+                changed: false
+            },
+            () => {this.readFiles(files)}   // returned promise from readFiles() is ignored, this is normal.
         );
-        // this.readFiles(files);  // returned promise is ignored, this is normal.
     };
 
     selectPreset = (id) => {
         // console.log(`selectPreset ${id}`);
         // if the user selects another preset or control, then clear the data in the state
+
+/* TODO: delete after test new implementation.
         if (id !== this.state.presetIndex) {
             this.setState({
                 presetIndex: id,
@@ -158,6 +252,16 @@ class Preset extends Component {
                 presetIndex: id
             });
         }
+*/
+        this.setState(
+            produce(draft => {
+                draft.presetIndex = id;
+                if (id !== this.state.presetIndex) {
+                    draft.data = null;
+                    draft.changed = false;
+                }
+            })
+        );
         if (isVal(id) && this.state.controlId) {
             this.sendSysex(requestPresetObj(id, this.state.controlId));
         }
@@ -166,7 +270,9 @@ class Preset extends Component {
     selectControl = (id) => {
         // console.log(`selectControl ${id}`);
         // if the user selects another preset or control, then clear the data in the state
-        if (id !== this.state.presetIndex) {
+
+/* TODO: delete after test new implementation.
+        if (id !== this.state.controlId) {
             this.setState({
                 controlId: id,
                 data: null
@@ -176,6 +282,16 @@ class Preset extends Component {
                 controlId: id
             });
         }
+*/
+        this.setState(
+            produce(draft => {
+                draft.controlId = id;
+                if (id !== this.state.controlId) {
+                    draft.data = null;
+                    draft.changed = false;
+                }
+            })
+        );
         if (isVal(this.state.presetIndex) && id) {
             this.sendSysex(requestPresetObj(this.state.presetIndex, id));
         }
@@ -225,6 +341,22 @@ class Preset extends Component {
         );
     };
 
+    updatePresetName = (name) => {
+        console.log("Presets.updateName", name);
+        if (name === undefined || name === null) return;
+        if (name.length > 5) {
+            console.warn(`Presets.updateName: name too long: ${name}`);
+            return;
+        }
+        this.setState(
+            produce(draft => {
+                draft.data[TARGET_PRESET][draft.presetIndex]["name"] = name;    // TODO : buld update message
+                draft.data[TARGET_PRESET][draft.presetIndex]["changed"] = true;
+                draft.changed = true;
+            })
+        );
+    };
+
     renderPort = (port, selected, clickHandler) => {
         if (port === undefined || port === null) return null;
         return (
@@ -255,12 +387,17 @@ class Preset extends Component {
 
     sendSysex = msg => {
         console.log("sendSysex", msg);
-        if (!this.state.output) return;
+        if (!this.state.output) {
+            console.warn("no output enabled to send the message");
+            return;
+        }
         let out = outputById(this.state.output);
         if (!out) {
             console.warn(`send: output ${this.state.output} not found`);
             return;
         }
+        // this.props.onBusy(true);
+        this.showBusy();
         // this.setState(
         //     // {data: null},
         //     () => out.sendSysex(SYSEX_SIGNATURE, msg)
@@ -269,6 +406,7 @@ class Preset extends Component {
     };
 
     updatePacer = (messages) => {
+        console.log("PresetMidi.updatePacer");
         for (let m of messages) {
             this.sendSysex(m);
         }
@@ -316,6 +454,10 @@ class Preset extends Component {
         let updateMessages = [];
         if (showEditor) {
             updateMessages = getControlUpdateSysexMessages(presetIndex, controlId, data);
+            let n = buildPresetNameSysex(presetIndex, data);
+            if (n) {
+                updateMessages.push(n);
+            }
         }
 
         // console.log("Presets.render", showEditor, presetIndex, controlId);
@@ -357,7 +499,7 @@ class Preset extends Component {
 */}
                         <div className="content-row-content">
 
-                            <h2>Choose the preset and the control to edit:</h2>
+                            <h2>Select preset and control:</h2>
 
                             <div className="selectors">
 
@@ -380,7 +522,12 @@ class Preset extends Component {
                         <div className="content-row-content">
                             {showEditor &&
                             <Fragment>
-                                <h2>Edit the selected control:</h2>
+
+                                <h2>Preset name:</h2>
+                                <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]}
+                                                  onUpdate={(name) => this.updatePresetName(name)} />
+
+                                <h2>{CONTROLS_FULLNAME[controlId]}:</h2>
                                 <ControlStepsEditor controlId={controlId}
                                                     steps={data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]}
                                                     onUpdate={(stepIndex, dataType, dataIndex, value) => this.updateControlStep(controlId, stepIndex, dataType, dataIndex, value)} />
