@@ -7,6 +7,10 @@
 
 }
 
+.message-name {
+    margin-left: 2rem;
+}
+
 button {
     margin-right: 1rem;
     padding: 5px 10px;

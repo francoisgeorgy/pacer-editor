@@ -1,17 +1,4 @@
-
-function sortObject(obj) {
-    let arr = [];
-    for (let prop in obj) {
-        if (obj.hasOwnProperty(prop)) {
-            arr.push({
-                'key': prop,
-                'value': obj[prop]
-            });
-        }
-    }
-    arr.sort((a, b) => a.value.localeCompare(b.value));
-    return arr;
-}
+import {sortObject} from "../utils/misc";
 
 export const PACER_MIDI_PORT_NAME = "Pacer midi1";          // can be a regex
 export const PACER_MIDI_INPUT_PORT_NAME = "Pacer midi1";
@@ -33,7 +20,6 @@ export const TARGETS = {
     [TARGET_BACKUP]: "full backup"
 };
 
-
 export const CONTROL_NAME = 0x01;
 export const CONTROL_STOMPSWITCH_1 = 0x0D;
 export const CONTROL_STOMPSWITCH_2 = 0x0E;
@@ -54,7 +40,6 @@ export const CONTROL_EXPRESSION_PEDAL_1 = 0x36;
 export const CONTROL_EXPRESSION_PEDAL_2 = 0x37;
 export const CONTROL_MIDI = 0x7E;
 export const CONTROL_ALL = 0x7F;
-
 
 // objects:
 export const CONTROLS = {
@@ -188,15 +173,7 @@ export const MSG_TYPES = {
 
 // Message types for stompswitches
 export const MSG_TYPES_FULLNAME_SW = {
-
-    // [MSG_AD_MIDICC]: "MIDI CC",
-    // [MSG_AD_NRPNC]: "MIDI NRPN Coarse",
-    // [MSG_AD_NRPNF]: "MIDI NRPN Fine",
-    // [MSG_AD_PITCH]: "Pitch Bend",
-    // [MSG_AD_ATCHAN]: "AT CHAN",
-    // [MSG_DAWFUNC]: "DAW FUNC",
     [MSG_CTRL_OFF]: "OFF",
-
     [MSG_SW_MIDI_CC_TGGLE]: "CC Toggle",
     [MSG_SW_MIDI_CC]: "CC Trigger",
     [MSG_SW_MIDI_CC_STEP]: "CC Step",
@@ -211,51 +188,13 @@ export const MSG_TYPES_FULLNAME_SW = {
     [MSG_SW_PRESET_SELECT]: "Preset Select",
     [MSG_SW_PRESET_INC_DEC]: "Preset Inc/Dec",
     [MSG_SW_STEP_SELECT]: "Step Select",
-    [MSG_SW_STEP_INC_DEC]: "Step Inc/Dec",
-
-    // [MSG_ENC_CC]: "CC",
-    // [MSG_ENC_MIDICC_REL]: "CC REL",
-    // [MSG_ENC_NRPNC]: "MIDI NRPN Coarse",
-    // [MSG_ENC_NRPNF]: "MIDI NRPN Fine",
-    // [MSG_ENC_PITCH]: "Pitch Bend",
-    // [MSG_ENC_ATCHAN]: "AT CHAN",
-    // [MSG_ENC_PROGRAM]: "PRG",
-    // [MSG_ENC_PRESETSELECT]: "PRESET SEL",
-    // [MSG_ENC_STEPSELECT]: "STEP SEL",
-    //
-    // [MSG_LOAD_CC]: "CC"
-
+    [MSG_SW_STEP_INC_DEC]: "Step Inc/Dec"
 };
 
 export const MSG_TYPES_FULLNAME_SW_SORTED = sortObject(MSG_TYPES_FULLNAME_SW);
 
 
 export const MSG_TYPES_FULLNAME_ENC = {
-
-    // [MSG_AD_MIDICC]: "MIDI CC",
-    // [MSG_AD_NRPNC]: "MIDI NRPN Coarse",
-    // [MSG_AD_NRPNF]: "MIDI NRPN Fine",
-    // [MSG_AD_PITCH]: "Pitch Bend",
-    // [MSG_AD_ATCHAN]: "AT CHAN",
-    // [MSG_DAWFUNC]: "DAW FUNC",
-    [MSG_CTRL_OFF]: "OFF",
-    //
-    // [MSG_SW_MIDICC_TGGLE]: "MIDI CC Toggle",
-    // [MSG_SW_MIDICC]: "CC",
-    // [MSG_SW_MIDICC_STEP]: "CC STEP",
-    // [MSG_SW_NOTE]: "MIDI Note",
-    // [MSG_SW_NOTE_TGGLE]: "MIDI Note Toggle",
-    // [MSG_SW_PRGBANK]: "PRG BANK",
-    // [MSG_SW_PRG_STEP]: "PRG STEP",
-    // [MSG_SW_NRPNCOARSE]: "MIDI NRPN Coarse",
-    // [MSG_SW_NRPNFINE]: "MIDI NRPN Fine",
-    // [MSG_SW_MMC]: "MMC",
-    // [MSG_SW_RELAY]: "RELAY",
-    // [MSG_SW_PRESETSELECT]: "PRESET SELECT",
-    // [MSG_SW_PRESETINCDEC]: "PRESET INC DEC",
-    // [MSG_SW_STEPSELECT]: "STEP SELECT",
-    // [MSG_SW_STEPINCDEC]: "STEP INC DEC",
-
     [MSG_ENC_CC]: "CC",
     [MSG_ENC_MIDICC_REL]: "CC REL",
     [MSG_ENC_NRPNC]: "NRPN Coarse",
@@ -264,16 +203,12 @@ export const MSG_TYPES_FULLNAME_ENC = {
     [MSG_ENC_ATCHAN]: "AT Chan.",
     [MSG_ENC_PROGRAM]: "Program",
     [MSG_ENC_PRESETSELECT]: "Preset Sel",
-    [MSG_ENC_STEPSELECT]: "Step Sel",
-
-    // [MSG_LOAD_CC]: "CC"
-
+    [MSG_ENC_STEPSELECT]: "Step Sel"
 };
 
 
 // Preset Midi Settings
 export const MSG_TYPES_FULLNAME_MIDI = {
-
     [MSG_LOAD_CC]: "Load CC",
     [MSG_SW_NOTE]: "MIDI Note",
     [MSG_SW_PRG_BANK]: "Program & Bank",
@@ -283,40 +218,9 @@ export const MSG_TYPES_FULLNAME_MIDI = {
     [MSG_SW_RELAY]: "Relay Outputs",
     [MSG_DAWFUNC]: "DAW Func.",
     [MSG_CTRL_OFF]: "OFF"
-
-    // [MSG_AD_MIDICC]: "CC",
-    // [MSG_AD_NRPNC]: "NRPN Coarse",
-    // [MSG_AD_NRPNF]: "NRPN Fine",
-    // [MSG_AD_PITCH]: "Pitch Bend",
-    // [MSG_AD_ATCHAN]: "AT Chan.",
-    //
-    // [MSG_SW_MIDICC_TGGLE]: "MIDI CC Toggle",
-    // [MSG_SW_MIDICC]: "CC",
-    // [MSG_SW_MIDICC_STEP]: "CC STEP",
-    // [MSG_SW_NOTE_TGGLE]: "MIDI Note Toggle",
-    // [MSG_SW_PRG_STEP]: "PRG STEP",
-    // [MSG_SW_PRESETSELECT]: "PRESET SELECT",
-    // [MSG_SW_PRESETINCDEC]: "PRESET INC DEC",
-    // [MSG_SW_STEPSELECT]: "STEP SELECT",
-    // [MSG_SW_STEPINCDEC]: "STEP INC DEC",
-
-
-    // [MSG_ENC_CC]: "CC",
-    // [MSG_ENC_MIDICC_REL]: "CC REL",
-    // [MSG_ENC_NRPNC]: "MIDI NRPN Coarse",
-    // [MSG_ENC_NRPNF]: "MIDI NRPN Fine",
-    // [MSG_ENC_PITCH]: "Pitch Bend",
-    // [MSG_ENC_ATCHAN]: "AT CHAN",
-    // [MSG_ENC_PROGRAM]: "PRG",
-    // [MSG_ENC_PRESETSELECT]: "PRESET SEL",
-    // [MSG_ENC_STEPSELECT]: "STEP SEL",
 };
 
-
 export const MSG_TYPES_FULLNAME_MIDI_SORTED = sortObject(MSG_TYPES_FULLNAME_MIDI);
-
-
-
 
 export const MSG_TYPES_DATA_HELP = {
 
@@ -358,10 +262,8 @@ export const MSG_TYPES_DATA_HELP = {
 };
 
 
-
 export const CONTROL_ELEMENT = {
     // 0x00: "",
-
     0x01: "step 1: channel",
     0x02: "step 1: message type",
     0x03: "step 1: data 1",
@@ -682,7 +584,6 @@ export const COLORS = {
     0x18 : "12B Dim White",
 };
 
-
 export const CONTROL_MODE_ELEMENT = 0x60;
 
 export const CONTROL_MODE_ALL = 0x00;
@@ -693,76 +594,4 @@ export const CONTROL_MODES = {
     [CONTROL_MODE_ALL]: "All",
     [CONTROL_MODE_EXT_STEP]: "External Step Select",
     [CONTROL_MODE_SEQUENCE]: "Sequence",
-};
-
-
-export function checksum(bytes) {
-    if (bytes === null || bytes === undefined || bytes.length === 0) return 128;
-    let sum = Uint8Array.from(bytes).reduce((previousValue, currentValue) => previousValue + currentValue);
-    return 128 - (sum % 128);
-}
-
-
-/**
- * return the sysex message to send to the Pacer to request some data
- */
-export function requestPreset(presetIndex) {
-    let msg = [
-        COMMAND_GET,
-        TARGET_PRESET,
-        presetIndex,
-        CONTROL_ALL
-    ];
-    let cs = checksum(msg);
-    msg.push(cs);
-    return SYSEX_HEADER.concat(msg);
-}
-
-/**
- * return the sysex message to send to the Pacer to request some data
- */
-export function requestPresetObj(presetIndex, controlId) {
-
-    // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
-    return requestPreset(presetIndex);
-
-/*
-    let msg = [
-        COMMAND_GET,
-        TARGET_PRESET,
-        presetIndex,      // preset #
-        controlId         // (control)
-    ];
-    let cs = checksum(msg);
-    msg.push(cs);
-    return SYSEX_HEADER.concat(msg);
-*/
-}
-
-// ============================================================================
-
-/**
- * Example: 23 => "D5"
- * @param index
- * @returns {string}
- */
-export const presetIndexToXY = index => {
-    if (index === 0) return "CUR";
-    //TODO: check valid range
-    let b = Math.floor((index - 1) / 6);
-    let i = (index - 1) % 6 + 1;
-    return String.fromCharCode(b + 65) + i.toString();
-};
-
-/**
- * Exampe: "D5" => 23
- * @param xy
- * @returns {number}
- */
-export const presetXYToIndex = xy => {
-    // if (xy === "CUR") return 0;
-    //TODO: check valid range
-    let bank = xy.charCodeAt(0) - 65;
-    let num = parseInt(xy[1], 10);
-    return bank * 6 + num;
 };

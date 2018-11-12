@@ -26,9 +26,11 @@
     margin-bottom: 1rem;
 }
 
+.dump-control th,
 .dump-control td {
     border: 1px solid #aaa;
     padding: 6px 6px 2px 6px;
+    text-align: left;
 }
 
 .dump-control td.name {

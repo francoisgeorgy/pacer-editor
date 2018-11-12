@@ -5,17 +5,16 @@ import {
     getControlUpdateSysexMessages,
     isSysexData,
     mergeDeep,
-    parseSysexDump
-} from "../utils/sysex";
+    parseSysexDump, requestPreset, requestPresetObj
+} from "../pacer/sysex";
 import ControlSelector from "../components/ControlSelector";
 import {
     CONTROLS_FULLNAME,
     MSG_CTRL_OFF,
     PACER_MIDI_PORT_NAME,
-    requestPresetObj,
     SYSEX_SIGNATURE,
     TARGET_PRESET
-} from "../pacer";
+} from "../pacer/constants";
 import {hs} from "../utils/hexstring";
 import {produce} from "immer";
 import {inputName, outputById, outputName} from "../utils/ports";
@@ -262,8 +261,10 @@ class Preset extends Component {
                 }
             })
         );
-        if (isVal(id) && this.state.controlId) {
-            this.sendSysex(requestPresetObj(id, this.state.controlId));
+        if (isVal(id) /*&& this.state.controlId*/) {
+            // this.sendSysex(requestPresetObj(id, this.state.controlId));
+            // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
+            this.sendSysex(requestPreset(id));
         }
     };
 
@@ -292,8 +293,10 @@ class Preset extends Component {
                 }
             })
         );
-        if (isVal(this.state.presetIndex) && id) {
-            this.sendSysex(requestPresetObj(this.state.presetIndex, id));
+        if (isVal(this.state.presetIndex) /*&& id*/) {
+            // this.sendSysex(requestPresetObj(this.state.presetIndex, id));
+            // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
+            this.sendSysex(requestPreset(this.state.presetIndex));
         }
     };
 

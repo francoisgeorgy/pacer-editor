@@ -1,20 +1,24 @@
 import {NEKTAR_TECHNOLOGY_INC} from "midi-manufacturers";
-import {h, hs} from "./hexstring";
+import {h, hs} from "../utils/hexstring";
 import {
-    TARGETS,
-    CONTROLS,
-    checksum,
-    SYSEX_HEADER,
-    COMMAND_SET,
     COMMAND_GET,
+    COMMAND_SET,
+    CONTROL_ALL,
+    CONTROL_EXPRESSION_PEDAL_1,
+    CONTROL_EXPRESSION_PEDAL_2,
+    CONTROL_FOOTSWITCH_4,
+    CONTROL_MIDI,
+    CONTROL_MODE_ELEMENT,
     CONTROL_NAME,
     CONTROL_STOMPSWITCH_1,
-    CONTROL_STOMPSWITCH_A,
-    CONTROL_EXPRESSION_PEDAL_1,
-    CONTROL_MIDI,
     CONTROL_STOMPSWITCH_6,
-    CONTROL_FOOTSWITCH_4, CONTROL_EXPRESSION_PEDAL_2, TARGET_PRESET, CONTROL_MODE_ELEMENT
-} from "../pacer";
+    CONTROL_STOMPSWITCH_A,
+    CONTROLS,
+    SYSEX_HEADER,
+    TARGET_PRESET,
+    TARGETS
+} from "./constants";
+
 export const SYSEX_START = 0xF0;
 export const SYSEX_END = 0xF7;
 
@@ -516,6 +520,45 @@ function parseSysexDump(data) {
     return presets;
 }
 
+
+export function checksum(bytes) {
+    if (bytes === null || bytes === undefined || bytes.length === 0) return 128;
+    let sum = Uint8Array.from(bytes).reduce((previousValue, currentValue) => previousValue + currentValue);
+    return 128 - (sum % 128);
+}
+
+/**
+ * return the sysex message to send to the Pacer to request some data
+ */
+export function requestPreset(presetIndex) {
+    let msg = [
+        COMMAND_GET,
+        TARGET_PRESET,
+        presetIndex,
+        CONTROL_ALL
+    ];
+    let cs = checksum(msg);
+    msg.push(cs);
+    return SYSEX_HEADER.concat(msg);
+}
+
+/**
+ * return the sysex message to send to the Pacer to request some data
+ */
+export function requestPresetObj(presetIndex, controlId) {
+
+    // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
+    // return requestPreset(presetIndex);
+    let msg = [
+        COMMAND_GET,
+        TARGET_PRESET,
+        presetIndex,      // preset #
+        controlId         // (control)
+    ];
+    let cs = checksum(msg);
+    msg.push(cs);
+    return SYSEX_HEADER.concat(msg);
+}
 
 /**
  * Return an array of sysex messages to update a control's steps.

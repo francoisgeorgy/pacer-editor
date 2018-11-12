@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {CONTROL_MODES} from "../pacer";
+import {CONTROL_MODES} from "../pacer/constants";
 import"./ControlModeEditor.css";
 
 class ControlModeEditor extends Component {

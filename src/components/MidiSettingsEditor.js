@@ -5,7 +5,7 @@ import {
     MSG_TYPES_FULLNAME_SW,
     MSG_TYPES_FULLNAME_MIDI_SORTED,
     MSG_TYPES_DATA_HELP
-} from "../pacer";
+} from "../pacer/constants";
 import * as Note from "tonal-note";
 import "./MidiSettingsEditor.css";
 

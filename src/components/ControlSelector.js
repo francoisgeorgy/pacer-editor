@@ -1,5 +1,5 @@
 import React from "react";
-import {FOOTSWITCHES, STOMPSWITCHES_TOP, STOMPSWITCHES_BOTTOM, EXPPEDALS, CONTROLS} from "../pacer";
+import {FOOTSWITCHES, STOMPSWITCHES_TOP, STOMPSWITCHES_BOTTOM, EXPPEDALS, CONTROLS} from "../pacer/constants";
 import "./ControlSelector.css";
 
 const Control = ({ name, id, selected, onClick }) =>

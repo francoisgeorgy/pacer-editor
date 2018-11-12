@@ -48,9 +48,7 @@ To contribute your bug fixes, new features, etc.: 1) fork the project, 2) create
 # Thanks
 
 Thank you to the Nektar support service for having provided precious informations regarding the SysEx data format of the Pacer.
-
 This editor would not have been possible without their support.
-
 
 
 # Trademarks
@@ -59,6 +57,6 @@ This editor would not have been possible without their support.
 
 This web site is not endorsed by, directly affiliated with, maintained, or sponsored by Nektar Technology.
 
-This web site is published under (GNU General Public License v3)[https://www.gnu.org/licenses/gpl-3.0.en.html].
+This web site is published under [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html).
 
 

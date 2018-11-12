@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import Dropzone from "react-dropzone";
 import {produce} from "immer";
-import {isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
+import {isSysexData, mergeDeep, parseSysexDump} from "../pacer/sysex";
 import DumpSysex from "../components/DumpSysex";
 import './DumpDecoder.css';
 import {hs} from "../utils/hexstring";
 import Midi from "../components/Midi";
 import MidiPort from "../components/MidiPort";
-import {PACER_MIDI_PORT_NAME} from "../pacer";
+import {PACER_MIDI_PORT_NAME} from "../pacer/constants";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -135,9 +135,6 @@ class DumpDecoder extends Component {
 
                         <div className="content-row-content">
                             <h2>Dump:</h2>
-                            {/*<Dropzone onDrop={this.onDrop} className="drop-zone">*/}
-                                {/*Drop a binary sysex file here or click to open the file dialog*/}
-                            {/*</Dropzone>*/}
                             Send a dump from your Pacer or drop a binary sysex file onto the drop zone on the right.
                         </div>
                     </div>
@@ -152,13 +149,11 @@ class DumpDecoder extends Component {
 */}
                         <div className="content-row-content">
                             <DumpSysex data={data} />
-
 {/*
-                            <div className="debug">
+                            {data && <div className="debug">
                                 <pre>{JSON.stringify(data, null, 4)}</pre>
-                            </div>
+                            </div>}
 */}
-
                         </div>
                     </div>
                 </div>
@@ -167,8 +162,6 @@ class DumpDecoder extends Component {
                     <Dropzone onDrop={this.onDrop} className="drop-zone">
                         Drop a binary sysex file here<br />or click to open the file dialog
                     </Dropzone>
-
-                    {/*<h3>Help</h3>*/}
                 </div>
 
             </div>

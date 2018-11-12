@@ -6,7 +6,7 @@ import {
     MSG_SW_NOTE_TGGLE, MSG_TYPES_DATA_HELP,
     MSG_TYPES_FULLNAME_SW,
     MSG_TYPES_FULLNAME_SW_SORTED
-} from "../pacer";
+} from "../pacer/constants";
 import * as Note from "tonal-note";
 import "./ControlStepsEditor.css";
 

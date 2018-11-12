@@ -5,8 +5,8 @@ import {
     getMidiSettingUpdateSysexMessages,
     isSysexData,
     mergeDeep,
-    parseSysexDump
-} from "../utils/sysex";
+    parseSysexDump, requestPreset
+} from "../pacer/sysex";
 import Midi from "../components/Midi";
 import MidiPort from "../components/MidiPort";
 import Dropzone from "react-dropzone";
@@ -16,10 +16,9 @@ import {produce} from "immer";
 import {
     MSG_CTRL_OFF,
     PACER_MIDI_PORT_NAME,
-    requestPreset,
     SYSEX_SIGNATURE,
     TARGET_PRESET
-} from "../pacer";
+} from "../pacer/constants";
 import {hs} from "../utils/hexstring";
 import MidiSettingsEditor from "../components/MidiSettingsEditor";
 import {inputName, outputById, outputName} from "../utils/ports";

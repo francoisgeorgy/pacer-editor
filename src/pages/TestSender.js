@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import {isSysexData, mergeDeep, parseSysexDump} from "../utils/sysex";
-import {requestPreset, requestPresetObj, SYSEX_SIGNATURE} from "../pacer/index";
+import {checksum, isSysexData, mergeDeep, parseSysexDump, requestPreset, requestPresetObj} from "../pacer/sysex";
+import {SYSEX_SIGNATURE} from "../pacer/constants";
 import {outputById} from "../utils/ports";
 import {fromHexString, h, hs} from "../utils/hexstring";
 import "./TestSender.css";
 import {produce} from "immer";
 import DumpSysex from "../components/DumpSysex";
-import {checksum, PACER_MIDI_PORT_NAME, SYSEX_HEADER} from "../pacer";
+import {PACER_MIDI_PORT_NAME, SYSEX_HEADER} from "../pacer/constants";
 import Midi from "../components/Midi";
 import MidiPort from "../components/MidiPort";
 
@@ -44,10 +44,16 @@ class TestSender extends Component {
     state = {
         output: null,           // MIDI output port used for output
         data: null,
-        messages: [
-            requestPreset(0),
-            requestPresetObj(5, 0x0D)
-        ],
+        messages: [{
+            name: "read current preset",
+            message: requestPreset(0)
+        }, {
+            name: "read preset A1",
+            message: requestPreset(1)
+        }, {
+            name: "read stompswitch #1 of preset #5",
+            message: requestPresetObj(5, 0x0D)
+        }],
         customMessage: ""
     };
 
@@ -186,10 +192,11 @@ class TestSender extends Component {
                             <div>
                             {messages.map((msg, i) =>
                                 <div key={i} className="send-message">
-                                    <button onClick={() => this.sendMessage(msg)}>send</button>
-                                    <span className="code light">{ hs(SYSEX_SIGNATURE.concat(msg.slice(0, 1))) } </span>
-                                    <span className="code">{ hs(msg.slice(1, -1)) } </span>
-                                    <span className="code light"> {hs(msg.slice(-1))}</span>
+                                    <button onClick={() => this.sendMessage(msg.message)}>send</button>
+                                    <span className="code light">{ hs(SYSEX_SIGNATURE.concat(msg.message.slice(0, 1))) } </span>
+                                    <span className="code">{ hs(msg.message.slice(1, -1)) } </span>
+                                    <span className="code light"> {hs(msg.message.slice(-1))}</span>
+                                    <span className="message-name"> {msg.name}</span>
                                 </div>
                             )}
                             </div>

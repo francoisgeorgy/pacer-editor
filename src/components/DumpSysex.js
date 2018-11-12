@@ -4,12 +4,12 @@ import {
     MSG_SW_NOTE,
     CONTROLS,
     TARGET_PRESET,
-    MSG_TYPES,
-    presetIndexToXY
-} from "../pacer";
+    MSG_TYPES, COLORS, CONTROLS_FULLNAME
+} from "../pacer/constants";
 import {h, hs} from "../utils/hexstring";
 import "./DumpSysex.css";
 import * as Note from "tonal-note";
+import {presetIndexToXY} from "../pacer/utils";
 
 const PresetName = ({ name }) => {
     console.log("presetname", name);
@@ -67,22 +67,39 @@ const ControlTable = ({ obj, config }) => {
             <table>
                 <tbody>
                     <tr>
-                        <td colSpan={6} className="name">{CONTROLS[obj]}</td>
+                        <td colSpan={10} className="name">{CONTROLS_FULLNAME[obj]}</td>
+                    </tr>
+                    <tr>
+                        <th>step</th>
+                        <th>ch.</th>
+                        <th>type</th>
+                        <th>data</th>
+                        <th>decoded</th>
+                        <th>active</th>
+                        <th>LED num</th>
+                        <th>LED On</th>
+                        <th>LED Off</th>
+                        <th>LED midi</th>
                     </tr>
                     {Object.keys(config["steps"]).map(i => {
                         let t = MSG_TYPES[config["steps"][i]["msg_type"]];
                         if (config["steps"][i]["msg_type"] === MSG_SW_NOTE) {
                             t = t + ' ' + Note.fromMidi(config["steps"][i]["data"][0], true) + ' vel. ' + config["steps"][i]["data"][1];
                         }
+                        const c0 = config["steps"][i]["led_inactive_color"];
+                        const c1 = config["steps"][i]["led_active_color"];
                         return (
                             <tr key={`${obj}.${i}`}>
-                                <td>step {i}</td>
-                                <td>ch. {h(config["steps"][i]["channel"])}</td>
-                                <td>msg {h(config["steps"][i]["msg_type"])}</td>
-                                <td>{t}</td>
+                                <td>{i}</td>
+                                <td>{h(config["steps"][i]["channel"])}</td>
+                                <td>{h(config["steps"][i]["msg_type"])}</td>
                                 <td>{hs(config["steps"][i]["data"])}</td>
-                                {/*<td>{config["steps"][i]["msg_type"] === MSG_SW_NOTE ? Note.fromMidi(config["steps"][i]["data"][0], true) : "  "}</td>*/}
+                                <td>{t}</td>
                                 <td>{config["steps"][i]["active"] ? "active" : "OFF"}</td>
+                                <td>{h(config["steps"][i]["led_num"])}</td>
+                                <td>{c1 in COLORS ? COLORS[c1] : h(c1)}</td>
+                                <td>{c0 in COLORS ? COLORS[c0] : h(c0)}</td>
+                                <td>{h(config["steps"][i]["led_midi_ctrl"])}</td>
                             </tr>
                         )}
                     )}
@@ -109,8 +126,6 @@ const Preset = ({ index, data }) => {
             <PresetName name={data["name"]} />
             <Controls controls={data["controls"]} />
             <MidiSettings settings={data["midi"]} />
-            {/*<pre>{JSON.stringify(data, null, 4)}</pre>*/}
-            {/*<pre>{JSON.stringify(data, null, 4)}</pre>*/}
         </div>
     );
 };
