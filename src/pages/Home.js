@@ -25,16 +25,6 @@ class Home extends Component {
                 <div className="doc">
                     <p>The current version of this editor isn't able to edit the Global configuration of the Pacer.</p>
                     <p>This editor does not offer patches management either.</p>
-{/*
-                    <p>The current version only allows you to edit:</p>
-                    <p>
-                        <ul>
-                            <li>The steps associated with a preset control</li>
-                            <li>The MIDI settings of a preset</li>
-                        </ul>
-                    </p>
-                    <p><i>To be completed...</i></p>
-*/}
                 </div>
 
 {/*

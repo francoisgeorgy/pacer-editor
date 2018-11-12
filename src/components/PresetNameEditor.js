@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-// import "./PresetNameEditor.css";
 
 class PresetNameEditor extends Component {
 
@@ -9,11 +8,7 @@ class PresetNameEditor extends Component {
     };
 
     render() {
-
         const name = this.props.name;
-
-        // console.log("PresetNameEditor.render", name);
-
         return (
             <div className="preset-name">
                 <p>The preset name is limited to 5 characters.</p>

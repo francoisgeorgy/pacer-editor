@@ -70,9 +70,6 @@ export function mergeDeep(target, ...sources) {
  * @param data Uint8Array
  */
 function isSysexData(data) {
-    // let view = new Uint8Array(data);
-    // if (view[0] !== SYSEX_START) return false;
-    // if (view[view.byteLength - 1] !== SYSEX_END) return false;
     if (data[0] !== SYSEX_START) return false;
     if (data[data.byteLength - 1] !== SYSEX_END) return false;
     return true;
@@ -120,16 +117,7 @@ function getControlMode(data) {
 
 function getControlLED(data) {
 
-    console.log("getControlLED", hs(data));
-
-    // 54 01 00     54 == LED, 01 == 1 byte of data, 00 = data itself
-
-    //
-    // 40 01 00 00
-    // 41 01 7F 00
-    // 42 01 7F 00
-    // 43 01 00
-    // 68 F7
+    // console.log("getControlLED", hs(data));
 
     // 0x40	<data>-MIDICtrl	Step 1: LED MIDI Ctrl
     // 0x41	<data>-Color	Step 1: LED Active Color
@@ -145,13 +133,9 @@ function getControlLED(data) {
     let i = 0;
     while (i<data.length) {
         let d = data[i];
-        // let step = "" + ((d - 0x40) / 4 + 1);
-        // if (i===0) console.log(`getControlLED: [${h(d)}], step ${step}`);
         if (i===0) {
             step = "" + ((d - 0x40) / 4 + 1);
-            // console.log(`getControlLED: [${h(d)}], step ${step}`);
         }
-        // if (!(step in cfg.steps)) cfg.steps[step] = {led:{}};
         if (!(step in cfg.steps)) cfg.steps[step] = {};
         switch (d) {
             case 0x40:
@@ -162,14 +146,12 @@ function getControlLED(data) {
             case 0x54:
                 i++;
                 data_len = data[i];
-                // console.log(`getControlLED: ${data_len} data byte(s)`);
                 i++;
                 if (data_len === 1) {
                     bytes = data[i];
                 } else {
                     bytes = Array.from(data.slice(i, i + data_len));
                 }
-                // console.log(`getControlLED: data bytes=[${hs(bytes)}]`);
                 i += data_len;
                 cfg.steps[step]["led_midi_ctrl"] = bytes;
                 break;
@@ -181,14 +163,12 @@ function getControlLED(data) {
             case 0x55:
                 i++;
                 data_len = data[i];
-                // console.log(`getControlLED: ${data_len} data byte(s)`);
                 i++;
                 if (data_len === 1) {
                     bytes = data[i];
                 } else {
                     bytes = Array.from(data.slice(i, i + data_len));
                 }
-                console.log(`getControlLED: data bytes=[${h(bytes)}]`);
                 i += data_len;
                 cfg.steps[step]["led_active_color"] = bytes;
                 break;
@@ -200,16 +180,13 @@ function getControlLED(data) {
             case 0x56:
                 i++;
                 data_len = data[i];
-                // console.log(`getControlLED: ${data_len} data byte(s)`);
                 i++;
                 if (data_len === 1) {
                     bytes = data[i];
                 } else {
                     bytes = Array.from(data.slice(i, i + data_len));
                 }
-                // console.log(`getControlLED: data bytes=[${hs(bytes)}]`);
                 i += data_len;
-                // cfg.steps[step]["led"].inactive_color = bytes;
                 cfg.steps[step]["led_inactive_color"] = bytes;
                 break;
             case 0x43:
@@ -220,20 +197,16 @@ function getControlLED(data) {
             case 0x57:
                 i++;
                 data_len = data[i];
-                // console.log(`getControlLED: ${data_len} data byte(s)`);
                 i++;
                 if (data_len === 1) {
                     bytes = data[i];
                 } else {
                     bytes = Array.from(data.slice(i, i + data_len));
                 }
-                // console.log(`getControlLED: data bytes=[${hs(bytes)}]`);
                 i += data_len;
-                // cfg.steps[step]["led"].num = bytes;
                 cfg.steps[step]["led_num"] = bytes;
                 break;
             case 0x7F:
-                // console.log(`getControlLED: end if data`);
                 i = data.length;
                 break;
             default:
@@ -243,7 +216,6 @@ function getControlLED(data) {
         }
     }
 
-    // console.log("getControlLED", cfg);
     return cfg;
 }
 
@@ -251,12 +223,6 @@ function getControlLED(data) {
 function getMidiSetting(data) {
 
     // console.log("getMidiSetting", hs(data));
-
-    // 01 01 00 00
-    // 02 01 61 00
-    // 03 01 00 00
-    // 04 01 00 00
-    // 05 01 00 0A
 
     return {
         index: (data[0] - 1) / 6 + 1,       // e.g.: 7 --> 1, ..., 0x2B 43 --> 8
@@ -270,25 +236,8 @@ function getMidiSetting(data) {
 
 
 function getPresetName(data) {
-
-    // console.log("getPresetName", hs(data));
-
-    // 01 05 4E 4F 54 45 53 69
-
     const len = data[1];
-
     return String.fromCharCode.apply(null, data.slice(2, 2 + len));
-
-/*
-    return {
-        index: (data[0] - 1) / 6 + 1,       // e.g.: 7 --> 1, ..., 0x2B 43 --> 8
-        config: {
-            channel: data[2],
-            msg_type: data[6],
-            data: [data[10], data[14], data[18]]
-        }
-    };
-*/
 }
 
 
@@ -415,40 +364,12 @@ function parseSysexMessage(data) {
 
     if (obj_type === "midi") {
 
-        // F0 00 01 77 7F 01 01 01
-        // 7E
-        //
-        // 25 01 00 00
-        // 26 01 61 00
-        // 27 01 00 00
-        // 28 01 00 00
-        // 29 01 00 56
-        //
-        // F7
-
-        // F0 00 01 77 7F 01 01 05
-        // 7E
-        //
-        // 07 01 02 00
-        // 08 01 65 00
-        // 09 01 7B 00
-        // 0A 01 7F 00
-        // 0B 01 00 68
-        //
-        // F7
-
-        message[tgt][idx]["midi"] = {
-            // settings: {}
-        };
+        message[tgt][idx]["midi"] = {};
 
         // which element?
         let e = data[ELM];
 
         if (e >= 0x01 && e <= 0x60) {
-
-            // if (e === 0x06 || e === 0x06 || e === 0x06 || e === 0x06 || e === 0x06 || )
-
-            // console.log(ELM, data.length);  // ELM == 8
 
             // SETTINGS
             if (data.length > ELM+19) {

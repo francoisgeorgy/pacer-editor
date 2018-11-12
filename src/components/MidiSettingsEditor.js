@@ -10,7 +10,6 @@ import * as Note from "tonal-note";
 import "./MidiSettingsEditor.css";
 
 const MidiNote = ({ note, onChange }) => {
-    // console.log(`MidiNote ${note}`, typeof note);
     return (
         <select onChange={(event) => onChange(event.target.value)} defaultValue={note}>
             {

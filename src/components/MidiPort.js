@@ -30,28 +30,6 @@ class MidiPorts extends Component {
                 {/*</div>*/}
             </div>
         );
-
-/*
-        return (
-            <div key={port.id} className={isSelected ? `port ${port.type} enabled` : `port ${port.type}`}>
-                <div className={"port-description"}>
-                    <div className="type">{port.type} {port.type === 'input' ? 'from' : 'to'}</div>
-                    <div className="port-name">{port.name}</div>
-                </div>
-                <div className={"port-state"}>
-                    <Switch
-                        onChange={() => clickHandler(port.id)}
-                        checked={isSelected}
-                        className="react-switch"
-                        id="normal-switch"
-                        height={20} width={42}
-                    />
-                    <span className={isSelected ? "port-usage selected" : "port-usage"}
-                          onClick={() => clickHandler(port.id)}>{isSelected ? "enabled" : "disabled"}</span>
-                </div>
-            </div>
-        );
-*/
     }
 
 }

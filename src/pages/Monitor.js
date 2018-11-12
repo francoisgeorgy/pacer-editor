@@ -17,7 +17,6 @@ class Monitor extends Component {
     };
 
     handleMidiInputEvent = (event) => {
-        // console.log("Monitor.handleMidiInputEvent", event, event.type, event.data);
         // if (event instanceof MIDIMessageEvent) {
         this.setState(
             produce(draft => {
@@ -43,14 +42,6 @@ class Monitor extends Component {
                 <div className="content">
                     <div>
                         <div className="content-row step-1">
-{/*
-                            <div className="background">
-                                Connect
-                            </div>
-                            <div className="content-row-header">
-                                1
-                            </div>
-*/}
                             <div className="content-row-content row-middle-aligned">
                                 <Midi only=".*" autoConnect=".*"
                                       inputRenderer={this.renderPort} outputRenderer={this.renderPort}
@@ -61,14 +52,6 @@ class Monitor extends Component {
                             </div>
                         </div>
                         <div className="content-row step-2">
-{/*
-                            <div className="background">
-                                View
-                            </div>
-                            <div className="content-row-header">
-                                2
-                            </div>
-*/}
                             <div className="content-row-content">
                                 <div>
                                     <h2>MIDI messages</h2>
@@ -77,7 +60,6 @@ class Monitor extends Component {
                                 <div className="messages">
                                     {this.state.messages.map((msg, i) => {      //TODO: display timestamp
                                         let m = parseMidi(msg);
-                                        // console.log(m, h(m.messageCode));
                                         let info2 = '';
                                         let info3 = '';
                                         switch (m.messageCode) {
@@ -121,7 +103,6 @@ class Monitor extends Component {
                     </div>
                 </div>
 {/*
-
                 <div className="help">
                     <h3>Help</h3>
                 </div>

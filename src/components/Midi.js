@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import * as WebMidi from "webmidi";
 import {inputById, portById} from "../utils/ports";
 
-
 const propTypes = {
     classname: PropTypes.string,
     only: PropTypes.string,                 // regex applied to port.name

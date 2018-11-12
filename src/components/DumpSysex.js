@@ -11,9 +11,8 @@ import * as Note from "tonal-note";
 import {presetIndexToXY} from "../pacer/utils";
 
 const PresetName = ({ name }) => {
-    console.log("presetname", name);
     return (
-    <div className="dump-preset-name">Preset name: {name}</div>
+        <div className="dump-preset-name">Preset name: {name}</div>
     );
 };
 

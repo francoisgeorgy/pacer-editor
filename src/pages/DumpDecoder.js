@@ -21,7 +21,6 @@ class DumpDecoder extends Component {
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
     showBusy = () =>  {
-        // let context = this;
         setTimeout(() => this.props.onBusy(false), 20000);
         this.props.onBusy(true);
     };
@@ -105,14 +104,6 @@ class DumpDecoder extends Component {
             <div className="wrapper">
                 <div className="content">
                     <div className="content-row step-1">
-{/*
-                        <div className="background">
-                            Connect
-                        </div>
-                        <div className="content-row-header">
-                            1
-                        </div>
-*/}
                         <div className="content-row-content row-middle-aligned">
                             <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
                                   inputRenderer={this.renderPort} outputRenderer={this.renderPort}
@@ -123,37 +114,14 @@ class DumpDecoder extends Component {
                         </div>
                     </div>
                     <div className="content-row step-2">
-{/*
-                        <div className="background">
-                            Get dump
-                        </div>
-                        <div className="content-row-header">
-                            2
-                        </div>
-*/}
-
-
                         <div className="content-row-content">
                             <h2>Dump:</h2>
                             Send a dump from your Pacer or drop a binary sysex file onto the drop zone on the right.
                         </div>
                     </div>
                     <div className="content-row step-3">
-{/*
-                        <div className="background">
-                            Decode
-                        </div>
-                        <div className="content-row-header">
-                            3
-                        </div>
-*/}
                         <div className="content-row-content">
                             <DumpSysex data={data} />
-{/*
-                            {data && <div className="debug">
-                                <pre>{JSON.stringify(data, null, 4)}</pre>
-                            </div>}
-*/}
                         </div>
                     </div>
                 </div>

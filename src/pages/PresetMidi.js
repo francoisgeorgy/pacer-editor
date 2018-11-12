@@ -30,39 +30,24 @@ const MAX_STATUS_MESSAGES = 40;
 
 function batchMessages(callback, wait) {
 
-    let messages = [];  // array of data arrays
+    let messages = [];  // batch of received messages
 
     let timeout;
 
     return function() {
-        console.log("func enter", arguments);
 
         // first, reset the timeout
         clearTimeout(timeout);
 
-        // const context = this;
-
         let event = arguments[0];
-        // console.log(event.type);
-
-        //TODO: filter by type, name, port, ...
-
-        // channel: 1
-        // data: Uint8Array(3) [144, 47, 115]
-        // note: {number: 47, name: "B", octave: 2}
-        // rawVelocity: 115
-        // target: Input {_userHandlers: {…}, _midiInput: MIDIInput, …}
-        // timestamp: 9612.800000000789
-        // type: "noteon"
-        // velocity: 0.905511811023622
 
         messages.push(event.data);
-        console.log("messages", messages);
 
         timeout = setTimeout(() => {
             console.log("timeout elapsed");
             timeout = null;
             callback(messages);
+            messages = [];
         }, wait);
     };
 
@@ -82,7 +67,6 @@ class PresetMidi extends Component {
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
     showBusy = () =>  {
-        // let context = this;
         setTimeout(() => this.props.onBusy(false), 20000);
         this.props.onBusy(true);
     };
@@ -91,8 +75,6 @@ class PresetMidi extends Component {
         this.setState(
             produce(draft => {
                 let m = { type, message };
-                // let len = draft.statusMessages.unshift(m);
-                // if (len > MAX_STATUS_MESSAGES) draft.statusMessages.pop();
                 let len = draft.statusMessages.push(m);
                 if (len > MAX_STATUS_MESSAGES) draft.statusMessages.shift();
             })
@@ -110,29 +92,6 @@ class PresetMidi extends Component {
     addErrorMessage= message => {
         this.addStatusMessage("error", message);
     };
-
-/*
-     handleMidiInputEvent = (event) => {
-        // console.log("PresetMidi.handleMidiInputEvent", event, event.data);
-        // if (event instanceof MIDIMessageEvent) {
-        if (isSysexData(event.data)) {
-            // this.props.onBusy(true);
-            this.setState(
-                produce(draft => {
-                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
-                    let pId = Object.keys(draft.data[TARGET_PRESET])[0];
-                    draft.presetIndex = parseInt(pId, 10);
-                    // console.log(`PresetMidi.handleMidiInputEvent, preset Id from data is ${draft.presetIndex}`);
-                    // this.props.onBusy(false);
-                })
-            );
-            this.addInfoMessage(`sysex received (${event.data.length} bytes)`);
-        } else {
-            console.log("MIDI message is not a sysex message")
-        }
-        // }
-    };
- */
 
     handleMidiInputEvent = batchMessages(
         messages => {
@@ -173,7 +132,6 @@ class PresetMidi extends Component {
                     this.showBusy();
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
                     if (isSysexData(data)) {
-                        //this.props.onBusy(true);
                         this.setState(
                             produce(draft => {
                                 // draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
@@ -211,21 +169,7 @@ class PresetMidi extends Component {
     };
 
     selectPreset = (id) => {
-        // console.log(`selectPreset ${id}`);
         // if the user selects another preset or control, then clear the data in the state
-
-/* TODO: delete after test new implementation.
-        if (id !== this.state.presetIndex) {
-            this.setState({
-                presetIndex: id,
-                data: null
-            });
-        } else {
-            this.setState({
-                presetIndex: id
-            });
-        }
-*/
         this.setState(
             produce(draft => {
                 draft.presetIndex = id;
@@ -242,7 +186,7 @@ class PresetMidi extends Component {
      * dataIndex is only used when dataType == "data"
      */
     updateMidiSettings = (settingIndex, dataType, dataIndex, value) => {
-        console.log("PresetMidi.updateMidiSettings", settingIndex, dataIndex, value);
+        // console.log("PresetMidi.updateMidiSettings", settingIndex, dataIndex, value);
         let v = parseInt(value, 10);
         this.setState(
             produce(draft => {
@@ -252,12 +196,9 @@ class PresetMidi extends Component {
                     draft.data[TARGET_PRESET][draft.presetIndex]["midi"][settingIndex][dataType] = v;
                 }
                 if (dataType === "msg_type") {
-                    console.log('msg_type', dataType, value);
                     if (v === MSG_CTRL_OFF) {
-                        console.log('set active 0');
                         draft.data[TARGET_PRESET][draft.presetIndex]["midi"][settingIndex]["active"] = 0;
                     } else {
-                        console.log('set active 1');
                         draft.data[TARGET_PRESET][draft.presetIndex]["midi"][settingIndex]["active"] = 1;
                     }
                 }
@@ -268,7 +209,7 @@ class PresetMidi extends Component {
     };
 
     updatePresetName = (name) => {
-        console.log("PresetMidi.updateName", name);
+        // console.log("PresetMidi.updateName", name);
         if (name === undefined || name === null) return;
         if (name.length > 5) {
             console.warn(`PresetMidi.updateName: name too long: ${name}`);
@@ -322,12 +263,7 @@ class PresetMidi extends Component {
             console.warn(`send: output ${this.state.output} not found`);
             return;
         }
-        // this.props.onBusy(true);
         this.showBusy();
-        // this.setState(
-        //     // {data: null},
-        //     () => out.sendSysex(SYSEX_SIGNATURE, msg)
-        // );
         out.sendSysex(SYSEX_SIGNATURE, msg);
     };
 
@@ -342,8 +278,6 @@ class PresetMidi extends Component {
     render() {
 
         const { presetIndex, data, changed } = this.state;
-
-        // console.log("PresetMidi.render: ", presetIndex);
 
         let showEditor = false;
 
@@ -365,7 +299,6 @@ class PresetMidi extends Component {
                 // console.log(`PresetMidi: midi not found in data`);
                 showEditor = false;
             }
-
         }
 
         showEditor = showEditor && (Object.keys(data[TARGET_PRESET][presetIndex]["midi"]).length === 16);
@@ -386,14 +319,6 @@ class PresetMidi extends Component {
                 <div className="content">
 
                     <div className="content-row step-1">
-{/*
-                        <div className="background">
-                            Connect
-                        </div>
-                        <div className="content-row-header">
-                            1
-                        </div>
-*/}
                         <div className="content-row-content row-middle-aligned">
                             <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
                                   inputRenderer={this.renderPort} outputRenderer={this.renderPort}
@@ -408,14 +333,6 @@ class PresetMidi extends Component {
                         </div>
                     </div>
                     <div className="content-row step-2">
-{/*
-                        <div className="background">
-                            Select
-                        </div>
-                        <div className="content-row-header">
-                            2
-                        </div>
-*/}
                         <div className="content-row-content">
 
                             <h2>Choose the preset to edit:</h2>
@@ -427,14 +344,6 @@ class PresetMidi extends Component {
                     </div>
 
                     <div className="content-row step-3">
-{/*
-                        <div className="background">
-                            Edit
-                        </div>
-                        <div className="content-row-header">
-                            3
-                        </div>
-*/}
                         <div className="content-row-content">
                             {showEditor &&
                             <Fragment>
@@ -450,14 +359,6 @@ class PresetMidi extends Component {
                     </div>
 
                     <div className="content-row step-4">
-{/*
-                        <div className="background">
-                            Write
-                        </div>
-                        <div className="content-row-header">
-                            4
-                        </div>
-*/}
                         <div className="content-row-content">
                             {changed &&
                             <Fragment>
@@ -477,14 +378,12 @@ class PresetMidi extends Component {
                                 {updateMessages.map((m, i) => <div key={i} className="code">{hs(m)}</div>)}
                             </div>
                         </div>}
-
 {/*
                         {data && <div className="debug">
                             <h4>[Debug] sysex data:</h4>
                             <pre>{JSON.stringify(data, null, 4)}</pre>
                         </div>}
 */}
-
                     </div>
                 </div>
 

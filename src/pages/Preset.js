@@ -37,34 +37,18 @@ function isVal(v) {
 
 function batchMessages(callback, wait) {
 
-    let messages = [];  // array of data arrays
+    let messages = [];  // batch of received messages
 
     let timeout;
 
     return function() {
-        // console.log("func enter", arguments);
 
         // first, reset the timeout
         clearTimeout(timeout);
 
-        // const context = this;
-
         let event = arguments[0];
-        // console.log(event.type);
-
-        //TODO: filter by type, name, port, ...
-
-        // channel: 1
-        // data: Uint8Array(3) [144, 47, 115]
-        // note: {number: 47, name: "B", octave: 2}
-        // rawVelocity: 115
-        // target: Input {_userHandlers: {…}, _midiInput: MIDIInput, …}
-        // timestamp: 9612.800000000789
-        // type: "noteon"
-        // velocity: 0.905511811023622
 
         messages.push(event.data);
-        // console.log("messages", messages);
 
         timeout = setTimeout(() => {
             console.log("timeout elapsed", messages.length);
@@ -100,8 +84,6 @@ class Preset extends Component {
         this.setState(
             produce(draft => {
                 let m = { type, message };
-                // let len = draft.statusMessages.unshift(m);
-                // if (len > MAX_STATUS_MESSAGES) draft.statusMessages.pop();
                 let len = draft.statusMessages.push(m);
                 if (len > MAX_STATUS_MESSAGES) draft.statusMessages.shift();
             })
@@ -120,63 +102,12 @@ class Preset extends Component {
         this.addStatusMessage("error", message);
     };
 
-/*
-    handleMidiInputEvent = (event) => {
-        // console.log("Presets.handleMidiInputEvent", hs(event.data));
-        // if (event instanceof MIDIMessageEvent) {
-        if (isSysexData(event.data)) {
-            this.setState(
-                produce(draft => {
-                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
-
-                    // When requesting a config via MIDI (and not via a file drag&drop), we do not
-                    // update the preset and control ID from the MIDI sysex received.
-                    // This is important because to get the LED data we need to request the complete
-                    // preset data instead of just the selected control's config.
-
-                    //TODO: factorise this code:
-                    // let pId = Object.keys(draft.data[TARGET_PRESET])[0];
-                    // let cId = Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0];
-                    // draft.presetIndex = parseInt(pId, 10);
-                    // draft.controlId = parseInt(cId, 10);
-
-                    // this.props.onBusy(false);
-                })
-            );
-            this.addInfoMessage(`sysex received (${event.data.length} bytes)`);
-        } else {
-            console.log("MIDI message is not a sysex message")
-        }
-        // }
-    };
-*/
-
     handleMidiInputEvent = batchMessages(
         messages => {
-
-/*
-            console.log("merge messages");
-
-            let d;
-            for (let m of messages) {
-                if (isSysexData(m)) {
-                    d = mergeDeep(d || {}, parseSysexDump(m));
-                } else {
-                    console.log("MIDI message is not a sysex message")
-                }
-            }
-
-            console.log("merge done", d);
-*/
-
-
-            console.log("handleMidiInputEvent enter", messages.length);
+            // console.log("handleMidiInputEvent enter", messages.length);
             this.setState(
                 produce(
                     draft => {
-
-                        // draft.data = d;
-                        // console.log("merge messages");
 
                         for (let m of messages) {
                             if (isSysexData(m)) {
@@ -185,8 +116,6 @@ class Preset extends Component {
                                 console.log("MIDI message is not a sysex message")
                             }
                         }
-
-                        // console.log("merge done", draft.data);
 
                         // When requesting a config via MIDI (and not via a file drag&drop), we do not
                         // update the preset and control ID from the MIDI sysex received.
@@ -221,7 +150,6 @@ class Preset extends Component {
                     this.showBusy();
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
                     if (isSysexData(data)) {
-                        //this.props.onBusy(true);
                         this.setState(
                             produce(draft => {
                                 // draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
@@ -261,21 +189,7 @@ class Preset extends Component {
     };
 
     selectPreset = (id) => {
-        // console.log(`selectPreset ${id}`);
         // if the user selects another preset or control, then clear the data in the state
-
-/* TODO: delete after test new implementation.
-        if (id !== this.state.presetIndex) {
-            this.setState({
-                presetIndex: id,
-                data: null
-            });
-        } else {
-            this.setState({
-                presetIndex: id
-            });
-        }
-*/
         this.setState(
             produce(draft => {
                 draft.presetIndex = id;
@@ -293,21 +207,7 @@ class Preset extends Component {
     };
 
     selectControl = (id) => {
-        // console.log(`selectControl ${id}`);
         // if the user selects another preset or control, then clear the data in the state
-
-/* TODO: delete after test new implementation.
-        if (id !== this.state.controlId) {
-            this.setState({
-                controlId: id,
-                data: null
-            });
-        } else {
-            this.setState({
-                controlId: id
-            });
-        }
-*/
         this.setState(
             produce(draft => {
                 draft.controlId = id;
@@ -328,7 +228,7 @@ class Preset extends Component {
      * dataIndex is only used when dataType == "data"
      */
     updateControlStep = (controlId, stepIndex, dataType, dataIndex, value) => {
-        console.log("Presets.updateControlStep", controlId, stepIndex, dataIndex, value);
+        // console.log("Presets.updateControlStep", controlId, stepIndex, dataIndex, value);
         let v = parseInt(value, 10);
         this.setState(
             produce(draft => {
@@ -338,12 +238,9 @@ class Preset extends Component {
                     draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
                 }
                 if (dataType === "msg_type") {
-                    // console.log('msg_type', dataType, value);
                     if (v === MSG_CTRL_OFF) {
-                        // console.log('set active 0');
                         draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 0;
                     } else {
-                        // console.log('set active 1');
                         draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 1;
                     }
                 }
@@ -423,12 +320,7 @@ class Preset extends Component {
             console.warn(`send: output ${this.state.output} not found`);
             return;
         }
-        // this.props.onBusy(true);
         this.showBusy();
-        // this.setState(
-        //     // {data: null},
-        //     () => out.sendSysex(SYSEX_SIGNATURE, msg)
-        // );
         out.sendSysex(SYSEX_SIGNATURE, msg);
     };
 
@@ -443,8 +335,6 @@ class Preset extends Component {
     render() {
 
         const { presetIndex, controlId, data, changed } = this.state;
-
-        // console.log("render", presetIndex, data);
 
         let showEditor = false;
 
@@ -490,21 +380,13 @@ class Preset extends Component {
             }
         }
 
-        console.log("Presets.render", showEditor, presetIndex, controlId);
+        // console.log("Presets.render", showEditor, presetIndex, controlId);
 
         return (
             <div className="wrapper">
                 <div className="content">
 
                     <div className="content-row step-1">
-{/*
-                        <div className="background">
-                            Connect
-                        </div>
-                        <div className="content-row-header">
-                            1
-                        </div>
-*/}
                         <div className="content-row-content row-middle-aligned">
                             <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
                                   inputRenderer={this.renderPort} outputRenderer={this.renderPort}
@@ -519,14 +401,6 @@ class Preset extends Component {
                         </div>
                     </div>
                     <div className="content-row step-2">
-{/*
-                        <div className="background">
-                            Select
-                        </div>
-                        <div className="content-row-header">
-                            2
-                        </div>
-*/}
                         <div className="content-row-content">
 
                             <h2>Select preset and control:</h2>
@@ -541,14 +415,6 @@ class Preset extends Component {
                     </div>
 
                     <div className="content-row step-3">
-{/*
-                        <div className="background">
-                            Edit
-                        </div>
-                        <div className="content-row-header">
-                            3
-                        </div>
-*/}
                         <div className="content-row-content">
                             {showEditor &&
                             <Fragment>
@@ -570,14 +436,6 @@ class Preset extends Component {
                     </div>
 
                     <div className="content-row step-4">
-{/*
-                        <div className="background">
-                            Write
-                        </div>
-                        <div className="content-row-header">
-                            4
-                        </div>
-*/}
                         <div className="content-row-content">
                             {changed &&
                             <Fragment>
@@ -597,12 +455,12 @@ class Preset extends Component {
                                 {updateMessages.map((m, i) => <div key={i} className="code">{hs(m)}</div>)}
                             </div>
                         </div>}
-
+{/*
                         {data && <div className="debug">
                             <h4>[Debug] sysex data for the control's steps:</h4>
                             <pre>{JSON.stringify(data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"], null, 4)}</pre>
                         </div>}
-
+*/}
                     </div>
                 </div>
 

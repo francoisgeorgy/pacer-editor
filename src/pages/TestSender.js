@@ -11,34 +11,6 @@ import Midi from "../components/Midi";
 import MidiPort from "../components/MidiPort";
 
 
-function debounce(func, wait) {
-    let timeout;
-    return function() {
-        const context = this;
-        const args = arguments;
-        console.log("cleatTimeout");
-        clearTimeout(timeout);
-        // let later = function() {
-        //     timeout = null;
-        //     func.apply(context, args);
-        // };
-        // timeout = setTimeout(later, wait);
-        timeout = setTimeout(() => {
-            timeout = null;
-            console.log("func.apply");
-            func.apply(context, args);
-        }, wait);
-    };
-}
-/*
-const debounce = (func, delay) => {
-  return function() {
-    inDebounce = setTimeout(() => func.apply(context, args), delay)
-  }
-}
-
-*/
-
 class TestSender extends Component {
 
     state = {
@@ -77,7 +49,6 @@ class TestSender extends Component {
         }
     };
 
-    /*
     handleMidiInputEvent = (event) => {
         // console.log("TestSender.handleMidiInputEvent", event, event.data);
         // if (event instanceof MIDIMessageEvent) {
@@ -94,9 +65,9 @@ class TestSender extends Component {
         // }
     };
 
-    debouncedMidi = debounce(handleMessage, 1000);
-    */
+    // debouncedMidi = debounce(handleMessage, 1000);
 
+/*
     handleMidiInputEvent = debounce((event) => {
         console.log("TestSender.handleMidiInputEvent", event, event.data);
         // if (event instanceof MIDIMessageEvent) {
@@ -112,7 +83,7 @@ class TestSender extends Component {
         }
         // }
     }, 1000);
-
+*/
 
     renderPort = (port, selected, clickHandler) => {
         if (port === undefined || port === null) return null;
@@ -148,11 +119,7 @@ class TestSender extends Component {
      */
     render() {
 
-        // console.log("SendTester.render", this.props);
-
         const { data, messages, customMessage } = this.state;
-
-        // console.log("SendTester.render", messages, customMessage.length % 2);
 
         const cs = checksum(fromHexString(customMessage, / /g));
 
@@ -160,14 +127,6 @@ class TestSender extends Component {
             <div className="wrapper">
                 <div className="content">
                     <div className="content-row step-1">
-{/*
-                        <div className="background">
-                            Connect
-                        </div>
-                        <div className="content-row-header">
-                            1
-                        </div>
-*/}
                         <div className="content-row-content row-middle-aligned">
                             <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
                                   inputRenderer={this.renderPort} outputRenderer={this.renderPort}
@@ -179,14 +138,6 @@ class TestSender extends Component {
                         </div>
                     </div>
                     <div className="content-row step-2">
-{/*
-                        <div className="background">
-                            Send
-                        </div>
-                        <div className="content-row-header">
-                            2
-                        </div>
-*/}
                         <div className="content-row-content">
                             <h2>Test messages:</h2>
                             <div>
@@ -209,24 +160,14 @@ class TestSender extends Component {
                                            placeholder={"hex digits only"} onChange={this.updateCustomMessage} />
                                     <span className="code light"> {h(cs)}</span>
                                 </div>
-{/*
-                                <div>
+                                <div className="custom-message code">
                                     {hs(SYSEX_SIGNATURE)} {hs(SYSEX_HEADER)} {hs(customMessage)} {h(cs)}
                                 </div>
-*/}
                             </div>
 
                         </div>
                     </div>
                     <div className="content-row step-3">
-{/*
-                        <div className="background">
-                            Receive
-                        </div>
-                        <div className="content-row-header">
-                            3
-                        </div>
-*/}
                         <div className="content-row-content">
                             <h2>Response:</h2>
                             <div className="message code">
@@ -240,7 +181,6 @@ class TestSender extends Component {
                             </div>}
 
                         </div>
-
                     </div>
                 </div>
 

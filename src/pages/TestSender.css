@@ -11,6 +11,10 @@
     margin-left: 2rem;
 }
 
+.custom-message {
+    margin: 5px 0 0 60px;
+}
+
 button {
     margin-right: 1rem;
     padding: 5px 10px;
