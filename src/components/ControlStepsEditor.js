@@ -20,12 +20,12 @@ const LEDMidi = ({ current_value, onChange }) => {
 };
 
 const LEDColor = ({ current_value, onChange }) => {
-    console.log("LEDColor", current_value, typeof current_value);
+    // console.log("LEDColor", current_value, typeof current_value);
     // let v = (typeof current_value === 'number') ? current_value.toString() : null;
-    let v = current_value ? 3 : null;
-    // let v = current_value;
+    // let v = current_value ? 3 : null;
+    // // let v = current_value;
     return (
-        <select defaultValue={v} onChange={(event) => onChange(event.target.value)}>
+        <select defaultValue={current_value} onChange={(event) => onChange(event.target.value)}>
             {
                 Object.keys(COLORS).map(
                     key => {
@@ -42,9 +42,9 @@ const LEDNum = ({ current_value, onChange }) => {
     return (
         <select defaultValue={current_value} onChange={(event) => onChange(event.target.value)}>
             <option value="0">default</option>
-            <option value="1">bottom</option>
-            <option value="2">middle</option>
             <option value="3">top</option>
+            <option value="2">middle</option>
+            <option value="1">bottom</option>
         </select>
     );
 };
@@ -80,7 +80,7 @@ const MidiNote = ({ note, onChange }) => {
 
 const Step = ({ index, config, updateCallback }) => {
 
-    console.log("Step", index, config);
+    console.log("Step", index, config.msg_type, config);
 
     let inactive = config.msg_type === MSG_CTRL_OFF;
 
@@ -147,10 +147,10 @@ const Step = ({ index, config, updateCallback }) => {
             <div>{d1}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type][1]}</div></div>
             <div>{d2}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type][2]}</div></div>
             <div>
-                <LEDColor current_value={config.led_active_color} onChange={(value) => updateCallback("led_active_color", null, value)} />
+                <LEDColor current_value={config.led_inactive_color} onChange={(value) => updateCallback("led_inactive_color", null, value)} />
             </div>
             <div>
-                <LEDColor current_value={config.led_inactive_color} onChange={(value) => updateCallback("led_inactive_color", null, value)} />
+                <LEDColor current_value={config.led_active_color} onChange={(value) => updateCallback("led_active_color", null, value)} />
             </div>
             <div>
                 <LEDNum current_value={config.led_num} onChange={(value) => updateCallback("led_num", null, value)} />
@@ -187,7 +187,7 @@ class ControlStepsEditor extends Component {
 
         const steps = this.props.steps;
 
-        // console.log("ControlStepsEditor.render", steps);
+        console.log("ControlStepsEditor.render", this.props.controlId, steps);
 
         return (
             <div className="steps">
@@ -196,18 +196,18 @@ class ControlStepsEditor extends Component {
                 <div className="step-col-header">Data 1</div>
                 <div className="step-col-header">Data 2</div>
                 <div className="step-col-header">Data 3</div>
-                <div className="step-col-header">LED On</div>
                 <div className="step-col-header">LED Off</div>
+                <div className="step-col-header">LED On</div>
                 <div className="step-col-header">LED Num</div>
                 <div className="step-col-header">LED MIDI</div>
                 <div className="step-col-header">MIDI Ch.</div>
 
-                <Step key={1} index={1} config={steps[1]} updateCallback={(dataType, dataIndex, value) => this.onStepUpdate(1, dataType, dataIndex, value)} />
-{/*
+                {/*<Step key={1} index={1} config={steps[1]} updateCallback={(dataType, dataIndex, value) => this.onStepUpdate(1, dataType, dataIndex, value)} />*/}
+
                 {Object.keys(steps).map(i =>
                     <Step key={i} index={i} config={steps[i]} updateCallback={(dataType, dataIndex, value) => this.onStepUpdate(i, dataType, dataIndex, value)} />
                 )}
-*/}
+
             </div>
         );
     }

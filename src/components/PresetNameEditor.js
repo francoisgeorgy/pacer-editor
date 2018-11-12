@@ -12,7 +12,7 @@ class PresetNameEditor extends Component {
 
         const name = this.props.name;
 
-        console.log("PresetNameEditor.render", name);
+        // console.log("PresetNameEditor.render", name);
 
         return (
             <div className="preset-name">

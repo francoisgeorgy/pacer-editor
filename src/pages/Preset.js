@@ -5,7 +5,7 @@ import {
     getControlUpdateSysexMessages,
     isSysexData,
     mergeDeep,
-    parseSysexDump, requestPreset, requestPresetObj
+    parseSysexDump, requestPreset
 } from "../pacer/sysex";
 import ControlSelector from "../components/ControlSelector";
 import {
@@ -42,7 +42,7 @@ function batchMessages(callback, wait) {
     let timeout;
 
     return function() {
-        console.log("func enter", arguments);
+        // console.log("func enter", arguments);
 
         // first, reset the timeout
         clearTimeout(timeout);
@@ -64,12 +64,13 @@ function batchMessages(callback, wait) {
         // velocity: 0.905511811023622
 
         messages.push(event.data);
-        console.log("messages", messages);
+        // console.log("messages", messages);
 
         timeout = setTimeout(() => {
-            console.log("timeout elapsed");
+            console.log("timeout elapsed", messages.length);
             timeout = null;
             callback(messages);
+            messages = [];
         }, wait);
     };
 
@@ -152,17 +153,40 @@ class Preset extends Component {
 
     handleMidiInputEvent = batchMessages(
         messages => {
+
+/*
+            console.log("merge messages");
+
+            let d;
+            for (let m of messages) {
+                if (isSysexData(m)) {
+                    d = mergeDeep(d || {}, parseSysexDump(m));
+                } else {
+                    console.log("MIDI message is not a sysex message")
+                }
+            }
+
+            console.log("merge done", d);
+*/
+
+
+            console.log("handleMidiInputEvent enter", messages.length);
             this.setState(
                 produce(
                     draft => {
 
+                        // draft.data = d;
+                        // console.log("merge messages");
+
                         for (let m of messages) {
                             if (isSysexData(m)) {
-                                draft.data = mergeDeep(m || {}, parseSysexDump(m));
+                                draft.data = mergeDeep(draft.data || {}, parseSysexDump(m));
                             } else {
                                 console.log("MIDI message is not a sysex message")
                             }
                         }
+
+                        // console.log("merge done", draft.data);
 
                         // When requesting a config via MIDI (and not via a file drag&drop), we do not
                         // update the preset and control ID from the MIDI sysex received.
@@ -179,7 +203,7 @@ class Preset extends Component {
             this.addInfoMessage(`${messages.length} messages received (${bytes} bytes)`);
             this.props.onBusy(false);
         },
-        2000
+        1000
     );
 
     /**
@@ -261,7 +285,7 @@ class Preset extends Component {
                 }
             })
         );
-        if (isVal(id) /*&& this.state.controlId*/) {
+        if (isVal(id) && this.state.controlId) {
             // this.sendSysex(requestPresetObj(id, this.state.controlId));
             // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
             this.sendSysex(requestPreset(id));
@@ -293,7 +317,7 @@ class Preset extends Component {
                 }
             })
         );
-        if (isVal(this.state.presetIndex) /*&& id*/) {
+        if (isVal(this.state.presetIndex) && id) {
             // this.sendSysex(requestPresetObj(this.state.presetIndex, id));
             // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
             this.sendSysex(requestPreset(this.state.presetIndex));
@@ -420,6 +444,8 @@ class Preset extends Component {
 
         const { presetIndex, controlId, data, changed } = this.state;
 
+        // console.log("render", presetIndex, data);
+
         let showEditor = false;
 
         if (data) {
@@ -450,6 +476,7 @@ class Preset extends Component {
                 console.log(`Presets: steps not found in data`);
                 showEditor = false;
             }
+
         }
 
         showEditor = showEditor && (Object.keys(data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]).length === 6);
@@ -463,7 +490,7 @@ class Preset extends Component {
             }
         }
 
-        // console.log("Presets.render", showEditor, presetIndex, controlId);
+        console.log("Presets.render", showEditor, presetIndex, controlId);
 
         return (
             <div className="wrapper">
@@ -565,15 +592,15 @@ class Preset extends Component {
 
                     <div>
                         {showEditor && <div className="debug">
-                            <h4>[Debug] update message to send to Pacer:</h4>
+                            <h4>[Debug] Update messages to send:</h4>
                             <div className="message-to-send">
                                 {updateMessages.map((m, i) => <div key={i} className="code">{hs(m)}</div>)}
                             </div>
                         </div>}
 
                         {data && <div className="debug">
-                            <h4>[Debug] sysex data:</h4>
-                            <pre>{JSON.stringify(data, null, 4)}</pre>
+                            <h4>[Debug] sysex data for the control's steps:</h4>
+                            <pre>{JSON.stringify(data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"], null, 4)}</pre>
                         </div>}
 
                     </div>

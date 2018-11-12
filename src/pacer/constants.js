@@ -261,7 +261,7 @@ export const MSG_TYPES_DATA_HELP = {
     [MSG_LOAD_CC]: ["controller", "value", "not used"]
 };
 
-
+/*
 export const CONTROL_ELEMENT = {
     // 0x00: "",
     0x01: "step 1: channel",
@@ -407,6 +407,7 @@ export const CONTROL_ELEMENT = {
 
     0x7F: "ALL"
 };
+*/
 
 export const MIDI_ELEMENT = {
     // 0x00: "",

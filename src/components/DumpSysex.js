@@ -2,7 +2,6 @@ import React from "react";
 import "./DumpSysex.css";
 import {
     MSG_SW_NOTE,
-    CONTROLS,
     TARGET_PRESET,
     MSG_TYPES, COLORS, CONTROLS_FULLNAME
 } from "../pacer/constants";

@@ -46,7 +46,9 @@ function isObject(item) {
  * @param ...sources
  */
 export function mergeDeep(target, ...sources) {
+
     if (!sources.length) return target;
+
     const source = sources.shift();
 
     if (isObject(target) && isObject(source)) {
@@ -118,7 +120,7 @@ function getControlMode(data) {
 
 function getControlLED(data) {
 
-    // console.log("getControlLED", hs(data));
+    console.log("getControlLED", hs(data));
 
     // 54 01 00     54 == LED, 01 == 1 byte of data, 00 = data itself
 
@@ -169,7 +171,6 @@ function getControlLED(data) {
                 }
                 // console.log(`getControlLED: data bytes=[${hs(bytes)}]`);
                 i += data_len;
-                // cfg.steps[step]["led"].midi_ctrl = bytes;
                 cfg.steps[step]["led_midi_ctrl"] = bytes;
                 break;
             case 0x41:
@@ -187,9 +188,8 @@ function getControlLED(data) {
                 } else {
                     bytes = Array.from(data.slice(i, i + data_len));
                 }
-                // console.log(`getControlLED: data bytes=[${hs(bytes)}]`);
+                console.log(`getControlLED: data bytes=[${h(bytes)}]`);
                 i += data_len;
-                // cfg.steps[step]["led"].active_color = bytes;
                 cfg.steps[step]["led_active_color"] = bytes;
                 break;
             case 0x42:
@@ -515,7 +515,7 @@ function parseSysexDump(data) {
 
     } // while
 
-    // console.log(JSON.stringify(presets));
+    // console.log("parseSysexDump", JSON.stringify(presets));
 
     return presets;
 }
@@ -593,6 +593,12 @@ function buildControlStepSysex(presetIndex, controlId, steps) {
         msg.push((i-1)*6 + 4, 1, step.data[1], 0x00);
         msg.push((i-1)*6 + 5, 1, step.data[2], 0x00);
         msg.push((i-1)*6 + 6, 1, step.active);
+
+        // LED
+        msg.push((i-1)*4 + 0x40, 1, step.led_midi_ctrl, 0x00);
+        msg.push((i-1)*4 + 0x41, 1, step.led_active_color, 0x00);
+        msg.push((i-1)*4 + 0x42, 1, step.led_inactive_color, 0x00);
+        msg.push((i-1)*4 + 0x43, 1, step.led_num, 0x00);
 
         // add checksum:
         msg.push(checksum(msg));

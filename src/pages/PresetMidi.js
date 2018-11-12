@@ -141,7 +141,7 @@ class PresetMidi extends Component {
                     draft => {
                         for (let m of messages) {
                             if (isSysexData(m)) {
-                                draft.data = mergeDeep(m || {}, parseSysexDump(m));
+                                draft.data = mergeDeep(draft.data || {}, parseSysexDump(m));
                             } else {
                                 console.log("MIDI message is not a sysex message")
                             }
@@ -155,7 +155,7 @@ class PresetMidi extends Component {
             this.addInfoMessage(`${messages.length} messages received (${bytes} bytes)`);
             this.props.onBusy(false);
         },
-        2000
+        1000
     );
 
     /**
@@ -170,10 +170,10 @@ class PresetMidi extends Component {
                     console.warn(`readFiles: ${file.name}: file too big, ${file.size}`);
                     this.addWarningMessage("file too big");
                 } else {
+                    this.showBusy();
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
                     if (isSysexData(data)) {
                         //this.props.onBusy(true);
-                        this.showBusy();
                         this.setState(
                             produce(draft => {
                                 // draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
@@ -183,11 +183,11 @@ class PresetMidi extends Component {
                             })
                         );
                         this.addInfoMessage("sysfile decoded");
-                        this.props.onBusy(false);
                     } else {
                         this.addWarningMessage("not a sysfile");
                         console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
                     }
+                    this.props.onBusy(false);
                     // non sysex files are ignored
                 }
                 // too big files are ignored
