@@ -1,14 +1,12 @@
 import React, {Component} from 'react';
 import "./Home.css";
 
-
 class Home extends Component {
-
 
     render() {
 
         return (
-            <div className="content full-width">
+            <div className="content home full-width">
 
                 <h1>Requirements</h1>
 

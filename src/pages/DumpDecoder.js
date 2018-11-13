@@ -6,8 +6,8 @@ import DumpSysex from "../components/DumpSysex";
 import './DumpDecoder.css';
 import {hs} from "../utils/hexstring";
 import Midi from "../components/Midi";
-import MidiPort from "../components/MidiPort";
 import {PACER_MIDI_PORT_NAME} from "../pacer/constants";
+import PortsGrid from "../components/PortsGrid";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -83,13 +83,6 @@ class DumpDecoder extends Component {
         // }
     };
 
-    renderPort = (port, selected, clickHandler) => {
-        if (port === undefined || port === null) return null;
-        return (
-            <MidiPort key={port.id} port={port} selected={selected} clickHandler={clickHandler} />
-        )
-    };
-
 
     /**
      * @returns {*}
@@ -103,33 +96,34 @@ class DumpDecoder extends Component {
         return (
             <div className="wrapper">
                 <div className="content">
-                    <div className="content-row step-1">
-                        <div className="content-row-content row-middle-aligned">
-                            <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
-                                  inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                                  onMidiInputEvent={this.handleMidiInputEvent}
-                                  className="sub-header" >
-                                <div className="no-midi">Please connect your Pacer to your computer.</div>
-                            </Midi>
-                        </div>
-                    </div>
-                    <div className="content-row step-2">
-                        <div className="content-row-content">
-                            <h2>Dump:</h2>
-                            Send a dump from your Pacer or drop a binary sysex file onto the drop zone on the right.
-                        </div>
-                    </div>
-                    <div className="content-row step-3">
-                        <div className="content-row-content">
-                            <DumpSysex data={data} />
+                    <div className="content-row-content no-grad">
+                        <div className="content-row-content-content">
+                            <div className="instructions">
+                                Send a dump from your Pacer or drop a binary sysex file onto the drop zone on the right.
+                            </div>
+                            <div>
+                                <DumpSysex data={data} />
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="help">
+                <div className="right-column">
+
+                    <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
+                          portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
+                          onMidiInputEvent={this.handleMidiInputEvent}
+                          className="sub-header" >
+                        <div className="no-midi">Please connect your Pacer to your computer.</div>
+                    </Midi>
+
                     <Dropzone onDrop={this.onDrop} className="drop-zone">
                         Drop a binary sysex file here<br />or click to open the file dialog
                     </Dropzone>
+
+                    {/*<h3>Log:</h3>*/}
+                    {/*<Status messages={this.state.statusMessages} />*/}
+
                 </div>
 
             </div>

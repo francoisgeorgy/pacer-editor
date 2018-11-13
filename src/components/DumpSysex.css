@@ -1,17 +1,21 @@
 .dump {
-    margin-top: 1rem;
+    margin-top: 16px;
     /*font-family: "Andale Mono", AndaleMono, "Consolas", monospace;*/
     /*font-size: 0.8rem;*/
     white-space: pre;
 }
 
+.instructions {
+    margin-top: 8px;
+}
+
 .data {
-    margin: 0.5rem 0 1rem;
+    margin: 0.5rem 0 16px;
     font-family: Courier New, Courier, monospace;
 }
 
 .dump-preset-name {
-    margin: 1rem 0;
+    margin: 16px 0;
 }
 
 .dump-controls {
@@ -22,8 +26,8 @@
 
 .dump-control table {
     border-collapse: collapse;
-    margin-right: 1rem;
-    margin-bottom: 1rem;
+    margin-right: 16px;
+    margin-bottom: 16px;
 }
 
 .dump-control th,
@@ -34,7 +38,7 @@
 }
 
 .dump-control td.name {
-    font-size: 1rem;
+    font-size: 14px;
     font-weight: bold;
-    padding-top: 0.5rem;
+    padding-top: 4px;
 }

@@ -20,13 +20,12 @@ import {produce} from "immer";
 import {inputName, outputById, outputName} from "../utils/ports";
 import ControlStepsEditor from "../components/ControlStepsEditor";
 import Midi from "../components/Midi";
-import MidiPort from "../components/MidiPort";
 import Dropzone from "react-dropzone";
 import "./Preset.css";
 import ControlModeEditor from "../components/ControlModeEditor";
 import Status from "../components/Status";
 import PresetNameEditor from "../components/PresetNameEditor";
-import Switch from "react-switch";
+import PortsGrid from "../components/PortsGrid";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -39,18 +38,12 @@ function isVal(v) {
 function batchMessages(callback, wait) {
 
     let messages = [];  // batch of received messages
-
     let timeout;
 
     return function() {
-
-        // first, reset the timeout
         clearTimeout(timeout);
-
         let event = arguments[0];
-
         messages.push(event.data);
-
         timeout = setTimeout(() => {
             console.log("timeout elapsed");
             timeout = null;
@@ -58,7 +51,6 @@ function batchMessages(callback, wait) {
             messages = [];
         }, wait);
     };
-
 }
 
 class Preset extends Component {
@@ -76,7 +68,6 @@ class Preset extends Component {
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
     showBusy = () =>  {
-        // let context = this;
         setTimeout(() => this.props.onBusy(false), 20000);
         this.props.onBusy(true);
     };
@@ -105,11 +96,9 @@ class Preset extends Component {
 
     handleMidiInputEvent = batchMessages(
         messages => {
-            // console.log("handleMidiInputEvent enter", messages.length);
             this.setState(
                 produce(
                     draft => {
-
                         for (let m of messages) {
                             if (isSysexData(m)) {
                                 draft.data = mergeDeep(draft.data || {}, parseSysexDump(m));
@@ -282,53 +271,6 @@ class Preset extends Component {
         );
     };
 
-/*
-    renderPort = (port, selected, clickHandler) => {
-        if (port === undefined || port === null) return null;
-        return (
-            <MidiPort key={port.id} port={port} selected={selected} clickHandler={clickHandler} />
-        )
-    };
-*/
-
-    renderPortsGrid = (groupedPorts, clickHandler) => {
-
-        console.log("groupPortsByName", groupedPorts);
-
-        return (
-            <div className="ports-grid">
-                <div className="grid-header">MIDI port</div>
-                <div className="grid-header">IN</div>
-                <div className="grid-header">OUT</div>
-                {Object.keys(groupedPorts).map(name =>
-                    <Fragment>
-                        <div className="xport-name">{name}</div>
-                        <div className="xport-switch">
-                            {groupedPorts[name].input &&
-                            <Switch
-                                onChange={() => clickHandler(groupedPorts[name].input.id)}
-                                checked={groupedPorts[name].input.selected}
-                                className="react-switch"
-                                id={`switch-${groupedPorts[name].input.id}`}
-                                height={16} width={36}
-                            />}
-                        </div>
-                        <div className="xport-switch">
-                            {groupedPorts[name].output && <Switch
-                                onChange={() => clickHandler(groupedPorts[name].output.id)}
-                                checked={groupedPorts[name].output.selected}
-                                className="react-switch"
-                                id={`switch-${groupedPorts[name].output.id}`}
-                                height={16} width={36}
-                            />}
-                        </div>
-                    </Fragment>
-                )}
-            </div>
-        );
-
-    };
-
     onInputConnection = (port_id) => {
         this.addInfoMessage(`input ${inputName(port_id)} connected`);
     };
@@ -493,8 +435,7 @@ class Preset extends Component {
                 <div className="right-column">
 
                     <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
-                          portsRenderer={this.renderPortsGrid}
-                          // inputRenderer={this.renderPort} outputRenderer={this.renderPort}
+                          portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
                           onMidiInputEvent={this.handleMidiInputEvent}
                           onInputConnection={this.onInputConnection}
                           onInputDisconnection={this.onInputDisconnection}

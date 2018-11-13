@@ -10,12 +10,13 @@ import "./DumpSysex.css";
 import * as Note from "tonal-note";
 import {presetIndexToXY} from "../pacer/utils";
 
+/*
 const PresetName = ({ name }) => {
     return (
         <div className="dump-preset-name">Preset name: {name}</div>
     );
 };
-
+*/
 
 const MidiTable = ({ settings }) => {
     if (settings === null || settings === undefined) return null;
@@ -120,8 +121,8 @@ const Preset = ({ index, data }) => {
     if (data === null || data === undefined) return null;
     return (
         <div>
-            <h3>Preset {presetIndexToXY(parseInt(index, 10))} (#{index})</h3>
-            <PresetName name={data["name"]} />
+            <h3>Preset {presetIndexToXY(parseInt(index, 10))} (#{index}): {data["name"]}</h3>
+            {/*<PresetName name= />*/}
             <Controls controls={data["controls"]} />
             <MidiSettings settings={data["midi"]} />
         </div>
@@ -141,7 +142,6 @@ const DumpSysex = ({ data }) => {
     return (
         <div className="dump code">
             {
-                // _.map(data, (value, key) => <Preset name={key} data={value} />)
                 data && <Presets presets={data[TARGET_PRESET]} />
             }
 {/*

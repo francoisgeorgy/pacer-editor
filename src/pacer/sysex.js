@@ -277,13 +277,13 @@ function parseSysexMessage(data) {
     message[tgt] = {};
 
     if (idx >= 0x19 && idx <= 0x7E) {
-        console.warn("parseSysexMessage: invalid/ignored idx", idx);
+        // console.warn("parseSysexMessage: invalid/ignored idx", idx);
     }
 
     message[tgt][idx] = {};
 
     if (!(obj in CONTROLS)) {
-        console.warn("parseSysexMessage: invalid/ignored object", h(obj));
+        // console.warn("parseSysexMessage: invalid/ignored object", h(obj));
         return null;
     }
 

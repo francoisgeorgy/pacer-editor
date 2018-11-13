@@ -5,21 +5,7 @@ h1 {
 
 h2 {
     font-size: 1.25rem;
-    /*line-height: 1.4;*/
-    /*margin-top: 0.875rem;*/
     margin-bottom: 0.25em;
-    font-variant-ligatures: common-ligatures;
-    font-feature-settings: "kern";
-    font-kerning: normal;
-    text-rendering: optimizeLegibility;
-    -webkit-font-feature-settings: "kern";
-    -webkit-font-variant-ligatures: common-ligatures;
-
-    /*border-top: 1px solid #c7c7c7;*/
-    /*border-right: 1px solid #c7c7c7;*/
-    /*border-left: 1px solid #c7c7c7;*/
-    /*background-color: #eee;*/
-    /*padding: 4px 6px;*/
 }
 
 h3 {
@@ -27,6 +13,7 @@ h3 {
     line-height: 1.5;
     margin-top: 0.25em;
     margin-bottom: 0.25em;
+    color: #555;
 }
 
 .app {
@@ -124,10 +111,6 @@ h3 {
 
 .content h2 {
     margin-bottom: 0.25em;
-    /*border-top: 1px solid #c7c7c7;*/
-    /*border-right: 1px solid #c7c7c7;*/
-    /*border-left: 1px solid #c7c7c7;*/
-    /*background-color: #eee;*/
     padding: 16px 8px 0 16px;
     font-size: 1rem;
     font-weight: bold;
@@ -198,7 +181,6 @@ div.status {
 }
 
 .code {
-    /*font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;*/
     font-family: "Andale Mono", AndaleMono, monospace;
     font-size: 0.875rem;
 }
@@ -211,14 +193,11 @@ div.status {
     color: red;
 }
 
-
 .drop-zone {
-    /*margin: 8px 0 0 0;*/
     padding: 16px 8px;
     border: 1px solid #ddddf0;
     background-color: #f4f4ff;
     text-align: center;
-    /*width: 600px;*/
 }
 
 .ports {
@@ -230,8 +209,6 @@ div.status {
     display: grid;
     grid-template-columns: repeat(3, auto);
     grid-gap: 4px 0px;
-    /*justify-content: start;*/
-    /*margin: 8px 16px 8px 0;*/
     margin-bottom: 16px;
 }
 
@@ -245,98 +222,53 @@ div.status {
 }
 
 .port {
-    /*background-color: #f4f4f4;*/
     border: 1px solid #c7c7c7;
     margin-right: 6px;
     padding: 2px 4px;
-
     display: flex;
     flex-direction: row;
     align-items: center;
-
-    /*
-    display: grid;
-    grid: 1fr / repeat(3, auto);
-    justify-content: start;
-    grid-column-gap: 4px;
-    grid-row-gap: 8px;
-    justify-items: stretch;
-    align-items: stretch;
-    */
-
 }
 
 .port > div {
     display: flex;
     justify-content: center;
     align-items: center;
-    /*padding: 1px 0;*/
-    /*background-color: #eeeeee;*/
-    /*margin-right: 4px;*/
-    /*width: 60px;*/
-    /*cursor: pointer;*/
-    /*border: 1px solid #eeeeee;*/
 }
 
-
+/*
 .port-type {
     margin-left: 8px;
     margin-right: 4px;
-    /*align-self: stretch;*/
-    /*padding: 4px 0;*/
-    /*background-color: #aaa;*/
-    /*color: #fff;*/
-    /*width: 40px;*/
-    /*text-align: right;*/
     font-weight: bold;
-    /*font-size: 0.875rem;*/
-
 }
+*/
 
 .port-name {
-    /*padding: 4px 0;*/
-    margin: 0 3px;
     font-weight: bold;
 }
 
-
+/*
 .port.input.enabled {
     background-color: #A1EEA1;
     border: 1px solid #52CA52;
 }
+*/
 
+/*
 .port.input.enabled .port-type {
     background-color: #52CA52;
-    /*border: 1px solid #00aa00;*/
 }
 
 .port.output.enabled {
-    /*background-color: #c4c4ea;*/
-    /*border: 1px solid #6666aa;*/
     background-color: #A1EEA1;
     border: 1px solid #52CA52;
 }
 
 .port.output.enabled .port-type {
     background-color: #52CA52;
-    /*border: 1px solid #00aa00;*/
 }
-
-.port-switch {
-    /*margin: 0 3px;*/
-    /*padding-left: 4px;*/
-    /*padding-right: 4px;*/
-}
-
-/*.port.enabled .port-description {*/
-/*}*/
-
-.port-state {
-    /*padding: 0 5px 5px 5px;*/
-}
-
-/*.port.enabled .port-state {*/
-/*}*/
+*/
 
 .port-usage {
     cursor: pointer;
@@ -357,7 +289,6 @@ div.status {
 }
 
 .debug {
-    /*margin: 16px 0;*/
     border-top: 1px solid #eee;
     padding: 16px 8px 8px;
     color: #777;
