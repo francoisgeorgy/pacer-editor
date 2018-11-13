@@ -68,12 +68,15 @@ h3 {
 }
 
 .busy {
-    align-self: flex-start;
+    flex-grow: 10;
+    align-self: center;
     background-color: orangered;
     color: white;
-    margin: 0 0 0 0;
-    padding: 8px 1.5rem 8px 1.5rem;
-    font-size: 1.5rem;
+    margin: 0 48px;
+    /*padding: 2px 1.5rem 2px 1.5rem;*/
+    padding: 3px 8px;
+    text-align: center;
+    font-size: 1.15rem;
 }
 
 .wrapper {

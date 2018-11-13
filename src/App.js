@@ -17,9 +17,9 @@ const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
         path={to}
         exact={activeOnlyWhenExact}
         children={({ match }) => (
-            <span className={match ? "header-link active" : "header-link"}>
+            <div className={match ? "header-link active" : "header-link"}>
                 <Link to={to}>{label}</Link>
-            </span>
+            </div>
         )}
     />
 );
@@ -60,9 +60,8 @@ class App extends Component {
                         <MenuLink to="/monitor" label="MIDI monitor" />
                         <MenuLink to="/dumpdecoder" label="Dump decoder" />
                         <MenuLink to="/testsender" label="Debug" />
-                        <div className="spacer">
-                        </div>
-                        {busy && <div className="busy">busy</div>}
+                        {!busy && <div className="spacer"> </div>}
+                        {busy && <div className="busy">please wait...</div>}
                         <div className="header-app-name">Pacer editor 0.2.0</div>
                     </header>
 
