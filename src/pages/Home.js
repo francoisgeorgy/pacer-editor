@@ -8,7 +8,7 @@ class Home extends Component {
     render() {
 
         return (
-            <div className="content">
+            <div className="content full-width">
 
                 <h1>Requirements</h1>
 

@@ -1,12 +1,12 @@
 h1 {
     font-size: 1.75rem;
-    margin: 10px 0;
+    margin: 8px 0;
 }
 
 h2 {
     font-size: 1.25rem;
     /*line-height: 1.4;*/
-    margin-top: 0.875rem;
+    /*margin-top: 0.875rem;*/
     margin-bottom: 0.25em;
     font-variant-ligatures: common-ligatures;
     font-feature-settings: "kern";
@@ -15,11 +15,11 @@ h2 {
     -webkit-font-feature-settings: "kern";
     -webkit-font-variant-ligatures: common-ligatures;
 
-    border-top: 1px solid #c7c7c7;
-    border-right: 1px solid #c7c7c7;
-    border-left: 1px solid #c7c7c7;
-    background-color: #eee;
-    padding: 4px 6px;
+    /*border-top: 1px solid #c7c7c7;*/
+    /*border-right: 1px solid #c7c7c7;*/
+    /*border-left: 1px solid #c7c7c7;*/
+    /*background-color: #eee;*/
+    /*padding: 4px 6px;*/
 }
 
 h3 {
@@ -89,38 +89,48 @@ h3 {
 }
 
 .content {
-    padding: 10px 10px 0 10px;
     flex-grow: 2;
     background-color: #ffffff;
+    width: calc(100vw - 200px);
 }
 
-.help {
+.full-width {
+    width: 100%;
+}
+
+.right-column {
     float: right;
-    flex-grow: 1;
-    /*width: 200px;*/
-    /*margin-left: 20px;*/
-    min-width: 15vw;
-    background-color: #dddddd;
-    border-left: 1px solid #cccccc;
-    padding: 10px;
-    color: #666;
+    width: 400px;
+    background-color: #eaeaea;
+    box-shadow: inset 2px 0px 5px 0px rgba(120,120,120,0.75);
+    padding: 16px;
+    color: #333333;
 }
 
 .content-row {
     position: relative;
     display: flex;
     flex-direction: row;
-    /*padding: 10px;*/
-    /*margin-bottom: 10px;*/
 }
 
 .background {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 8px;
+    right: 8px;
     overflow: hidden;
     font-size: 3rem;
     color: #fff;
+}
+
+.content h2 {
+    margin-bottom: 0.25em;
+    /*border-top: 1px solid #c7c7c7;*/
+    /*border-right: 1px solid #c7c7c7;*/
+    /*border-left: 1px solid #c7c7c7;*/
+    /*background-color: #eee;*/
+    padding: 16px 8px 0 16px;
+    font-size: 1rem;
+    font-weight: bold;
 }
 
 .content-row-header {
@@ -131,41 +141,28 @@ h3 {
 
 .content-row-content {
     flex-grow: 10;
+    border-top: 1px solid #c7c7c7;
+    background: linear-gradient(160deg, #ffffff 33%,#e5e5e5 100%);
+}
+
+.no-grad {
+    background: #fff;
+}
+
+.content-row-content-content {
+    padding: 8px 16px 16px 16px;
 }
 
 .row-middle-aligned {
     align-self: center;
 }
 
-.step-1 {
-    /*background-color: #E8E8E8;*/
-    /*background-color: #f0f0f0;*/
-}
-
-.step-2 {
-    /*background-color: #FDE0E1;*/
-    /*background-color: #E0E0E0;*/
-    /*background-color: #f0e8e8;*/
-}
-
-.step-3 {
-    /*background-color: #FCC2C5;*/
-    /*background-color: #D8D8D8;*/
-    /*background-color: #f0e0e0;*/
-}
-
-.step-4 {
-    /*background-color: #FBA5A9;*/
-    /*background-color: #D0D0D0;*/
-    /*background-color: #f0dada;*/
-}
-
 .no-midi {
     width: 100%;
-    margin: 10px 0;
-    padding: 10px;
+    margin-bottom: 16px;
+    padding: 8px;
     background-color: #fbea00c9;
-    /*border: 1px solid #000;*/
+    border: 1px solid #ff9999;
     color: #000;
 }
 
@@ -175,7 +172,7 @@ h3 {
 }
 
 .all-ports > div {
-    margin-right: 10px;
+    margin-right: 8px;
 }
 
 .sub-header {
@@ -194,8 +191,8 @@ div.status {
 }
 
 .sorry {
-    margin: 10px 0;
-    padding: 10px;
+    margin: 8px 0;
+    padding: 8px;
     background-color: orange;
     border: 1px solid red;
 }
@@ -217,7 +214,7 @@ div.status {
 
 .drop-zone {
     /*margin: 8px 0 0 0;*/
-    padding: 20px 10px;
+    padding: 16px 8px;
     border: 1px solid #ddddf0;
     background-color: #f4f4ff;
     text-align: center;
@@ -227,6 +224,24 @@ div.status {
 .ports {
     display: flex;
     flex-direction: row;
+}
+
+.ports-grid {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    grid-gap: 4px 0px;
+    /*justify-content: start;*/
+    /*margin: 8px 16px 8px 0;*/
+    margin-bottom: 16px;
+}
+
+.grid-header {
+    border-bottom: 1px solid #c7c7c7;
+    margin-bottom: 4px;
+}
+
+.ports-grid > div {
+    padding-right: 16px;
 }
 
 .port {
@@ -244,7 +259,7 @@ div.status {
     grid: 1fr / repeat(3, auto);
     justify-content: start;
     grid-column-gap: 4px;
-    grid-row-gap: 10px;
+    grid-row-gap: 8px;
     justify-items: stretch;
     align-items: stretch;
     */
@@ -265,7 +280,7 @@ div.status {
 
 
 .port-type {
-    margin-left: 10px;
+    margin-left: 8px;
     margin-right: 4px;
     /*align-self: stretch;*/
     /*padding: 4px 0;*/
@@ -327,7 +342,7 @@ div.status {
     cursor: pointer;
     font-size: 0.85rem;
     user-select: none;
-    margin-left: 10px;
+    margin-left: 8px;
 }
 
 .port-manufacturer {
@@ -339,4 +354,15 @@ div.status {
 
 .react-switch {
     vertical-align: middle;
+}
+
+.debug {
+    /*margin: 16px 0;*/
+    border-top: 1px solid #eee;
+    padding: 16px 8px 8px;
+    color: #777;
+}
+
+.debug pre {
+    font-size: 0.85rem;
 }

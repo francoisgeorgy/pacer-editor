@@ -8,8 +8,8 @@ const propTypes = {
     only: PropTypes.string,                 // regex applied to port.name
     autoConnect: PropTypes.string,          // regex applied to port.name
     portsRenderer: PropTypes.func,
-    inputRenderer: PropTypes.func,
-    outputRenderer: PropTypes.func,
+    // inputRenderer: PropTypes.func,
+    // outputRenderer: PropTypes.func,
     onMidiInputEvent: PropTypes.func,
     onMidiOutputEvent: PropTypes.func,
     onInputConnection: PropTypes.func,      // callback with port.id as parameter

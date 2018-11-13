@@ -83,6 +83,44 @@ class Monitor extends Component {
 
     };
 
+    renderPortsGrid = (groupedPorts, clickHandler) => {
+
+        console.log("groupPortsByName", groupedPorts);
+
+        return (
+            <div className="ports-grid">
+                <div className="grid-header">MIDI port</div>
+                <div className="grid-header">IN</div>
+                <div className="grid-header">OUT</div>
+                {Object.keys(groupedPorts).map(name =>
+                    <Fragment>
+                        <div className="xport-name">{name}</div>
+                        <div className="xport-switch">
+                            {groupedPorts[name].input &&
+                            <Switch
+                                onChange={() => clickHandler(groupedPorts[name].input.id)}
+                                checked={groupedPorts[name].input.selected}
+                                className="react-switch"
+                                id={`switch-${groupedPorts[name].input.id}`}
+                                height={16} width={36}
+                            />}
+                        </div>
+                        <div className="xport-switch">
+                            {groupedPorts[name].output && <Switch
+                                onChange={() => clickHandler(groupedPorts[name].output.id)}
+                                checked={groupedPorts[name].output.selected}
+                                className="react-switch"
+                                id={`switch-${groupedPorts[name].output.id}`}
+                                height={16} width={36}
+                            />}
+                        </div>
+                    </Fragment>
+                )}
+            </div>
+        );
+
+    };
+
     render() {
 
         return (
@@ -92,13 +130,6 @@ class Monitor extends Component {
                     <div>
                         <div className="content-row step-1">
                             <div className="content-row-content row-middle-aligned">
-                                <Midi only=".*" autoConnect=".*"
-                                      portsRenderer={this.renderPorts}
-                                      inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                                      onMidiInputEvent={this.handleMidiInputEvent}
-                                      className="sub-header" >
-                                    <div className="no-midi">Please connect your Pacer or any other MIDI device to your computer.</div>
-                                </Midi>
                             </div>
                         </div>
                         <div className="content-row step-2">
@@ -152,11 +183,15 @@ class Monitor extends Component {
                         </div>
                     </div>
                 </div>
-{/*
-                <div className="help">
-                    <h3>Help</h3>
+                <div className="right-column">
+                    <Midi only=".*" autoConnect=".*"
+                          portsRenderer={this.renderPortsGrid}
+                          inputRenderer={this.renderPort} outputRenderer={this.renderPort}
+                          onMidiInputEvent={this.handleMidiInputEvent}
+                          className="sub-header" >
+                        <div className="no-midi">Please connect your Pacer or any other MIDI device to your computer.</div>
+                    </Midi>
                 </div>
-*/}
             </div>
         );
     }

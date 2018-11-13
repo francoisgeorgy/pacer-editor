@@ -23,6 +23,7 @@ import {hs} from "../utils/hexstring";
 import MidiSettingsEditor from "../components/MidiSettingsEditor";
 import {inputName, outputById, outputName} from "../utils/ports";
 import PresetNameEditor from "../components/PresetNameEditor";
+import Switch from "react-switch";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -224,11 +225,51 @@ class PresetMidi extends Component {
         );
     };
 
+/*
     renderPort = (port, selected, clickHandler) => {
         if (port === undefined || port === null) return null;
         return (
             <MidiPort key={port.id} port={port} selected={selected} clickHandler={clickHandler} />
         )
+    };
+*/
+
+    renderPortsGrid = (groupedPorts, clickHandler) => {
+
+        console.log("groupPortsByName", groupedPorts);
+
+        return (
+            <div className="ports-grid">
+                <div className="grid-header">MIDI port</div>
+                <div className="grid-header">IN</div>
+                <div className="grid-header">OUT</div>
+                {Object.keys(groupedPorts).map(name =>
+                    <Fragment>
+                        <div className="xport-name">{name}</div>
+                        <div className="xport-switch">
+                            {groupedPorts[name].input &&
+                            <Switch
+                                onChange={() => clickHandler(groupedPorts[name].input.id)}
+                                checked={groupedPorts[name].input.selected}
+                                className="react-switch"
+                                id={`switch-${groupedPorts[name].input.id}`}
+                                height={16} width={36}
+                            />}
+                        </div>
+                        <div className="xport-switch">
+                            {groupedPorts[name].output && <Switch
+                                onChange={() => clickHandler(groupedPorts[name].output.id)}
+                                checked={groupedPorts[name].output.selected}
+                                className="react-switch"
+                                id={`switch-${groupedPorts[name].output.id}`}
+                                height={16} width={36}
+                            />}
+                        </div>
+                    </Fragment>
+                )}
+            </div>
+        );
+
     };
 
     onInputConnection = (port_id) => {
@@ -318,76 +359,77 @@ class PresetMidi extends Component {
             <div className="wrapper">
                 <div className="content">
 
-                    <div className="content-row step-1">
-                        <div className="content-row-content row-middle-aligned">
-                            <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
-                                  inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                                  onMidiInputEvent={this.handleMidiInputEvent}
-                                  onInputConnection={this.onInputConnection}
-                                  onInputDisconnection={this.onInputDisconnection}
-                                  onOutputConnection={this.onOutputConnection}
-                                  onOutputDisconnection={this.onOutputDisconnection}
-                                  className="sub-header" >
-                                <div className="no-midi">Please connect your Pacer to your computer.</div>
-                            </Midi>
-                        </div>
-                    </div>
-                    <div className="content-row step-2">
-                        <div className="content-row-content">
-
-                            <h2>Choose the preset to edit:</h2>
-
+                    <div className="content-row-content">
+                        <h2>Choose the preset to edit:</h2>
+                        <div className="content-row-content-content">
                             <div className="selectors">
                                 <PresetSelector currentPreset={presetIndex} onClick={this.selectPreset} />
                             </div>
                         </div>
                     </div>
 
-                    <div className="content-row step-3">
-                        <div className="content-row-content">
-                            {showEditor &&
-                            <Fragment>
-                                <h2>Preset name:</h2>
-                                <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]}
-                                                    onUpdate={(name) => this.updatePresetName(name)} />
-                                <h2>Preset MIDI settings:</h2>
+                    {showEditor &&
+                    <div className="content-row-content">
+                        <Fragment>
+                            <h2>Preset name:</h2>
+                            <div className="content-row-content-content">
+                                <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />
+                            </div>
+                        </Fragment>
+                    </div>
+                    }
+
+                    {showEditor &&
+                    <div className="content-row-content">
+                        <Fragment>
+                            <h2>Preset MIDI settings:</h2>
+                            <div className="content-row-content-content">
                                 <MidiSettingsEditor settings={data[TARGET_PRESET][presetIndex]["midi"]}
                                                     onUpdate={(settingIndex, dataType, dataIndex, value) => this.updateMidiSettings(settingIndex, dataType, dataIndex, value)} />
-                            </Fragment>
-                            }
-                        </div>
+                            </div>
+                        </Fragment>
                     </div>
+                    }
 
-                    <div className="content-row step-4">
-                        <div className="content-row-content">
-                            {changed &&
-                            <Fragment>
-                                <h2>Send the updated config to the Pacer:</h2>
+                    {changed &&
+                    <div className="content-row-content">
+                        <Fragment>
+                            <h2>Send the updated config to the Pacer:</h2>
+                            <div className="content-row-content-content">
                                 <div className="actions">
                                     <button className="update" onClick={() => this.updatePacer(updateMessages)}>Update Pacer</button>
                                 </div>
-                            </Fragment>
-                            }
-                        </div>
+                            </div>
+                        </Fragment>
                     </div>
+                    }
 
-                    <div>
-                        {showEditor && <div className="debug">
-                            <h4>[Debug] update message to send to Pacer:</h4>
+                    {showEditor &&
+                    <div className="content-row-content no-grad">
+                        <div className="debug">
+                            <h4>[Debug] Update messages to send:</h4>
                             <div className="message-to-send">
                                 {updateMessages.map((m, i) => <div key={i} className="code">{hs(m)}</div>)}
                             </div>
-                        </div>}
-{/*
-                        {data && <div className="debug">
-                            <h4>[Debug] sysex data:</h4>
-                            <pre>{JSON.stringify(data, null, 4)}</pre>
-                        </div>}
-*/}
+                        </div>
                     </div>
+                    }
+
                 </div>
 
-                <div className="help">
+                <div className="right-column">
+
+                    <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
+                          portsRenderer={this.renderPortsGrid}
+                          // inputRenderer={this.renderPort} outputRenderer={this.renderPort}
+                          onMidiInputEvent={this.handleMidiInputEvent}
+                          onInputConnection={this.onInputConnection}
+                          onInputDisconnection={this.onInputDisconnection}
+                          onOutputConnection={this.onOutputConnection}
+                          onOutputDisconnection={this.onOutputDisconnection}
+                          className="sub-header" >
+                        <div className="no-midi">Please connect your Pacer to your computer.</div>
+                    </Midi>
 
                     <Dropzone onDrop={this.onDrop} className="drop-zone">
                         Drop a binary sysex file here<br />or click to open the file dialog
