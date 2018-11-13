@@ -32,6 +32,13 @@ h3 {
     border: none;
 }
 
+.header-app-name {
+    float: right;
+    margin: 0 16px;
+    font-style: italic;
+    color: #c7c7c7;
+}
+
 .header-link {
     padding: 14px 0;
     margin: 0;

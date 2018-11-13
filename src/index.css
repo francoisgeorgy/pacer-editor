@@ -32,9 +32,6 @@ footer, header, hgroup, menu, nav, section {
 body {
     line-height: 1;
 }
-/*ol, ul {*/
-    /*list-style: none;*/
-/*}*/
 blockquote, q {
     quotes: none;
 }
@@ -47,7 +44,6 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
-
 
 * {
     box-sizing: border-box;
@@ -65,14 +61,12 @@ html {
     -webkit-text-size-adjust: 100%;
 }
 body {
-    /*font-family: futura-pt, Arial, "Helvetica Neue", Helvetica, sans-serif;*/
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 400;
     font-style: normal;
     font-size: 14px;
     line-height: 1.2;
     color: #000;
-    /*background-color: #FFF;*/
     margin: 0;
     padding: 0;
     -webkit-font-smoothing: antialiased;
@@ -85,24 +79,18 @@ h1, h2, h3, h4, strong {
 }
 
 a {
-    /*color: inherit;*/
     text-decoration: none;
 }
 
 select, input {
-    /*font-family: futura-pt, Arial, "Helvetica Neue", Helvetica, sans-serif;*/
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 400;
-    /*font-size: 1rem;*/
     font-style: normal;
 }
 
-
 button {
-    /*font-family: futura-pt, Arial, "Helvetica Neue", Helvetica, sans-serif;*/
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 400;
-    /*font-size: 1rem;*/
     font-style: normal;
 }
 

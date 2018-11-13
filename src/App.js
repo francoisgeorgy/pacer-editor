@@ -63,6 +63,7 @@ class App extends Component {
                         <div className="spacer">
                         </div>
                         {busy && <div className="busy">busy</div>}
+                        <div className="header-app-name">Pacer editor 0.2.0</div>
                     </header>
 
                     {/*<div className="wrapper">*/}
