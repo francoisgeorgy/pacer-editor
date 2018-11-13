@@ -7,6 +7,7 @@ const propTypes = {
     classname: PropTypes.string,
     only: PropTypes.string,                 // regex applied to port.name
     autoConnect: PropTypes.string,          // regex applied to port.name
+    portsRenderer: PropTypes.func,
     inputRenderer: PropTypes.func,
     outputRenderer: PropTypes.func,
     onMidiInputEvent: PropTypes.func,
@@ -213,6 +214,10 @@ export default class Midi extends Component {
 
     };
 
+    /**
+     *
+     * @param port_id
+     */
     togglePort = (port_id) => {
         let p = portById(port_id);
         if (p.type === 'input') {
@@ -229,11 +234,13 @@ export default class Midi extends Component {
             this.setState({ input: port_id === prev ? null : port_id });
         } else {
             console.log("toggle output", port_id);
+            let prev = this.state.output;
             // There is nothing to "connect" for an output port since this type of port does not generate any event.
             // if (this.state.output) this.disconnectOutput(this.state.output);
             if (this.state.output) {
                 this.disconnectOutput();
-            } else {
+            }
+            if (port_id !== prev) {
                 this.connectOutput(portById(port_id));
             }
             // this.setState({ output: port_id === this.state.output ? null : port_id });
@@ -281,6 +288,34 @@ export default class Midi extends Component {
         this.unRegisterOutputs();
     }
 
+
+    portsGrouped = () => {
+        let g = {};
+        for (let p of WebMidi.inputs) {
+            g[p.name] = {
+                input: {
+                    id: p.id,
+                    selected: p.id === this.state.input
+                },
+                output: null
+            };
+        }
+        for (let p of WebMidi.outputs) {
+            if (!(p.name in g)) {
+                g[p.name] = {
+                    input: null,
+                    output: null
+                };
+            }
+            g[p.name].output = {
+                id: p.id,
+                selected: p.id === this.state.output
+            }
+        }
+        return g;
+    };
+
+
     render() {
 
         let {inputs, outputs} = this.state;
@@ -294,8 +329,9 @@ export default class Midi extends Component {
         } else {
             return (
                 <div className={this.props.className}>
-                    {inputs.map(port => this.props.inputRenderer(port, port.id === this.state.input, this.togglePort))}
-                    {outputs.map(port => this.props.outputRenderer(port, port.id === this.state.output, this.togglePort))}
+                    {this.props.portsRenderer(this.portsGrouped(), this.togglePort)}
+                    {/*{inputs.map(port => this.props.inputRenderer(port, port.id === this.state.input, this.togglePort))}*/}
+                    {/*{outputs.map(port => this.props.outputRenderer(port, port.id === this.state.output, this.togglePort))}*/}
                 </div>
             );
         }

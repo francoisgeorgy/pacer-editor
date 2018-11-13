@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import "./MidiPort.css";
 import Switch from "react-switch";
 
-class MidiPorts extends Component {
+class MidiPort extends Component {
 
     render() {
 
@@ -34,4 +34,4 @@ class MidiPorts extends Component {
 
 }
 
-export default MidiPorts;
+export default MidiPort;

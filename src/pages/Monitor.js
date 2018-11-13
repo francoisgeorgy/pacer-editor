@@ -1,12 +1,12 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import Midi from "../components/Midi";
 import {produce} from "immer";
-import MidiPort from "../components/MidiPort";
 import parseMidi from 'parse-midi';
 import {hs} from "../utils/hexstring";
 import {CONTROLER, MESSAGE} from "../utils/midi";
 import * as Note from "tonal-note";
 import "./Monitor.css";
+import Switch from "react-switch";
 
 const MAX_MESSAGES = 40;
 
@@ -27,11 +27,60 @@ class Monitor extends Component {
         // }
     };
 
+/*
     renderPort = (port, selected, clickHandler) => {
         if (port === undefined || port === null) return null;
         return (
             <MidiPort key={port.id} port={port} selected={selected} clickHandler={clickHandler} />
         )
+    };
+*/
+
+    /**
+     *
+     * @param groupedPorts
+     * @param clickHandler callback with port_id as only parameter
+     * @returns {*}
+     */
+    renderPorts = (groupedPorts, clickHandler) => {
+
+        console.log("groupPortsByName", groupedPorts);
+
+        return (
+            <div className="ports">
+                {Object.keys(groupedPorts).map(name =>
+                    <div className="port">
+                        {name}
+                        {groupedPorts[name].input &&
+                        <Fragment>
+                            <div className="port-type">IN</div>
+                            <div className="port-switch">
+                                <Switch
+                                    onChange={() => clickHandler(groupedPorts[name].input.id)}
+                                    checked={groupedPorts[name].input.selected}
+                                    className="react-switch"
+                                    id={`switch-${groupedPorts[name].input.id}`}
+                                    height={16} width={36}
+                                />
+                            </div>
+                        </Fragment>}
+                        {groupedPorts[name].output &&
+                        <Fragment>
+                            <div className="port-type">OUT</div>
+                            <div className="port-switch">
+                                <Switch
+                                    onChange={() => clickHandler(groupedPorts[name].output.id)}
+                                    checked={groupedPorts[name].output.selected}
+                                    className="react-switch"
+                                    id={`switch-${groupedPorts[name].output.id}`}
+                                    height={16} width={36}
+                                />
+                            </div>
+                        </Fragment>}
+                    </div>)}
+            </div>
+        );
+
     };
 
     render() {
@@ -44,6 +93,7 @@ class Monitor extends Component {
                         <div className="content-row step-1">
                             <div className="content-row-content row-middle-aligned">
                                 <Midi only=".*" autoConnect=".*"
+                                      portsRenderer={this.renderPorts}
                                       inputRenderer={this.renderPort} outputRenderer={this.renderPort}
                                       onMidiInputEvent={this.handleMidiInputEvent}
                                       className="sub-header" >

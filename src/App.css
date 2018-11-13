@@ -223,3 +223,120 @@ div.status {
     text-align: center;
     /*width: 600px;*/
 }
+
+.ports {
+    display: flex;
+    flex-direction: row;
+}
+
+.port {
+    /*background-color: #f4f4f4;*/
+    border: 1px solid #c7c7c7;
+    margin-right: 6px;
+    padding: 2px 4px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    /*
+    display: grid;
+    grid: 1fr / repeat(3, auto);
+    justify-content: start;
+    grid-column-gap: 4px;
+    grid-row-gap: 10px;
+    justify-items: stretch;
+    align-items: stretch;
+    */
+
+}
+
+.port > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /*padding: 1px 0;*/
+    /*background-color: #eeeeee;*/
+    /*margin-right: 4px;*/
+    /*width: 60px;*/
+    /*cursor: pointer;*/
+    /*border: 1px solid #eeeeee;*/
+}
+
+
+.port-type {
+    margin-left: 10px;
+    margin-right: 4px;
+    /*align-self: stretch;*/
+    /*padding: 4px 0;*/
+    /*background-color: #aaa;*/
+    /*color: #fff;*/
+    /*width: 40px;*/
+    /*text-align: right;*/
+    font-weight: bold;
+    /*font-size: 0.875rem;*/
+
+}
+
+.port-name {
+    /*padding: 4px 0;*/
+    margin: 0 3px;
+    font-weight: bold;
+}
+
+
+.port.input.enabled {
+    background-color: #A1EEA1;
+    border: 1px solid #52CA52;
+}
+
+.port.input.enabled .port-type {
+    background-color: #52CA52;
+    /*border: 1px solid #00aa00;*/
+}
+
+.port.output.enabled {
+    /*background-color: #c4c4ea;*/
+    /*border: 1px solid #6666aa;*/
+    background-color: #A1EEA1;
+    border: 1px solid #52CA52;
+}
+
+.port.output.enabled .port-type {
+    background-color: #52CA52;
+    /*border: 1px solid #00aa00;*/
+}
+
+.port-switch {
+    /*margin: 0 3px;*/
+    /*padding-left: 4px;*/
+    /*padding-right: 4px;*/
+}
+
+/*.port.enabled .port-description {*/
+/*}*/
+
+.port-state {
+    /*padding: 0 5px 5px 5px;*/
+}
+
+/*.port.enabled .port-state {*/
+/*}*/
+
+.port-usage {
+    cursor: pointer;
+    font-size: 0.85rem;
+    user-select: none;
+    margin-left: 10px;
+}
+
+.port-manufacturer {
+}
+
+.port-manufacturer.unknown {
+    font-style: italic;
+}
+
+.react-switch {
+    vertical-align: middle;
+}

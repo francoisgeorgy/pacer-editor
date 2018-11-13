@@ -1,3 +1,5 @@
+import * as WebMidi from "webmidi";
+
 export const MESSAGE = {
     0x80: "Note Off",
     0x90: "Note On",
@@ -76,4 +78,22 @@ export const CONTROLER = {
     125: "Omni Mode On",
     126: "Mono Operation",
     127: "Poly Operation"
+};
+
+
+export const groupPortsByName = () => {
+    let g = {};
+    for (let p of WebMidi.inputs) {
+        g[p.name] = {
+            input: p.id,
+            output: null
+        };
+    }
+    for (let p of WebMidi.outputs) {
+        if (!(p.name in g)) {
+            g[p.name] = {input: null, output: null};
+        }
+        g[p.name].output = p.id
+    }
+    return g;
 };
