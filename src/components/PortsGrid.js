@@ -3,7 +3,7 @@ import Switch from "react-switch";
 
 const PortsGrid = ({ groupedPorts, clickHandler }) => {
 
-    console.log("groupPortsByName", groupedPorts);
+    // console.log("PortsGrid", groupedPorts);
 
     return (
         <div className="ports-grid">

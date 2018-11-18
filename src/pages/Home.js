@@ -25,15 +25,24 @@ class Home extends Component {
                     <p>This editor does not offer patches management either.</p>
                 </div>
 
-{/*
-                <h2>Usage</h2>
-
+                <h1>Usage</h1>
                 <div className="doc">
+                    <p>Make sure your Pacer is connected to your computer and switched-on.</p>
+                    <p>On the upper right corner of the editor, check the MIDI settings.</p>
+                    <p>You need to enable the input and output ports labeled "PACER MIDI 1":</p>
+                    <img src="help-03b.png" alt="" />
+
+                    <p className="strong">Editing presets</p>
+                    <p>The preset #0 is the <span className="italic">current</span> preset.
+                        When you edit preset #0 your changes are immediately applied.</p>
+                    <p>When you edit any other presets, your changes will only be applied when you load this preset.</p>
+
+                    <p className="strong">In case of problem</p>
                     <ol>
-                        <li>Connect your Pacer to your computer</li>
+                        <li>Restart your Pacer</li>
+                        <li>Reload the editor</li>
                     </ol>
                 </div>
-*/}
 
                 <h1>MIDI in your browser</h1>
 

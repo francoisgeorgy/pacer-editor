@@ -62,57 +62,53 @@ class App extends Component {
                         <MenuLink to="/testsender" label="Debug" />
                         {!busy && <div className="spacer"> </div>}
                         {busy && <div className="busy">please wait...</div>}
-                        <div className="header-app-name">Pacer editor 0.2.0</div>
+                        <div className="header-app-name">Pacer editor 0.2.1</div>
                     </header>
 
-                    {/*<div className="wrapper">*/}
-                        {/*<div className="content">*/}
-                            <Switch>
-                                <Route exact={true} path="/" render={
-                                    props => (
-                                        <Home />
-                                    )
-                                }/>
-                                <Route path="/preset" render={
-                                    props => (
-                                        <Preset onBusy={this.onBusy} />
-                                    )
-                                }/>
-                                <Route path="/presetmidi" render={
-                                    props => (
-                                        <PresetMidi onBusy={this.onBusy} />
-                                    )
-                                }/>
-                                <Route path="/global" render={
-                                    props => (
-                                        <Global onBusy={this.onBusy} />
-                                    )
-                                }/>
+                        <Switch>
+                            <Route exact={true} path="/" render={
+                                props => (
+                                    <Home />
+                                )
+                            }/>
+                            <Route path="/preset" render={
+                                props => (
+                                    <Preset onBusy={this.onBusy} />
+                                )
+                            }/>
+                            <Route path="/presetmidi" render={
+                                props => (
+                                    <PresetMidi onBusy={this.onBusy} />
+                                )
+                            }/>
+                            <Route path="/global" render={
+                                props => (
+                                    <Global onBusy={this.onBusy} />
+                                )
+                            }/>
 {/*
-                                <Route path="/chords" render={
-                                    props => (
-                                        <Chords onBusy={this.onBusy} />
-                                    )
-                                }/>
+                            <Route path="/chords" render={
+                                props => (
+                                    <Chords onBusy={this.onBusy} />
+                                )
+                            }/>
 */}
-                                <Route path="/monitor" render={
-                                    props => (
-                                        <Monitor onBusy={this.onBusy} />
-                                    )
-                                }/>
-                                <Route path="/dumpdecoder" render={
-                                    props => (
-                                        <DumpDecoder onBusy={this.onBusy} />
-                                    )
-                                }/>
-                                <Route path="/testsender" render={
-                                    props => (
-                                        <TestSender onBusy={this.onBusy} />
-                                    )
-                                }/>
-                            </Switch>
-                        {/*</div>*/}
-                    {/*</div>*/}
+                            <Route path="/monitor" render={
+                                props => (
+                                    <Monitor onBusy={this.onBusy} />
+                                )
+                            }/>
+                            <Route path="/dumpdecoder" render={
+                                props => (
+                                    <DumpDecoder onBusy={this.onBusy} />
+                                )
+                            }/>
+                            <Route path="/testsender" render={
+                                props => (
+                                    <TestSender onBusy={this.onBusy} />
+                                )
+                            }/>
+                        </Switch>
 
                     <Footer />
 

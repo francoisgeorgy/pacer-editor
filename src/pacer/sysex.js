@@ -449,6 +449,20 @@ export function checksum(bytes) {
 }
 
 /**
+ *
+ */
+export function requestAllPresets() {
+    let msg = [
+        COMMAND_GET,
+        TARGET_PRESET,
+        CONTROL_ALL
+    ];
+    let cs = checksum(msg);
+    msg.push(cs);
+    return SYSEX_HEADER.concat(msg);
+}
+
+/**
  * return the sysex message to send to the Pacer to request some data
  */
 export function requestPreset(presetIndex) {
