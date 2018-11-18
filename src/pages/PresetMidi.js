@@ -38,7 +38,7 @@ function batchMessages(callback, wait) {
         let event = arguments[0];
         messages.push(event.data);
         timeout = setTimeout(() => {
-            console.log("timeout elapsed");
+            // console.log("timeout elapsed");
             timeout = null;
             callback(messages);
             messages = [];

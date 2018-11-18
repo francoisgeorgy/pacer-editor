@@ -26,6 +26,8 @@ import ControlModeEditor from "../components/ControlModeEditor";
 import Status from "../components/Status";
 import PresetNameEditor from "../components/PresetNameEditor";
 import PortsGrid from "../components/PortsGrid";
+import Download from "../components/Download";
+import {presetIndexToXY} from "../pacer/utils";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -45,7 +47,7 @@ function batchMessages(callback, wait) {
         let event = arguments[0];
         messages.push(event.data);
         timeout = setTimeout(() => {
-            console.log("timeout elapsed");
+            // console.log("timeout elapsed");
             timeout = null;
             callback(messages);
             messages = [];
@@ -60,7 +62,8 @@ class Preset extends Component {
         presetIndex: null,
         controlId: null,
         changed: false,     // true when the control has been edited
-        data: null,
+        data: null,         // json
+        binData: null,      // binary, will be used to download as .syx file
         statusMessages: []
     };
 
@@ -96,10 +99,21 @@ class Preset extends Component {
 
     handleMidiInputEvent = batchMessages(
         messages => {
+
+            let bytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
+
             this.setState(
                 produce(
                     draft => {
+
+                        draft.binData = new Uint8Array(bytes);
+                        let bin_index = 0;
+
                         for (let m of messages) {
+
+                            draft.binData.set(m, bin_index);
+                            bin_index += m.length;
+
                             if (isSysexData(m)) {
                                 draft.data = mergeDeep(draft.data || {}, parseSysexDump(m));
                             } else {
@@ -118,7 +132,7 @@ class Preset extends Component {
                     }
                 )
             );
-            let bytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
+
             this.addInfoMessage(`${messages.length} messages received (${bytes} bytes)`);
             this.props.onBusy(false);
         },
@@ -189,29 +203,38 @@ class Preset extends Component {
                 }
             })
         );
-        if (isVal(id) && this.state.controlId) {
+        if (isVal(id)) {   // && this.state.controlId) {
             // this.sendSysex(requestPresetObj(id, this.state.controlId));
             // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
             this.sendSysex(requestPreset(id));
         }
     };
 
-    selectControl = (id) => {
+    selectControl = (controlId) => {
+
+        //TODO: no need to read the preset data again. Just select the control from the data we must already have.
+
+        if (isVal(this.state.presetIndex) && controlId) {
+            this.setState({ controlId });
+        }
+
+        /*
         // if the user selects another preset or control, then clear the data in the state
         this.setState(
             produce(draft => {
-                draft.controlId = id;
-                if (id !== this.state.controlId) {
+                draft.controlId = controlId;
+                if (controlId !== this.state.controlId) {
                     draft.data = null;
                     draft.changed = false;
                 }
             })
         );
-        if (isVal(this.state.presetIndex) && id) {
-            // this.sendSysex(requestPresetObj(this.state.presetIndex, id));
+        if (isVal(this.state.presetIndex) && controlId) {
+            // this.sendSysex(requestPresetObj(this.state.presetIndex, controlId));
             // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
             this.sendSysex(requestPreset(this.state.presetIndex));
         }
+        */
     };
 
     /**
@@ -445,9 +468,21 @@ class Preset extends Component {
                         <div className="no-midi">Please connect your Pacer to your computer.</div>
                     </Midi>
 
+                    <h3>Load preset from file:</h3>
+
                     <Dropzone onDrop={this.onDrop} className="drop-zone">
                         Drop a binary sysex file here<br />or click to open the file dialog
                     </Dropzone>
+
+                    {data &&
+                    <Fragment>
+                    <h3>Save preset as file:</h3>
+                    <div className="download">
+                        <Download data={this.state.binData}
+                                  filename={`pacer-preset-${presetIndexToXY(presetIndex)}`}
+                                  addTimestamp={true} label="Download the preset data as a binary sysex file" />
+                    </div>
+                    </Fragment>}
 
                     <h3>Log:</h3>
                     <Status messages={this.state.statusMessages} />

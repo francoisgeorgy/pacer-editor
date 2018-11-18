@@ -9,11 +9,11 @@ h2 {
 }
 
 h3 {
-    font-size: 1.15rem;
+    font-size: 1.0rem;
     line-height: 1.5;
     margin-top: 0.25em;
     margin-bottom: 0.25em;
-    color: #555;
+    color: #333;
 }
 
 .app {
@@ -208,6 +208,15 @@ div.status {
     border: 1px solid #ddddf0;
     background-color: #f4f4ff;
     text-align: center;
+}
+
+.download {
+    /*margin: 16px 0;*/
+}
+
+.download button {
+    padding: 5px 10px;
+    font-size: 0.85rem;
 }
 
 .ports {
