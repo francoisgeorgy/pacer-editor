@@ -10,7 +10,7 @@ import Global from "./pages/Global";
 import DumpDecoder from "./pages/DumpDecoder";
 // import Chords from "./pages/Chords";
 import PresetMidi from "./pages/PresetMidi";
-
+import * as QueryString from "query-string";
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
     <Route
@@ -23,6 +23,13 @@ const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
         )}
     />
 );
+
+const NoMatch = () =>
+    <div className="content home full-width">
+        <div className="instructions">
+            Invalid URL
+        </div>
+    </div>;
 
 
 class App extends Component {
@@ -46,12 +53,16 @@ class App extends Component {
     render() {
         const { busy } = this.state;
 
+        const q =  QueryString.parse(window.location.search);
+        const debug = q.debug ? q.debug === '1' : false;
+
+        console.log(q.debug, debug);
+
         return (
             <Router>
                 <div className="app">
 
                     <header className="header">
-                        {/*<h1>Pacer Editor</h1>*/}
                         <MenuLink activeOnlyWhenExact={true} to="/" label="Home" />
                         <MenuLink to="/preset" label="Preset Controls" />
                         <MenuLink to="/presetmidi" label="Preset Name & MIDI" />
@@ -59,10 +70,10 @@ class App extends Component {
                         {/*<MenuLink to="/chords" label="Chords" />*/}
                         <MenuLink to="/monitor" label="MIDI monitor" />
                         <MenuLink to="/dumpdecoder" label="Dump decoder" />
-                        <MenuLink to="/testsender" label="Debug" />
+                        {debug && <MenuLink to="/testsender" label="Debug" />}
                         {!busy && <div className="spacer"> </div>}
                         {busy && <div className="busy">please wait...</div>}
-                        <div className="header-app-name">Pacer editor 0.2.2</div>
+                        <div className="header-app-name">Pacer editor 0.2.3</div>
                     </header>
 
                         <Switch>
@@ -103,11 +114,14 @@ class App extends Component {
                                     <DumpDecoder onBusy={this.onBusy} />
                                 )
                             }/>
+                            {debug &&
                             <Route path="/testsender" render={
                                 props => (
-                                    <TestSender onBusy={this.onBusy} />
+                                    <TestSender onBusy={this.onBusy}/>
                                 )
                             }/>
+                            }
+                            <Route component={NoMatch} />
                         </Switch>
 
                     <Footer />
