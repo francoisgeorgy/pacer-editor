@@ -7,6 +7,7 @@ import {CONTROLER, MESSAGE} from "../utils/midi";
 import * as Note from "tonal-note";
 import "./Monitor.css";
 import PortsGrid from "../components/PortsGrid";
+import {ANY_MIDI_PORT} from "../pacer/constants";
 
 const MAX_MESSAGES = 40;
 
@@ -84,7 +85,7 @@ class Monitor extends Component {
                     </div>
                 </div>
                 <div className="right-column">
-                    <Midi only=".*" autoConnect=".*"
+                    <Midi only={ANY_MIDI_PORT} autoConnect={ANY_MIDI_PORT}
                           portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
                           // inputRenderer={this.renderPort} outputRenderer={this.renderPort}
                           onMidiInputEvent={this.handleMidiInputEvent}

@@ -29,8 +29,11 @@ class Home extends Component {
                 <div className="doc">
                     <p>Make sure your Pacer is connected to your computer and switched-on.</p>
                     <p>On the upper right corner of the editor, check the MIDI settings.</p>
-                    <p>You need to enable the input and output ports labeled "PACER MIDI 1":</p>
-                    <img src="help-03b.png" alt="" />
+                    <p>You need to enable the following input and output ports:</p>
+                    <p>- under <span className="bold" >OS X</span>:</p>
+                    <img src="help-ports-osx-no-retina.png" alt="" />
+                    <p>- under <span className="bold" >Windows</span>:</p>
+                    <img src="help-ports-windows.png" alt="" />
 
                     <p className="strong">Editing presets</p>
                     <p>The preset #0 is the <span className="italic">current</span> preset.

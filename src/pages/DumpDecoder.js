@@ -6,7 +6,7 @@ import DumpSysex from "../components/DumpSysex";
 import './DumpDecoder.css';
 import {hs} from "../utils/hexstring";
 import Midi from "../components/Midi";
-import {PACER_MIDI_PORT_NAME} from "../pacer/constants";
+import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME} from "../pacer/constants";
 import PortsGrid from "../components/PortsGrid";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
@@ -110,7 +110,7 @@ class DumpDecoder extends Component {
 
                 <div className="right-column">
 
-                    <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
+                    <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
                           portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
                           onMidiInputEvent={this.handleMidiInputEvent}
                           className="sub-header" >

@@ -98,6 +98,7 @@ button {
     font-style: italic;
 }
 
+.bold,
 .strong {
     font-weight: bold;
 }

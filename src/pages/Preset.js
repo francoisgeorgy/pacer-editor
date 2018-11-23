@@ -9,6 +9,7 @@ import {
 } from "../pacer/sysex";
 import ControlSelector from "../components/ControlSelector";
 import {
+    ANY_MIDI_PORT,
     CONTROLS_FULLNAME,
     MSG_CTRL_OFF,
     PACER_MIDI_PORT_NAME,
@@ -457,7 +458,7 @@ class Preset extends Component {
 
                 <div className="right-column">
 
-                    <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
+                    <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
                           portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
                           onMidiInputEvent={this.handleMidiInputEvent}
                           onInputConnection={this.onInputConnection}

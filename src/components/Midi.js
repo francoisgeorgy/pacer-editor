@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import * as WebMidi from "webmidi";
 import {inputById, portById} from "../utils/ports";
@@ -318,23 +318,27 @@ export default class Midi extends Component {
 
     render() {
 
-        let {inputs, outputs} = this.state;
+        let {input, output} = this.state;
 
-        if (inputs.length === 0 && outputs.length === 0) {
+        // if (input === null && output === null) {
+        //     return (
+        //         <div className={this.props.className}>
+        //             {this.props.children}
+        //         </div>
+        //     );
+        // } else {
             return (
-                <div className={this.props.className}>
-                    {this.props.children}
-                </div>
+                <Fragment>
+                    {input === null && output === null &&
+                    <div>
+                        {this.props.children}
+                    </div>}
+                    <div className={this.props.className}>
+                        {this.props.portsRenderer(this.portsGrouped(), this.togglePort)}
+                    </div>
+                </Fragment>
             );
-        } else {
-            return (
-                <div className={this.props.className}>
-                    {this.props.portsRenderer(this.portsGrouped(), this.togglePort)}
-                    {/*{inputs.map(port => this.props.inputRenderer(port, port.id === this.state.input, this.togglePort))}*/}
-                    {/*{outputs.map(port => this.props.outputRenderer(port, port.id === this.state.output, this.togglePort))}*/}
-                </div>
-            );
-        }
+        // }
     }
 
 }

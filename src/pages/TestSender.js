@@ -8,7 +8,7 @@ import {
     requestPreset,
     requestPresetObj
 } from "../pacer/sysex";
-import {SYSEX_SIGNATURE} from "../pacer/constants";
+import {ANY_MIDI_PORT, SYSEX_SIGNATURE} from "../pacer/constants";
 import {outputById} from "../utils/ports";
 import {fromHexString, h, hs} from "../utils/hexstring";
 import "./TestSender.css";
@@ -229,7 +229,7 @@ class TestSender extends Component {
                 </div>
 
                 <div className="right-column">
-                    <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
+                    <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
                           portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
                           onMidiInputEvent={this.handleMidiInputEvent}
                           onOutputConnection={this.setOutput}

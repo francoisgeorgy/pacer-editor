@@ -13,6 +13,7 @@ import "./Preset.css";
 import Status from "../components/Status";
 import {produce} from "immer";
 import {
+    ANY_MIDI_PORT,
     MSG_CTRL_OFF,
     PACER_MIDI_PORT_NAME,
     SYSEX_SIGNATURE,
@@ -364,7 +365,7 @@ class PresetMidi extends Component {
 
                 <div className="right-column">
 
-                    <Midi only={PACER_MIDI_PORT_NAME} autoConnect={PACER_MIDI_PORT_NAME}
+                    <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
                           portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
                           onMidiInputEvent={this.handleMidiInputEvent}
                           onInputConnection={this.onInputConnection}
