@@ -135,7 +135,7 @@ h3 {
 .content-row-content {
     flex-grow: 10;
     border-top: 1px solid #c7c7c7;
-    background: linear-gradient(160deg, #ffffff 33%,#e5e5e5 100%);
+    /*background: linear-gradient(160deg, #ffffff 33%,#e5e5e5 100%);*/
 }
 
 .no-grad {
