@@ -147,6 +147,18 @@ class PresetMidi extends Component {
         ));
     }
 
+    onDragEnter = () => {
+        this.setState({
+            dropZoneActive: true
+        });
+    };
+
+    onDragLeave= () => {
+        this.setState({
+            dropZoneActive: false
+        });
+    };
+
     /**
      * Drop Zone handler
      * @param files
@@ -156,7 +168,8 @@ class PresetMidi extends Component {
         this.setState(
             {
                 data: null,
-                changed: false
+                changed: false,
+                dropZoneActive: false
             },
             () => {this.readFiles(files)}   // returned promise from readFiles() is ignored, this is normal.
         );
@@ -169,7 +182,7 @@ class PresetMidi extends Component {
                 draft.presetIndex = id;
                 if (id !== this.state.presetIndex) {
                     draft.data = null;
-                    draft.data = null;
+                    draft.changed = false;
                 }
             })
         );
@@ -299,10 +312,54 @@ class PresetMidi extends Component {
             }
         }
 
+        const { /*accept, files,*/ dropZoneActive } = this.state;
+
+        const overlayStyle = {
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            paddingTop: '4rem',
+            background: 'rgba(0,0,0,0.4)',
+            textAlign: 'center',
+            color: '#fff',
+            fontSize: '4rem'
+        };
+
+
         // console.log("PresetMidi.render", showEditor, presetIndex);
 
         return (
+
+            <Dropzone
+                disableClick
+                style={{position: "relative"}}
+                // accept={accept}
+                onDrop={this.onDrop}
+                onDragEnter={this.onDragEnter}
+                onDragLeave={this.onDragLeave}
+            >
+            {dropZoneActive &&
+            <div style={overlayStyle}>
+                Drop sysex file...
+            </div>}
+
             <div className="wrapper">
+
+                <div className="subheader">
+                    <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
+                          portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
+                          onMidiInputEvent={this.handleMidiInputEvent}
+                          onInputConnection={this.onInputConnection}
+                          onInputDisconnection={this.onInputDisconnection}
+                          onOutputConnection={this.onOutputConnection}
+                          onOutputDisconnection={this.onOutputDisconnection}
+                          className="" >
+                        <div className="no-midi">Please connect your Pacer to your computer.</div>
+                    </Midi>
+                </div>
+
                 <div className="content">
 
                     <div className="content-row-content">
@@ -350,7 +407,7 @@ class PresetMidi extends Component {
                     </div>
                     }
 
-                    {showEditor &&
+                    {this.props.debug && showEditor &&
                     <div className="content-row-content no-grad">
                         <div className="debug">
                             <h4>[Debug] Update messages to send:</h4>
@@ -363,29 +420,20 @@ class PresetMidi extends Component {
 
                 </div>
 
+{/*
                 <div className="right-column">
-
-                    <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
-                          portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
-                          onMidiInputEvent={this.handleMidiInputEvent}
-                          onInputConnection={this.onInputConnection}
-                          onInputDisconnection={this.onInputDisconnection}
-                          onOutputConnection={this.onOutputConnection}
-                          onOutputDisconnection={this.onOutputDisconnection}
-                          className="sub-header" >
-                        <div className="no-midi">Please connect your Pacer to your computer.</div>
-                    </Midi>
-
                     <Dropzone onDrop={this.onDrop} className="drop-zone">
                         Drop a binary sysex file here<br />or click to open the file dialog
                     </Dropzone>
-
                     <h3>Log:</h3>
                     <Status messages={this.state.statusMessages} />
-
                 </div>
+*/}
 
             </div>
+
+            </Dropzone>
+
         );
     }
 

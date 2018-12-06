@@ -329,13 +329,13 @@ export default class Midi extends Component {
         // } else {
             return (
                 <Fragment>
-                    {input === null && output === null &&
-                    <div>
-                        {this.props.children}
-                    </div>}
-                    <div className={this.props.className}>
+                    {/*<div className={this.props.className}>*/}
                         {this.props.portsRenderer(this.portsGrouped(), this.togglePort)}
-                    </div>
+                    {/*</div>*/}
+                    {input === null && output === null &&
+                    <Fragment>
+                        {this.props.children}
+                    </Fragment>}
                 </Fragment>
             );
         // }

@@ -1,11 +1,11 @@
 .footer {
     /*margin-top: 20px;*/
-    padding: 10px;
+    padding: 8px 0;
     /*background-color: #333;*/
-    border-top: 1px solid #000;
+    border-top: 1px solid #999;
     width: 100%;
     /*text-align: center;*/
-    color: #aaa;
+    color: #999;
     font-size: 0.75rem;
     /*display: flex;*/
     /*flex-direction: row;*/

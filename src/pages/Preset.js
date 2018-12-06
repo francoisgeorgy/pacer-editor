@@ -65,7 +65,12 @@ class Preset extends Component {
         changed: false,     // true when the control has been edited
         data: null,         // json
         binData: null,      // binary, will be used to download as .syx file
-        statusMessages: []
+        statusMessages: [],
+
+        // accept: '',
+        // files: [],
+        dropZoneActive: false
+
     };
 
     /**
@@ -178,6 +183,18 @@ class Preset extends Component {
         ));
     }
 
+    onDragEnter = () => {
+        this.setState({
+            dropZoneActive: true
+        });
+    };
+
+    onDragLeave= () => {
+        this.setState({
+            dropZoneActive: false
+        });
+    };
+
     /**
      * Drop Zone handler
      * @param files
@@ -187,7 +204,8 @@ class Preset extends Component {
         this.setState(
             {
                 data: null,
-                changed: false
+                changed: false,
+                dropZoneActive: false
             },
             () => {this.readFiles(files)}   // returned promise from readFiles() is ignored, this is normal.
         );
@@ -339,6 +357,10 @@ class Preset extends Component {
         this.addInfoMessage(`update${messages.length > 1 ? 's' : ''} sent to Pacer`);
     };
 
+    // componentDidMount() {
+    //     window.addEventListener('drop', this.onDrop);
+    // }
+
     render() {
 
         const { presetIndex, controlId, data, changed } = this.state;
@@ -387,10 +409,54 @@ class Preset extends Component {
             }
         }
 
+        const { /*accept, files,*/ dropZoneActive } = this.state;
+
+        const overlayStyle = {
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            paddingTop: '4rem',
+            background: 'rgba(0,0,0,0.4)',
+            textAlign: 'center',
+            color: '#fff',
+            fontSize: '4rem'
+        };
+
+
         // console.log("Presets.render", showEditor, presetIndex, controlId);
 
         return (
+
+            <Dropzone
+                disableClick
+                style={{position: "relative"}}
+                // accept={accept}
+                onDrop={this.onDrop}
+                onDragEnter={this.onDragEnter}
+                onDragLeave={this.onDragLeave}
+            >
+            {dropZoneActive &&
+            <div style={overlayStyle}>
+                Drop sysex file...
+            </div>}
+
             <div className="wrapper">
+
+                <div className="subheader">
+                    <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
+                          portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
+                          onMidiInputEvent={this.handleMidiInputEvent}
+                          onInputConnection={this.onInputConnection}
+                          onInputDisconnection={this.onInputDisconnection}
+                          onOutputConnection={this.onOutputConnection}
+                          onOutputDisconnection={this.onOutputDisconnection}
+                          className="" >
+                        <div className="no-midi">Please connect your Pacer to your computer.</div>
+                    </Midi>
+                </div>
+
                 <div className="content">
 
                     <div className="content-row-content">
@@ -443,7 +509,7 @@ class Preset extends Component {
                     </div>
                     }
 
-                    {showEditor &&
+                    {this.props.debug && showEditor &&
                     <div className="content-row-content no-grad">
                         <div className="debug">
                         <h4>[Debug] Update messages to send:</h4>
@@ -456,6 +522,7 @@ class Preset extends Component {
 
                 </div>
 
+{/*
                 <div className="right-column">
 
                     <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
@@ -489,8 +556,12 @@ class Preset extends Component {
                     <Status messages={this.state.statusMessages} />
 
                 </div>
+*/}
 
             </div>
+
+            </Dropzone>
+
         );
     }
 

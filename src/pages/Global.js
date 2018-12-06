@@ -5,8 +5,9 @@ class Global extends Component {
     render() {
 
         return (
-            <div className="content home full-width">
-                <div className="instructions">
+            <div className="content">
+
+                <div className="doc" style={{marginTop: '16px'}}>
                     Sorry, this feature is not implemented yet.
                 </div>
 

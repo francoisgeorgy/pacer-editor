@@ -27,6 +27,8 @@ const Setting = ({ index, config, updateCallback }) => {
 
     let inactive = config.msg_type === MSG_CTRL_OFF;
 
+    console.log(index, inactive);
+
     if (inactive) {
         return (
             <Fragment>
@@ -36,27 +38,21 @@ const Setting = ({ index, config, updateCallback }) => {
                         {
                             Object.keys(MSG_TYPES_FULLNAME_SW).map(
                                 key => {
-                                    // let n = Note.fromMidi(i, true);
                                     return <option key={key} value={key}>{MSG_TYPES_FULLNAME_SW[key]}</option>
                                 })
                         }
                     </select>
                 </div>
-                <div>
-                </div>
-                <div>
-                </div>
-                <div>
-                </div>
-                <div>
-                </div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
             </Fragment>
         );
     }
 
     let d0, d1, d2;
     if (config.msg_type === MSG_SW_NOTE) {
-        // d0 = `note ${Note.fromMidi(config.data[0], true)}`;
         d0 = <MidiNote note={config.data[0]} onChange={(value) => updateCallback("data", 0, value)} />;
         d1 = <input type="text" value={config.data[1]} onChange={(event) => updateCallback("data", 1, event.target.value)} />;
         d2 = '';
@@ -96,15 +92,12 @@ const Setting = ({ index, config, updateCallback }) => {
 class MidiSettingsEditor extends Component {
 
     onSettingUpdate = (settingIndex, dataType, dataIndex, value) => {
-        // console.log(`MidiSettingsEditor.onSettingUpdate`, settingIndex, dataType, dataIndex, value);
         this.props.onUpdate(settingIndex, dataType, dataIndex, value);
     };
 
     render() {
 
         const settings = this.props.settings;
-
-        // console.log("MidiSettingsEditor.render", settings);
 
         return (
             <div className="settings">

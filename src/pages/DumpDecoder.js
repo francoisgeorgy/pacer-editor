@@ -57,13 +57,30 @@ class DumpDecoder extends Component {
         ));
     }
 
+    onDragEnter = () => {
+        this.setState({
+            dropZoneActive: true
+        });
+    };
+
+    onDragLeave= () => {
+        this.setState({
+            dropZoneActive: false
+        });
+    };
+
     /**
      * Drop Zone handler
      * @param files
      */
     onDrop = (files) => {
         console.log('drop', files);
-        this.setState({ data: null }, () => {this.readFiles(files)});
+        this.setState(
+        {
+                data: null,
+                dropZoneActive: false
+            },
+    () => {this.readFiles(files)});
     };
 
     handleMidiInputEvent = (event) => {
@@ -93,40 +110,73 @@ class DumpDecoder extends Component {
 
         console.log("DumpDecoder.render", this.props);
 
+        const { /*accept, files,*/ dropZoneActive } = this.state;
+
+        const overlayStyle = {
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            paddingTop: '1rem',
+            background: 'rgba(0,0,0,0.4)',
+            textAlign: 'center',
+            color: '#fff',
+            fontSize: '4rem'
+        };
+
         return (
-            <div className="wrapper">
-                <div className="content">
-                    <div className="content-row-content no-grad">
-                        <div className="content-row-content-content">
-                            <div className="instructions">
-                                Send a dump from your Pacer or drop a binary sysex file onto the drop zone on the right.
-                            </div>
-                            <div>
-                                <DumpSysex data={data} />
+
+            <Dropzone
+                disableClick
+                style={{position: "relative"}}
+                // accept={accept}
+                onDrop={this.onDrop}
+                onDragEnter={this.onDragEnter}
+                onDragLeave={this.onDragLeave}>
+
+                {dropZoneActive &&
+                <div style={overlayStyle}>
+                    Drop sysex file...
+                </div>}
+
+                <div className="wrapper">
+
+                    <div className="subheader">
+                        <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
+                              portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
+                              onMidiInputEvent={this.handleMidiInputEvent}
+                              className="sub-header" >
+                            <div className="no-midi">Please connect your Pacer to your computer.</div>
+                        </Midi>
+                    </div>
+
+                    <div className="content">
+                        <div className="content-row-content no-grad">
+                            <div className="content-row-content-content">
+                                <div className="instructions">
+                                    Send a dump from your Pacer or drag&drop a binary sysex file here.
+                                </div>
+                                <div>
+                                    <DumpSysex data={data} />
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
+{/*
                 <div className="right-column">
-
-                    <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
-                          portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
-                          onMidiInputEvent={this.handleMidiInputEvent}
-                          className="sub-header" >
-                        <div className="no-midi">Please connect your Pacer to your computer.</div>
-                    </Midi>
-
                     <Dropzone onDrop={this.onDrop} className="drop-zone">
                         Drop a binary sysex file here<br />or click to open the file dialog
                     </Dropzone>
-
-                    {/*<h3>Log:</h3>*/}
-                    {/*<Status messages={this.state.statusMessages} />*/}
+                    <h3>Log:</h3>
+                    <Status messages={this.state.statusMessages} />
+                </div>
+*/}
 
                 </div>
 
-            </div>
+            </Dropzone>
 
         );
     }

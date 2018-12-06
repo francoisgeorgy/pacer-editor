@@ -56,7 +56,7 @@ class App extends Component {
         const q =  QueryString.parse(window.location.search);
         const debug = q.debug ? q.debug === '1' : false;
 
-        console.log(q.debug, debug);
+        console.log("debug", q.debug, debug);
 
         return (
             <Router>
@@ -73,7 +73,7 @@ class App extends Component {
                         {debug && <MenuLink to="/testsender" label="Debug" />}
                         {!busy && <div className="spacer"> </div>}
                         {busy && <div className="busy">please wait...</div>}
-                        <div className="header-app-name">Pacer editor 0.2.5</div>
+                        <div className="header-app-name">Pacer editor 0.3.0</div>
                     </header>
 
                         <Switch>
@@ -84,40 +84,40 @@ class App extends Component {
                             }/>
                             <Route path="/preset" render={
                                 props => (
-                                    <Preset onBusy={this.onBusy} />
+                                    <Preset onBusy={this.onBusy} debug={debug} />
                                 )
                             }/>
                             <Route path="/presetmidi" render={
                                 props => (
-                                    <PresetMidi onBusy={this.onBusy} />
+                                    <PresetMidi onBusy={this.onBusy} debug={debug} />
                                 )
                             }/>
                             <Route path="/global" render={
                                 props => (
-                                    <Global onBusy={this.onBusy} />
+                                    <Global onBusy={this.onBusy} debug={debug} />
                                 )
                             }/>
 {/*
                             <Route path="/chords" render={
                                 props => (
-                                    <Chords onBusy={this.onBusy} />
+                                    <Chords onBusy={this.onBusy} debug={debug} />
                                 )
                             }/>
 */}
                             <Route path="/monitor" render={
                                 props => (
-                                    <Monitor onBusy={this.onBusy} />
+                                    <Monitor onBusy={this.onBusy} debug={debug} />
                                 )
                             }/>
                             <Route path="/dumpdecoder" render={
                                 props => (
-                                    <DumpDecoder onBusy={this.onBusy} />
+                                    <DumpDecoder onBusy={this.onBusy} debug={debug} />
                                 )
                             }/>
                             {debug &&
                             <Route path="/testsender" render={
                                 props => (
-                                    <TestSender onBusy={this.onBusy}/>
+                                    <TestSender onBusy={this.onBusy} debug={debug} />
                                 )
                             }/>
                             }
@@ -128,6 +128,7 @@ class App extends Component {
 
                 </div>
             </Router>
+
         );
     }
 }

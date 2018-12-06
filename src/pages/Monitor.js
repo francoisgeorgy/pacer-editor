@@ -7,7 +7,7 @@ import {CONTROLER, MESSAGE} from "../utils/midi";
 import * as Note from "tonal-note";
 import "./Monitor.css";
 import PortsGrid from "../components/PortsGrid";
-import {ANY_MIDI_PORT} from "../pacer/constants";
+import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME} from "../pacer/constants";
 
 const MAX_MESSAGES = 40;
 
@@ -33,12 +33,22 @@ class Monitor extends Component {
         return (
 
             <div className="wrapper">
+
+                <div className="subheader">
+                    <Midi only={ANY_MIDI_PORT} autoConnect={ANY_MIDI_PORT}
+                          portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
+                        // inputRenderer={this.renderPort} outputRenderer={this.renderPort}
+                          onMidiInputEvent={this.handleMidiInputEvent}>
+                        <div className="no-midi">Please connect your Pacer or any other MIDI device to your computer.</div>
+                    </Midi>
+                </div>
+
                 <div className="content">
                     <div>
                         <div className="content-row-content no-grad">
                             <h2>MIDI messages</h2>
                             <div className="content-row-content-content">
-                                <p>The messages are displayed in reverse chronological order (the most recent on top). Only the last 20 messages are displayed.</p>
+                                <p>The messages are displayed in reverse chronological order (the most recent on top). Only the last 40 messages are displayed.</p>
                                 <div className="messages">
                                     {this.state.messages.map((msg, i) => {      //TODO: display timestamp
                                         let m = parseMidi(msg);
@@ -83,15 +93,6 @@ class Monitor extends Component {
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className="right-column">
-                    <Midi only={ANY_MIDI_PORT} autoConnect={ANY_MIDI_PORT}
-                          portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
-                          // inputRenderer={this.renderPort} outputRenderer={this.renderPort}
-                          onMidiInputEvent={this.handleMidiInputEvent}
-                          className="sub-header" >
-                        <div className="no-midi">Please connect your Pacer or any other MIDI device to your computer.</div>
-                    </Midi>
                 </div>
             </div>
         );
