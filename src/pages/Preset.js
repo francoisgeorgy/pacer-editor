@@ -24,11 +24,13 @@ import Midi from "../components/Midi";
 import Dropzone from "react-dropzone";
 import "./Preset.css";
 import ControlModeEditor from "../components/ControlModeEditor";
-import Status from "../components/Status";
+// import Status from "../components/Status";
 import PresetNameEditor from "../components/PresetNameEditor";
 import PortsGrid from "../components/PortsGrid";
 import Download from "../components/Download";
 import {presetIndexToXY} from "../pacer/utils";
+// import Download from "../components/Download";
+// import {presetIndexToXY} from "../pacer/utils";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -58,6 +60,7 @@ function batchMessages(callback, wait) {
 
 class Preset extends Component {
 
+/*
     state = {
         output: null,       // MIDI output port used for output
         presetIndex: null,
@@ -72,6 +75,24 @@ class Preset extends Component {
         dropZoneActive: false
 
     };
+*/
+
+    constructor(props) {
+        super(props);
+        this.inputOpenFileRef = React.createRef();
+        this.state = {
+            output: null,       // MIDI output port used for output
+            presetIndex: null,
+            controlId: null,
+            changed: false,     // true when the control has been edited
+            data: null,         // json
+            binData: null,      // binary, will be used to download as .syx file
+            statusMessages: [],
+            // accept: '',
+            // files: [],
+            dropZoneActive: false
+        };
+    }
 
     /**
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
@@ -182,6 +203,18 @@ class Preset extends Component {
             }
         ));
     }
+
+    onChangeFile = (e) => {
+        console.log("onChangeFile", e);
+        var file = e.target.files[0];
+        console.log(file);
+        this.readFiles([file]);
+    };
+
+    onInputFile = (e) => {
+        console.log("onInputFile", e);
+        this.inputOpenFileRef.current.click()
+    };
 
     onDragEnter = () => {
         this.setState({
@@ -424,8 +457,9 @@ class Preset extends Component {
             fontSize: '4rem'
         };
 
-
         // console.log("Presets.render", showEditor, presetIndex, controlId);
+
+        // const inputOpenFileRef = React.createRef();
 
         return (
 
@@ -455,6 +489,16 @@ class Preset extends Component {
                           className="" >
                         <div className="no-midi">Please connect your Pacer to your computer.</div>
                     </Midi>
+
+                    <div className="download-upload">
+                        {data &&
+                        <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
+                                  label="Download the preset as a binary sysex file" />
+                        }
+                        <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
+                        <button onClick={this.onInputFile}>Load preset from a binary sysex file</button>
+                    </div>
+
                 </div>
 
                 <div className="content">
@@ -541,16 +585,6 @@ class Preset extends Component {
                     <Dropzone onDrop={this.onDrop} className="drop-zone">
                         Drop a binary sysex file here<br />or click to open the file dialog
                     </Dropzone>
-
-                    {data &&
-                    <Fragment>
-                    <h3>Save preset as file:</h3>
-                    <div className="download">
-                        <Download data={this.state.binData}
-                                  filename={`pacer-preset-${presetIndexToXY(presetIndex)}`}
-                                  addTimestamp={true} label="Download the preset data as a binary sysex file" />
-                    </div>
-                    </Fragment>}
 
                     <h3>Log:</h3>
                     <Status messages={this.state.statusMessages} />
