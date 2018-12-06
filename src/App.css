@@ -93,6 +93,15 @@ h3 {
     padding: 4px;
 }
 
+.download-upload {
+    background-color: white;
+    padding-left: 0!important;
+}
+
+.download-upload > button {
+    margin-right: 16px;
+}
+
 .content {
     /*flex-grow: 2;*/
     /*background-color: #ffffff;*/
