@@ -86,11 +86,11 @@ h3 {
 }
 
 .subheader {
-    background-color: #c7c7c7;
+    background-color: #e0e0e0;
 }
 
 .subheader > div {
-    padding: 4px;
+    padding: 9px 14px 7px;
 }
 
 .content {
@@ -274,7 +274,7 @@ div.status {
 
 .port {
     border: 1px solid #999;
-    margin-right: 6px;
+    margin-right: 12px;
     padding: 2px 4px;
     display: flex;
     flex-direction: row;
