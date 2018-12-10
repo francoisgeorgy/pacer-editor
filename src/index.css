@@ -102,6 +102,10 @@ button {
     font-style: normal;
 }
 
+button:focus {
+    outline: 0;
+}
+
 .italic {
     font-style: italic;
 }

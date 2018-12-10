@@ -283,8 +283,9 @@ div.status {
 
 .port {
     border: 1px solid #999;
+    border-radius: 6px;
     margin-right: 12px;
-    padding: 2px 4px;
+    padding: 5px 4px 4px 4px;
     display: flex;
     flex-direction: row;
     align-items: center;

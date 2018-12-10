@@ -233,7 +233,7 @@ class TestSender extends Component {
                           portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
                           onMidiInputEvent={this.handleMidiInputEvent}
                           onOutputConnection={this.setOutput}
-                          className="sub-header" >
+                          className="" >
                         <div className="no-midi">Please connect your Pacer to your computer.</div>
                     </Midi>
                 </div>
