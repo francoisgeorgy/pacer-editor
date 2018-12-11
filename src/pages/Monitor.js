@@ -7,7 +7,7 @@ import {CONTROLER, MESSAGE} from "../utils/midi";
 import * as Note from "tonal-note";
 import "./Monitor.css";
 import PortsGrid from "../components/PortsGrid";
-import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME} from "../pacer/constants";
+import {ANY_MIDI_PORT} from "../pacer/constants";
 
 const MAX_MESSAGES = 40;
 

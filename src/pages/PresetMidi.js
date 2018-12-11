@@ -10,7 +10,6 @@ import {
 import Midi from "../components/Midi";
 import Dropzone from "react-dropzone";
 import "./Preset.css";
-import Status from "../components/Status";
 import {produce} from "immer";
 import {
     ANY_MIDI_PORT,

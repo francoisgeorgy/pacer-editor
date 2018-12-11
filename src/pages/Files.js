@@ -4,9 +4,7 @@ import {isSysexData, mergeDeep, parseSysexDump, requestAllPresets} from "../pace
 import Midi from "../components/Midi";
 import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer/constants";
 import PortsGrid from "../components/PortsGrid";
-import DumpSysex from "../components/DumpSysex";
-import Download from "../components/Download";
-import {outputById, outputName} from "../utils/ports";
+import {outputById} from "../utils/ports";
 import {presetIndexToXY} from "../pacer/utils";
 import Dropzone from "react-dropzone";
 
@@ -203,7 +201,6 @@ class Files extends Component {
                 draft.output = port_id;
             })
         );
-        // this.addInfoMessage(`output ${outputName(port_id)} connected`);
     };
 
     sendSysex = msg => {
