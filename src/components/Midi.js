@@ -329,9 +329,9 @@ export default class Midi extends Component {
         // } else {
             return (
                 <Fragment>
-                    {/*<div className={this.props.className}>*/}
-                        {this.props.portsRenderer(this.portsGrouped(), this.togglePort)}
-                    {/*</div>*/}
+                    {(input != null || output != null) &&
+                        this.props.portsRenderer(this.portsGrouped(), this.togglePort)
+                    }
                     {input === null && output === null &&
                     <Fragment>
                         {this.props.children}

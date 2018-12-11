@@ -496,7 +496,7 @@ class Preset extends Component {
                                   label="Download the preset as a binary sysex file" />
                         }
                         <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
-                        <button onClick={this.onInputFile}>Load preset from a binary sysex file</button>
+                        <button className="myButton" onClick={this.onInputFile}>Load preset from a binary sysex file</button>
                     </div>
 
                 </div>

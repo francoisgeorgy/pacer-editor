@@ -166,6 +166,14 @@ h3 {
     padding: 8px 0;
 }
 
+.instructions {
+    margin-top: 8px;
+}
+
+.space-below {
+    margin-bottom: 16px;
+}
+
 .no-grad {
     background: #fff;
 }
@@ -182,9 +190,9 @@ h3 {
     width: 100%;
     /*margin: 4px 0;*/
     padding: 4px;
-    /*background-color: #fbea00c9;*/
-    background-color: #ffA500;
-    border: 1px solid #ff9999;
+    background-color: #fbea00c9;
+    /*background-color: #ffA500;*/
+    /*border: 1px solid #ff9999;*/
     border-top-color: #777;
     color: #000;
     text-align: center;
@@ -364,11 +372,50 @@ div.status {
     vertical-align: middle;
 }
 
+/*
+button {
+    box-shadow:inset 0px 1px 0px 0px #54a3f7;
+    background:linear-gradient(to bottom, #2db7fc 5%, #007dd6 100%);
+    background-color:#2db7fc;
+    border-radius:3px;
+    border:1px solid #1a72ad;
+    color:#ffffff;
+    font-size:14px;
+    padding: 4px 16px;
+    text-decoration:none;
+}
+button:hover {
+    background:linear-gradient(to bottom, #007dd6 5%, #2db7fc 100%);
+    background-color:#007dd6;
+}
+*/
+
+button {
+    background-color: #efefef;
+    border-radius: 4px;
+    border: 1px solid #aaa;
+    color: #000;
+    font-size: 13px;
+    padding: 4px 16px;
+}
+button:hover {
+    background-color: #ccc;
+}
+
+
 button.update {
-    background-image: linear-gradient(to bottom, #ffdd99, #ffaa00);
+    background: linear-gradient(to bottom, #ffdd99, #ffaa00);
     border: 1px solid #999;
     padding: 4px 8px;
     font-size: 1rem;
+    color: #000;
+}
+button.update:hover {
+    background: linear-gradient(to bottom, #ffaa00, #ffdd99);
+    border: 1px solid #999;
+    padding: 4px 8px;
+    font-size: 1rem;
+    color: #000;
 }
 
 .debug {

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {produce} from "immer";
 import {isSysexData, mergeDeep, parseSysexDump, requestAllPresets} from "../pacer/sysex";
 import Midi from "../components/Midi";
@@ -230,7 +230,7 @@ class Files extends Component {
      */
     render() {
 
-        const { data } = this.state;
+        const { data, output } = this.state;
 
         // console.log("Files.render", this.props);
 
@@ -291,11 +291,22 @@ class Files extends Component {
 
                     <div className="content">
                         <div className="content-row-content">
-                            {/*<h2>Trigger a full dump</h2>*/}
-                                <div className="content-row-content-content">
-                                <div className="actions">
-                                    <button className="update" onClick={() => this.sendMessage(requestAllPresets())}>Get full dump from Pacer</button>
+                            <div className="content-row-content-content">
+                                {!output &&
+                                <div className="instructions space-below">
+                                    You can drag & drop a sysex file here.
                                 </div>
+                                }
+                                {output &&
+                                <Fragment>
+                                    <div className="instructions space-below">
+                                        Click the button below to request a full dump from the Pacer. You can also drag & drop a sysex file here.
+                                    </div>
+                                    <div className="actions">
+                                        <button className="update" onClick={() => this.sendMessage(requestAllPresets())}>Get full dump from Pacer</button>
+                                    </div>
+                                </Fragment>
+                                }
                             </div>
                         </div>
 
