@@ -59,7 +59,6 @@ const DumpContent = ({ data }) => {
 
 
 const PresetsList = ({ data }) =>
-    <Fragment>
         <div className="presets-list">
             {/*<div>CUR</div>*/}
             {
@@ -69,16 +68,17 @@ const PresetsList = ({ data }) =>
                         let show = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
                         let name = show ? data[TARGET_PRESET][index]["name"] : "";
                         return (
-                            <div className="preset-line">
-                                {index} {id} {name}
-                                {show && <button className="small">download</button>}
-                                {show && <button className="small">upload</button>}
-                            </div>
+                            <Fragment>
+                                <div className="right-align">{index}</div>
+                                <div>{id}</div>
+                                {show ? <div>{name}</div> : <div className="placeholder">no data</div>}
+                                <button className={show ? "small" : "small disabled"}>download</button>
+                                <button className="small">upload</button>
+                            </Fragment>
                         );
                     })
             }
-        </div>
-    </Fragment>;
+        </div>;
 
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
@@ -321,12 +321,12 @@ class Files extends Component {
 
                     <div className="content">
                         <div className="content-row-content first">
-                            <div className="content-row-content-content">
-                                {!output &&
+                            {/*<div className="content-row-content-content">*/}
+                                {/* !output &&
                                 <div className="instructions space-below">
                                     You can drag & drop a sysex file here.
                                 </div>
-                                }
+                                */}
                                 {output &&
                                 <Fragment>
                                     <div className="instructions space-below">
@@ -337,17 +337,17 @@ class Files extends Component {
                                     </div>
                                 </Fragment>
                                 }
-                            </div>
+                            {/*</div>*/}
                         </div>
 
                         {/*{data &&*/}
                         <div className="content-row-content">
-                            <div className="content-row-content-content">
-                                <div className="message code">
+                            {/*<div className="content-row-content-content">*/}
+                                {/*<div className="message code">*/}
                                     <PresetsList data={data} />
                                     {/*<DumpContent data={data} />*/}
-                                </div>
-                            </div>
+                                {/*</div>*/}
+                            {/*</div>*/}
                         </div>{/*}*/}
 
                     </div>

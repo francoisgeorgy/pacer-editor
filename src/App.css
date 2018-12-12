@@ -151,6 +151,8 @@ h3 {
     /*margin-bottom: 0.25em;*/
     /*padding: 16px 8px 0 16px;*/
     /*margin: 8px 0 8px 0;*/
+    padding-bottom: 2px;
+    border-bottom: 1px solid #d0d0d0;
     font-size: 1rem;
     font-weight: bold;
 }
@@ -162,8 +164,8 @@ h3 {
 }
 
 .content-row-content {
-    flex-grow: 10;
-    border-top: 1px solid #999;
+    /*flex-grow: 10;*/
+    /*border-top: 1px solid #999;*/
     /*background: linear-gradient(160deg, #ffffff 33%,#e5e5e5 100%);*/
     padding: 8px 0;
 }
@@ -410,6 +412,14 @@ button {
 button.small {
     padding: 2px 8px;
     font-size: 11px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+button.disabled, button.disabled:hover {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    color: #999;
 }
 
 button:hover {
@@ -430,6 +440,10 @@ button.update:hover {
     padding: 4px 8px;
     font-size: 1rem;
     color: #000;
+}
+
+.right-align {
+    text-align: right;
 }
 
 .debug {
