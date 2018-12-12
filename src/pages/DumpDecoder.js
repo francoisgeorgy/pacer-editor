@@ -106,11 +106,7 @@ class DumpDecoder extends Component {
      */
     render() {
 
-        const { data } = this.state;
-
-        console.log("DumpDecoder.render", this.props);
-
-        const { /*accept, files,*/ dropZoneActive } = this.state;
+        const { data, dropZoneActive } = this.state;
 
         const overlayStyle = {
             position: 'absolute',

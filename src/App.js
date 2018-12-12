@@ -68,14 +68,14 @@ class App extends Component {
                         <MenuLink to="/preset" label="Preset Controls" />
                         <MenuLink to="/presetmidi" label="Preset Name & MIDI" />
                         <MenuLink to="/global" label="Global config" />
-                        <MenuLink to="/files" label="Files" />
+                        {/*<MenuLink to="/files" label="Files" />*/}
                         {/*<MenuLink to="/chords" label="Chords" />*/}
                         <MenuLink to="/monitor" label="MIDI monitor" />
                         <MenuLink to="/dumpdecoder" label="Dump decoder" />
                         {debug && <MenuLink to="/testsender" label="Debug" />}
                         {!busy && <div className="spacer"> </div>}
                         {busy && <div className="busy">please wait...</div>}
-                        <div className="header-app-name">Pacer editor 0.4.0</div>
+                        <div className="header-app-name">Pacer editor 0.4.1</div>
                     </header>
 
                         <Switch>

@@ -75,7 +75,7 @@ class Chords extends Component {
                             <div className="harmony">
                                 <div>
                                     Scale:
-                                    <select defaultValue={scale} onChange={this.setScale}>
+                                    <select value={scale} onChange={this.setScale}>
                                     {
                                         Scale.names().map(
                                             (scale, index) => <option key={scale} value={scale}>{scale}</option>

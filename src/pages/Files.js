@@ -29,34 +29,7 @@ function batchMessages(callback, wait) {
     };
 }
 
-
-const PresetsList = ({ data }) =>
-    <div className="presets-list">
-        {/*<div>CUR</div>*/}
-        {
-            Array.from(Array(24+1).keys()).map(
-            index => {
-                let id = presetIndexToXY(index);
-                let show = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
-                let name = show ? data[TARGET_PRESET][index]["name"] : "";
-                return (
-                    <Fragment>
-                        <div className="right-align">{index}</div>
-                        <div>{id}</div>
-                        {show ? <div>{name}</div> : <div className="placeholder">no data</div>}
-                        {/*<button className={show ? "small" : "small disabled"}>download</button>*/}
-                        {show ? <Download data={data[TARGET_PRESET][index]} filename={`pacer-preset-${presetIndexToXY(index)}`} addTimestamp={true}
-                                          label="download" /> : <div></div>}
-                        <button className="small">upload</button>
-                    </Fragment>
-                );
-            })
-        }
-    </div>;
-
-
 const MAX_FILE_SIZE = 5 * 1024*1024;
-
 
 class Files extends Component {
 
@@ -182,7 +155,7 @@ class Files extends Component {
      * @param files
      */
     onDrop = (files) => {
-        console.log('drop', files);
+        // console.log('drop', files);
         this.setState(
             {
                 data: null,
@@ -233,13 +206,7 @@ class Files extends Component {
      */
     render() {
 
-        const { data, output } = this.state;
-
-        // console.log("Files.render", this.props);
-
-        console.log("Files.render", data);
-
-        const { /*accept, files,*/ dropZoneActive } = this.state;
+        const { data, output, dropZoneActive } = this.state;
 
         const overlayStyle = {
             position: 'absolute',
@@ -279,18 +246,6 @@ class Files extends Component {
                               className="" >
                             <div className="no-midi">Please connect your Pacer to your computer.</div>
                         </Midi>
-
-    {/*
-                        <div className="download-upload">
-                            {data &&
-                            <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
-                                      label="Download the preset as a binary sysex file" />
-                            }
-                            <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
-                            <button onClick={this.onInputFile}>Load preset from a binary sysex file</button>
-                        </div>
-    */}
-
                     </div>
 
                     <div className="content">
@@ -313,9 +268,7 @@ class Files extends Component {
                         </div>
 
                         <div className="content-row-content">
-                            {/*<PresetsList data={data} />*/}
                             <div className="presets-list">
-                            {/*<div>CUR</div>*/}
                             {
                                 Array.from(Array(24+1).keys()).map(
                                 index => {
@@ -327,7 +280,6 @@ class Files extends Component {
                                             <div className="right-align">{index}</div>
                                             <div>{id}</div>
                                             {show ? <div>{name}</div> : <div className="placeholder">no data</div>}
-                                            {/*<button className={show ? "small" : "small disabled"}>download</button>*/}
                                             {show ? <Download data={data[TARGET_PRESET][index]} filename={`pacer-preset-${presetIndexToXY(index)}`} addTimestamp={true}
                                                               className="small" label="download" /> : <button className="small disabled">download</button>}
                                             <button className="small">upload</button>

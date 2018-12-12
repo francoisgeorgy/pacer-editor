@@ -244,28 +244,29 @@ class Preset extends Component {
         );
     };
 
-    selectPreset = (id) => {
+    selectPreset = (index) => {
         // if the user selects another preset or control, then clear the data in the state
-        if (this.state.data) {      //FIXME: add condition: data must include preset id requested
+        const { data } = this.state;
+        if (data && data[TARGET_PRESET] && data[TARGET_PRESET][index]) {
             this.setState(
                 produce(draft => {
-                    draft.presetIndex = id;
+                    draft.presetIndex = index;
                 })
             );
         } else {
             this.setState(
                 produce(draft => {
-                    draft.presetIndex = id;
-                    if (id !== this.state.presetIndex) {
+                    draft.presetIndex = index;
+                    if (index !== this.state.presetIndex) {
                         draft.data = null;
                         draft.changed = false;
                     }
                 })
             );
-            if (isVal(id)) {   // && this.state.controlId) {
+            if (isVal(index)) {   // && this.state.controlId) {
                 // this.sendSysex(requestPresetObj(id, this.state.controlId));
                 // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
-                this.sendSysex(requestPreset(id));
+                this.sendSysex(requestPreset(index));
             }
         }
     };
@@ -274,7 +275,12 @@ class Preset extends Component {
 
         //TODO: no need to read the preset data again. Just select the control from the data we must already have.
 
+        // console.log(`selectControl ${controlId}`);
+
         if (isVal(this.state.presetIndex) && controlId) {
+
+            // console.log(`selectControl setState ${controlId}`);
+
             this.setState({ controlId });
         }
 
@@ -339,7 +345,7 @@ class Preset extends Component {
     };
 
     updatePresetName = (name) => {
-        console.log("Presets.updateName", name);
+        // console.log("Presets.updateName", name);
         if (name === undefined || name === null) return;
         if (name.length > 5) {
             console.warn(`Presets.updateName: name too long: ${name}`);
@@ -396,7 +402,6 @@ class Preset extends Component {
     };
 
     updatePacer = (messages) => {
-        console.log("PresetMidi.updatePacer");
         for (let m of messages) {
             this.sendSysex(m);
         }
@@ -482,128 +487,105 @@ class Preset extends Component {
                 onDragEnter={this.onDragEnter}
                 onDragLeave={this.onDragLeave}
             >
-            {dropZoneActive &&
-            <div style={overlayStyle}>
-                Drop sysex file...
-            </div>}
 
-            <div className="wrapper">
+                {dropZoneActive &&
+                <div style={overlayStyle}>
+                    Drop sysex file...
+                </div>}
 
-                <div className="subheader">
-                    <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
-                          portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
-                          onMidiInputEvent={this.handleMidiInputEvent}
-                          onInputConnection={this.onInputConnection}
-                          onInputDisconnection={this.onInputDisconnection}
-                          onOutputConnection={this.onOutputConnection}
-                          onOutputDisconnection={this.onOutputDisconnection}
-                          className="" >
-                        <div className="no-midi">Please connect your Pacer to your computer.</div>
-                    </Midi>
-                </div>
+                <div className="wrapper">
 
-                <div className="content">
-
-                    <div className="content-row-content first">
-                        <h2>Select preset and control:</h2>
-                        <div className="content-row-content-content">
-                            <div className="selectors">
-                                <PresetSelector data={data} currentPreset={presetIndex} onClick={this.selectPreset} />
-                                {isVal(presetIndex) && <ControlSelector currentControl={controlId} onClick={this.selectControl} />}
-                            </div>
-                        </div>
+                    <div className="subheader">
+                        <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
+                              portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
+                              onMidiInputEvent={this.handleMidiInputEvent}
+                              onInputConnection={this.onInputConnection}
+                              onInputDisconnection={this.onInputDisconnection}
+                              onOutputConnection={this.onOutputConnection}
+                              onOutputDisconnection={this.onOutputDisconnection}
+                              className="" >
+                            <div className="no-midi">Please connect your Pacer to your computer.</div>
+                        </Midi>
                     </div>
 
-                    {showEditor &&
-                    <div className="content-row-content">
-                        <Fragment>
-                            <h2>Preset:</h2>
+                    <div className="content">
 
-                            <div className="download-upload">
-                                {data &&
-                                <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
-                                          label="Download the preset as a binary sysex file" />
-                                }
-                                <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
-                                <button className="myButton" onClick={this.onInputFile}>Load preset from a binary sysex file</button>
-                            </div>
-
+                        <div className="content-row-content first">
+                            <h2>Select preset and control:</h2>
                             <div className="content-row-content-content">
-                                <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />
-                            </div>
-                        </Fragment>
-                    </div>
-                    }
-
-                    {showEditor &&
-                    <div className="content-row-content">
-                        <Fragment>
-                            <h2>{CONTROLS_FULLNAME[controlId]}:</h2>
-                            <div className="content-row-content-content">
-                                <ControlStepsEditor controlId={controlId}
-                                                    steps={data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]}
-                                                    onUpdate={(stepIndex, dataType, dataIndex, value) => this.updateControlStep(controlId, stepIndex, dataType, dataIndex, value)} />
-                                <ControlModeEditor controlId={controlId}
-                                                   mode={data[TARGET_PRESET][presetIndex]["controls"][controlId]["control_mode"]}
-                                                   onUpdate={(value) => this.updateControlMode(controlId, value)} />
-                            </div>
-                        </Fragment>
-                    </div>
-                    }
-
-                    {changed &&
-                    <div className="content-row-content">
-                        <Fragment>
-                            <h2>Send the updated config to the Pacer:</h2>
-                            <div className="content-row-content-content">
-                                <div className="actions">
-                                    <button className="update" onClick={() => this.updatePacer(updateMessages)}>Update Pacer</button>
+                                <div className="selectors">
+                                    <PresetSelector data={data} currentPreset={presetIndex} onClick={this.selectPreset} />
+                                    {isVal(presetIndex) && <ControlSelector currentControl={controlId} onClick={this.selectControl} />}
                                 </div>
                             </div>
-                        </Fragment>
-                    </div>
-                    }
+                        </div>
 
-                    {this.props.debug && showEditor &&
-                    <div className="content-row-content first">
-                        <div className="debug">
-                        <h4>[Debug] Update messages to send:</h4>
-                        <div className="message-to-send">
-                            {updateMessages.map((m, i) => <div key={i} className="code">{hs(m)}</div>)}
+                        {showEditor &&
+                        <div className="content-row-content">
+                            <Fragment>
+                                <h2>Preset:</h2>
+
+                                <div className="download-upload">
+                                    {data &&
+                                    <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
+                                              label="Download the preset as a binary sysex file" />
+                                    }
+                                    <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
+                                    <button className="myButton" onClick={this.onInputFile}>Load preset from a binary sysex file</button>
+                                </div>
+
+                                <div className="content-row-content-content">
+                                    <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />
+                                </div>
+                            </Fragment>
                         </div>
+                        }
+
+                        {showEditor &&
+                        <div className="content-row-content">
+                            <Fragment>
+                                <h2>{CONTROLS_FULLNAME[controlId]}:</h2>
+                                <div className="content-row-content-content">
+                                    <ControlStepsEditor
+                                        controlId={controlId}
+                                        steps={data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]}
+                                        onUpdate={(stepIndex, dataType, dataIndex, value) => this.updateControlStep(controlId, stepIndex, dataType, dataIndex, value)} />
+                                    <ControlModeEditor
+                                        controlId={controlId}
+                                        mode={data[TARGET_PRESET][presetIndex]["controls"][controlId]["control_mode"]}
+                                        onUpdate={(value) => this.updateControlMode(controlId, value)} />
+                                </div>
+                            </Fragment>
                         </div>
+                        }
+
+                        {changed &&
+                        <div className="content-row-content">
+                            <Fragment>
+                                <h2>Send the updated config to the Pacer:</h2>
+                                <div className="content-row-content-content">
+                                    <div className="actions">
+                                        <button className="update" onClick={() => this.updatePacer(updateMessages)}>Update Pacer</button>
+                                    </div>
+                                </div>
+                            </Fragment>
+                        </div>
+                        }
+
+                        {this.props.debug && showEditor &&
+                        <div className="content-row-content first">
+                            <div className="debug">
+                            <h4>[Debug] Update messages to send:</h4>
+                            <div className="message-to-send">
+                                {updateMessages.map((m, i) => <div key={i} className="code">{hs(m)}</div>)}
+                            </div>
+                            </div>
+                        </div>
+                        }
+
                     </div>
-                    }
 
                 </div>
-
-{/*
-                <div className="right-column">
-
-                    <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
-                          portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
-                          onMidiInputEvent={this.handleMidiInputEvent}
-                          onInputConnection={this.onInputConnection}
-                          onInputDisconnection={this.onInputDisconnection}
-                          onOutputConnection={this.onOutputConnection}
-                          onOutputDisconnection={this.onOutputDisconnection}
-                          className="sub-header" >
-                        <div className="no-midi">Please connect your Pacer to your computer.</div>
-                    </Midi>
-
-                    <h3>Load preset from file:</h3>
-
-                    <Dropzone onDrop={this.onDrop} className="drop-zone">
-                        Drop a binary sysex file here<br />or click to open the file dialog
-                    </Dropzone>
-
-                    <h3>Log:</h3>
-                    <Status messages={this.state.statusMessages} />
-
-                </div>
-*/}
-
-            </div>
 
             </Dropzone>
 

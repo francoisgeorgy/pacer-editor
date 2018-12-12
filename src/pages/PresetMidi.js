@@ -276,7 +276,7 @@ class PresetMidi extends Component {
 
     render() {
 
-        const { presetIndex, data, changed } = this.state;
+        const { presetIndex, data, changed, dropZoneActive } = this.state;
 
         let showEditor = false;
 
@@ -310,8 +310,6 @@ class PresetMidi extends Component {
                 updateMessages.push(n);
             }
         }
-
-        const { /*accept, files,*/ dropZoneActive } = this.state;
 
         const overlayStyle = {
             position: 'absolute',

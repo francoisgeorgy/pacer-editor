@@ -11,7 +11,7 @@ import "./MidiSettingsEditor.css";
 
 const MidiNote = ({ note, onChange }) => {
     return (
-        <select onChange={(event) => onChange(event.target.value)} defaultValue={note}>
+        <select onChange={(event) => onChange(event.target.value)} value={note}>
             {
                 Array.from(Array(127).keys()).map(
                     i => {
@@ -27,14 +27,12 @@ const Setting = ({ index, config, updateCallback }) => {
 
     let inactive = config.msg_type === MSG_CTRL_OFF;
 
-    console.log(index, inactive);
-
     if (inactive) {
         return (
             <Fragment>
                 <div className="setting-row-header">setting {index}:</div>
                 <div>
-                    <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} defaultValue={config.msg_type}>
+                    <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} value={config.msg_type}>
                         {
                             Object.keys(MSG_TYPES_FULLNAME_SW).map(
                                 key => {
@@ -66,7 +64,7 @@ const Setting = ({ index, config, updateCallback }) => {
         <Fragment>
             <div className="setting-row-header">Setting {index}:</div>
             <div>
-                <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} defaultValue={config.msg_type}>
+                <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} value={config.msg_type}>
                 {
                     MSG_TYPES_FULLNAME_MIDI_SORTED.map(
                         v => {
@@ -79,7 +77,7 @@ const Setting = ({ index, config, updateCallback }) => {
             <div>{d1}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type][1]}</div></div>
             <div>{d2}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type][2]}</div></div>
             <div>
-                <select onChange={(event) => updateCallback("channel", null, event.target.value)} defaultValue={config.channel}>
+                <select onChange={(event) => updateCallback("channel", null, event.target.value)} value={config.channel}>
                     {
                         Array.from(Array(16).keys()).map(i => <option key={i} value={i}>{i}</option>)
                     }

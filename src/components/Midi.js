@@ -359,7 +359,7 @@ export default class Midi extends Component {
 
         let {pacerPresent} = this.state;
 
-        console.log("pacerPresent", pacerPresent);
+        // console.log("pacerPresent", pacerPresent);
 
         // console.log(this.state.inputs, this.state.outputs);
 

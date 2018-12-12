@@ -12,7 +12,7 @@ import "./ControlStepsEditor.css";
 
 const LEDMidi = ({ current_value, onChange }) => {
     return (
-        <select defaultValue={current_value} onChange={(event) => onChange(event.target.value)}>
+        <select value={current_value} onChange={(event) => onChange(event.target.value)}>
             <option value="0">0</option>
             <option value="1">1</option>
         </select>
@@ -20,9 +20,8 @@ const LEDMidi = ({ current_value, onChange }) => {
 };
 
 const LEDColor = ({ current_value, onChange }) => {
-    // console.log("LEDColor", current_value, typeof current_value);
     return (
-        <select defaultValue={current_value} onChange={(event) => onChange(event.target.value)}>
+        <select value={current_value} onChange={(event) => onChange(event.target.value)}>
             {
                 Object.keys(COLORS).map(
                     key => {
@@ -35,7 +34,7 @@ const LEDColor = ({ current_value, onChange }) => {
 
 const LEDNum = ({ current_value, onChange }) => {
     return (
-        <select defaultValue={current_value} onChange={(event) => onChange(event.target.value)}>
+        <select value={current_value} onChange={(event) => onChange(event.target.value)}>
             <option value="0">default</option>
             <option value="3">top</option>
             <option value="2">middle</option>
@@ -46,7 +45,7 @@ const LEDNum = ({ current_value, onChange }) => {
 
 const MidiNote = ({ note, onChange }) => {
     return (
-        <select onChange={(event) => onChange(event.target.value)} defaultValue={note}>
+        <select value={note} onChange={(event) => onChange(event.target.value)}>
             {
                 Array.from(Array(127).keys()).map(
                     i => {
@@ -60,8 +59,6 @@ const MidiNote = ({ note, onChange }) => {
 
 const Step = ({ index, config, updateCallback }) => {
 
-    // console.log("Step", index, config.msg_type, config);
-
     let inactive = config.msg_type === MSG_CTRL_OFF;
 
     if (inactive) {
@@ -69,7 +66,7 @@ const Step = ({ index, config, updateCallback }) => {
             <Fragment>
                 <div className="step-row-header">Step {index}:</div>
                 <div>
-                    <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} defaultValue={config.msg_type}>
+                    <select value={config.msg_type} onChange={(event) => updateCallback("msg_type", null, event.target.value)}>
                         {
                             Object.keys(MSG_TYPES_FULLNAME_SW).map(
                                 key => {
@@ -113,7 +110,7 @@ const Step = ({ index, config, updateCallback }) => {
         <Fragment>
             <div className="step-row-header">Step {index}:</div>
             <div>
-                <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} defaultValue={config.msg_type}>
+                <select value={config.msg_type} onChange={(event) => updateCallback("msg_type", null, event.target.value)}>
                 {
                     MSG_TYPES_FULLNAME_SW_SORTED.map(
                         v => {
@@ -138,7 +135,7 @@ const Step = ({ index, config, updateCallback }) => {
                 <LEDMidi current_value={config.led_midi_ctrl} onChange={(value) => updateCallback("led_midi_ctrl", null, value)} />
             </div>
             <div>
-                <select onChange={(event) => updateCallback("channel", null, event.target.value)} defaultValue={config.channel}>
+                <select value={config.channel} onChange={(event) => updateCallback("channel", null, event.target.value)}>
                     {
                         Array.from(Array(16).keys()).map(i => <option key={i} value={i}>{i}</option>)
                     }
@@ -151,15 +148,12 @@ const Step = ({ index, config, updateCallback }) => {
 class ControlStepsEditor extends Component {
 
     onStepUpdate = (stepIndex, dataType, dataIndex, value) => {
-        // console.log(`ControlStepsEditor.onStepUpdate`, stepIndex, dataType, dataIndex, value);
         this.props.onUpdate(stepIndex, dataType, dataIndex, value);    // stepIndex, dataIndex, value
     };
 
     render() {
 
         const steps = this.props.steps;
-
-        // console.log("ControlStepsEditor.render", this.props.controlId, steps);
 
         return (
             <div className="steps">

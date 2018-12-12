@@ -8,7 +8,7 @@ class ControlModeEditor extends Component {
         return (
             <div className="control-mode">
                 <span className="step-row-header">Control mode:</span>
-                <select onChange={(event) => this.props.onUpdate(event.target.value)} defaultValue={this.props.mode}>
+                <select onChange={(event) => this.props.onUpdate(event.target.value)} value={this.props.mode}>
                     {
                         Object.keys(CONTROL_MODES).map(
                             key => {
