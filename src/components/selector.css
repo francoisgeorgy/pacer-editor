@@ -15,3 +15,12 @@
     border: 1px solid green;
     color: white;
 }
+
+.selector .preset-id {
+    width: 30px;
+    text-align: left;
+}
+
+.selector .preset-name {
+
+}

@@ -401,7 +401,7 @@ class Preset extends Component {
 
     render() {
 
-        const { presetIndex, controlId, data, changed } = this.state;
+        const { presetIndex, controlId, data, changed, dropZoneActive } = this.state;
 
         let showEditor = false;
 
@@ -446,8 +446,6 @@ class Preset extends Component {
                 updateMessages.push(n);
             }
         }
-
-        const { /*accept, files,*/ dropZoneActive } = this.state;
 
         const overlayStyle = {
             position: 'absolute',
@@ -494,8 +492,6 @@ class Preset extends Component {
                           className="" >
                         <div className="no-midi">Please connect your Pacer to your computer.</div>
                     </Midi>
-
-
                 </div>
 
                 <div className="content">
@@ -515,7 +511,7 @@ class Preset extends Component {
                         <h2>Select preset and control:</h2>
                         <div className="content-row-content-content">
                             <div className="selectors">
-                                <PresetSelector currentPreset={presetIndex} onClick={this.selectPreset} />
+                                <PresetSelector data={data} currentPreset={presetIndex} onClick={this.selectPreset} />
                                 {isVal(presetIndex) && <ControlSelector currentControl={controlId} onClick={this.selectControl} />}
                             </div>
                         </div>

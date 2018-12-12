@@ -1,6 +1,6 @@
 .preset-selectors {
     display: grid;
-    grid: repeat(4, 1fr) / repeat(7, auto);
+    grid: repeat(5, 1fr) / repeat(6, auto);
     grid-gap: 6px;
     justify-content: start;
     margin: 10px 20px 10px 0;
@@ -8,9 +8,10 @@
 
 .preset-selectors > div {
     display: flex;
-    justify-content: center;
+    /*justify-content: center;*/
+    justify-content: flex-start;
     align-items: center;
-    width: 40px;
-    padding: 4px 0;
+    width: 100px;
+    padding: 4px 8px 4px 8px;
     cursor: pointer;
 }
