@@ -39,7 +39,7 @@ class Download extends Component {
 
     render() {
         return (
-            <button onClick={this.handleClick} >{this.props.label}</button>
+            <button onClick={this.handleClick} className={this.props.className}>{this.props.label}</button>
         );
     }
 

@@ -8,6 +8,7 @@ import {outputById, outputName} from "../utils/ports";
 import {presetIndexToXY, presetXYToIndex} from "../pacer/utils";
 import Dropzone from "react-dropzone";
 import "./Files.css";
+import Download from "../components/Download";
 
 
 function batchMessages(callback, wait) {
@@ -29,56 +30,29 @@ function batchMessages(callback, wait) {
 }
 
 
-const Preset = ({ index, data }) => {
-    if (data === null || data === undefined) return null;
-    return (
-        <div>
-            Preset {presetIndexToXY(parseInt(index, 10))} (#{index}): {data["name"]}
-        </div>
-    );
-};
-
-const Presets = ({ presets }) => {
-    if (presets === null || presets === undefined) return null;
-    return (
-        <div>
-            {Object.keys(presets).map(idx => <Preset key={idx} index={idx} data={presets[idx]} />)}
-        </div>
-    );
-};
-
-const DumpContent = ({ data }) => {
-    return (
-        <div className="">
-        {
-            data && <Presets presets={data[TARGET_PRESET]} />
-        }
-        </div>
-    );
-};
-
-
 const PresetsList = ({ data }) =>
-        <div className="presets-list">
-            {/*<div>CUR</div>*/}
-            {
-                Array.from(Array(24+1).keys()).map(
-                    index => {
-                        let id = presetIndexToXY(index);
-                        let show = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
-                        let name = show ? data[TARGET_PRESET][index]["name"] : "";
-                        return (
-                            <Fragment>
-                                <div className="right-align">{index}</div>
-                                <div>{id}</div>
-                                {show ? <div>{name}</div> : <div className="placeholder">no data</div>}
-                                <button className={show ? "small" : "small disabled"}>download</button>
-                                <button className="small">upload</button>
-                            </Fragment>
-                        );
-                    })
-            }
-        </div>;
+    <div className="presets-list">
+        {/*<div>CUR</div>*/}
+        {
+            Array.from(Array(24+1).keys()).map(
+            index => {
+                let id = presetIndexToXY(index);
+                let show = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
+                let name = show ? data[TARGET_PRESET][index]["name"] : "";
+                return (
+                    <Fragment>
+                        <div className="right-align">{index}</div>
+                        <div>{id}</div>
+                        {show ? <div>{name}</div> : <div className="placeholder">no data</div>}
+                        {/*<button className={show ? "small" : "small disabled"}>download</button>*/}
+                        {show ? <Download data={data[TARGET_PRESET][index]} filename={`pacer-preset-${presetIndexToXY(index)}`} addTimestamp={true}
+                                          label="download" /> : <div></div>}
+                        <button className="small">upload</button>
+                    </Fragment>
+                );
+            })
+        }
+    </div>;
 
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
@@ -321,34 +295,48 @@ class Files extends Component {
 
                     <div className="content">
                         <div className="content-row-content first">
-                            {/*<div className="content-row-content-content">*/}
-                                {/* !output &&
+                            {/* !output &&
+                            <div className="instructions space-below">
+                                You can drag & drop a sysex file here.
+                            </div>
+                            */}
+                            {output &&
+                            <Fragment>
                                 <div className="instructions space-below">
-                                    You can drag & drop a sysex file here.
+                                    Click the button below to request a full dump from the Pacer. You can also drag & drop a sysex file here.
                                 </div>
-                                */}
-                                {output &&
-                                <Fragment>
-                                    <div className="instructions space-below">
-                                        Click the button below to request a full dump from the Pacer. You can also drag & drop a sysex file here.
-                                    </div>
-                                    <div className="actions">
-                                        <button className="update" onClick={() => this.sendMessage(requestAllPresets())}>Get full dump from Pacer</button>
-                                    </div>
-                                </Fragment>
-                                }
-                            {/*</div>*/}
+                                <div className="actions">
+                                    <button className="update" onClick={() => this.sendMessage(requestAllPresets())}>Get full dump from Pacer</button>
+                                </div>
+                            </Fragment>
+                            }
                         </div>
 
-                        {/*{data &&*/}
                         <div className="content-row-content">
-                            {/*<div className="content-row-content-content">*/}
-                                {/*<div className="message code">*/}
-                                    <PresetsList data={data} />
-                                    {/*<DumpContent data={data} />*/}
-                                {/*</div>*/}
-                            {/*</div>*/}
-                        </div>{/*}*/}
+                            {/*<PresetsList data={data} />*/}
+                            <div className="presets-list">
+                            {/*<div>CUR</div>*/}
+                            {
+                                Array.from(Array(24+1).keys()).map(
+                                index => {
+                                    let id = presetIndexToXY(index);
+                                    let show = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
+                                    let name = show ? data[TARGET_PRESET][index]["name"] : "";
+                                    return (
+                                        <Fragment>
+                                            <div className="right-align">{index}</div>
+                                            <div>{id}</div>
+                                            {show ? <div>{name}</div> : <div className="placeholder">no data</div>}
+                                            {/*<button className={show ? "small" : "small disabled"}>download</button>*/}
+                                            {show ? <Download data={data[TARGET_PRESET][index]} filename={`pacer-preset-${presetIndexToXY(index)}`} addTimestamp={true}
+                                                              className="small" label="download" /> : <button className="small disabled">download</button>}
+                                            <button className="small">upload</button>
+                                        </Fragment>
+                                    );
+                                })
+                            }
+                            </div>
+                        </div>
 
                     </div>
 

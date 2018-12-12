@@ -106,11 +106,13 @@ class App extends Component {
                                 )
                             }/>
 */}
+{/*
                             <Route path="/files" render={
                                 props => (
                                     <Files onBusy={this.onBusy} debug={debug} />
                                 )
                             }/>
+*/}
                             <Route path="/monitor" render={
                                 props => (
                                     <Monitor onBusy={this.onBusy} debug={debug} />
