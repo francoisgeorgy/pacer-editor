@@ -246,19 +246,27 @@ class Preset extends Component {
 
     selectPreset = (id) => {
         // if the user selects another preset or control, then clear the data in the state
-        this.setState(
-            produce(draft => {
-                draft.presetIndex = id;
-                if (id !== this.state.presetIndex) {
-                    draft.data = null;
-                    draft.changed = false;
-                }
-            })
-        );
-        if (isVal(id)) {   // && this.state.controlId) {
-            // this.sendSysex(requestPresetObj(id, this.state.controlId));
-            // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
-            this.sendSysex(requestPreset(id));
+        if (this.state.data) {      //FIXME: add condition: data must include preset id requested
+            this.setState(
+                produce(draft => {
+                    draft.presetIndex = id;
+                })
+            );
+        } else {
+            this.setState(
+                produce(draft => {
+                    draft.presetIndex = id;
+                    if (id !== this.state.presetIndex) {
+                        draft.data = null;
+                        draft.changed = false;
+                    }
+                })
+            );
+            if (isVal(id)) {   // && this.state.controlId) {
+                // this.sendSysex(requestPresetObj(id, this.state.controlId));
+                // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
+                this.sendSysex(requestPreset(id));
+            }
         }
     };
 
@@ -497,17 +505,6 @@ class Preset extends Component {
                 <div className="content">
 
                     <div className="content-row-content first">
-                        <div className="download-upload">
-                            {data &&
-                            <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
-                                      label="Download the preset as a binary sysex file" />
-                            }
-                            <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
-                            <button className="myButton" onClick={this.onInputFile}>Load preset from a binary sysex file</button>
-                        </div>
-                    </div>
-
-                    <div className="content-row-content">
                         <h2>Select preset and control:</h2>
                         <div className="content-row-content-content">
                             <div className="selectors">
@@ -520,7 +517,17 @@ class Preset extends Component {
                     {showEditor &&
                     <div className="content-row-content">
                         <Fragment>
-                            <h2>Preset name:</h2>
+                            <h2>Preset:</h2>
+
+                            <div className="download-upload">
+                                {data &&
+                                <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
+                                          label="Download the preset as a binary sysex file" />
+                                }
+                                <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
+                                <button className="myButton" onClick={this.onInputFile}>Load preset from a binary sysex file</button>
+                            </div>
+
                             <div className="content-row-content-content">
                                 <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />
                             </div>

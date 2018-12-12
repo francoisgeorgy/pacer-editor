@@ -405,16 +405,22 @@ button {
     border-radius: 4px;
     border: 1px solid #aaa;
     color: #000;
-    font-size: 13px;
-    padding: 4px 16px;
+    /*font-size: 13px;*/
+    /*padding: 4px 16px;*/
+    padding: 2px 8px;
+    font-size: 11px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
+/*
 button.small {
     padding: 2px 8px;
     font-size: 11px;
     margin-top: 5px;
     margin-bottom: 5px;
 }
+*/
 
 button.disabled, button.disabled:hover {
     background-color: #f9f9f9;
