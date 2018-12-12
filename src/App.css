@@ -406,6 +406,12 @@ button {
     font-size: 13px;
     padding: 4px 16px;
 }
+
+button.small {
+    padding: 2px 8px;
+    font-size: 11px;
+}
+
 button:hover {
     background-color: #ccc;
 }

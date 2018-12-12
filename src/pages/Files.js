@@ -5,8 +5,9 @@ import Midi from "../components/Midi";
 import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer/constants";
 import PortsGrid from "../components/PortsGrid";
 import {outputById, outputName} from "../utils/ports";
-import {presetIndexToXY} from "../pacer/utils";
+import {presetIndexToXY, presetXYToIndex} from "../pacer/utils";
 import Dropzone from "react-dropzone";
+import "./Files.css";
 
 
 function batchMessages(callback, wait) {
@@ -55,6 +56,29 @@ const DumpContent = ({ data }) => {
         </div>
     );
 };
+
+
+const PresetsList = ({ data }) =>
+    <Fragment>
+        <div className="presets-list">
+            {/*<div>CUR</div>*/}
+            {
+                Array.from(Array(24+1).keys()).map(
+                    index => {
+                        let id = presetIndexToXY(index);
+                        let show = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
+                        let name = show ? data[TARGET_PRESET][index]["name"] : "";
+                        return (
+                            <div className="preset-line">
+                                {index} {id} {name}
+                                {show && <button className="small">download</button>}
+                                {show && <button className="small">upload</button>}
+                            </div>
+                        );
+                    })
+            }
+        </div>
+    </Fragment>;
 
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
@@ -316,14 +340,15 @@ class Files extends Component {
                             </div>
                         </div>
 
-                        {data &&
+                        {/*{data &&*/}
                         <div className="content-row-content">
                             <div className="content-row-content-content">
                                 <div className="message code">
-                                    <DumpContent data={data} />
+                                    <PresetsList data={data} />
+                                    {/*<DumpContent data={data} />*/}
                                 </div>
                             </div>
-                        </div>}
+                        </div>{/*}*/}
 
                     </div>
 
