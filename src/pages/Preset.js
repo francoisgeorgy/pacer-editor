@@ -364,6 +364,11 @@ class Preset extends Component {
     };
 
     onOutputDisconnection = (port_id) => {
+        this.setState(
+            produce(draft => {
+                draft.output = null;        // we manage only one output connection at a time
+            })
+        );
         this.addInfoMessage(`output ${outputName(port_id)} disconnected`);
     };
 
@@ -490,18 +495,21 @@ class Preset extends Component {
                         <div className="no-midi">Please connect your Pacer to your computer.</div>
                     </Midi>
 
-                    <div className="download-upload">
-                        {data &&
-                        <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
-                                  label="Download the preset as a binary sysex file" />
-                        }
-                        <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
-                        <button className="myButton" onClick={this.onInputFile}>Load preset from a binary sysex file</button>
-                    </div>
 
                 </div>
 
                 <div className="content">
+
+                    <div className="content-row-content first">
+                        <div className="download-upload">
+                            {data &&
+                            <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
+                                      label="Download the preset as a binary sysex file" />
+                            }
+                            <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
+                            <button className="myButton" onClick={this.onInputFile}>Load preset from a binary sysex file</button>
+                        </div>
+                    </div>
 
                     <div className="content-row-content">
                         <h2>Select preset and control:</h2>
@@ -554,7 +562,7 @@ class Preset extends Component {
                     }
 
                     {this.props.debug && showEditor &&
-                    <div className="content-row-content no-grad">
+                    <div className="content-row-content first">
                         <div className="debug">
                         <h4>[Debug] Update messages to send:</h4>
                         <div className="message-to-send">

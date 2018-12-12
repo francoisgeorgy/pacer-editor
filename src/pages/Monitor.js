@@ -45,7 +45,7 @@ class Monitor extends Component {
 
                 <div className="content">
                     <div>
-                        <div className="content-row-content no-grad">
+                        <div className="content-row-content first">
                             <h2>MIDI messages</h2>
                             <div className="content-row-content-content">
                                 <p>The messages are displayed in reverse chronological order (the most recent on top). Only the last 40 messages are displayed.</p>

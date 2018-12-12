@@ -2,6 +2,8 @@ import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import * as WebMidi from "webmidi";
 import {inputById, portById} from "../utils/ports";
+import {PACER_MIDI_INPUT_PORT_NAME, PACER_MIDI_OUTPUT_PORT_NAME} from "../pacer/constants";
+import {produce} from "immer";
 
 const propTypes = {
     classname: PropTypes.string,
@@ -35,10 +37,13 @@ export default class Midi extends Component {
     //TODO: allow specification of channel and message types to listen to
 
     state = {
-        inputs: [],         // array of MIDI inputs (copied from WebMidi object)
-        outputs: [],        // array of MIDI outputs (copied from WebMidi object)
+        inputs: [],         // array of MIDI inputs (filtered from WebMidi object)
+        outputs: [],        // array of MIDI outputs (filtered from WebMidi object)
         input: null,        // MIDI output port enabled
-        output: null,       // MIDI output port enabled
+        output: null,       // MIDI output port enabled,
+        pacerPresent: false,
+        pacerInputConnected: false,
+        pacerOutputConnected: false
     };
 
     connectInput = port => {
@@ -52,6 +57,11 @@ export default class Midi extends Component {
                     if (this.props.onInputConnection) {
                         this.props.onInputConnection(port.id);
                     }
+                    console.log("connectInput: ", port.name);
+                    if (port.name.match(new RegExp(PACER_MIDI_INPUT_PORT_NAME, 'i'))) {
+                        // console.log("connectInput: matched ", port.name);
+                        this.setState({ pacerInputConnected: true })
+                    }
                 }
             }
         }
@@ -64,6 +74,9 @@ export default class Midi extends Component {
             if (this.props.onInputDisconnection) {
                 this.props.onInputDisconnection(port.id);
             }
+            if (port.name.match(new RegExp(PACER_MIDI_INPUT_PORT_NAME, 'i'))) {
+                this.setState({ pacerInputConnected: false })
+            }
         }
     };
 
@@ -74,19 +87,26 @@ export default class Midi extends Component {
             if (this.props.onOutputConnection) {
                 this.props.onOutputConnection(port.id);
             }
+            if (port.name.match(new RegExp(PACER_MIDI_OUTPUT_PORT_NAME, 'i'))) {
+                this.setState({ pacerOutputConnected: true })
+            }
         }
     };
 
     disconnectOutput = () => {
         if (this.state.output) {
             let port_id = this.state.output;
-            this.setState({output: null});
+            this.setState(
+                produce(draft => {
+                    draft.pacerOutputConnected = false; // Since we only manage one connected output, if we disconnect it then the Pacer is necessarily disconnected too.
+                    draft.output = null;
+                })
+            );
             console.log(`disconnectOutput: output ${port_id} disconnected`);
             if (this.props.onOutputDisconnection) {
                 this.props.onOutputDisconnection(port_id);
             }
         }
-
     };
 
     autoConnectInput = () => {
@@ -101,7 +121,7 @@ export default class Midi extends Component {
 
                     console.log(`Midi.autoConnectInput: port ${port.name} ${port.id}`);
 
-                    if (port.type === 'input' && port.name.match(new RegExp(this.props.autoConnect, 'i'))) {
+                    if (port.type === 'input' && (port.name.match(new RegExp(this.props.autoConnect, 'i')) != null)) {
 
                         console.log(`Midi.autoConnectInput: connect ${port.name}`);
 
@@ -137,7 +157,7 @@ export default class Midi extends Component {
 
                     console.log(`Midi.autoConnectOutput: port ${port.name} ${port.id}`);
 
-                    if (port.type === 'output' && port.name.match(new RegExp(this.props.autoConnect, 'i'))) {
+                    if (port.type === 'output' && (port.name.match(new RegExp(this.props.autoConnect, 'i')) != null)) {
 
                         console.log(`Midi.autoConnectOutput: autoConnect: auto-connect ${port.name}`);
 
@@ -156,20 +176,39 @@ export default class Midi extends Component {
 
     registerInputs = () => {
         const r = new RegExp(this.props.only, 'i');
-        console.log(`Midi.registerInputs matching /${this.props.only}/i`, WebMidi.inputs, WebMidi.inputs.filter(port => port.name.match(r)));
-        this.setState({ inputs: WebMidi.inputs.filter(port => port.name.match(r)) }, () => this.autoConnectInput());
+        const r2 = new RegExp(PACER_MIDI_INPUT_PORT_NAME, 'i');
+        // console.log(`Midi.registerInputs matching /${this.props.only}/i`, WebMidi.inputs, WebMidi.inputs.filter(port => port.name.match(r)));
+        // console.log("Midi.registerInputs index ", WebMidi.inputs.findIndex(
+        //     port => {
+        //         console.log("array.findIndex", port.name, port.name.match(r2));
+        //         return port.name.match(r2) != null
+        //     }));
+        this.setState({
+                inputs: WebMidi.inputs.filter(port => port.name.match(r) != null),
+                pacerPresent: WebMidi.inputs.findIndex(port => port.name.match(r2) != null) >= 0,
+            },
+            () => this.autoConnectInput()
+        );
     };
 
     registerOutputs = () => {
         const r = new RegExp(this.props.only, 'i');
-        console.log(`Midi.registerOutputs matching /${this.props.only}/i`, WebMidi.outputs, WebMidi.outputs.filter(port => port.name.match(r)));
-        this.setState({ outputs: WebMidi.outputs.filter(port => port.name.match(r)) }, () => this.autoConnectOutput());
+        // console.log(`Midi.registerOutputs matching /${this.props.only}/i`, WebMidi.outputs, WebMidi.outputs.filter(port => port.name.match(r) != null));
+        this.setState({
+                outputs: WebMidi.outputs.filter(port => port.name.match(r) != null)
+            },
+            () => this.autoConnectOutput()
+        );
     };
 
     unRegisterInputs = () => {
         console.log("Midi.unRegisterInputs");
         this.disconnectInput(portById(this.state.input));
-        this.setState({ inputs: [], input: null });
+        this.setState({
+            inputs: [],
+            input: null,
+            pacerPresent: false
+        });
     };
 
     unRegisterOutputs = () => {
@@ -318,7 +357,11 @@ export default class Midi extends Component {
 
     render() {
 
-        let {input, output} = this.state;
+        let {pacerPresent} = this.state;
+
+        console.log("pacerPresent", pacerPresent);
+
+        // console.log(this.state.inputs, this.state.outputs);
 
         // if (input === null && output === null) {
         //     return (
@@ -329,10 +372,10 @@ export default class Midi extends Component {
         // } else {
             return (
                 <Fragment>
-                    {(input != null || output != null) &&
+                    {
                         this.props.portsRenderer(this.portsGrouped(), this.togglePort)
                     }
-                    {input === null && output === null &&
+                    {!pacerPresent &&
                     <Fragment>
                         {this.props.children}
                     </Fragment>}

@@ -87,6 +87,7 @@ h3 {
 
 .subheader {
     background-color: #e0e0e0;
+    padding-bottom: 1px;
 }
 
 .subheader > div {
@@ -112,6 +113,7 @@ h3 {
 }
 
 .content {
+    min-height: 50vh;
     /*flex-grow: 2;*/
     /*background-color: #ffffff;*/
     /*width: calc(100vw - 200px);*/
@@ -166,6 +168,10 @@ h3 {
     padding: 8px 0;
 }
 
+.content-row-content.first {
+    border-top: none;
+}
+
 .instructions {
     margin-top: 8px;
 }
@@ -187,13 +193,15 @@ h3 {
 }
 
 .no-midi {
-    width: 100%;
-    /*margin: 4px 0;*/
+    /*width: 100%;*/
+    /*margin: 8px 8px 8px 8px;*/
+    margin: 0;
+    border: 8px solid #e0e0e0;
     padding: 4px;
-    background-color: #fbea00c9;
+    background-color: #fff900;
     /*background-color: #ffA500;*/
     /*border: 1px solid #ff9999;*/
-    border-top-color: #777;
+    /*border-top-color: #777;*/
     color: #000;
     text-align: center;
 }

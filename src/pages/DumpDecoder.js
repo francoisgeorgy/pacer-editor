@@ -152,7 +152,7 @@ class DumpDecoder extends Component {
                     </div>
 
                     <div className="content">
-                        <div className="content-row-content no-grad">
+                        <div className="content-row-content first">
                             <div className="content-row-content-content">
                                 <div className="instructions">
                                     Send a dump from your Pacer or drag&drop a binary sysex file here.

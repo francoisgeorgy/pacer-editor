@@ -361,7 +361,7 @@ class PresetMidi extends Component {
 
                 <div className="content">
 
-                    <div className="content-row-content">
+                    <div className="content-row-content first">
                         <h2>Select preset:</h2>
                         <div className="content-row-content-content">
                             <div className="selectors">
@@ -407,7 +407,7 @@ class PresetMidi extends Component {
                     }
 
                     {this.props.debug && showEditor &&
-                    <div className="content-row-content no-grad">
+                    <div className="content-row-content first">
                         <div className="debug">
                             <h4>[Debug] Update messages to send:</h4>
                             <div className="message-to-send">

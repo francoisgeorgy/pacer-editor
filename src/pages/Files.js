@@ -4,7 +4,7 @@ import {isSysexData, mergeDeep, parseSysexDump, requestAllPresets} from "../pace
 import Midi from "../components/Midi";
 import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer/constants";
 import PortsGrid from "../components/PortsGrid";
-import {outputById} from "../utils/ports";
+import {outputById, outputName} from "../utils/ports";
 import {presetIndexToXY} from "../pacer/utils";
 import Dropzone from "react-dropzone";
 
@@ -203,6 +203,14 @@ class Files extends Component {
         );
     };
 
+    onOutputDisconnection = (port_id) => {
+        this.setState(
+            produce(draft => {
+                draft.output = null;
+            })
+        );
+    };
+
     sendSysex = msg => {
         console.log("sendSysex", msg);
         if (!this.state.output) return;
@@ -269,6 +277,7 @@ class Files extends Component {
                               portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
                               onMidiInputEvent={this.handleMidiInputEvent}
                               onOutputConnection={this.onOutputConnection}
+                              onOutputDisconnection={this.onOutputDisconnection}
                               className="" >
                             <div className="no-midi">Please connect your Pacer to your computer.</div>
                         </Midi>
@@ -287,7 +296,7 @@ class Files extends Component {
                     </div>
 
                     <div className="content">
-                        <div className="content-row-content">
+                        <div className="content-row-content first">
                             <div className="content-row-content-content">
                                 {!output &&
                                 <div className="instructions space-below">

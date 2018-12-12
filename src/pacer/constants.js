@@ -2,9 +2,12 @@ import {sortObject} from "../utils/misc";
 
 export const ANY_MIDI_PORT = ".*";
 
-export const PACER_MIDI_PORT_NAME = "Pacer.*";          // can be a regex
-export const PACER_MIDI_INPUT_PORT_NAME = "Pacer.*";
-export const PACER_MIDI_OUTPUT_PORT_NAME = "Pacer.*";
+export const PACER_MIDI_PORT_NAME = "vmpk.*";          // can be a regex
+export const PACER_MIDI_INPUT_PORT_NAME = "vmpk.*";
+export const PACER_MIDI_OUTPUT_PORT_NAME = "vmpk.*";
+// export const PACER_MIDI_PORT_NAME = "Pacer.*";          // can be a regex
+// export const PACER_MIDI_INPUT_PORT_NAME = "Pacer.*";
+// export const PACER_MIDI_OUTPUT_PORT_NAME = "Pacer.*";
 
 export const SYSEX_SIGNATURE = [0x00, 0x01, 0x77];
 export const SYSEX_HEADER = [0x7F];
