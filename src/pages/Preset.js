@@ -10,7 +10,6 @@ import {
 import ControlSelector from "../components/ControlSelector";
 import {
     ANY_MIDI_PORT,
-    CONTROLS_FULLNAME,
     MSG_CTRL_OFF,
     PACER_MIDI_PORT_NAME,
     SYSEX_SIGNATURE,
@@ -24,13 +23,8 @@ import Midi from "../components/Midi";
 import Dropzone from "react-dropzone";
 import "./Preset.css";
 import ControlModeEditor from "../components/ControlModeEditor";
-// import Status from "../components/Status";
 import PresetNameEditor from "../components/PresetNameEditor";
 import PortsGrid from "../components/PortsGrid";
-import Download from "../components/Download";
-import {presetIndexToXY} from "../pacer/utils";
-// import Download from "../components/Download";
-// import {presetIndexToXY} from "../pacer/utils";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -508,6 +502,12 @@ class Preset extends Component {
 
                     <div className="content">
 
+                        <div className="instructions">
+                            You can click on a preset to only load this specific preset from the Pacer. <br />
+                            Or you can use the ad-hoc button to read ALL the presets from the Pacer. <br />
+                            You can also load a patch file or send a dump from the Pacer.
+                        </div>
+
                         <div className="content-row-content first">
                             <h2>Preset:</h2>
                             <div className="content-row-content-content">
@@ -526,20 +526,6 @@ class Preset extends Component {
                                 {showEditor && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                             </div>
                         </div>
-
-                        {/* showEditor &&
-                        <div className="content-row-content">
-                            <Fragment>
-                                <h2>Preset:</h2>
-
-                                <div className="download-upload">
-                                </div>
-
-                                <div className="content-row-content-content">
-                                </div>
-                            </Fragment>
-                        </div>
-                        */}
 
                         {showEditor &&
                         <div className="content-row-content">

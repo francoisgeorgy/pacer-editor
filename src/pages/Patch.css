@@ -1,0 +1,44 @@
+.patch-content {
+    display: grid;
+    grid: repeat(5, 1fr) / repeat(6, auto);
+    grid-gap: 6px;
+    justify-content: start;
+    margin: 10px 30px 10px 0;
+}
+
+.patch-content > div {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    /*width: 100px;*/
+    padding: 4px 8px 4px 8px;
+    cursor: pointer;
+}
+
+.patch-content > div > div {
+    margin: 0 5px;
+}
+
+.placeholder {
+    font-style: italic;
+    color: #aaa;
+}
+
+/*
+
+.presets-list {
+    display: grid;
+    grid-template-columns: auto auto 100px;
+    grid-template-rows: repeat(25, 24px);
+    justify-content: start;
+    grid-column-gap: 16px;
+    !*grid-row-gap: 8px;*!
+    align-items: center;
+}
+
+.presets-list
+
+.preset-line {
+    margin: 10px 0;
+}
+*/

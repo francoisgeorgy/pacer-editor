@@ -2,7 +2,6 @@ import React, {Component, Fragment} from 'react';
 import {
     MSG_CTRL_OFF,
     MSG_SW_NOTE,
-    MSG_TYPES_FULLNAME_SW,
     MSG_TYPES_FULLNAME_MIDI_SORTED,
     MSG_TYPES_DATA_HELP
 } from "../pacer/constants";

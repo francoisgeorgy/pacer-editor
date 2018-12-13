@@ -280,7 +280,12 @@ function parseSysexMessage(data) {
         // console.warn("parseSysexMessage: invalid/ignored idx", idx);
     }
 
-    message[tgt][idx] = {};
+    // console.log("parseSysexMessage: bytes", data);
+    // console.log("parseSysexMessage: bytes", Array.from(data));
+
+    message[tgt][idx] = {
+        // bytes: data      // FIXME: consolidate data per preset
+    };
 
     if (!(obj in CONTROLS)) {
         // console.warn("parseSysexMessage: invalid/ignored object", h(obj));
@@ -440,6 +445,59 @@ function parseSysexDump(data) {
 
     return presets;
 }
+
+
+/**
+ * Split a sysex dump into individual presets
+ *
+ * input: binay data
+ * output: collection (key-value obj) of binary data
+ */
+/*
+function splitDump(data) {
+
+    if (data === null) return {};
+
+    let presets = [];   // Collection of presets. The key is the preset's index. The value is the preset.
+    // let global = {};    // global conf
+
+    let i = 0;
+    let cont = true;
+    while (cont) {
+
+        i = data.indexOf(SYSEX_START, i);
+        if (i < 0) break;
+
+        i++;
+
+        let k = data.indexOf(SYSEX_END, i);
+
+        let manufacturer_id = (Array.from(data.slice(i, i+3)).map(n => h(n))).join(" ");    // Array.from() is necessary to get a non-typed array
+        if (manufacturer_id !== NEKTAR_TECHNOLOGY_INC) {
+            console.log("parseSysexDump: file does not contain a Nektar Pacer patch", i, k, manufacturer_id, "-", hs(data));
+            return {};
+        }
+
+        if (data[i+3] !== 0x7F) {
+            console.warn(`parseSysexDump: invalid byte after manufacturer id: ${data[i+1 +3]}`);
+            return {};
+        }
+
+        let d = data.slice(i, k);
+
+        // let config = parseSysexMessage(data.slice(i, k));  // data.slice(i, k) are the data between SYSEX_START and SYSEX_END
+
+        // if (config) {
+        //     mergeDeep(presets, config);
+        // }
+
+    } // while
+
+    // console.log("parseSysexDump", JSON.stringify(presets));
+
+    return presets;
+}
+*/
 
 
 export function checksum(bytes) {

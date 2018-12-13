@@ -23,8 +23,6 @@ import MidiSettingsEditor from "../components/MidiSettingsEditor";
 import {inputName, outputById, outputName} from "../utils/ports";
 import PresetNameEditor from "../components/PresetNameEditor";
 import PortsGrid from "../components/PortsGrid";
-import Download from "../components/Download";
-import {presetIndexToXY} from "../pacer/utils";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -393,6 +391,12 @@ class PresetMidi extends Component {
 
                 <div className="content">
 
+                    <div className="instructions">
+                        You can click on a preset to only load this specific preset from the Pacer. <br />
+                        Or you can use the ad-hoc button to read ALL the presets from the Pacer. <br />
+                        You can also load a patch file or send a dump from the Pacer.
+                    </div>
+
                     <div className="content-row-content first">
                         <h2>Preset:</h2>
                         <div className="content-row-content-content">
@@ -411,17 +415,6 @@ class PresetMidi extends Component {
                             {showEditor && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                         </div>
                     </div>
-
-                    {/* showEditor &&
-                    <div className="content-row-content">
-                        <Fragment>
-                            <h2>Preset name:</h2>
-                            <div className="content-row-content-content">
-                                <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />
-                            </div>
-                        </Fragment>
-                    </div>
-                    */}
 
                     {showEditor &&
                     <div className="content-row-content">
@@ -460,16 +453,6 @@ class PresetMidi extends Component {
                     }
 
                 </div>
-
-{/*
-                <div className="right-column">
-                    <Dropzone onDrop={this.onDrop} className="drop-zone">
-                        Drop a binary sysex file here<br />or click to open the file dialog
-                    </Dropzone>
-                    <h3>Log:</h3>
-                    <Status messages={this.state.statusMessages} />
-                </div>
-*/}
 
             </div>
 

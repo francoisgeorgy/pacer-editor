@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import * as WebMidi from "webmidi";
 import {inputById, portById} from "../utils/ports";
-import {PACER_MIDI_INPUT_PORT_NAME, PACER_MIDI_OUTPUT_PORT_NAME} from "../pacer/constants";
+import {PACER_MIDI_INPUT_PORT_NAME} from "../pacer/constants";
 import {produce} from "immer";
 
 const propTypes = {

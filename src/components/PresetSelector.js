@@ -12,7 +12,7 @@ const Selector = ({ id, index, name, selected, onClick }) =>
 const PresetSelector = ({ data, currentPreset, onClick }) =>
     <Fragment>
         <div className="preset-selectors">
-            <Selector id={"CUR"} index={0} name={"-"} selected={0 === currentPreset} onClick={onClick} key={0} />
+            <Selector id={"CUR"} index={0} name={""} selected={0 === currentPreset} onClick={onClick} key={0} />
             <div></div>
             <div></div>
             <div></div>

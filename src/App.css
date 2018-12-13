@@ -175,7 +175,15 @@ h3 {
 }
 
 .instructions {
+    max-width: 25%;
     margin-top: 8px;
+    padding: 16px;
+    background-color: #ccf6e4;
+    border-left: 8px solid #fff;
+    float:right;
+    font-style: italic;
+    font-size: 0.85rem;
+    line-height: 125%;
 }
 
 .space-below {

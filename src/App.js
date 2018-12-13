@@ -8,10 +8,9 @@ import Monitor from "./pages/Monitor";
 import Footer from "./components/Footer";
 import Global from "./pages/Global";
 import DumpDecoder from "./pages/DumpDecoder";
-// import Chords from "./pages/Chords";
 import PresetMidi from "./pages/PresetMidi";
 import * as QueryString from "query-string";
-import Files from "./pages/Files";
+import Patch from "./pages/Patch";
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
     <Route
@@ -57,8 +56,6 @@ class App extends Component {
         const q =  QueryString.parse(window.location.search);
         const debug = q.debug ? q.debug === '1' : false;
 
-        console.log("debug", q.debug, debug);
-
         return (
             <Router>
                 <div className="app">
@@ -68,14 +65,16 @@ class App extends Component {
                         <MenuLink to="/preset" label="Preset Controls" />
                         <MenuLink to="/presetmidi" label="Preset Name & MIDI" />
                         <MenuLink to="/global" label="Global config" />
-                        <MenuLink to="/files" label="Files" />
+                        <MenuLink to="/patch" label="Patch" />
+                        {/*<MenuLink to="/patches" label="Patches" />*/}
+                        {/*<MenuLink to="/files" label="Files" />*/}
                         {/*<MenuLink to="/chords" label="Chords" />*/}
                         <MenuLink to="/monitor" label="MIDI monitor" />
                         <MenuLink to="/dumpdecoder" label="Dump decoder" />
                         {debug && <MenuLink to="/testsender" label="Debug" />}
                         {!busy && <div className="spacer"> </div>}
                         {busy && <div className="busy">please wait...</div>}
-                        <div className="header-app-name">Pacer editor 0.4.1</div>
+                        <div className="header-app-name">Pacer editor 0.5.0</div>
                     </header>
 
                         <Switch>
@@ -106,11 +105,23 @@ class App extends Component {
                                 )
                             }/>
 */}
-                            <Route path="/files" render={
+{/*
+                            <Route path="/patches" render={
                                 props => (
-                                    <Files onBusy={this.onBusy} debug={debug} />
+                                    <Patches onBusy={this.onBusy} debug={debug} />
                                 )
                             }/>
+*/}
+                            <Route path="/patch" render={
+                                props => (
+                                    <Patch onBusy={this.onBusy} debug={debug} />
+                                )
+                            }/>
+                            {/*<Route path="/files" render={*/}
+                                {/*props => (*/}
+                                    {/*<Files onBusy={this.onBusy} debug={debug} />*/}
+                                {/*)*/}
+                            {/*}/>*/}
                             <Route path="/monitor" render={
                                 props => (
                                     <Monitor onBusy={this.onBusy} debug={debug} />

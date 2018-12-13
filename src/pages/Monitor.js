@@ -45,10 +45,14 @@ class Monitor extends Component {
 
                 <div className="content">
                     <div>
+
+                        <div className="instructions">
+                            The messages are displayed in reverse chronological order (the most recent on top). Only the last 40 messages are displayed.
+                        </div>
+
                         <div className="content-row-content first">
                             <h2>MIDI messages</h2>
                             <div className="content-row-content-content">
-                                <p>The messages are displayed in reverse chronological order (the most recent on top). Only the last 40 messages are displayed.</p>
                                 <div className="messages">
                                     {this.state.messages.map((msg, i) => {      //TODO: display timestamp
                                         let m = parseMidi(msg);
