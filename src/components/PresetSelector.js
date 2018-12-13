@@ -6,7 +6,7 @@ import {TARGET_PRESET} from "../pacer/constants";
 
 const Selector = ({ id, index, name, selected, onClick }) =>
     <div className={selected ? "selector selected" : "selector"} onClick={() => onClick(index)}>
-        <span className="preset-id">{id}</span> <span className="preset-name">{name}</span>
+        <span className="preset-id">{index} {id}</span> <span className="preset-name">{name}</span>
     </div>;
 
 const PresetSelector = ({ data, currentPreset, onClick }) =>

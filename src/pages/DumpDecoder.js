@@ -74,7 +74,7 @@ class DumpDecoder extends Component {
      * @param files
      */
     onDrop = (files) => {
-        console.log('drop', files);
+        // console.log('drop', files);
         this.setState(
         {
                 data: null,
@@ -84,10 +84,10 @@ class DumpDecoder extends Component {
     };
 
     handleMidiInputEvent = (event) => {
-        console.log("DumpDecoder.handleMidiInputEvent", event, event.data);
+        // console.log("DumpDecoder.handleMidiInputEvent", event, event.data);
         // if (event instanceof MIDIMessageEvent) {
         if (isSysexData(event.data)) {
-            console.log("DumpDecoder.handleMidiInputEvent: data is SysEx");
+            // console.log("DumpDecoder.handleMidiInputEvent: data is SysEx");
             this.setState(
                 produce(draft => {
                     draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));

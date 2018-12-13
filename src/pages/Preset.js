@@ -42,6 +42,7 @@ function batchMessages(callback, wait) {
     return function() {
         clearTimeout(timeout);
         let event = arguments[0];
+        console.log('rec sysex');
         messages.push(event.data);
         timeout = setTimeout(() => {
             // console.log("timeout elapsed");
@@ -420,22 +421,22 @@ class Preset extends Component {
             }
 
             if (showEditor && !(presetIndex in data[TARGET_PRESET])) {
-                console.log(`Presets: preset ${presetIndex} not found in data`);
+                // console.log(`Presets: preset ${presetIndex} not found in data`);
                 showEditor = false;
             }
 
             if (showEditor && !("controls" in data[TARGET_PRESET][presetIndex])) {
-                console.log(`Presets: controls not found in data`);
+                // console.log(`Presets: controls not found in data`);
                 showEditor = false;
             }
 
             if (showEditor && !(controlId in data[TARGET_PRESET][presetIndex]["controls"])) {
-                console.log(`Presets: control ${controlId} not found in data`);
+                // console.log(`Presets: control ${controlId} not found in data`);
                 showEditor = false;
             }
 
             if (showEditor && !("steps" in data[TARGET_PRESET][presetIndex]["controls"][controlId])) {
-                console.log(`Presets: steps not found in data`);
+                // console.log(`Presets: steps not found in data`);
                 showEditor = false;
             }
 
@@ -523,29 +524,30 @@ class Preset extends Component {
                                         */}
                                     </div>
                                 </div>
-                                {showEditor && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
+                                {data && data[TARGET_PRESET][presetIndex] && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                             </div>
                         </div>
 
-                        {showEditor &&
+
                         <div className="content-row-content">
                             <Fragment>
                                 {/*<h2>{CONTROLS_FULLNAME[controlId]}:</h2>*/}
                                 <h2>Controls</h2>
                                 {isVal(presetIndex) && <ControlSelector currentControl={controlId} onClick={this.selectControl} />}
+                                {showEditor &&
                                 <div className="content-row-content-content">
                                     <ControlStepsEditor
                                         controlId={controlId}
                                         steps={data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]}
-                                        onUpdate={(stepIndex, dataType, dataIndex, value) => this.updateControlStep(controlId, stepIndex, dataType, dataIndex, value)} />
+                                        onUpdate={(stepIndex, dataType, dataIndex, value) => this.updateControlStep(controlId, stepIndex, dataType, dataIndex, value)}/>
                                     <ControlModeEditor
                                         controlId={controlId}
                                         mode={data[TARGET_PRESET][presetIndex]["controls"][controlId]["control_mode"]}
-                                        onUpdate={(value) => this.updateControlMode(controlId, value)} />
+                                        onUpdate={(value) => this.updateControlMode(controlId, value)}/>
                                 </div>
+                                }
                             </Fragment>
                         </div>
-                        }
 
                         {changed &&
                         <div className="content-row-content">

@@ -412,7 +412,7 @@ class PresetMidi extends Component {
                                     */}
                                 </div>
                             </div>
-                            {showEditor && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
+                            {data && data[TARGET_PRESET][presetIndex] && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                         </div>
                     </div>
 
