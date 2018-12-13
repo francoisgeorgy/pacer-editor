@@ -74,7 +74,7 @@ class App extends Component {
                         {debug && <MenuLink to="/testsender" label="Debug" />}
                         {!busy && <div className="spacer"> </div>}
                         {busy && <div className="busy">please wait...</div>}
-                        <div className="header-app-name">Pacer editor 0.5.0</div>
+                        <div className="header-app-name">Pacer editor 0.5.1</div>
                     </header>
 
                         <Switch>
