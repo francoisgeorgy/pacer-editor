@@ -34,10 +34,14 @@ const Setting = ({ index, config, updateCallback }) => {
                 <div>
                     <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} value={config.msg_type}>
                         {
-                            Object.keys(MSG_TYPES_FULLNAME_SW).map(
-                                key => {
-                                    return <option key={key} value={key}>{MSG_TYPES_FULLNAME_SW[key]}</option>
-                                })
+                            // Object.keys(MSG_TYPES_FULLNAME_SW).map(
+                            //     key => {
+                            //         return <option key={key} value={key}>{MSG_TYPES_FULLNAME_SW[key]}</option>
+                            //     })
+                            MSG_TYPES_FULLNAME_MIDI_SORTED.map(
+                                v => {
+                                    return <option key={v.key} value={v.key}>{v.value}</option>
+                            })
                         }
                     </select>
                 </div>

@@ -15,8 +15,9 @@
     justify-content: center;
     align-items: center;
     /*background-color: #f4f4f4;*/
-    margin-right: 4px;
     width: 50px;
+    margin-right: 4px;
+    padding: 4px 2px;
     cursor: pointer;
     /*border: 1px solid #eeeeee;*/
 }

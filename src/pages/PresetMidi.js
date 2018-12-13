@@ -5,7 +5,7 @@ import {
     getMidiSettingUpdateSysexMessages,
     isSysexData,
     mergeDeep,
-    parseSysexDump, requestPreset
+    parseSysexDump, requestAllPresets, requestPreset
 } from "../pacer/sysex";
 import Midi from "../components/Midi";
 import Dropzone from "react-dropzone";
@@ -23,10 +23,16 @@ import MidiSettingsEditor from "../components/MidiSettingsEditor";
 import {inputName, outputById, outputName} from "../utils/ports";
 import PresetNameEditor from "../components/PresetNameEditor";
 import PortsGrid from "../components/PortsGrid";
+import Download from "../components/Download";
+import {presetIndexToXY} from "../pacer/utils";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
 const MAX_STATUS_MESSAGES = 40;
+
+function isVal(v) {
+    return v !== undefined && v !== null && v !== '';
+}
 
 function batchMessages(callback, wait) {
 
@@ -146,6 +152,18 @@ class PresetMidi extends Component {
         ));
     }
 
+    onChangeFile = (e) => {
+        console.log("onChangeFile", e);
+        var file = e.target.files[0];
+        console.log(file);
+        this.readFiles([file]);
+    };
+
+    onInputFile = (e) => {
+        console.log("onInputFile", e);
+        this.inputOpenFileRef.current.click()
+    };
+
     onDragEnter = () => {
         this.setState({
             dropZoneActive: true
@@ -174,18 +192,31 @@ class PresetMidi extends Component {
         );
     };
 
-    selectPreset = (id) => {
+    selectPreset = (index) => {
         // if the user selects another preset or control, then clear the data in the state
-        this.setState(
-            produce(draft => {
-                draft.presetIndex = id;
-                if (id !== this.state.presetIndex) {
-                    draft.data = null;
-                    draft.changed = false;
-                }
-            })
-        );
-        this.sendSysex(requestPreset(id));
+        const { data } = this.state;
+        if (data && data[TARGET_PRESET] && data[TARGET_PRESET][index]) {
+            this.setState(
+                produce(draft => {
+                    draft.presetIndex = index;
+                })
+            );
+        } else {
+            this.setState(
+                produce(draft => {
+                    draft.presetIndex = index;
+                    if (index !== this.state.presetIndex) {
+                        draft.data = null;
+                        draft.changed = false;
+                    }
+                })
+            );
+            if (isVal(index)) {   // && this.state.controlId) {
+                // this.sendSysex(requestPresetObj(id, this.state.controlId));
+                // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
+                this.sendSysex(requestPreset(index));
+            }
+        }
     };
 
     /**
@@ -239,6 +270,7 @@ class PresetMidi extends Component {
     };
 
     onOutputConnection = (port_id) => {
+        console.log("onOutputConnection");
         this.setState(
             produce(draft => {
                 draft.output = port_id;
@@ -248,6 +280,12 @@ class PresetMidi extends Component {
     };
 
     onOutputDisconnection = (port_id) => {
+        console.log("onOutputDisconnection");
+        this.setState(
+            produce(draft => {
+                draft.output = null;        // we manage only one output connection at a time
+            })
+        );
         this.addInfoMessage(`output ${outputName(port_id)} disconnected`);
     };
 
@@ -267,7 +305,6 @@ class PresetMidi extends Component {
     };
 
     updatePacer = (messages) => {
-        console.log("PresetMidi.updatePacer");
         for (let m of messages) {
             this.sendSysex(m);
         }
@@ -276,7 +313,7 @@ class PresetMidi extends Component {
 
     render() {
 
-        const { presetIndex, data, changed, dropZoneActive } = this.state;
+        const { output, presetIndex, data, changed, dropZoneActive } = this.state;
 
         let showEditor = false;
 
@@ -324,9 +361,6 @@ class PresetMidi extends Component {
             fontSize: '4rem'
         };
 
-
-        // console.log("PresetMidi.render", showEditor, presetIndex);
-
         return (
 
             <Dropzone
@@ -360,15 +394,25 @@ class PresetMidi extends Component {
                 <div className="content">
 
                     <div className="content-row-content first">
-                        <h2>Select preset:</h2>
+                        <h2>Preset:</h2>
                         <div className="content-row-content-content">
                             <div className="selectors">
-                                <PresetSelector currentPreset={presetIndex} onClick={this.selectPreset} />
+                                <PresetSelector data={data} currentPreset={presetIndex} onClick={this.selectPreset} />
+                                <div className="preset-buttons">
+                                    {output && <button className="space-right" onClick={() => this.sendSysex(requestAllPresets())}>Read all presets from Pacer</button>}
+                                    <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
+                                    <button onClick={this.onInputFile}>Load preset(s) from file</button>
+                                    {/*data &&
+                                    <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
+                                              label="Download preset" />
+                                    */}
+                                </div>
                             </div>
+                            {showEditor && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                         </div>
                     </div>
 
-                    {showEditor &&
+                    {/* showEditor &&
                     <div className="content-row-content">
                         <Fragment>
                             <h2>Preset name:</h2>
@@ -377,7 +421,7 @@ class PresetMidi extends Component {
                             </div>
                         </Fragment>
                     </div>
-                    }
+                    */}
 
                     {showEditor &&
                     <div className="content-row-content">

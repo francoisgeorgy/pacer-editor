@@ -5,7 +5,7 @@ import {
     getControlUpdateSysexMessages,
     isSysexData,
     mergeDeep,
-    parseSysexDump, requestPreset
+    parseSysexDump, requestAllPresets, requestPreset
 } from "../pacer/sysex";
 import ControlSelector from "../components/ControlSelector";
 import {
@@ -369,6 +369,7 @@ class Preset extends Component {
     };
 
     onOutputConnection = (port_id) => {
+        console.log("onOutputConnection");
         this.setState(
             produce(draft => {
                 draft.output = port_id;
@@ -378,6 +379,7 @@ class Preset extends Component {
     };
 
     onOutputDisconnection = (port_id) => {
+        console.log("onOutputDisconnection");
         this.setState(
             produce(draft => {
                 draft.output = null;        // we manage only one output connection at a time
@@ -408,13 +410,9 @@ class Preset extends Component {
         this.addInfoMessage(`update${messages.length > 1 ? 's' : ''} sent to Pacer`);
     };
 
-    // componentDidMount() {
-    //     window.addEventListener('drop', this.onDrop);
-    // }
-
     render() {
 
-        const { presetIndex, controlId, data, changed, dropZoneActive } = this.state;
+        const { output, presetIndex, controlId, data, changed, dropZoneActive } = this.state;
 
         let showEditor = false;
 
@@ -511,40 +509,44 @@ class Preset extends Component {
                     <div className="content">
 
                         <div className="content-row-content first">
-                            <h2>Select preset and control:</h2>
+                            <h2>Preset:</h2>
                             <div className="content-row-content-content">
                                 <div className="selectors">
                                     <PresetSelector data={data} currentPreset={presetIndex} onClick={this.selectPreset} />
-                                    {isVal(presetIndex) && <ControlSelector currentControl={controlId} onClick={this.selectControl} />}
+                                    <div className="preset-buttons">
+                                        {output && <button className="space-right" onClick={() => this.sendSysex(requestAllPresets())}>Read all presets from Pacer</button>}
+                                        <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
+                                        <button onClick={this.onInputFile}>Load preset(s) from file</button>
+                                        {/* data &&
+                                        <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
+                                                  label="Download preset" />
+                                        */}
+                                    </div>
                                 </div>
+                                {showEditor && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                             </div>
                         </div>
 
-                        {showEditor &&
+                        {/* showEditor &&
                         <div className="content-row-content">
                             <Fragment>
                                 <h2>Preset:</h2>
 
                                 <div className="download-upload">
-                                    {data &&
-                                    <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
-                                              label="Download the preset as a binary sysex file" />
-                                    }
-                                    <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
-                                    <button className="myButton" onClick={this.onInputFile}>Load preset from a binary sysex file</button>
                                 </div>
 
                                 <div className="content-row-content-content">
-                                    <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />
                                 </div>
                             </Fragment>
                         </div>
-                        }
+                        */}
 
                         {showEditor &&
                         <div className="content-row-content">
                             <Fragment>
-                                <h2>{CONTROLS_FULLNAME[controlId]}:</h2>
+                                {/*<h2>{CONTROLS_FULLNAME[controlId]}:</h2>*/}
+                                <h2>Controls</h2>
+                                {isVal(presetIndex) && <ControlSelector currentControl={controlId} onClick={this.selectControl} />}
                                 <div className="content-row-content-content">
                                     <ControlStepsEditor
                                         controlId={controlId}

@@ -68,7 +68,7 @@ class App extends Component {
                         <MenuLink to="/preset" label="Preset Controls" />
                         <MenuLink to="/presetmidi" label="Preset Name & MIDI" />
                         <MenuLink to="/global" label="Global config" />
-                        {/*<MenuLink to="/files" label="Files" />*/}
+                        <MenuLink to="/files" label="Files" />
                         {/*<MenuLink to="/chords" label="Chords" />*/}
                         <MenuLink to="/monitor" label="MIDI monitor" />
                         <MenuLink to="/dumpdecoder" label="Dump decoder" />
@@ -106,13 +106,11 @@ class App extends Component {
                                 )
                             }/>
 */}
-{/*
                             <Route path="/files" render={
                                 props => (
                                     <Files onBusy={this.onBusy} debug={debug} />
                                 )
                             }/>
-*/}
                             <Route path="/monitor" render={
                                 props => (
                                     <Monitor onBusy={this.onBusy} debug={debug} />

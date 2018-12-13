@@ -33,12 +33,16 @@ const MAX_FILE_SIZE = 5 * 1024*1024;
 
 class Files extends Component {
 
-    state = {
-        output: null,   // MIDI output port used for output
-        data: null,     // json
-        binData: null,  // binary, will be used to download as .syx file
-        dropZoneActive: false
-    };
+    constructor(props) {
+        super(props);
+        this.inputOpenFileRef = React.createRef();
+        this.state = {
+            output: null,   // MIDI output port used for output
+            data: null,     // json
+            binData: null,  // binary, will be used to download as .syx file
+            dropZoneActive: false
+        };
+    }
 
     /**
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
@@ -137,6 +141,18 @@ class Files extends Component {
             }
         ));
     }
+
+    onChangeFile = (e) => {
+        console.log("onChangeFile", e);
+        var file = e.target.files[0];
+        console.log(file);
+        this.readFiles([file]);
+    };
+
+    onInputFile = (e) => {
+        console.log("onInputFile", e);
+        this.inputOpenFileRef.current.click()
+    };
 
     onDragEnter = () => {
         this.setState({
@@ -255,7 +271,12 @@ class Files extends Component {
                                 You can drag & drop a sysex file here.
                             </div>
                             */}
-                            {output &&
+
+                            {output && <button className="space-right" onClick={() => this.sendSysex(requestAllPresets())}>Read all presets from Pacer</button>}
+                            <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
+                            <button onClick={this.onInputFile}>Load preset(s) from file</button>
+
+                            {/* output &&
                             <Fragment>
                                 <div className="instructions space-below">
                                     Click the button below to request a full dump from the Pacer. You can also drag & drop a sysex file here.
@@ -264,7 +285,7 @@ class Files extends Component {
                                     <button className="update" onClick={() => this.sendMessage(requestAllPresets())}>Get full dump from Pacer</button>
                                 </div>
                             </Fragment>
-                            }
+                            */}
                         </div>
 
                         <div className="content-row-content">
@@ -282,7 +303,7 @@ class Files extends Component {
                                             {show ? <div>{name}</div> : <div className="placeholder">no data</div>}
                                             {show ? <Download data={data[TARGET_PRESET][index]} filename={`pacer-preset-${presetIndexToXY(index)}`} addTimestamp={true}
                                                               className="small" label="download" /> : <button className="small disabled">download</button>}
-                                            <button className="small">upload</button>
+                                            {/*<button className="small">upload</button>*/}
                                         </Fragment>
                                     );
                                 })

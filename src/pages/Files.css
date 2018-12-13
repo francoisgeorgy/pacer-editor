@@ -1,6 +1,6 @@
 .presets-list {
     display: grid;
-    grid-template-columns: auto auto 100px auto auto ;
+    grid-template-columns: auto auto 100px auto;
     grid-template-rows: repeat(25, 24px);
     justify-content: start;
     grid-column-gap: 16px;
