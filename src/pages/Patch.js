@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {produce} from "immer";
-import {isSysexData, mergeDeep, parseSysexDump, requestAllPresets} from "../pacer/sysex";
+import {ALL_PRESETS_EXPECTED_BYTES, isSysexData, mergeDeep, parseSysexDump, requestAllPresets} from "../pacer/sysex";
 import Midi from "../components/Midi";
 import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer/constants";
 import PortsGrid from "../components/PortsGrid";
@@ -10,7 +10,7 @@ import Dropzone from "react-dropzone";
 import "./Patch.css";
 import Download from "../components/Download";
 
-function batchMessages(callback, wait) {
+function batchMessages(callback, callbackBusy, wait) {
 
     let messages = [];  // batch of received messages
     let timeout;
@@ -19,6 +19,8 @@ function batchMessages(callback, wait) {
         clearTimeout(timeout);
         let event = arguments[0];
         messages.push(event.data);
+        // console.log('rec sysex', messages.length);
+        callbackBusy(messages.length);
         timeout = setTimeout(() => {
             // console.log("timeout elapsed");
             timeout = null;
@@ -49,9 +51,10 @@ class Patch extends Component {
     /**
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
-    showBusy = () =>  {
-        setTimeout(() => this.props.onBusy(false), 20000);
-        this.props.onBusy(true);
+    showBusy = ({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) =>  {
+        // console.log("show busy", busyMessage);
+        setTimeout(() => this.props.onBusy({busy: false}), 20000);
+        this.props.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
     };
 
     handleMidiInputEvent = batchMessages(
@@ -82,7 +85,12 @@ class Patch extends Component {
             );
 
             // this.addInfoMessage(`${messages.length} messages received (${bytes} bytes)`);
-            this.props.onBusy(false);
+            // this.props.onBusy(false);
+            this.props.onBusy({busy: false});
+        },
+        (n) => {
+            // console.log(n);
+            this.props.onBusy({busy: true, bytesReceived: n});
         },
         1000
     );
@@ -98,21 +106,21 @@ class Patch extends Component {
                 if (file.size > MAX_FILE_SIZE) {
                     console.warn(`${file.name}: file too big, ${file.size}`);
                 } else {
-                    this.showBusy();
+                    this.showBusy({busy: true, busyMessage: "loading file..."});
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
                     if (isSysexData(data)) {
                         this.setState(
                             produce(draft => {
                                 draft.bytes = data;
                                 draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
-                                this.props.onBusy(false);
+                                this.props.onBusy({busy: false});
                             })
                         );
                         // this.addInfoMessage("sysfile decoded");
                         // } else {
                         //     console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
                     }
-                    this.props.onBusy(false);
+                    this.props.onBusy({busy: false});
                     // non sysex files are ignored
                 }
                 // too big files are ignored
@@ -176,15 +184,18 @@ class Patch extends Component {
         );
     };
 
-    sendSysex = msg => {
-        console.log("sendSysex", msg);
-        if (!this.state.output) return;
+    sendSysex = (msg, bytesExpected) => {
+        console.log("sendSysex", msg, bytesExpected);
+        if (!this.state.output) {
+            console.warn("no output enabled to send the message");
+            return;
+        }
         let out = outputById(this.state.output);
         if (!out) {
             console.warn(`send: output ${this.state.output} not found`);
             return;
         }
-        this.showBusy();
+        this.showBusy({busy: true, busyMessage: "receiving data...", bytesReceived: 0, bytesExpected});
         this.setState(
             {data: null},
             () => out.sendSysex(SYSEX_SIGNATURE, msg)
@@ -262,7 +273,7 @@ class Patch extends Component {
                             <h2>From Pacer</h2>
 
                             <div>
-                                {output && <button className="space-right" onClick={() => this.sendSysex(requestAllPresets())}>Read patch from Pacer</button>}
+                                {output && <button className="space-right" onClick={() => this.sendSysex(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read patch from Pacer</button>}
                             </div>
 
                             <div>

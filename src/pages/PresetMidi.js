@@ -1,11 +1,12 @@
 import React, {Component, Fragment} from 'react';
 import PresetSelector from "../components/PresetSelector";
 import {
+    ALL_PRESETS_EXPECTED_BYTES,
     buildPresetNameSysex,
     getMidiSettingUpdateSysexMessages,
     isSysexData,
     mergeDeep,
-    parseSysexDump, requestAllPresets, requestPreset
+    parseSysexDump, requestAllPresets, requestPreset, SINGLE_PRESET_EXPECTED_BYTES
 } from "../pacer/sysex";
 import Midi from "../components/Midi";
 import Dropzone from "react-dropzone";
@@ -32,7 +33,7 @@ function isVal(v) {
     return v !== undefined && v !== null && v !== '';
 }
 
-function batchMessages(callback, wait) {
+function batchMessages(callback, callbackBusy, wait) {
 
     let messages = [];  // batch of received messages
     let timeout;
@@ -41,6 +42,8 @@ function batchMessages(callback, wait) {
         clearTimeout(timeout);
         let event = arguments[0];
         messages.push(event.data);
+        // console.log('rec sysex', messages.length);
+        callbackBusy(messages.length);
         timeout = setTimeout(() => {
             // console.log("timeout elapsed");
             timeout = null;
@@ -63,9 +66,10 @@ class PresetMidi extends Component {
     /**
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
-    showBusy = () =>  {
-        setTimeout(() => this.props.onBusy(false), 20000);
-        this.props.onBusy(true);
+    showBusy = ({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) =>  {
+        // console.log("show busy", busyMessage);
+        setTimeout(() => this.props.onBusy({busy: false}), 20000);
+        this.props.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
     };
 
     addStatusMessage = (type, message) => {
@@ -107,9 +111,14 @@ class PresetMidi extends Component {
                     }
                 )
             );
-            let bytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
-            this.addInfoMessage(`${messages.length} messages received (${bytes} bytes)`);
-            this.props.onBusy(false);
+            // let bytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
+            // this.addInfoMessage(`${messages.length} messages received (${bytes} bytes)`);
+            // this.props.onBusy(false);
+            this.props.onBusy({busy: false});
+        },
+        (n) => {
+            // console.log(n);
+            this.props.onBusy({busy: true, bytesReceived: n});
         },
         1000
     );
@@ -124,9 +133,9 @@ class PresetMidi extends Component {
             async file => {
                 if (file.size > MAX_FILE_SIZE) {
                     console.warn(`readFiles: ${file.name}: file too big, ${file.size}`);
-                    this.addWarningMessage("file too big");
+                    // this.addWarningMessage("file too big");
                 } else {
-                    this.showBusy();
+                    this.showBusy({busy: true, busyMessage: "loading file..."});
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
                     if (isSysexData(data)) {
                         this.setState(
@@ -142,7 +151,7 @@ class PresetMidi extends Component {
                         this.addWarningMessage("not a sysfile");
                         console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
                     }
-                    this.props.onBusy(false);
+                    this.props.onBusy({busy: false});
                     // non sysex files are ignored
                 }
                 // too big files are ignored
@@ -179,7 +188,7 @@ class PresetMidi extends Component {
      * @param files
      */
     onDrop = (files) => {
-        console.log('drop', files);
+        // console.log('drop', files);
         this.setState(
             {
                 data: null,
@@ -212,7 +221,7 @@ class PresetMidi extends Component {
             if (isVal(index)) {   // && this.state.controlId) {
                 // this.sendSysex(requestPresetObj(id, this.state.controlId));
                 // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
-                this.sendSysex(requestPreset(index));
+                this.sendSysex(requestPreset(index), SINGLE_PRESET_EXPECTED_BYTES);
             }
         }
     };
@@ -274,7 +283,7 @@ class PresetMidi extends Component {
                 draft.output = port_id;
             })
         );
-        this.addInfoMessage(`output ${outputName(port_id)} connected`);
+        // this.addInfoMessage(`output ${outputName(port_id)} connected`);
     };
 
     onOutputDisconnection = (port_id) => {
@@ -287,8 +296,8 @@ class PresetMidi extends Component {
         this.addInfoMessage(`output ${outputName(port_id)} disconnected`);
     };
 
-    sendSysex = msg => {
-        console.log("sendSysex", msg);
+    sendSysex = (msg, bytesExpected) => {
+        console.log("sendSysex", msg, bytesExpected);
         if (!this.state.output) {
             console.warn("no output enabled to send the message");
             return;
@@ -298,15 +307,15 @@ class PresetMidi extends Component {
             console.warn(`send: output ${this.state.output} not found`);
             return;
         }
-        this.showBusy();
+        this.showBusy({busy: true, busyMessage: "receiving data...", bytesReceived: 0, bytesExpected});
         out.sendSysex(SYSEX_SIGNATURE, msg);
     };
 
     updatePacer = (messages) => {
         for (let m of messages) {
-            this.sendSysex(m);
+            this.sendSysex(m, 0);
         }
-        this.addInfoMessage(`update${messages.length > 1 ? 's' : ''} sent to Pacer`);
+        // this.addInfoMessage(`update${messages.length > 1 ? 's' : ''} sent to Pacer`);
     };
 
     render() {
@@ -403,7 +412,7 @@ class PresetMidi extends Component {
                             <div className="selectors">
                                 <PresetSelector data={data} currentPreset={presetIndex} onClick={this.selectPreset} />
                                 <div className="preset-buttons">
-                                    {output && <button className="space-right" onClick={() => this.sendSysex(requestAllPresets())}>Read all presets from Pacer</button>}
+                                    {output && <button className="space-right" onClick={() => this.sendSysex(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read all presets from Pacer</button>}
                                     <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
                                     <button onClick={this.onInputFile}>Load preset(s) from file</button>
                                     {/*data &&

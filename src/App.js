@@ -11,6 +11,7 @@ import DumpDecoder from "./pages/DumpDecoder";
 import PresetMidi from "./pages/PresetMidi";
 import * as QueryString from "query-string";
 import Patch from "./pages/Patch";
+import {produce} from "immer";
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
     <Route
@@ -35,15 +36,78 @@ const NoMatch = () =>
 class App extends Component {
 
     state = {
-        busy: false
+        busy: false,
+        busyMessage: "please wait",
+        bytesExpected: -1,
+        // bytesReceived: -1,
+        progress: -1    // 0..100
     };
+
+    // initBusy = (busy, busyMessage, bytesExpected, bytesReceived) => {
+    //     this.setState({ busy, busyMessage, bytesExpected, bytesReceived });
+    // };
 
     /**
      *
-     * @param busy boolean
+     * @param busy
+     * @param busyMessage
+     * @param bytesExpected
+     * @param bytesReceived
      */
-    onBusy = (busy) => {
-        if (busy !== this.state.busy) this.setState({ busy });
+    onBusy = ({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) => {
+
+        // console.log("app.onBusy", busy, busyMessage, bytesExpected, bytesReceived);
+
+        let show = busy !== this.state.busy;
+        show = show || (busyMessage !== null && busyMessage !== this.state.busyMessage);
+        show = show || bytesExpected > this.state.bytesExpected;
+        // show = show || bytesReceived > 0;
+        let progress = 0;
+        if (bytesReceived > 0) {
+            progress = Math.round(bytesReceived / this.state.bytesExpected * 100 / 5) * 5;
+            // console.log("progress", draft.bytesExpected, bytesReceived, progress);
+            show = show || ((progress >= 0) && (progress !== this.state.progress));
+        }
+
+        // console.log("show", show, busyMessage);
+
+        if (show) {
+            // console.log("busy setstate", this.state, busy, busyMessage, bytesExpected, bytesReceived, progress);
+            this.setState(
+                produce(draft => {
+                    if (draft.busy !== busy) draft.busy = busy;
+
+                    if (busyMessage !== null) draft.busyMessage = busyMessage;
+
+                    if (busy === false) {
+                        draft.bytesExpected = -1;
+                        progress = -1;
+                    } else {
+
+                        // console.log("draft.busyMessage", draft.busyMessage);
+
+                        if (bytesExpected > 0) draft.bytesExpected = bytesExpected;
+
+                        // if (bytesReceived > 0) {
+                        //     let progress = Math.round(bytesReceived / draft.bytesExpected * 100 / 5) * 5;
+                        if (draft.progress !== progress) {
+                            draft.progress = progress;
+                            // console.log("progress", draft.bytesExpected, bytesReceived, progress);
+                        }
+                        // console.log("progress", draft.bytesExpected, bytesReceived, progress);
+                        // }
+
+                    }
+
+                    // let m = { type, message };
+                    // let len = draft.statusMessages.push(m);
+                    // if (len > MAX_STATUS_MESSAGES) draft.statusMessages.shift();
+                })
+            );
+        }
+
+        // if (busy !== this.state.busy) this.setState({ busy, bytesReceived });
+        // this.setState({ busy, bytesReceived });
     };
 
     /**
@@ -51,7 +115,7 @@ class App extends Component {
      * @returns {*}
      */
     render() {
-        const { busy } = this.state;
+        const { busy, busyMessage, progress } = this.state;
 
         const q =  QueryString.parse(window.location.search);
         const debug = q.debug ? q.debug === '1' : false;
@@ -73,8 +137,8 @@ class App extends Component {
                         <MenuLink to="/dumpdecoder" label="Dump decoder" />
                         {debug && <MenuLink to="/testsender" label="Debug" />}
                         {!busy && <div className="spacer"> </div>}
-                        {busy && <div className="busy">please wait...</div>}
-                        <div className="header-app-name">Pacer editor 0.5.1</div>
+                        {busy && <div className="busy">{busyMessage}{progress >= 0 && <div>{progress} %</div>}</div>}
+                        <div className="header-app-name">Pacer editor 0.5.2</div>
                     </header>
 
                         <Switch>

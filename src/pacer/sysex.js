@@ -19,6 +19,9 @@ import {
     TARGETS
 } from "./constants";
 
+export const SINGLE_PRESET_EXPECTED_BYTES = 189;    // FIXME: unit is not bytes but messages
+export const ALL_PRESETS_EXPECTED_BYTES = 4536;     // FIXME: unit is not bytes but messages
+
 export const SYSEX_START = 0xF0;
 export const SYSEX_END = 0xF7;
 
@@ -562,7 +565,7 @@ export function requestPresetObj(presetIndex, controlId) {
  */
 function buildControlStepSysex(presetIndex, controlId, steps) {
 
-    // console.log(`buildControlStepSysex(${presetIndex}, ${controlId}, ...)`);
+    console.log(`buildControlStepSysex(${presetIndex}, ${controlId}, ...)`);
 
     let msgs = [];
 
@@ -601,6 +604,7 @@ function buildControlStepSysex(presetIndex, controlId, steps) {
     }
 
     // console.log("buildControlStepSysex", msgs);
+    msgs.map(m => console.log("buildControlStepSysex", hs(m)));
 
     return msgs;
 }
@@ -631,6 +635,9 @@ function buildControlModeSysex(presetIndex, controlId, mode) {
 
 
 function getControlUpdateSysexMessages(presetIndex, controlId, data) {
+
+    console.log(`getControlUpdateSysexMessages(${presetIndex}, ${controlId}, ${JSON.stringify(data)})`);
+
     let msgs = buildControlStepSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]);
     if (data[TARGET_PRESET][presetIndex]["controls"][controlId]["changed"]) {
         msgs.push(buildControlModeSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex]["controls"][controlId]["control_mode"]));

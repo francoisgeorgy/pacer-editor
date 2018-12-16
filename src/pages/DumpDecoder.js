@@ -20,9 +20,10 @@ class DumpDecoder extends Component {
     /**
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
-    showBusy = () =>  {
-        setTimeout(() => this.props.onBusy(false), 20000);
-        this.props.onBusy(true);
+    showBusy = ({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) =>  {
+        // console.log("show busy", busyMessage);
+        setTimeout(() => this.props.onBusy({busy: false}), 20000);
+        this.props.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
     };
 
     /**
@@ -36,7 +37,7 @@ class DumpDecoder extends Component {
                 if (file.size > MAX_FILE_SIZE) {
                     console.warn(`${file.name}: file too big, ${file.size}`);
                 } else {
-                    this.showBusy();
+                    this.showBusy({busy: true, busyMessage: "loading file..."});
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
                     if (isSysexData(data)) {
                         this.setState(
@@ -49,7 +50,7 @@ class DumpDecoder extends Component {
                     } else {
                         console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
                     }
-                    this.props.onBusy(false);
+                    this.props.onBusy({busy: false});
                     // non sysex files are ignored
                 }
                 // too big files are ignored

@@ -67,16 +67,32 @@ h3 {
     flex-grow: 10;
 }
 
+/*.busy {*/
+    /*flex-grow: 10;*/
+    /*align-self: center;*/
+    /*background-color: orangered;*/
+    /*color: white;*/
+    /*margin: 0 48px;*/
+    /*!*padding: 2px 1.5rem 2px 1.5rem;*!*/
+    /*padding: 3px 8px;*/
+    /*text-align: center;*/
+    /*font-size: 1.15rem;*/
+/*}*/
+
 .busy {
-    flex-grow: 10;
-    align-self: center;
-    background-color: orangered;
-    color: white;
-    margin: 0 48px;
-    /*padding: 2px 1.5rem 2px 1.5rem;*/
-    padding: 3px 8px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10000;
+    padding-top: 30vh;
     text-align: center;
-    font-size: 1.15rem;
+    /*background-color: orangered;*/
+    background-color: #777777;
+    opacity: 0.5;
+    color: white;
+    font-size: 8rem;
 }
 
 .wrapper {
@@ -331,6 +347,10 @@ div.status {
     background-color: #eee;
 }
 
+.port-enabled {
+    box-shadow: 0px 0px 8px 3px orange;
+}
+
 .port > div {
     display: flex;
     justify-content: center;
@@ -400,6 +420,7 @@ div.status {
 
 .preset-buttons button {
     display: block;
+    margin-bottom: 12px;
 }
 
 /*
@@ -430,8 +451,8 @@ button {
     color: #000;
     /*font-size: 13px;*/
     /*padding: 4px 16px;*/
-    padding: 2px 8px;
-    font-size: 11px;
+    padding: 4px 12px;
+    font-size: 12px;
     margin-top: 5px;
     margin-bottom: 5px;
 }
