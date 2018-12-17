@@ -21,18 +21,21 @@ import {
 } from "../pacer/constants";
 import {hs} from "../utils/hexstring";
 import MidiSettingsEditor from "../components/MidiSettingsEditor";
-import {inputName, outputById, outputName} from "../utils/ports";
+import {outputById} from "../utils/ports";
 import PresetNameEditor from "../components/PresetNameEditor";
 import PortsGrid from "../components/PortsGrid";
+import {batchMessages, outputIsPacer} from "../utils/midi";
+import {dropOverlayStyle, MAX_FILE_SIZE} from "../utils/misc";
 
-const MAX_FILE_SIZE = 5 * 1024*1024;
+// const MAX_FILE_SIZE = 5 * 1024*1024;
 
-const MAX_STATUS_MESSAGES = 40;
+// const MAX_STATUS_MESSAGES = 40;
 
 function isVal(v) {
     return v !== undefined && v !== null && v !== '';
 }
 
+/*
 function batchMessages(callback, callbackBusy, wait) {
 
     let messages = [];  // batch of received messages
@@ -52,6 +55,7 @@ function batchMessages(callback, callbackBusy, wait) {
         }, wait);
     };
 }
+*/
 
 class PresetMidi extends Component {
 
@@ -59,8 +63,8 @@ class PresetMidi extends Component {
         output: null,       // MIDI output port used for output
         presetIndex: null,  //
         changed: false,     // true when the control has been edited
-        data: null,
-        statusMessages: []
+        data: null          // ,
+        // statusMessages: []
     };
 
     /**
@@ -72,6 +76,7 @@ class PresetMidi extends Component {
         this.props.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
     };
 
+/*
     addStatusMessage = (type, message) => {
         this.setState(
             produce(draft => {
@@ -93,6 +98,7 @@ class PresetMidi extends Component {
     addErrorMessage = message => {
         this.addStatusMessage("error", message);
     };
+*/
 
     handleMidiInputEvent = batchMessages(
         messages => {
@@ -113,7 +119,6 @@ class PresetMidi extends Component {
             );
             // let bytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
             // this.addInfoMessage(`${messages.length} messages received (${bytes} bytes)`);
-            // this.props.onBusy(false);
             this.props.onBusy({busy: false});
         },
         (n) => {
@@ -146,9 +151,9 @@ class PresetMidi extends Component {
                                 draft.presetIndex = parseInt(pId, 10);
                             })
                         );
-                        this.addInfoMessage("sysfile decoded");
+                        // this.addInfoMessage("sysfile decoded");
                     } else {
-                        this.addWarningMessage("not a sysfile");
+                        // this.addWarningMessage("not a sysfile");
                         console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
                     }
                     this.props.onBusy({busy: false});
@@ -188,7 +193,6 @@ class PresetMidi extends Component {
      * @param files
      */
     onDrop = (files) => {
-        // console.log('drop', files);
         this.setState(
             {
                 data: null,
@@ -200,6 +204,7 @@ class PresetMidi extends Component {
     };
 
     selectPreset = (index) => {
+        if (!outputIsPacer(this.state.output)) return;
         // if the user selects another preset or control, then clear the data in the state
         const { data } = this.state;
         if (data && data[TARGET_PRESET] && data[TARGET_PRESET][index]) {
@@ -219,9 +224,8 @@ class PresetMidi extends Component {
                 })
             );
             if (isVal(index)) {   // && this.state.controlId) {
-                // this.sendSysex(requestPresetObj(id, this.state.controlId));
                 // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
-                this.sendSysex(requestPreset(index), SINGLE_PRESET_EXPECTED_BYTES);
+                this.readPacer(requestPreset(index), SINGLE_PRESET_EXPECTED_BYTES);
             }
         }
     };
@@ -269,11 +273,11 @@ class PresetMidi extends Component {
     };
 
     onInputConnection = (port_id) => {
-        this.addInfoMessage(`input ${inputName(port_id)} connected`);
+        // this.addInfoMessage(`input ${inputName(port_id)} connected`);
     };
 
     onInputDisconnection = (port_id) => {
-        this.addInfoMessage(`input ${inputName(port_id)} disconnected`);
+        // this.addInfoMessage(`input ${inputName(port_id)} disconnected`);
     };
 
     onOutputConnection = (port_id) => {
@@ -293,11 +297,11 @@ class PresetMidi extends Component {
                 draft.output = null;        // we manage only one output connection at a time
             })
         );
-        this.addInfoMessage(`output ${outputName(port_id)} disconnected`);
+        // this.addInfoMessage(`output ${outputName(port_id)} disconnected`);
     };
 
-    sendSysex = (msg, bytesExpected) => {
-        console.log("sendSysex", msg, bytesExpected);
+    sendSysex = msg => {
+        // console.log("sendSysex", hs(msg));
         if (!this.state.output) {
             console.warn("no output enabled to send the message");
             return;
@@ -307,15 +311,22 @@ class PresetMidi extends Component {
             console.warn(`send: output ${this.state.output} not found`);
             return;
         }
-        this.showBusy({busy: true, busyMessage: "receiving data...", bytesReceived: 0, bytesExpected});
         out.sendSysex(SYSEX_SIGNATURE, msg);
     };
 
+    readPacer = (msg, bytesExpected) => {
+        this.showBusy({busy: true, busyMessage: "receiving data...", bytesReceived: 0, bytesExpected});
+        this.sendSysex(msg);
+    };
+
     updatePacer = (messages) => {
+        this.showBusy({busy: true, busyMessage: "sending data..."});
         for (let m of messages) {
-            this.sendSysex(m, 0);
+            this.sendSysex(m);
         }
-        // this.addInfoMessage(`update${messages.length > 1 ? 's' : ''} sent to Pacer`);
+        setTimeout(() => {
+            this.readPacer(requestPreset(this.state.presetIndex), SINGLE_PRESET_EXPECTED_BYTES);
+        }, 1000);
     };
 
     render() {
@@ -326,25 +337,30 @@ class PresetMidi extends Component {
 
         if (data) {
 
-            showEditor = true;
+            // showEditor = true;
+            //
+            // if (!(TARGET_PRESET in data)) {
+            //     console.log(`PresetMidi: invalid data`, data);
+            //     showEditor = false;
+            // }
+            //
+            // if (showEditor && !(presetIndex in data[TARGET_PRESET])) {
+            //     // console.log(`PresetMid: preset ${presetIndex} not found in data`);
+            //     showEditor = false;
+            // }
+            //
+            // if (showEditor && !("midi" in data[TARGET_PRESET][presetIndex])) {
+            //     // console.log(`PresetMidi: midi not found in data`);
+            //     showEditor = false;
+            // }
 
-            if (!(TARGET_PRESET in data)) {
-                console.log(`PresetMidi: invalid data`, data);
-                showEditor = false;
-            }
-
-            if (showEditor && !(presetIndex in data[TARGET_PRESET])) {
-                // console.log(`PresetMid: preset ${presetIndex} not found in data`);
-                showEditor = false;
-            }
-
-            if (showEditor && !("midi" in data[TARGET_PRESET][presetIndex])) {
-                // console.log(`PresetMidi: midi not found in data`);
-                showEditor = false;
-            }
+            showEditor = (TARGET_PRESET in data) &&
+                         (presetIndex in data[TARGET_PRESET]) &&
+                         ("midi" in data[TARGET_PRESET][presetIndex]) &&
+                         (Object.keys(data[TARGET_PRESET][presetIndex]["midi"]).length === 16)
         }
 
-        showEditor = showEditor && (Object.keys(data[TARGET_PRESET][presetIndex]["midi"]).length === 16);
+        // showEditor = showEditor && (Object.keys(data[TARGET_PRESET][presetIndex]["midi"]).length === 16);
 
         let updateMessages = [];
         if (showEditor) {
@@ -355,6 +371,7 @@ class PresetMidi extends Component {
             }
         }
 
+/*
         const overlayStyle = {
             position: 'absolute',
             top: 0,
@@ -367,6 +384,7 @@ class PresetMidi extends Component {
             color: '#fff',
             fontSize: '4rem'
         };
+*/
 
         return (
 
@@ -378,8 +396,9 @@ class PresetMidi extends Component {
                 onDragEnter={this.onDragEnter}
                 onDragLeave={this.onDragLeave}
             >
+
             {dropZoneActive &&
-            <div style={overlayStyle}>
+            <div style={dropOverlayStyle}>
                 Drop sysex file...
             </div>}
 
@@ -408,43 +427,37 @@ class PresetMidi extends Component {
 
                     <div className="content-row-content first">
                         <h2>Preset:</h2>
-                        <div className="content-row-content-content">
-                            <div className="selectors">
-                                <PresetSelector data={data} currentPreset={presetIndex} onClick={this.selectPreset} />
-                                <div className="preset-buttons">
-                                    {output && <button className="space-right" onClick={() => this.sendSysex(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read all presets from Pacer</button>}
-                                    <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
-                                    <button onClick={this.onInputFile}>Load preset(s) from file</button>
-                                    {/*data &&
-                                    <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
-                                              label="Download preset" />
-                                    */}
-                                </div>
+                        <div className="selectors">
+                            <PresetSelector data={data} currentPreset={presetIndex} onClick={this.selectPreset} />
+                            <div className="preset-buttons">
+                                    {output && <button className="space-right" onClick={() => this.readPacer(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read all presets from Pacer</button>}
+                                <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
+                                <button onClick={this.onInputFile}>Load preset(s) from file</button>
+                                {/*data &&
+                                <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
+                                          label="Download preset" />
+                                */}
                             </div>
-                            {data && data[TARGET_PRESET][presetIndex] && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                         </div>
+                        {data && data[TARGET_PRESET][presetIndex] && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                     </div>
 
                     {showEditor &&
                     <div className="content-row-content">
                         <Fragment>
                             <h2>Preset MIDI settings:</h2>
-                            <div className="content-row-content-content">
-                                <MidiSettingsEditor settings={data[TARGET_PRESET][presetIndex]["midi"]}
-                                                    onUpdate={(settingIndex, dataType, dataIndex, value) => this.updateMidiSettings(settingIndex, dataType, dataIndex, value)} />
-                            </div>
+                            <MidiSettingsEditor settings={data[TARGET_PRESET][presetIndex]["midi"]}
+                                                onUpdate={(settingIndex, dataType, dataIndex, value) => this.updateMidiSettings(settingIndex, dataType, dataIndex, value)} />
                         </Fragment>
                     </div>
                     }
 
-                    {changed &&
+                    {changed && outputIsPacer(output) &&
                     <div className="content-row-content">
                         <Fragment>
                             <h2>Send the updated config to the Pacer:</h2>
-                            <div className="content-row-content-content">
-                                <div className="actions">
-                                    <button className="update" onClick={() => this.updatePacer(updateMessages)}>Update Pacer</button>
-                                </div>
+                            <div className="actions">
+                                <button className="update" onClick={() => this.updatePacer(updateMessages)}>Update Pacer</button>
                             </div>
                         </Fragment>
                     </div>

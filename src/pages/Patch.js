@@ -9,6 +9,7 @@ import {presetIndexToXY} from "../pacer/utils";
 import Dropzone from "react-dropzone";
 import "./Patch.css";
 import Download from "../components/Download";
+import {outputIsPacer} from "../utils/midi";
 
 function batchMessages(callback, callbackBusy, wait) {
 
@@ -206,14 +207,12 @@ class Patch extends Component {
         this.sendSysex(msg);
     };
 
-
     updatePacer = (messages) => {
         // for (let m of messages) {
         //     this.sendSysex(m);
         // }
         // this.addInfoMessage(`update${messages.length > 1 ? 's' : ''} sent to Pacer`);
     };
-
 
     /**
      * @returns {*}
@@ -269,42 +268,32 @@ class Patch extends Component {
                         </div>
 
                         <div className="content-row-content first">
-
                             <h2>From Pacer</h2>
-
                             <div>
                                 {output && <button className="space-right" onClick={() => this.sendSysex(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read patch from Pacer</button>}
                             </div>
-
                             <div>
                                 {data && <Download data={data} filename={`pacer-preset`} addTimestamp={true} className="small" label="Download patch" />}
                             </div>
-
                         </div>
 
                         <div className="content-row-content first">
-
                             <h2>To Pacer</h2>
-
                             <div>
                                 {/*{output && <button className="space-right" onClick={() => this.sendSysex(requestAllPresets())}>Read all presets from Pacer</button>}*/}
                                 <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}} onChange={this.onChangeFile} />
                                 <button onClick={this.onInputFile}>Load patch from file</button>
                             </div>
-
                             <div>
-                                {data && <button onClick={() => this.updatePacer()}>Send patch to Pacer</button>}
+                                {data && outputIsPacer(output) && <button onClick={() => this.updatePacer()}>Send patch to Pacer</button>}
                             </div>
-
                         </div>
 
                         <div className="content-row-content">
 
-
                             <div className="instructions">
                                 Presets marked "no data" are ignored. They will NOT erase the preset config in your Pacer.
                             </div>
-
 
                             <h2>Patch content:</h2>
                             <div className="patch-content">

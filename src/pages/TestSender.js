@@ -96,7 +96,7 @@ class TestSender extends Component {
                 // console.log("getCustomMessageData", data, typeof data);
                 if (data && data.length > 0) {
                     data.push(checksum(data));
-                    let tmp = SYSEX_HEADER.concat(d);
+                    // let tmp = SYSEX_HEADER.concat(d);
                     // console.log("return custom message data", tmp, hs(data));
                     // return SYSEX_HEADER.concat(d);
                     return [SYSEX_HEADER, ...d];

@@ -1,4 +1,6 @@
 import * as WebMidi from "webmidi";
+import {PACER_MIDI_PORT_NAME} from "../pacer/constants";
+import {portById} from "./ports";
 
 export const MESSAGE = {
     0x80: "Note Off",
@@ -80,7 +82,6 @@ export const CONTROLER = {
     127: "Poly Operation"
 };
 
-
 export const groupPortsByName = () => {
     let g = {};
     for (let p of WebMidi.inputs) {
@@ -97,3 +98,35 @@ export const groupPortsByName = () => {
     }
     return g;
 };
+
+/**
+ *
+ * @param port
+ * returns true if the midi port is the Pacer
+ */
+export const outputIsPacer = portId => {
+    let port = portById(portId);
+    return port ? port.name.match(new RegExp(PACER_MIDI_PORT_NAME, 'i')) : false
+};
+
+
+export const batchMessages = (callback, callbackBusy, wait) => {
+
+    let messages = [];  // batch of received messages
+    let timeout;
+
+    return function() {
+        clearTimeout(timeout);
+        let event = arguments[0];
+        messages.push(event.data);
+        // console.log('rec sysex', messages.length);
+        callbackBusy(messages.length);
+        timeout = setTimeout(() => {
+            // console.log("timeout elapsed");
+            timeout = null;
+            callback(messages);
+            messages = [];
+        }, wait);
+    };
+};
+

@@ -252,7 +252,7 @@ function getPresetName(data) {
  */
 function parseSysexMessage(data) {
 
-    console.log("parseSysexMessage", hs(data));
+    // console.log("parseSysexMessage", hs(data));
 
     //TODO: verify checksum
 
