@@ -6,7 +6,7 @@ import {
     parseSysexDump,
     requestAllPresets,
     requestPreset,
-    requestPresetObj
+    requestPresetObj, SYSEX_END, SYSEX_START
 } from "../pacer/sysex";
 import {ANY_MIDI_PORT, SYSEX_SIGNATURE} from "../pacer/constants";
 import {outputById} from "../utils/ports";
@@ -18,6 +18,20 @@ import {PACER_MIDI_PORT_NAME, SYSEX_HEADER} from "../pacer/constants";
 import Midi from "../components/Midi";
 import PortsGrid from "../components/PortsGrid";
 
+
+function replacerDec2Hex(key, value) {
+    return typeof value === 'number' ? '0x' + h(value) : value;
+    // if (typeof value === 'number') {
+    //     value = 2 * value;
+    // }
+    // return value;
+}
+
+function toSysExMessage(data) {
+    // console.log("toSysExMessage", data, typeof data);
+    if (data === null) return null;
+    return [SYSEX_START, ...SYSEX_SIGNATURE, ...data, SYSEX_END];
+}
 
 function batchMessages(callback, wait) {
 
@@ -36,6 +50,7 @@ function batchMessages(callback, wait) {
         }, wait);
     };
 }
+
 
 class TestSender extends Component {
 
@@ -73,14 +88,35 @@ class TestSender extends Component {
         });
     };
 
-    sendCustomMessage = () => {
-        if (this.state.customMessage) {
-            let data = Array.from(fromHexString(this.state.customMessage, / /g));
-            if (data && data.length > 0) {
-                data.push(checksum(data));
-                this.sendSysex(SYSEX_HEADER.concat(data));
+    getCustomMessageData = () => {
+        if (this.state.customMessage && this.state.customMessage !== "") {
+            let d = fromHexString(this.state.customMessage, / /g);
+            if (d) {
+                let data = Array.from(d);
+                // console.log("getCustomMessageData", data, typeof data);
+                if (data && data.length > 0) {
+                    data.push(checksum(data));
+                    let tmp = SYSEX_HEADER.concat(d);
+                    // console.log("return custom message data", tmp, hs(data));
+                    // return SYSEX_HEADER.concat(d);
+                    return [SYSEX_HEADER, ...d];
+                    // return data;
+                }
             }
         }
+        return null;
+    };
+
+    sendCustomMessage = () => {
+        let d = this.getCustomMessageData();
+        if (d && d.length > 0) this.sendSysex(d);
+        // if (this.state.customMessage) {
+        //     let data = Array.from(fromHexString(this.state.customMessage, / /g));
+        //     if (data && data.length > 0) {
+        //         data.push(checksum(data));
+        //         this.sendSysex(SYSEX_HEADER.concat(data));
+        //     }
+        // }
     };
 
 /*
@@ -128,8 +164,12 @@ class TestSender extends Component {
         this.setState({output: port_id});
     };
 
+    /**
+     *
+     * @param msg
+     */
     sendSysex = msg => {
-        console.log("sendSysex", msg);
+        // console.log("sendSysex", msg);
         if (!this.state.output) return;
         let out = outputById(this.state.output);
         if (!out) {
@@ -165,16 +205,33 @@ class TestSender extends Component {
         }
 */
         let hex_msg = '';
-        for (let i=0; i < customMessage.length; i++) {
+        let s = (customMessage.toUpperCase().match(/[0-9A-F]+/g) || []).join('');
+        for (let i=0; i < s.length; i++) {
             if ((i > 0) && (i % 2 === 0)) hex_msg += ' ';
-            hex_msg += customMessage[i];
+            hex_msg += s[i];
         }
+
+        let u = toSysExMessage(this.getCustomMessageData());
+        // console.log("u", u);
+        let v = u ? JSON.stringify(parseSysexDump(Uint8Array.from(toSysExMessage(this.getCustomMessageData()))), replacerDec2Hex, 4) : "";
+
 
         return (
             <div className="wrapper">
+
+
+                <div className="subheader">
+                    <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
+                          portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
+                          onMidiInputEvent={this.handleMidiInputEvent}
+                          className="" >
+                        <div className="no-midi">Please connect your Pacer to your computer.</div>
+                    </Midi>
+                </div>
+
                 <div className="content">
 
-                    <div className="content-row-content">
+                    <div className="content-row-content first">
                         <h2>Test messages:</h2>
                         <div className="content-row-content-content">
                         {messages.map((msg, i) =>
@@ -195,12 +252,18 @@ class TestSender extends Component {
                             <div className="send-message">
                                 <button onClick={this.sendCustomMessage} disabled={(customMessage.length % 2) !== 0}>send</button>
                                 <span className="code light">{hs(SYSEX_SIGNATURE)} {hs(SYSEX_HEADER)} </span>
-                                <input type="text" className="code" size="30" value={customMessage}
+                                <input type="text" className="code" size="80" value={customMessage}
                                        placeholder={"hex digits only"} onChange={this.updateCustomMessage} />
                                 <span className="code light"> {h(cs)}</span>
                             </div>
+
                             <div className="custom-message code">
-                                {hs(SYSEX_SIGNATURE)} {hs(SYSEX_HEADER)} {hex_msg} {h(cs)}
+                                <span className="code light">{hs(SYSEX_SIGNATURE)} {hs(SYSEX_HEADER)}</span> {hex_msg} <span className="code light">{h(cs)}</span>
+                            </div>
+
+                            <div className="debug">
+                                {v ? <pre>{v}</pre> : <div>Invalid message. Send at your own risk.</div>}
+                                {/*<pre>{hs(toSysExMessage(this.getCustomMessageData()))}</pre>*/}
                             </div>
                         </div>
                     </div>
@@ -211,31 +274,37 @@ class TestSender extends Component {
                             <div className="message code">
                                 <DumpSysex data={data} />
                             </div>
-
                         </div>
                     </div>
 
+                    <div className="content-row-content">
+                    </div>
+
 {/*
-                    <div className="content-row-content no-grad">
+                    <div className="content-row-content">
+                        {messages.map((msg, i) => {
+                            let d = Uint8Array.from(toSysExMessage(msg.message));
+                            console.log('d', d);
+                            return isSysexData(d) ?
+                                <div className="debug" key={i}>
+                                    <h4>[Debug] sysex data to send:</h4>
+                                    <pre>{JSON.stringify(parseSysexDump(d), null, 4)}</pre>
+                                </div> :
+                                <div key={i}>nop {hs(d)}</div>
+                            }
+                        )}
+                    </div>
+*/}
+
+                    <div className="content-row-content">
                         {data &&
                         <div className="debug">
-                            <h4>[Debug] sysex data:</h4>
+                            <h4>[Debug] sysex data received:</h4>
                             <pre>{JSON.stringify(data, null, 4)}</pre>
                         </div>
                         }
                     </div>
-*/}
 
-                </div>
-
-                <div className="right-column">
-                    <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
-                          portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
-                          onMidiInputEvent={this.handleMidiInputEvent}
-                          onOutputConnection={this.setOutput}
-                          className="" >
-                        <div className="no-midi">Please connect your Pacer to your computer.</div>
-                    </Midi>
                 </div>
 
             </div>

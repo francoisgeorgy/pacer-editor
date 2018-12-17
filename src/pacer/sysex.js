@@ -73,6 +73,7 @@ export function mergeDeep(target, ...sources) {
  * @param data Uint8Array
  */
 function isSysexData(data) {
+    // console.log("isSysexData", data, data.byteLength, data[0], SYSEX_START, data[data.byteLength - 1], SYSEX_END);
     if (data[0] !== SYSEX_START) return false;
     if (data[data.byteLength - 1] !== SYSEX_END) return false;
     return true;
@@ -251,7 +252,7 @@ function getPresetName(data) {
  */
 function parseSysexMessage(data) {
 
-    // console.log("parseSysex", hs(data));
+    console.log("parseSysexMessage", hs(data));
 
     //TODO: verify checksum
 
@@ -290,6 +291,8 @@ function parseSysexMessage(data) {
         // bytes: data      // FIXME: consolidate data per preset
     };
 
+    if (data.length === 7) return message;
+
     if (!(obj in CONTROLS)) {
         // console.warn("parseSysexMessage: invalid/ignored object", h(obj));
         return null;
@@ -304,10 +307,14 @@ function parseSysexMessage(data) {
         obj_type = "control";
     } else if (obj === CONTROL_MIDI) {
         obj_type = "midi";
+    } else if (obj === CONTROL_ALL) {
+        obj_type = "all";
     } else {
         console.warn('parseSysexMessage: invalid obj', obj);
         return null;
     }
+
+    // if (data.length === 8) return message;
 
     // console.log(`target=${TARGET[tgt]} (${h(tgt)}), idx=${h(idx)}, object=${OBJECT[obj]} (${h(obj)}), type=${obj_type}`);
     // console.log(`${TARGETS[tgt]} ${h(idx)} : ${CONTROLS[obj]} ${obj_type}`);
@@ -327,45 +334,54 @@ function parseSysexMessage(data) {
             }
         };
 
-        // which element?
-        let e = data[ELM];
+        if (data.length > 9) {
 
-        // console.log(h(e));
+            // which element?
+            let e = data[ELM];
 
-        if (e >= 0x01 && e <= 0x24) {
+            // console.log(h(e));
 
-            // STEPS
-            if (data.length > ELM+22) {
-                let s = getControlStep(data.slice(ELM, ELM + 23));
-                message[tgt][idx]["controls"][obj]["steps"][s.index] = s.config;
+            if (e >= 0x01 && e <= 0x24) {
+
+                // STEPS
+                if (data.length > ELM + 22) {
+                    let s = getControlStep(data.slice(ELM, ELM + 23));
+                    message[tgt][idx]["controls"][obj]["steps"][s.index] = s.config;
+                } else {
+                    console.warn(`parseSysexMessage: data does not contains steps. data.length=${data.length}`, hs(data));
+                }
+
+            } else if (e === CONTROL_MODE_ELEMENT) {
+
+                // CONTROL MODE
+                // console.log('parseSysexMessage: CONTROL MODE');
+
+                let mode_cfg = getControlMode(data.slice(ELM, data.length - 1));
+                message[tgt][idx]["controls"][obj] = mergeDeep(message[tgt][idx]["controls"][obj], mode_cfg);
+
+            } else if (e >= 0x40 && e <= 0x57) {
+
+                // LED
+                // console.log('parseSysexMessage: LED');
+
+                let led_cfg = getControlLED(data.slice(ELM, data.length - 1));
+                message[tgt][idx]["controls"][obj] = mergeDeep(message[tgt][idx]["controls"][obj], led_cfg);
+
+            } else if (e === 0x7F) {
+
+                // ALL
+                // console.log('parseSysexMessage: ALL');
+
             } else {
-                console.warn(`parseSysexMessage: data does not contains steps. data.length=${data.length}`, hs(data));
+                console.warn(`parseSysexMessage: unknown element: ${h(e)}`);
+                return null;
             }
-
-        } else if (e === CONTROL_MODE_ELEMENT) {
-
-            // CONTROL MODE
-            // console.log('parseSysexMessage: CONTROL MODE');
-
-            let mode_cfg = getControlMode(data.slice(ELM, data.length-1));
-            message[tgt][idx]["controls"][obj] = mergeDeep(message[tgt][idx]["controls"][obj], mode_cfg);
-
-        } else if (e >= 0x40 && e <= 0x57) {
-
-            // LED
-            // console.log('parseSysexMessage: LED');
-
-            let led_cfg = getControlLED(data.slice(ELM, data.length-1));
-            message[tgt][idx]["controls"][obj] = mergeDeep(message[tgt][idx]["controls"][obj], led_cfg);
-
-        } else if (e === 0x7F) {
-
-            // ALL
-            // console.log('parseSysexMessage: ALL');
-
         } else {
-            console.warn(`parseSysexMessage: unknown element: ${h(e)}`);
-            return null;
+
+            message[tgt][idx]["controls"] = {
+                [obj]: {}
+            };
+
         }
 
     }
@@ -393,6 +409,33 @@ function parseSysexMessage(data) {
         }
 
     }
+
+
+    if (obj_type === "all") {
+
+        message[tgt][idx]["all"] = {};
+
+        // // which element?
+        // let e = data[ELM];
+        //
+        // if (e >= 0x01 && e <= 0x60) {
+        //
+        //     // SETTINGS
+        //     if (data.length > ELM+19) {
+        //         let s = getMidiSetting(data.slice(ELM, ELM + 20));
+        //         message[tgt][idx]["midi"][s.index] = s.config;
+        //     } else {
+        //         console.warn(`parseSysexMessage: data does not contains steps. data.length=${data.length}`, hs(data));
+        //     }
+        //
+        // } else {
+        //     console.warn(`parseSysexMessage: unknown element: ${h(e)}`);
+        //     return null;
+        // }
+
+    }
+
+
 
     // console.log('MESSAGE', message);
     return message;
@@ -636,7 +679,7 @@ function buildControlModeSysex(presetIndex, controlId, mode) {
 
 function getControlUpdateSysexMessages(presetIndex, controlId, data) {
 
-    console.log(`getControlUpdateSysexMessages(${presetIndex}, ${controlId}, ${JSON.stringify(data)})`);
+    // console.log(`getControlUpdateSysexMessages(${presetIndex}, ${controlId}, ${JSON.stringify(data)})`);
 
     let msgs = buildControlStepSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]);
     if (data[TARGET_PRESET][presetIndex]["controls"][controlId]["changed"]) {

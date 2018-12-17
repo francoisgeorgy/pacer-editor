@@ -143,7 +143,7 @@ class DumpDecoder extends Component {
                         <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
                               portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
                               onMidiInputEvent={this.handleMidiInputEvent}
-                              className="sub-header" >
+                              className="" >
                             <div className="no-midi">Please connect your Pacer to your computer.</div>
                         </Midi>
                     </div>
