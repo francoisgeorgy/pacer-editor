@@ -119,9 +119,9 @@ const Step = ({ index, config, updateCallback }) => {
                 }
                 </select>
             </div>
-            <div>{d0}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type][0]}</div></div>
-            <div>{d1}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type][1]}</div></div>
-            <div>{d2}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type][2]}</div></div>
+            <div>{d0}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type] ? MSG_TYPES_DATA_HELP[config.msg_type][0] : ''}</div></div>
+            <div>{d1}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type] ? MSG_TYPES_DATA_HELP[config.msg_type][1] : ''}</div></div>
+            <div>{d2}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type] ? MSG_TYPES_DATA_HELP[config.msg_type][2] : ''}</div></div>
             <div>
                 <LEDColor current_value={config.led_inactive_color} onChange={(value) => updateCallback("led_inactive_color", null, value)} />
             </div>

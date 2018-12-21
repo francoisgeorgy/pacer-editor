@@ -60,14 +60,25 @@ class App extends Component {
 
         let show = busy !== this.state.busy;
         show = show || (busyMessage !== null && busyMessage !== this.state.busyMessage);
-        show = show || bytesExpected > this.state.bytesExpected;
-        // show = show || bytesReceived > 0;
-        let progress = 0;
-        if (bytesReceived > 0) {
+        show = show || (bytesExpected > 0 && bytesExpected !== this.state.bytesExpected);
+
+        // let progressString = "";
+        // if (bytesExpected > 0) {
+            // show progress in %
+        let progress = -1;
+        if (this.state.bytesExpected > 0 && bytesReceived > 0) {
             progress = Math.round(bytesReceived / this.state.bytesExpected * 100 / 5) * 5;
-            // console.log("progress", draft.bytesExpected, bytesReceived, progress);
             show = show || ((progress >= 0) && (progress !== this.state.progress));
         }
+        // } else {
+        //     // show progress in bytes
+        //     let progress = 0;
+        //     if (bytesReceived > 0) {
+        //         progress = Math.round(bytesReceived / this.state.bytesExpected * 100 / 5) * 5;
+        //         // console.log("progress", draft.bytesExpected, bytesReceived, progress);
+        //         show = show || ((progress >= 0) && (progress !== this.state.progress));
+        //     }
+        // }
 
         // console.log("show", show, busyMessage);
 
@@ -78,6 +89,8 @@ class App extends Component {
                     if (draft.busy !== busy) draft.busy = busy;
 
                     if (busyMessage !== null) draft.busyMessage = busyMessage;
+
+                    if (bytesExpected > 0 && bytesExpected !== draft.bytesExpected) draft.bytesExpected = bytesExpected;
 
                     if (busy === false) {
                         draft.bytesExpected = -1;

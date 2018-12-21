@@ -69,6 +69,7 @@ class Preset extends Component {
             presetIndex: null,
             controlId: null,
             changed: false,     // true when the control has been edited
+            updateMessages: [],
             data: null,         // json
             binData: null,      // binary, will be used to download as .syx file
             // statusMessages: [],
@@ -131,7 +132,7 @@ class Preset extends Component {
                             if (isSysexData(m)) {
                                 draft.data = mergeDeep(draft.data || {}, parseSysexDump(m));
                             } else {
-                                console.log("MIDI message is not a sysex message")
+                                console.log("MIDI message is not a sysex message", hs(m))
                             }
                         }
 
@@ -314,6 +315,9 @@ class Preset extends Component {
                 }
                 draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
                 draft.changed = true;
+
+                draft.updateMessages = this.getUpdateMessages(draft.presetIndex, controlId, draft.data);
+
             })
         );
     };
@@ -378,7 +382,7 @@ class Preset extends Component {
     };
 
     sendSysex = msg => {
-        // console.log("sendSysex", hs(msg));
+        console.log("sendSysex", hs(msg));
         if (!this.state.output) {
             console.warn("no output enabled to send the message");
             return;
@@ -391,24 +395,45 @@ class Preset extends Component {
         out.sendSysex(SYSEX_SIGNATURE, msg);
     };
 
-    readPacer = (msg, bytesExpected) => {
-        this.showBusy({busy: true, busyMessage: "receiving data...", bytesReceived: 0, bytesExpected});
+    readPacer = (msg, bytesExpected, busyMessage = "reading Pacer...") => {
+        console.log(`readPacer, ${bytesExpected} bytes expected`);
+        this.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected});
         this.sendSysex(msg);
     };
 
     updatePacer = (messages) => {
-        this.showBusy({busy: true, busyMessage: "sending data..."});
+        console.log("updatePacer");
+        this.showBusy({busy: true, busyMessage: "write Preset..."});
         for (let m of messages) {
             this.sendSysex(m);
         }
         setTimeout(() => {
-            this.readPacer(requestPreset(this.state.presetIndex), SINGLE_PRESET_EXPECTED_BYTES);
+            console.log("updatePacer: clear changed flag and updateMessages array");
+            this.setState({changed: false, updateMessages: []});
+            this.readPacer(requestPreset(this.state.presetIndex), SINGLE_PRESET_EXPECTED_BYTES, "read updated preset");
         }, 1000);
+    };
+
+    getUpdateMessages = (presetIndex, controlId, data) => {
+
+        console.log("getUpdateMessages");
+
+        // const { presetIndex, controlId, data } = this.state;
+
+        // let updateMessages = [];
+        // if (showEditor) {
+            let updateMessages = getControlUpdateSysexMessages(presetIndex, controlId, data);
+            let n = buildPresetNameSysex(presetIndex, data);
+            if (n) {
+                updateMessages.push(n);
+            }
+        // }
+        return updateMessages;
     };
 
     render() {
 
-        const { output, presetIndex, controlId, data, changed, dropZoneActive } = this.state;
+        const { output, presetIndex, controlId, data, changed, updateMessages, dropZoneActive } = this.state;
 
         let showEditor = false;
 
@@ -452,15 +477,6 @@ class Preset extends Component {
         }
 
         // showEditor = showEditor && (Object.keys(data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]).length === 6);
-
-        let updateMessages = [];
-        if (showEditor) {
-            updateMessages = getControlUpdateSysexMessages(presetIndex, controlId, data);
-            let n = buildPresetNameSysex(presetIndex, data);
-            if (n) {
-                updateMessages.push(n);
-            }
-        }
 
 /*
         const overlayStyle = {
@@ -565,13 +581,13 @@ class Preset extends Component {
                         </div>
                         }
 
-                        {this.props.debug && showEditor &&
-                        <div className="content-row-content first">
+                        {this.props.debug && changed &&
+                        <div className="content-row-content">
                             <div className="debug">
-                            <h4>[Debug] Update messages to send:</h4>
-                            <div className="message-to-send">
-                                {updateMessages.map((m, i) => <div key={i} className="code">{hs(m)}</div>)}
-                            </div>
+                                <h4>[Debug] Update messages to send:</h4>
+                                <div className="message-to-send">
+                                    {updateMessages.map((m, i) => <div key={i} className="code">{hs(m)}</div>)}
+                                </div>
                             </div>
                         </div>
                         }

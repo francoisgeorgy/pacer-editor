@@ -679,7 +679,7 @@ function buildControlModeSysex(presetIndex, controlId, mode) {
 
 function getControlUpdateSysexMessages(presetIndex, controlId, data) {
 
-    // console.log(`getControlUpdateSysexMessages(${presetIndex}, ${controlId}, ${JSON.stringify(data)})`);
+    console.log(`getControlUpdateSysexMessages(${presetIndex}, ${controlId}`); //, ${JSON.stringify(data)})`);
 
     let msgs = buildControlStepSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]);
     if (data[TARGET_PRESET][presetIndex]["controls"][controlId]["changed"]) {

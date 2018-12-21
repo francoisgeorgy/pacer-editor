@@ -169,7 +169,7 @@ class TestSender extends Component {
      * @param msg
      */
     sendSysex = msg => {
-        // console.log("sendSysex", msg);
+        console.log("sendSysex", msg);
         if (!this.state.output) return;
         let out = outputById(this.state.output);
         if (!out) {
