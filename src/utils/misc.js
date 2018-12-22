@@ -1,6 +1,8 @@
 
 export const MAX_FILE_SIZE = 5 * 1024*1024;
 
+// export const MAX_STATUS_MESSAGES = 40;
+
 export function sortObject(obj) {
     let arr = [];
     for (let prop in obj) {

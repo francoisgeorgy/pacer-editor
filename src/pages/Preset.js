@@ -28,36 +28,11 @@ import PresetNameEditor from "../components/PresetNameEditor";
 import PortsGrid from "../components/PortsGrid";
 import {batchMessages, outputIsPacer} from "../utils/midi";
 import {dropOverlayStyle, MAX_FILE_SIZE} from "../utils/misc";
-
-// const MAX_FILE_SIZE = 5 * 1024*1024;
-
-// const MAX_STATUS_MESSAGES = 40;
+import {updateMessageName} from "../utils/state";
 
 function isVal(v) {
     return v !== undefined && v !== null && v !== '';
 }
-
-/*
-function batchMessages(callback, callbackBusy, wait) {
-
-    let messages = [];  // batch of received messages
-    let timeout;
-
-    return function() {
-        clearTimeout(timeout);
-        let event = arguments[0];
-        messages.push(event.data);
-        // console.log('rec sysex', messages.length);
-        callbackBusy(messages.length);
-        timeout = setTimeout(() => {
-            // console.log("timeout elapsed");
-            timeout = null;
-            callback(messages);
-            messages = [];
-        }, wait);
-    };
-}
-*/
 
 class Preset extends Component {
 
@@ -71,7 +46,7 @@ class Preset extends Component {
             changed: false,     // true when the control has been edited
             updateMessages: {},
             data: null,         // json
-            binData: null,      // binary, will be used to download as .syx file
+            // binData: null,      // binary, will be used to download as .syx file
             // statusMessages: [],
             // accept: '',
             // files: [],
@@ -114,20 +89,18 @@ class Preset extends Component {
 
     handleMidiInputEvent = batchMessages(
         messages => {
-
             let bytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
-
             this.setState(
                 produce(
                     draft => {
 
-                        draft.binData = new Uint8Array(bytes);
-                        let bin_index = 0;
+                        // draft.binData = new Uint8Array(bytes);
+                        // let bin_index = 0;
 
                         for (let m of messages) {
 
-                            draft.binData.set(m, bin_index);
-                            bin_index += m.length;
+                            // draft.binData.set(m, bin_index);
+                            // bin_index += m.length;
 
                             if (isSysexData(m)) {
                                 draft.data = mergeDeep(draft.data || {}, parseSysexDump(m));
@@ -177,10 +150,10 @@ class Preset extends Component {
                             produce(draft => {
                                 // draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
                                 draft.data = parseSysexDump(data);
-                                let pId = Object.keys(draft.data[TARGET_PRESET])[0];
-                                let cId = Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0];
-                                draft.presetIndex = parseInt(pId, 10);
-                                draft.controlId = parseInt(cId, 10);
+                                // let pId = Object.keys(draft.data[TARGET_PRESET])[0];
+                                // let cId = Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0];
+                                // draft.presetIndex = parseInt(pId, 10);
+                                // draft.controlId = parseInt(cId, 10);
                             })
                         );
                         // this.addInfoMessage("sysfile decoded");
@@ -254,12 +227,14 @@ class Preset extends Component {
                     //     draft.data = null;
                     //     draft.changed = false;
                     // }
-                })
+                }),
+                () => {
+                    if (isVal(index)) {
+                        // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
+                        this.readPacer(requestPreset(index), SINGLE_PRESET_EXPECTED_BYTES);
+                    }
+                }
             );
-            if (isVal(index)) {   // && this.state.controlId) {
-                // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
-                this.readPacer(requestPreset(index), SINGLE_PRESET_EXPECTED_BYTES);
-            }
         }
     };
 
@@ -306,8 +281,6 @@ class Preset extends Component {
                 if (dataType === "data") {
                     draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["data"][dataIndex] = v;
                     draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
-                // } else {
-                //     draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
                 }
 
                 if (dataType === "msg_type") {
@@ -321,7 +294,6 @@ class Preset extends Component {
 
                 if (dataType.startsWith("led_")) {
                     draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
-                    // console.log("updateControlStep led changed");
                     draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["led_changed"] = true;
                 }
 
@@ -360,16 +332,20 @@ class Preset extends Component {
      * @param name
      */
     updatePresetName = (name) => {
-        // console.log("Presets.updateName", name);
-        if (name === undefined || name === null) return;
-        if (name.length > 5) {
-            console.warn(`Presets.updateName: name too long: ${name}`);
-            return;
-        }
 
+        // if (name === undefined || name === null) return;
+        //
+        // if (name.length > 5) {
+        //     console.warn(`Presets.updateName: name too long: ${name}`);
+        //     return;
+        // }
+
+        this.setState(updateMessageName(this.state, {name}));
+/*
+        this.setState(updateMessageName(name));
         this.setState(
             produce(draft => {
-                draft.data[TARGET_PRESET][draft.presetIndex]["name"] = name;    // TODO : buld update message
+                draft.data[TARGET_PRESET][draft.presetIndex]["name"] = name;
                 draft.data[TARGET_PRESET][draft.presetIndex]["changed"] = true;
                 draft.changed = true;
 
@@ -379,7 +355,7 @@ class Preset extends Component {
                 draft.updateMessages[draft.presetIndex]["name"] = buildPresetNameSysex(draft.presetIndex, draft.data);
             })
         );
-
+*/
     };
 
     onInputConnection = (port_id) => {
@@ -490,8 +466,7 @@ class Preset extends Component {
                 // accept={accept}
                 onDrop={this.onDrop}
                 onDragEnter={this.onDragEnter}
-                onDragLeave={this.onDragLeave}
-            >
+                onDragLeave={this.onDragLeave}>
 
                 {dropZoneActive &&
                 <div style={dropOverlayStyle}>
@@ -503,12 +478,12 @@ class Preset extends Component {
                     <div className="subheader">
                         <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
                               portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
+                              messageType="sysex"
                               onMidiInputEvent={this.handleMidiInputEvent}
                               onInputConnection={this.onInputConnection}
                               onInputDisconnection={this.onInputDisconnection}
                               onOutputConnection={this.onOutputConnection}
-                              onOutputDisconnection={this.onOutputDisconnection}
-                              className="" >
+                              onOutputDisconnection={this.onOutputDisconnection}>
                             <div className="no-midi">Please connect your Pacer to your computer.</div>
                         </Midi>
                     </div>
@@ -581,8 +556,8 @@ class Preset extends Component {
                                                 return Object.getOwnPropertyNames(updateMessages[v]).map(
                                                     (w, j) => {
                                                         return updateMessages[v][w].map(
-                                                            (e, k) => {
-                                                               return (<div key={`${i}-${j}-${k}`} className="code">{hs(e)}</div>);
+                                                            (m, k) => {
+                                                               return (<div key={`${i}-${j}-${k}`} className="code">{hs(m)}</div>);
                                                             }
                                                         );
                                                     }

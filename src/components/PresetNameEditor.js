@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 class PresetNameEditor extends Component {
 
     onNameUpdate = (event) => {
-        console.log(`PresetNameEditor.onSettingUpdate`, event.target.value);
+        // console.log(`PresetNameEditor.onSettingUpdate`, event.target.value);
         this.props.onUpdate(event.target.value.length > 5 ? event.target.value.substr(0, 5) : event.target.value);
     };
 

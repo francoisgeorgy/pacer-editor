@@ -12,6 +12,7 @@ const propTypes = {
     portsRenderer: PropTypes.func,
     // inputRenderer: PropTypes.func,
     // outputRenderer: PropTypes.func,
+    messageType: PropTypes.string,
     onMidiInputEvent: PropTypes.func,
     onMidiOutputEvent: PropTypes.func,
     onInputConnection: PropTypes.func,      // callback with port.id as parameter
@@ -23,8 +24,9 @@ const propTypes = {
 };
 
 const defaultProps = {
-    classname: '',
-    only: ".*"
+    classname: "",
+    only: ".*",
+    messageType: "midimessage"
 };
 
 /**
@@ -49,11 +51,11 @@ export default class Midi extends Component {
     connectInput = port => {
         if (this.props.onMidiInputEvent) {
             if (port) {
-                if (port.hasListener('midimessage', 'all', this.props.onMidiInputEvent)) {
+                if (port.hasListener(this.props.messageType, 'all', this.props.onMidiInputEvent)) {
                     console.warn(`Midi.connectInput: sysex messages on all channels listener already connected`);
                 } else {
                     console.log(`Midi.connectInput: add listener for sysex messages on all channels`);
-                    port.addListener('midimessage', 'all', this.props.onMidiInputEvent);
+                    port.addListener(this.props.messageType, 'all', this.props.onMidiInputEvent);
                     if (this.props.onInputConnection) {
                         this.props.onInputConnection(port.id);
                     }
