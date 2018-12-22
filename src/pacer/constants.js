@@ -593,8 +593,10 @@ export const COLORS = {
 export const CONTROL_MODE_ELEMENT = 0x60;
 
 export const CONTROL_MODE_ALL = 0x00;
-export const CONTROL_MODE_EXT_STEP = 0x01;
-export const CONTROL_MODE_SEQUENCE = 0x02;
+// export const CONTROL_MODE_EXT_STEP = 0x01;
+// export const CONTROL_MODE_SEQUENCE = 0x02;
+export const CONTROL_MODE_EXT_STEP = 0x02;
+export const CONTROL_MODE_SEQUENCE = 0x01;
 
 export const CONTROL_MODES = {
     [CONTROL_MODE_ALL]: "All",

@@ -1,6 +1,7 @@
 import * as WebMidi from "webmidi";
 import {PACER_MIDI_PORT_NAME} from "../pacer/constants";
 import {portById} from "./ports";
+import {SYSEX_START} from "../pacer/sysex";
 
 export const MESSAGE = {
     0x80: "Note Off",
@@ -118,6 +119,17 @@ export const batchMessages = (callback, callbackBusy, wait) => {
     return function() {
         clearTimeout(timeout);
         let event = arguments[0];
+
+        // console.log(event);
+
+        //
+        // We ignore all messages that are NOT sysex messages:
+        //
+        if (event.data[0] !== SYSEX_START) {
+            console.log("non sysex message ignored");
+            return;
+        }
+
         messages.push(event.data);
         // console.log('rec sysex', messages.length);
         callbackBusy(messages.length);

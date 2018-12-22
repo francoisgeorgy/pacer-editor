@@ -144,11 +144,9 @@ const DumpSysex = ({ data }) => {
             {
                 data && <Presets presets={data[TARGET_PRESET]} />
             }
-{/*
             {
                 JSON.stringify(data, null, 4)
             }
-*/}
         </div>
     );
 };

@@ -155,6 +155,8 @@ class ControlStepsEditor extends Component {
 
         const steps = this.props.steps;
 
+        // console.log("ControlStepsEditor", steps);
+
         return (
             <div className="steps">
                 <div></div>

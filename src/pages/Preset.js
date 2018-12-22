@@ -69,7 +69,7 @@ class Preset extends Component {
             presetIndex: null,
             controlId: null,
             changed: false,     // true when the control has been edited
-            updateMessages: [],
+            updateMessages: {},
             data: null,         // json
             binData: null,      // binary, will be used to download as .syx file
             // statusMessages: [],
@@ -198,7 +198,7 @@ class Preset extends Component {
 
     onChangeFile = (e) => {
         let file = e.target.files[0];
-        console.log(file);
+        // console.log(file);
         // noinspection JSIgnoredPromiseFromCall
         this.readFiles([file]);
     };
@@ -236,8 +236,9 @@ class Preset extends Component {
     };
 
     selectPreset = (index) => {
-        // if the user selects another preset or control, then clear the data in the state
+
         if (!outputIsPacer(this.state.output)) return;
+
         const { data } = this.state;
         if (data && data[TARGET_PRESET] && data[TARGET_PRESET][index]) {
             this.setState(
@@ -249,10 +250,10 @@ class Preset extends Component {
             this.setState(
                 produce(draft => {
                     draft.presetIndex = index;
-                    if (index !== this.state.presetIndex) {
-                        draft.data = null;
-                        draft.changed = false;
-                    }
+                    // if (index !== this.state.presetIndex) {
+                    //     draft.data = null;
+                    //     draft.changed = false;
+                    // }
                 })
             );
             if (isVal(index)) {   // && this.state.controlId) {
@@ -297,26 +298,38 @@ class Preset extends Component {
      * dataIndex is only used when dataType == "data"
      */
     updateControlStep = (controlId, stepIndex, dataType, dataIndex, value) => {
-        console.log("Presets.updateControlStep", controlId, stepIndex, dataType, dataIndex, value);
+        // console.log("Presets.updateControlStep", controlId, stepIndex, dataType, dataIndex, value);
         let v = parseInt(value, 10);
         this.setState(
             produce(draft => {
+
                 if (dataType === "data") {
                     draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["data"][dataIndex] = v;
-                } else {
-                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
+                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
+                // } else {
+                //     draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
                 }
+
                 if (dataType === "msg_type") {
                     if (v === MSG_CTRL_OFF) {
                         draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 0;
                     } else {
                         draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 1;
                     }
+                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
                 }
-                draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
+
+                if (dataType.startsWith("led_")) {
+                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
+                    // console.log("updateControlStep led changed");
+                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["led_changed"] = true;
+                }
+
                 draft.changed = true;
 
-                draft.updateMessages = this.getUpdateMessages(draft.presetIndex, controlId, draft.data);
+                if (!draft.updateMessages.hasOwnProperty(draft.presetIndex)) draft.updateMessages[draft.presetIndex] = {};
+                if (!draft.updateMessages[draft.presetIndex].hasOwnProperty(controlId)) draft.updateMessages[draft.presetIndex][controlId] = [];
+                draft.updateMessages[draft.presetIndex][controlId] = this.getUpdateMessages(draft.presetIndex, controlId, draft.data);
 
             })
         );
@@ -331,12 +344,21 @@ class Preset extends Component {
         this.setState(
             produce(draft => {
                 draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["control_mode"] = v;
-                draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["changed"] = true;
+                draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["control_mode_changed"] = true;
                 draft.changed = true;
+
+                if (!draft.updateMessages.hasOwnProperty(draft.presetIndex)) draft.updateMessages[draft.presetIndex] = {};
+                if (!draft.updateMessages[draft.presetIndex].hasOwnProperty(controlId)) draft.updateMessages[draft.presetIndex][controlId] = [];
+
+                draft.updateMessages[draft.presetIndex][controlId]  = this.getUpdateMessages(draft.presetIndex, controlId, draft.data);
             })
         );
     };
 
+    /**
+     *
+     * @param name
+     */
     updatePresetName = (name) => {
         // console.log("Presets.updateName", name);
         if (name === undefined || name === null) return;
@@ -344,13 +366,20 @@ class Preset extends Component {
             console.warn(`Presets.updateName: name too long: ${name}`);
             return;
         }
+
         this.setState(
             produce(draft => {
                 draft.data[TARGET_PRESET][draft.presetIndex]["name"] = name;    // TODO : buld update message
                 draft.data[TARGET_PRESET][draft.presetIndex]["changed"] = true;
                 draft.changed = true;
+
+                if (!draft.updateMessages.hasOwnProperty(draft.presetIndex)) draft.updateMessages[draft.presetIndex] = {};
+                if (!draft.updateMessages[draft.presetIndex].hasOwnProperty("name")) draft.updateMessages[draft.presetIndex]["name"] = [];
+
+                draft.updateMessages[draft.presetIndex]["name"] = buildPresetNameSysex(draft.presetIndex, draft.data);
             })
         );
+
     };
 
     onInputConnection = (port_id) => {
@@ -396,38 +425,45 @@ class Preset extends Component {
     };
 
     readPacer = (msg, bytesExpected, busyMessage = "reading Pacer...") => {
-        console.log(`readPacer, ${bytesExpected} bytes expected`);
+        // console.log(`readPacer, ${bytesExpected} bytes expected`);
         this.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected});
         this.sendSysex(msg);
     };
 
     updatePacer = (messages) => {
-        console.log("updatePacer");
+        // console.log("updatePacer");
         this.showBusy({busy: true, busyMessage: "write Preset..."});
-        for (let m of messages) {
-            this.sendSysex(m);
-        }
+        Object.getOwnPropertyNames(messages).forEach(
+            v => {
+                Object.getOwnPropertyNames(messages[v]).forEach(
+                    w => {
+                        messages[v][w].forEach(
+                            m => {
+                                this.sendSysex(m);
+                            }
+                        );
+                    }
+                );
+            }
+        );
         setTimeout(() => {
-            console.log("updatePacer: clear changed flag and updateMessages array");
-            this.setState({changed: false, updateMessages: []});
-            this.readPacer(requestPreset(this.state.presetIndex), SINGLE_PRESET_EXPECTED_BYTES, "read updated preset");
+            // console.log("updatePacer: clear changed flag and updateMessages array");
+            this.setState({changed: false, updateMessages: {}}, () => this.readPacer(requestPreset(this.state.presetIndex), SINGLE_PRESET_EXPECTED_BYTES, "read updated preset"));
         }, 1000);
     };
 
     getUpdateMessages = (presetIndex, controlId, data) => {
 
-        console.log("getUpdateMessages");
+        // console.log("getUpdateMessages");
 
-        // const { presetIndex, controlId, data } = this.state;
+        let updateMessages = getControlUpdateSysexMessages(presetIndex, controlId, data);
+        // console.log("updateMessages", updateMessages);
 
-        // let updateMessages = [];
-        // if (showEditor) {
-            let updateMessages = getControlUpdateSysexMessages(presetIndex, controlId, data);
-            let n = buildPresetNameSysex(presetIndex, data);
-            if (n) {
-                updateMessages.push(n);
-            }
+        // let n = buildPresetNameSysex(presetIndex, data);
+        // if (n) {
+        //     updateMessages.push(n);
         // }
+
         return updateMessages;
     };
 
@@ -438,36 +474,6 @@ class Preset extends Component {
         let showEditor = false;
 
         if (data) {
-
-            // showEditor = true;
-
-/*
-            if (!(TARGET_PRESET in data)) {
-                console.log(`Presets: invalid data`, data);
-                showEditor = false;
-            }
-
-            if (showEditor && !(presetIndex in data[TARGET_PRESET])) {
-                // console.log(`Presets: preset ${presetIndex} not found in data`);
-                showEditor = false;
-            }
-
-            if (showEditor && !("controls" in data[TARGET_PRESET][presetIndex])) {
-                // console.log(`Presets: controls not found in data`);
-                showEditor = false;
-            }
-
-            if (showEditor && !(controlId in data[TARGET_PRESET][presetIndex]["controls"])) {
-                // console.log(`Presets: control ${controlId} not found in data`);
-                showEditor = false;
-            }
-
-            if (showEditor && !("steps" in data[TARGET_PRESET][presetIndex]["controls"][controlId])) {
-                // console.log(`Presets: steps not found in data`);
-                showEditor = false;
-            }
-*/
-
             showEditor = (TARGET_PRESET in data) &&
                          (presetIndex in data[TARGET_PRESET]) &&
                          ("controls" in data[TARGET_PRESET][presetIndex]) &&
@@ -475,23 +481,6 @@ class Preset extends Component {
                          ("steps" in data[TARGET_PRESET][presetIndex]["controls"][controlId]) &&
                          (Object.keys(data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]).length === 6);
         }
-
-        // showEditor = showEditor && (Object.keys(data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]).length === 6);
-
-/*
-        const overlayStyle = {
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-            paddingTop: '4rem',
-            background: 'rgba(0,0,0,0.4)',
-            textAlign: 'center',
-            color: '#fff',
-            fontSize: '4rem'
-        };
-*/
 
         return (
 
@@ -586,8 +575,29 @@ class Preset extends Component {
                             <div className="debug">
                                 <h4>[Debug] Update messages to send:</h4>
                                 <div className="message-to-send">
-                                    {updateMessages.map((m, i) => <div key={i} className="code">{hs(m)}</div>)}
+                                    {
+                                        Object.getOwnPropertyNames(updateMessages).map(
+                                            (v, i) => {
+                                                return Object.getOwnPropertyNames(updateMessages[v]).map(
+                                                    (w, j) => {
+                                                        return updateMessages[v][w].map(
+                                                            (e, k) => {
+                                                               return (<div key={`${i}-${j}-${k}`} className="code">{hs(e)}</div>);
+                                                            }
+                                                        );
+                                                    }
+                                                );
+                                            }
+                                        )
+                                    }
                                 </div>
+{/*
+                                <div className="dump code">
+                                    {
+                                        JSON.stringify(updateMessages, null, 4)
+                                    }
+                                </div>
+*/}
                             </div>
                         </div>
                         }

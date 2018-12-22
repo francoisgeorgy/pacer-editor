@@ -114,7 +114,7 @@ function getControlStep(data) {
 
 function getControlMode(data) {
     return {
-        control_mode: data[1]
+        control_mode: data[2]
     };
 }
 
@@ -354,7 +354,7 @@ function parseSysexMessage(data) {
             } else if (e === CONTROL_MODE_ELEMENT) {
 
                 // CONTROL MODE
-                // console.log('parseSysexMessage: CONTROL MODE');
+                // console.log('parseSysexMessage: CONTROL MODE', idx, obj, ELM, data.slice(ELM, data.length - 1), data);
 
                 let mode_cfg = getControlMode(data.slice(ELM, data.length - 1));
                 message[tgt][idx]["controls"][obj] = mergeDeep(message[tgt][idx]["controls"][obj], mode_cfg);
@@ -608,7 +608,7 @@ export function requestPresetObj(presetIndex, controlId) {
  */
 function buildControlStepSysex(presetIndex, controlId, steps) {
 
-    console.log(`buildControlStepSysex(${presetIndex}, ${controlId}, ...)`);
+    // console.log(`buildControlStepSysex(${presetIndex}, ${controlId}, ...)`);
 
     let msgs = [];
 
@@ -634,10 +634,12 @@ function buildControlStepSysex(presetIndex, controlId, steps) {
         msg.push((i-1)*6 + 6, 1, step.active);
 
         // LED
+/*
         msg.push((i-1)*4 + 0x40, 1, step.led_midi_ctrl, 0x00);
         msg.push((i-1)*4 + 0x41, 1, step.led_active_color, 0x00);
         msg.push((i-1)*4 + 0x42, 1, step.led_inactive_color, 0x00);
         msg.push((i-1)*4 + 0x43, 1, step.led_num, 0x00);
+*/
 
         // add checksum:
         msg.push(checksum(msg));
@@ -652,6 +654,59 @@ function buildControlStepSysex(presetIndex, controlId, steps) {
     return msgs;
 }
 
+function buildControlStepLedSysex(presetIndex, controlId, steps) {
+
+    // console.log(`buildControlStepLedSysex(${presetIndex}, ${controlId}, ...)`);
+
+    let msgs = [];
+
+    for (let i of Object.keys(steps)) {
+
+        let step = steps[i];
+
+        if (!step.led_changed) continue;
+
+        // start with command and target:
+        let msg = [
+            COMMAND_SET,
+            TARGET_PRESET,
+            presetIndex,
+            controlId];
+
+        // add data:
+        // msg.push((i-1)*6 + 1, 1, step.channel, 0x00);
+        // msg.push((i-1)*6 + 2, 1, step.msg_type, 0x00);
+        // msg.push((i-1)*6 + 3, 1, step.data[0], 0x00);
+        // msg.push((i-1)*6 + 4, 1, step.data[1], 0x00);
+        // msg.push((i-1)*6 + 5, 1, step.data[2], 0x00);
+        // msg.push((i-1)*6 + 6, 1, step.active);
+
+        // LED
+        msg.push((i-1)*4 + 0x40, 1, step.led_midi_ctrl, 0x00);
+        msg.push((i-1)*4 + 0x41, 1, step.led_active_color, 0x00);
+        msg.push((i-1)*4 + 0x42, 1, step.led_inactive_color, 0x00);
+        msg.push((i-1)*4 + 0x43, 1, step.led_num, 0x00);
+
+        // add checksum:
+        msg.push(checksum(msg));
+
+        // inject header and add to list of messages:
+        msgs.push(SYSEX_HEADER.concat(msg));
+    }
+
+    // console.log("buildControlStepLedSysex", msgs);
+    // msgs.map(m => console.log("buildControlStepLedSysex", hs(m)));
+
+    return msgs;
+}
+
+/**
+ *
+ * @param presetIndex
+ * @param controlId
+ * @param mode
+ * @returns {number[]}
+ */
 function buildControlModeSysex(presetIndex, controlId, mode) {
 
     // console.log(`buildControlStepMode(${presetIndex}, ${controlId}, ...)`);
@@ -676,15 +731,31 @@ function buildControlModeSysex(presetIndex, controlId, mode) {
     return SYSEX_HEADER.concat(msg);
 }
 
-
+/**
+ * Wihtout Control Mode config
+ * Without LED config
+ *
+ * @param presetIndex
+ * @param controlId
+ * @param data
+ * @returns {*}
+ */
 function getControlUpdateSysexMessages(presetIndex, controlId, data) {
 
-    console.log(`getControlUpdateSysexMessages(${presetIndex}, ${controlId}`); //, ${JSON.stringify(data)})`);
+    // console.log(`getControlUpdateSysexMessages(${presetIndex}, ${controlId}`); //, ${JSON.stringify(data)})`);
 
-    let msgs = buildControlStepSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]);
-    if (data[TARGET_PRESET][presetIndex]["controls"][controlId]["changed"]) {
+    let msgs = [];
+
+    if (data[TARGET_PRESET][presetIndex]["controls"][controlId]["control_mode_changed"]) {
         msgs.push(buildControlModeSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex]["controls"][controlId]["control_mode"]));
     }
+
+    msgs = msgs.concat(buildControlStepSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]));
+
+    // if (data[TARGET_PRESET][presetIndex]["controls"][controlId]["changed"]) {
+        msgs = msgs.concat(buildControlStepLedSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]));
+    // }
+
     return msgs;
 }
 
@@ -732,7 +803,9 @@ function buildMidiSettingsSysex(presetIndex, settings) {
 
 function buildPresetNameSysex(presetIndex, data) {
 
-    if (!data[TARGET_PRESET][presetIndex].changed) return null;
+    // console.log("buildPresetNameSysex", presetIndex, data);
+
+    // if (!data[TARGET_PRESET][presetIndex].changed) return null;
 
     // start with command and target:
     let msg = [
@@ -756,7 +829,7 @@ function buildPresetNameSysex(presetIndex, data) {
     msg.push(checksum(msg));
 
     // inject header and return result:
-    return SYSEX_HEADER.concat(msg)
+    return [SYSEX_HEADER.concat(msg)];  // we need to return an array of messages, even if it'sonly one message
 }
 
 
