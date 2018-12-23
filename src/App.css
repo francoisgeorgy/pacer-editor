@@ -292,10 +292,6 @@ h3 {
     /*text-align: center;*/
 /*}*/
 
-div.status {
-    margin-top: 0.5rem;
-    font-size: 0.75rem;
-}
 
 .sorry {
     margin: 8px 0;
@@ -382,6 +378,7 @@ div.status {
     flex-direction: row;
     align-items: center;
     background-color: #eee;
+    font-size: 0.85rem;
 }
 
 .port-enabled {
@@ -478,6 +475,9 @@ button:hover {
 }
 */
 
+select, input {
+    font-size: 0.85rem
+}
 
 
 button {
@@ -489,7 +489,7 @@ button {
     /*font-size: 13px;*/
     /*padding: 4px 16px;*/
     padding: 4px 12px;
-    font-size: 12px;
+    font-size: 0.85rem;
     margin-top: 5px;
     margin-bottom: 5px;
 }

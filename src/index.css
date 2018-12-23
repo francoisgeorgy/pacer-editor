@@ -49,6 +49,15 @@ table {
     box-sizing: border-box;
 }
 
+:root {
+    /*font-size: 16px;*/
+    /*body {*/
+        /*margin: 0;*/
+        /*// Body font size 16px*/
+        /*font-size: 1.6rem;*/
+    /*}*/
+}
+
 html,
 body {
     height: 100%;
@@ -64,7 +73,7 @@ body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 400;
     font-style: normal;
-    font-size: 14px;
+    /*font-size: 16px;*/
     line-height: 1.2;
     color: #000;
     margin: 0;

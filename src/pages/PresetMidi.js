@@ -127,8 +127,10 @@ class PresetMidi extends Component {
                             produce(draft => {
                                 // draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
                                 draft.data = parseSysexDump(data);
-                                // let pId = Object.keys(draft.data[TARGET_PRESET])[0];
-                                // draft.presetIndex = parseInt(pId, 10);
+                                // if the file contains only one preset, then automatically select it:
+                                if (Object.keys(draft.data[TARGET_PRESET]).length === 1) {
+                                    draft.presetIndex = parseInt(Object.keys(draft.data[TARGET_PRESET])[0], 10);
+                                }
                             })
                         );
                         // this.addInfoMessage("sysfile decoded");
@@ -146,8 +148,9 @@ class PresetMidi extends Component {
 
     onChangeFile = (e) => {
         console.log("onChangeFile", e);
-        var file = e.target.files[0];
+        let file = e.target.files[0];
         console.log(file);
+        // noinspection JSIgnoredPromiseFromCall
         this.readFiles([file]);
     };
 
@@ -372,15 +375,15 @@ class PresetMidi extends Component {
                             <h2>Preset:</h2>
                             <div className="selectors">
                                 <PresetSelector data={data} currentPreset={presetIndex} onClick={this.selectPreset} />
-                                <div className="preset-buttons">
-                                        {output && <button className="space-right" onClick={() => this.readPacer(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read all presets from Pacer</button>}
-                                    <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
-                                    <button onClick={this.onInputFile}>Load preset(s) from file</button>
-                                    {/*data &&
+                            </div>
+                            <div className="preset-buttons">
+                                {output && <button className="space-right" onClick={() => this.readPacer(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read all presets from Pacer</button>}
+                                <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
+                                <button onClick={this.onInputFile}>Load preset(s) from file</button>
+                                {/*data &&
                                     <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
                                               label="Download preset" />
                                     */}
-                                </div>
                             </div>
                             {data && data[TARGET_PRESET][presetIndex] && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                         </div>

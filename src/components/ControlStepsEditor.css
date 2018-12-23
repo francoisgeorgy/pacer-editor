@@ -15,6 +15,7 @@
     grid: repeat(6, 1fr) / repeat(10, auto);
     justify-content: start;
     grid-gap: 6px 18px;
+    margin-top: 24px;
 }
 
 .steps > div {}

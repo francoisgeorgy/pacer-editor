@@ -150,9 +150,13 @@ class Preset extends Component {
                             produce(draft => {
                                 // draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
                                 draft.data = parseSysexDump(data);
-                                // let pId = Object.keys(draft.data[TARGET_PRESET])[0];
+
+                                // if the file contains only one preset, then automatically select it:
+                                if (Object.keys(draft.data[TARGET_PRESET]).length === 1) {
+                                    draft.presetIndex = parseInt(Object.keys(draft.data[TARGET_PRESET])[0], 10);
+                                }
+
                                 // let cId = Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0];
-                                // draft.presetIndex = parseInt(pId, 10);
                                 // draft.controlId = parseInt(cId, 10);
                             })
                         );
@@ -265,14 +269,16 @@ class Preset extends Component {
      * dataIndex is only used when dataType == "data"
      */
     updateControlStep = (controlId, stepIndex, dataType, dataIndex, value) => {
-        // console.log("Presets.updateControlStep", controlId, stepIndex, dataType, dataIndex, value);
+        console.log("Presets.updateControlStep", controlId, stepIndex, dataType, dataIndex, value);
         let v = parseInt(value, 10);
         this.setState(
             produce(draft => {
 
                 if (dataType === "data") {
                     draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["data"][dataIndex] = v;
-                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
+                    // draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
+                } else {
+                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
                 }
 
                 if (dataType === "msg_type") {
@@ -281,12 +287,14 @@ class Preset extends Component {
                     } else {
                         draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 1;
                     }
-                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
+                    // draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
                 }
 
                 if (dataType.startsWith("led_")) {
-                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
+                    // draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
                     draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["led_changed"] = true;
+                } else {
+                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
                 }
 
                 draft.changed = true;
@@ -455,15 +463,16 @@ class Preset extends Component {
                             <h2>Preset:</h2>
                             <div className="selectors">
                                 <PresetSelector data={data} currentPreset={presetIndex} onClick={this.selectPreset} />
-                                <div className="preset-buttons">
-                                    {output && <button className="space-right" onClick={() => this.readPacer(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read all presets from Pacer</button>}
-                                    <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
-                                    <button onClick={this.onInputFile}>Load preset(s) from file</button>
-                                    {/* data &&
+
+                            </div>
+                            <div className="preset-buttons">
+                                {output && <button className="space-right" onClick={() => this.readPacer(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read all presets from Pacer</button>}
+                                <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
+                                <button onClick={this.onInputFile}>Load preset(s) from file</button>
+                                {/* data &&
                                     <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
                                               label="Download preset" />
                                     */}
-                                </div>
                             </div>
                             {data && data[TARGET_PRESET][presetIndex] && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                         </div>

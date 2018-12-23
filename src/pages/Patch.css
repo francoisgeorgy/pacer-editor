@@ -34,6 +34,20 @@
 
 }
 
+.status {
+    /*font-size: 0.85rem;*/
+    margin: 24px 0;
+    color: #555;
+}
+
+.status.error {
+    color: red;
+}
+
+.status.info {
+
+}
+
 /*
 
 .presets-list {

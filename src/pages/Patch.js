@@ -10,7 +10,7 @@ import Dropzone from "react-dropzone";
 import "./Patch.css";
 import Download from "../components/Download";
 import {outputIsPacer} from "../utils/midi";
-import {dropOverlayStyle} from "../utils/misc";
+import {dropOverlayStyle, MAX_FILE_SIZE} from "../utils/misc";
 
 function batchMessages(callback, callbackBusy, wait) {
 
@@ -32,8 +32,6 @@ function batchMessages(callback, callbackBusy, wait) {
     };
 }
 
-const MAX_FILE_SIZE = 5 * 1024*1024;
-
 class Patch extends Component {
 
     // one data structure per preset
@@ -46,7 +44,9 @@ class Patch extends Component {
             data: null,     // json
             bytes: null,  // binary, will be used to download as .syx file
             // presets: [],            // array of {data, bytes}, array index is preset index, 0 = current preset
-            dropZoneActive: false
+            dropZoneActive: false,
+            // filename: null,
+            status: null
         };
     }
 
@@ -107,6 +107,16 @@ class Patch extends Component {
             async file => {
                 if (file.size > MAX_FILE_SIZE) {
                     console.warn(`${file.name}: file too big, ${file.size}`);
+                    this.setState(
+                        produce(draft => {
+                            draft.status = {
+                                severity: "error",
+                                message: `The file ${file.name} is too big.`
+                            };
+                            // draft.filename = null;
+                            this.props.onBusy({busy: false});
+                        })
+                    );
                 } else {
                     this.showBusy({busy: true, busyMessage: "loading file..."});
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
@@ -115,12 +125,26 @@ class Patch extends Component {
                             produce(draft => {
                                 draft.bytes = data;
                                 draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
-                                this.props.onBusy({busy: false});
+                                // draft.filename = file.name;
+                                draft.status = {
+                                    severity: "info",
+                                    message: `Patch file loaded: ${file.name}`
+                                };
                             })
                         );
                         // this.addInfoMessage("sysfile decoded");
                         // } else {
                         //     console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
+                    } else {
+                        this.setState(
+                            produce(draft => {
+                                // draft.filename = null;
+                                draft.status = {
+                                    severity: "error",
+                                    message: `The file ${file.name} does not contain a patch (is not a binary sysex file)`
+                                };
+                            })
+                        );
                     }
                     this.props.onBusy({busy: false});
                     // non sysex files are ignored
@@ -133,7 +157,7 @@ class Patch extends Component {
     onChangeFile = (e) => {
         // console.log("onChangeFile", e);
         var file = e.target.files[0];
-        console.log(file);
+        // noinspection JSIgnoredPromiseFromCall
         this.readFiles([file]);
     };
 
@@ -220,7 +244,7 @@ class Patch extends Component {
      */
     render() {
 
-        const { bytes, data, output, dropZoneActive } = this.state;
+        const { status, bytes, data, output, dropZoneActive } = this.state;
 
         return (
 
@@ -251,22 +275,6 @@ class Patch extends Component {
                     </div>
 
                     <div className="content">
-
-{/*
-                        <div className="instructions">
-                            A patch is a full dump of the Pacer.
-                        </div>
-*/}
-
-{/*
-                        <div className="content-row-content first">
-                            <h2>From Pacer</h2>
-                        </div>
-
-                        <div className="content-row-content first">
-                            <h2>To Pacer</h2>
-                        </div>
-*/}
 
                         <div className="content-row-content">
 
@@ -300,6 +308,12 @@ class Patch extends Component {
                                 })
                             }
                             </div>
+
+                            {status &&
+                            <div className={`status ${status.severity}`}>
+                                {status.message}
+                            </div>
+                            }
 
                             <div className="patch-actions">
                                 <div>
