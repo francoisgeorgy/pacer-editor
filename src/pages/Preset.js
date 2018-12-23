@@ -210,7 +210,7 @@ class Preset extends Component {
 
     selectPreset = (index) => {
 
-        if (!outputIsPacer(this.state.output)) return;
+        // if (!outputIsPacer(this.state.output)) return;
 
         const { data } = this.state;
         if (data && data[TARGET_PRESET] && data[TARGET_PRESET][index]) {
@@ -229,7 +229,7 @@ class Preset extends Component {
                     // }
                 }),
                 () => {
-                    if (isVal(index)) {
+                    if (outputIsPacer(this.state.output) && isVal(index)) {
                         // To get the LED data, we need to request the complete preset config instead of just the specific control's config.
                         this.readPacer(requestPreset(index), SINGLE_PRESET_EXPECTED_BYTES);
                     }

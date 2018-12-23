@@ -184,7 +184,7 @@ class PresetMidi extends Component {
     };
 
     selectPreset = (index) => {
-        if (!outputIsPacer(this.state.output)) return;
+        //if (!outputIsPacer(this.state.output)) return;
         const { data } = this.state;
         if (data && data[TARGET_PRESET] && data[TARGET_PRESET][index]) {
             this.setState(
@@ -198,7 +198,7 @@ class PresetMidi extends Component {
                     draft.presetIndex = index;
                 }),
                 () => {
-                    if (isVal(index)) {
+                    if (outputIsPacer(this.state.output) && isVal(index)) {
                         this.readPacer(requestPreset(index), SINGLE_PRESET_EXPECTED_BYTES);
                     }
                 }
