@@ -105,12 +105,3 @@ button {
 button:focus {
     outline: 0;
 }
-
-.italic {
-    font-style: italic;
-}
-
-.bold,
-.strong {
-    font-weight: bold;
-}

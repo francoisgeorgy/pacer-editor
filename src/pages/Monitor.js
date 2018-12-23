@@ -47,7 +47,9 @@ class Monitor extends Component {
                     <div>
 
                         <div className="instructions">
-                            The messages are displayed in reverse chronological order (the most recent on top). Only the last 40 messages are displayed.
+                            <div className="instruction">
+                                The messages are displayed in reverse chronological order (the most recent on top). Only the last 40 messages are displayed.
+                            </div>
                         </div>
 
                         <div className="content-row-content first">

@@ -1,6 +1,6 @@
 .patch-content {
     display: grid;
-    grid: repeat(5, 1fr) / repeat(6, auto);
+    grid: repeat(4, 1fr) / repeat(6, auto);
     grid-gap: 6px;
     justify-content: start;
     margin: 10px 30px 10px 0;
@@ -22,6 +22,16 @@
 .placeholder {
     font-style: italic;
     color: #aaa;
+}
+
+.patch-actions {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    grid-column-gap: 12px;
+    justify-content: start;
+    align-items: center;
+
 }
 
 /*

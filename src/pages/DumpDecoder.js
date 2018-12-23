@@ -149,12 +149,17 @@ class DumpDecoder extends Component {
                     </div>
 
                     <div className="content">
+
                         <div className="instructions">
-                            Send a dump from your Pacer or<br />drag & drop a patch file here.
+                            <div className="instruction">
+                                Send a dump from your Pacer or<br />drag & drop a patch file here.
+                            </div>
                         </div>
+
                         <div className="content-row-content first">
                             <DumpSysex data={data} />
                         </div>
+
                     </div>
 
 {/*

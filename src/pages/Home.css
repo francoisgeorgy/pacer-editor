@@ -1,3 +1,8 @@
+.home h1 {
+    font-size: 1.5rem;
+    margin: 8px 0;
+}
+
 .content p {
     margin: 0.5rem 0;
 }

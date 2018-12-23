@@ -440,9 +440,15 @@ class Preset extends Component {
                     <div className="content">
 
                         <div className="instructions">
-                            You can click on a preset to only load this specific preset from the Pacer. <br />
-                            Or you can use the ad-hoc button to read ALL the presets from the Pacer. <br />
-                            You can also load a patch file or send a dump from the Pacer.
+                            <div className="instruction">
+                                You can click on a preset to only load this specific preset from the Pacer.
+                            </div>
+                            <div className="instruction">
+                                Or you can use the ad-hoc button to read ALL the presets from the Pacer.
+                            </div>
+                            <div className="instruction">
+                                You can also load a patch file or send a dump from the Pacer.
+                            </div>
                         </div>
 
                         <div className="content-row-content first">

@@ -131,14 +131,14 @@ class Patch extends Component {
     }
 
     onChangeFile = (e) => {
-        console.log("onChangeFile", e);
+        // console.log("onChangeFile", e);
         var file = e.target.files[0];
         console.log(file);
         this.readFiles([file]);
     };
 
     onInputFile = (e) => {
-        console.log("onInputFile", e);
+        // console.log("onInputFile", e);
         this.inputOpenFileRef.current.click()
     };
 
@@ -252,36 +252,31 @@ class Patch extends Component {
 
                     <div className="content">
 
+{/*
                         <div className="instructions">
                             A patch is a full dump of the Pacer.
                         </div>
+*/}
 
+{/*
                         <div className="content-row-content first">
                             <h2>From Pacer</h2>
-                            <div>
-                                {output && <button className="space-right" onClick={() => this.sendSysex(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read patch from Pacer</button>}
-                            </div>
-                            <div>
-                                {data && <Download data={bytes} filename={`pacer-patch`} addTimestamp={true} className="small" label="Download patch" />}
-                            </div>
                         </div>
 
                         <div className="content-row-content first">
                             <h2>To Pacer</h2>
-                            <div>
-                                {/*{output && <button className="space-right" onClick={() => this.sendSysex(requestAllPresets())}>Read all presets from Pacer</button>}*/}
-                                <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}} onChange={this.onChangeFile} />
-                                <button onClick={this.onInputFile}>Load patch from file</button>
-                            </div>
-                            <div>
-                                {data && outputIsPacer(output) && <button onClick={() => this.updatePacer()}>Send patch to Pacer</button>}
-                            </div>
                         </div>
+*/}
 
                         <div className="content-row-content">
 
                             <div className="instructions">
-                                Presets marked "no data" are ignored. They will NOT erase the preset config in your Pacer.
+                                <div className="instruction">
+                                    Presets marked "no data" are ignored. They will NOT erase the preset config in your Pacer.
+                                </div>
+                                <div className="instruction">
+                                    A patch is a full dump of the Pacer.
+                                </div>
                             </div>
 
                             <h2>Patch content:</h2>
@@ -305,6 +300,29 @@ class Patch extends Component {
                                 })
                             }
                             </div>
+
+                            <div className="patch-actions">
+                                <div>
+                                    <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}} onChange={this.onChangeFile} />
+                                    <button onClick={this.onInputFile}>Load patch from file</button>
+                                </div>
+                                <div>
+                                    {outputIsPacer(output) && "or"}
+                                </div>
+                                <div>
+                                    {outputIsPacer(output) && <button onClick={() => this.sendSysex(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read patch from Pacer</button>}
+                                </div>
+                                <div>
+                                    {data && <Download data={bytes} filename={`pacer-patch`} addTimestamp={true} className="small" label="Save patch to file" />}
+                                </div>
+                                <div>
+                                    {data && outputIsPacer(output) && "or"}
+                                </div>
+                                <div>
+                                    {data && outputIsPacer(output) && <button onClick={() => this.updatePacer()}>Send patch to Pacer</button>}
+                                </div>
+                            </div>
+
 
                         </div>
 

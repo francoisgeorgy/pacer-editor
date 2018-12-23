@@ -26,8 +26,8 @@ const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
 );
 
 const NoMatch = () =>
-    <div className="content home full-width">
-        <div className="instructions">
+    <div className="content home">
+        <div className="error">
             Invalid URL
         </div>
     </div>;
@@ -151,7 +151,7 @@ class App extends Component {
                         {debug && <MenuLink to="/debug" label="Debug" />}
                         {!busy && <div className="spacer"> </div>}
                         {busy && <div className="busy">{busyMessage}{progress >= 0 && <div>{progress} %</div>}</div>}
-                        <div className="header-app-name">Pacer editor 0.6.0</div>
+                        <div className="header-app-name">Pacer editor 0.6.1</div>
                     </header>
 
                         <Switch>

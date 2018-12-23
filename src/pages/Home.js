@@ -6,7 +6,7 @@ class Home extends Component {
     render() {
 
         return (
-            <div className="content">
+            <div className="content home">
 
                 <h1>Requirements</h1>
 
@@ -22,29 +22,34 @@ class Home extends Component {
 
                 <div className="doc">
                     <p>The current version of this editor isn't able to edit the Global configuration of the Pacer.</p>
-                    <p>This editor does not offer patches management either.</p>
+                    <p>This editor is provided as-is, without warranty of any kind, express or implied. If you encounter a bug, please fill a bug report with <a href="https://github.com/francoisgeorgy/pacer-editor/issues/new" target="_blank" rel="noopener noreferrer">this form</a>.</p>
                 </div>
 
-                <h1>Usage</h1>
+                <h1>Connecting your Pacer</h1>
                 <div className="doc">
-                    <p>Make sure your Pacer is connected to your computer and switched-on.</p>
-                    <p>On the upper right corner of the editor, check the MIDI settings.</p>
+                    <p>1. Make sure your Pacer is connected to your computer and switched-on.</p>
+                    <p>2. In the application, check the MIDI settings.</p>
                     <p>You need to enable the following input and output ports:</p>
                     <p>- under <span className="bold" >OS X</span>:</p>
                     <img src="help-ports-osx.png" alt="" />
                     <p>- under <span className="bold" >Windows</span>:</p>
                     <img src="help-ports-windows.png" alt="" />
+                </div>
 
-                    <p className="strong">Editing presets</p>
-                    <p>The preset #0 is the <span className="italic">current</span> preset.
+                <h1>Editing presets</h1>
+                <div className="doc">
+                    <p>The preset #0 is the <span className="italic fluo">current</span><span className="fluo"> preset</span>.
                         When you edit preset #0 your changes are immediately applied.</p>
-                    <p>When you edit any other presets, your changes will only be applied when you load this preset.</p>
+                    <p>When you edit any other presets, you edit the <span className="fluo">saved</span> settings of the presets and your changes will only be applied when you load this preset in the Pacer. It is currently not possible to load the preset from this editor.</p>
+                </div>
 
-                    <p className="strong">In case of problem</p>
-                    <ol>
-                        <li>Restart your Pacer</li>
-                        <li>Reload the editor</li>
-                    </ol>
+                <h1>In case of problem</h1>
+                <div className="doc">
+                    <p>Try the following:</p>
+                    <p>- Check the MIDI configuration.</p>
+                    <p>- Reload the editor (F5 or Cmd-R or Ctrl-R)</p>
+                    <p>- Restart the Pacer.</p>
+                    <p>If you mess up the configuration of your Pacer, do a <span className="fluo">Factory Restore</span>. See page 21 of the Pacer User Guide for the procedure.</p>
                 </div>
 
                 <h1>MIDI in your browser</h1>
