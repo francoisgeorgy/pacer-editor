@@ -132,7 +132,9 @@ export const batchMessages = (callback, callbackBusy, wait) => {
 
         messages.push(event.data);
         // console.log('rec sysex', messages.length);
-        callbackBusy(messages.length);
+
+        callbackBusy(messages.length);  // messages.length is the total number of bytes received so far
+
         timeout = setTimeout(() => {
             // console.log("timeout elapsed");
             timeout = null;

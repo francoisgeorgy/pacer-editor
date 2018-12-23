@@ -10,6 +10,7 @@ import Dropzone from "react-dropzone";
 import "./Patch.css";
 import Download from "../components/Download";
 import {outputIsPacer} from "../utils/midi";
+import {dropOverlayStyle} from "../utils/misc";
 
 function batchMessages(callback, callbackBusy, wait) {
 
@@ -219,20 +220,7 @@ class Patch extends Component {
      */
     render() {
 
-        const { data, output, dropZoneActive } = this.state;
-
-        const overlayStyle = {
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-            paddingTop: '4rem',
-            background: 'rgba(0,0,0,0.4)',
-            textAlign: 'center',
-            color: '#fff',
-            fontSize: '4rem'
-        };
+        const { bytes, data, output, dropZoneActive } = this.state;
 
         return (
 
@@ -243,8 +231,9 @@ class Patch extends Component {
                 onDrop={this.onDrop}
                 onDragEnter={this.onDragEnter}
                 onDragLeave={this.onDragLeave}>
+
                 {dropZoneActive &&
-                <div style={overlayStyle}>
+                <div style={dropOverlayStyle}>
                     Drop sysex file...
                 </div>}
 
@@ -273,7 +262,7 @@ class Patch extends Component {
                                 {output && <button className="space-right" onClick={() => this.sendSysex(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read patch from Pacer</button>}
                             </div>
                             <div>
-                                {data && <Download data={data} filename={`pacer-preset`} addTimestamp={true} className="small" label="Download patch" />}
+                                {data && <Download data={bytes} filename={`pacer-patch`} addTimestamp={true} className="small" label="Download patch" />}
                             </div>
                         </div>
 

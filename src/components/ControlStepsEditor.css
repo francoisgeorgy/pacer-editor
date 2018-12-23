@@ -40,3 +40,7 @@
     color: #665;
     margin-top: 1px;
 }
+
+select.notes option {
+    text-align: justify-all;
+}

@@ -84,7 +84,7 @@ class Monitor extends Component {
                                                 break;
                                         }
                                         return (
-                                            <div>
+                                            <div key={i}>
                                                 <span className="code">[{hs(msg)}]</span>
                                                 <span className="msg-channel">Channel {m.channel}</span>
                                                 <span className="msg-name">{MESSAGE[m.messageCode]}</span>

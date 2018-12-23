@@ -2,7 +2,6 @@ import React, {Component, Fragment} from 'react';
 import PresetSelector from "../components/PresetSelector";
 import {
     ALL_PRESETS_EXPECTED_BYTES,
-    buildPresetNameSysex,
     getControlUpdateSysexMessages,
     isSysexData,
     mergeDeep,
@@ -29,6 +28,7 @@ import PortsGrid from "../components/PortsGrid";
 import {batchMessages, outputIsPacer} from "../utils/midi";
 import {dropOverlayStyle, MAX_FILE_SIZE} from "../utils/misc";
 import {updateMessageName} from "../utils/state";
+import UpdateMessages from "../components/UpdateMessages";
 
 function isVal(v) {
     return v !== undefined && v !== null && v !== '';
@@ -89,7 +89,7 @@ class Preset extends Component {
 
     handleMidiInputEvent = batchMessages(
         messages => {
-            let bytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
+            // let bytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
             this.setState(
                 produce(
                     draft => {
@@ -239,18 +239,10 @@ class Preset extends Component {
     };
 
     selectControl = (controlId) => {
-
-        //TODO: no need to read the preset data again. Just select the control from the data we must already have.
-
         // console.log(`selectControl ${controlId}`);
-
         if (isVal(this.state.presetIndex) && controlId) {
-
-            // console.log(`selectControl setState ${controlId}`);
-
             this.setState({ controlId });
         }
-
         /*
         // if the user selects another preset or control, then clear the data in the state
         this.setState(
@@ -301,8 +293,7 @@ class Preset extends Component {
 
                 if (!draft.updateMessages.hasOwnProperty(draft.presetIndex)) draft.updateMessages[draft.presetIndex] = {};
                 if (!draft.updateMessages[draft.presetIndex].hasOwnProperty(controlId)) draft.updateMessages[draft.presetIndex][controlId] = [];
-                draft.updateMessages[draft.presetIndex][controlId] = this.getUpdateMessages(draft.presetIndex, controlId, draft.data);
-
+                draft.updateMessages[draft.presetIndex][controlId] = getControlUpdateSysexMessages(draft.presetIndex, controlId, draft.data);
             })
         );
     };
@@ -322,40 +313,13 @@ class Preset extends Component {
                 if (!draft.updateMessages.hasOwnProperty(draft.presetIndex)) draft.updateMessages[draft.presetIndex] = {};
                 if (!draft.updateMessages[draft.presetIndex].hasOwnProperty(controlId)) draft.updateMessages[draft.presetIndex][controlId] = [];
 
-                draft.updateMessages[draft.presetIndex][controlId]  = this.getUpdateMessages(draft.presetIndex, controlId, draft.data);
+                draft.updateMessages[draft.presetIndex][controlId]  = getControlUpdateSysexMessages(draft.presetIndex, controlId, draft.data);
             })
         );
     };
 
-    /**
-     *
-     * @param name
-     */
     updatePresetName = (name) => {
-
-        // if (name === undefined || name === null) return;
-        //
-        // if (name.length > 5) {
-        //     console.warn(`Presets.updateName: name too long: ${name}`);
-        //     return;
-        // }
-
         this.setState(updateMessageName(this.state, {name}));
-/*
-        this.setState(updateMessageName(name));
-        this.setState(
-            produce(draft => {
-                draft.data[TARGET_PRESET][draft.presetIndex]["name"] = name;
-                draft.data[TARGET_PRESET][draft.presetIndex]["changed"] = true;
-                draft.changed = true;
-
-                if (!draft.updateMessages.hasOwnProperty(draft.presetIndex)) draft.updateMessages[draft.presetIndex] = {};
-                if (!draft.updateMessages[draft.presetIndex].hasOwnProperty("name")) draft.updateMessages[draft.presetIndex]["name"] = [];
-
-                draft.updateMessages[draft.presetIndex]["name"] = buildPresetNameSysex(draft.presetIndex, draft.data);
-            })
-        );
-*/
     };
 
     onInputConnection = (port_id) => {
@@ -428,21 +392,6 @@ class Preset extends Component {
         }, 1000);
     };
 
-    getUpdateMessages = (presetIndex, controlId, data) => {
-
-        // console.log("getUpdateMessages");
-
-        let updateMessages = getControlUpdateSysexMessages(presetIndex, controlId, data);
-        // console.log("updateMessages", updateMessages);
-
-        // let n = buildPresetNameSysex(presetIndex, data);
-        // if (n) {
-        //     updateMessages.push(n);
-        // }
-
-        return updateMessages;
-    };
-
     render() {
 
         const { output, presetIndex, controlId, data, changed, updateMessages, dropZoneActive } = this.state;
@@ -513,10 +462,8 @@ class Preset extends Component {
                             {data && data[TARGET_PRESET][presetIndex] && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                         </div>
 
-
                         <div className="content-row-content">
                             <Fragment>
-                                {/*<h2>{CONTROLS_FULLNAME[controlId]}:</h2>*/}
                                 <h2>Controls</h2>
                                 {isVal(presetIndex) && <ControlSelector currentControl={controlId} onClick={this.selectControl} />}
                                 {showEditor &&
@@ -549,23 +496,7 @@ class Preset extends Component {
                         <div className="content-row-content">
                             <div className="debug">
                                 <h4>[Debug] Update messages to send:</h4>
-                                <div className="message-to-send">
-                                    {
-                                        Object.getOwnPropertyNames(updateMessages).map(
-                                            (v, i) => {
-                                                return Object.getOwnPropertyNames(updateMessages[v]).map(
-                                                    (w, j) => {
-                                                        return updateMessages[v][w].map(
-                                                            (m, k) => {
-                                                               return (<div key={`${i}-${j}-${k}`} className="code">{hs(m)}</div>);
-                                                            }
-                                                        );
-                                                    }
-                                                );
-                                            }
-                                        )
-                                    }
-                                </div>
+                                <UpdateMessages messages={updateMessages} />
 {/*
                                 <div className="dump code">
                                     {

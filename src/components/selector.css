@@ -3,11 +3,16 @@
     /*border: 1px solid #bbbbff;*/
     background-color: #f3f3f3;
     border: 1px solid #e7e7e7;
+    color: #555;
 }
 
 .selector:hover {
     background-color: lightblue;
     border: 1px solid #aaa;
+}
+
+.selector.loaded {
+    color: #000;
 }
 
 .selector.selected {

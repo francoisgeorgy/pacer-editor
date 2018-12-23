@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import './App.css';
 import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
 import Home from "./pages/Home";
-import TestSender from "./pages/TestSender";
+import Debug from "./pages/Debug";
 import Preset from "./pages/Preset";
 import Monitor from "./pages/Monitor";
 import Footer from "./components/Footer";
@@ -148,10 +148,10 @@ class App extends Component {
                         {/*<MenuLink to="/chords" label="Chords" />*/}
                         <MenuLink to="/monitor" label="MIDI monitor" />
                         <MenuLink to="/dumpdecoder" label="Dump decoder" />
-                        {debug && <MenuLink to="/testsender" label="Debug" />}
+                        {debug && <MenuLink to="/debug" label="Debug" />}
                         {!busy && <div className="spacer"> </div>}
                         {busy && <div className="busy">{busyMessage}{progress >= 0 && <div>{progress} %</div>}</div>}
-                        <div className="header-app-name">Pacer editor 0.5.4</div>
+                        <div className="header-app-name">Pacer editor 0.6.0</div>
                     </header>
 
                         <Switch>
@@ -210,9 +210,9 @@ class App extends Component {
                                 )
                             }/>
                             {debug &&
-                            <Route path="/testsender" render={
+                            <Route path="/debug" render={
                                 props => (
-                                    <TestSender onBusy={this.onBusy} debug={debug} />
+                                    <Debug onBusy={this.onBusy} debug={debug} />
                                 )
                             }/>
                             }

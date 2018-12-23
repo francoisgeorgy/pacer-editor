@@ -31,7 +31,7 @@ class Home extends Component {
                     <p>On the upper right corner of the editor, check the MIDI settings.</p>
                     <p>You need to enable the following input and output ports:</p>
                     <p>- under <span className="bold" >OS X</span>:</p>
-                    <img src="help-ports-osx-no-retina.png" alt="" />
+                    <img src="help-ports-osx.png" alt="" />
                     <p>- under <span className="bold" >Windows</span>:</p>
                     <img src="help-ports-windows.png" alt="" />
 

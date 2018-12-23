@@ -11,20 +11,16 @@ import {
 import {ANY_MIDI_PORT, SYSEX_SIGNATURE} from "../pacer/constants";
 import {outputById} from "../utils/ports";
 import {fromHexString, h, hs} from "../utils/hexstring";
-import "./TestSender.css";
+import "./Debug.css";
 import {produce} from "immer";
 import DumpSysex from "../components/DumpSysex";
 import {PACER_MIDI_PORT_NAME, SYSEX_HEADER} from "../pacer/constants";
 import Midi from "../components/Midi";
 import PortsGrid from "../components/PortsGrid";
-
+import {batchMessages} from "../utils/midi";
 
 function replacerDec2Hex(key, value) {
     return typeof value === 'number' ? '0x' + h(value) : value;
-    // if (typeof value === 'number') {
-    //     value = 2 * value;
-    // }
-    // return value;
 }
 
 function toSysExMessage(data) {
@@ -33,42 +29,45 @@ function toSysExMessage(data) {
     return [SYSEX_START, ...SYSEX_SIGNATURE, ...data, SYSEX_END];
 }
 
-function batchMessages(callback, wait) {
+// function batchMessages(callback, wait) {
+//
+//     let messages = [];  // batch of received messages
+//     let timeout;
+//
+//     return function() {
+//         clearTimeout(timeout);
+//         let event = arguments[0];
+//         messages.push(event.data);
+//         timeout = setTimeout(() => {
+//             // console.log("timeout elapsed");
+//             timeout = null;
+//             callback(messages);
+//             messages = [];
+//         }, wait);
+//     };
+// }
 
-    let messages = [];  // batch of received messages
-    let timeout;
-
-    return function() {
-        clearTimeout(timeout);
-        let event = arguments[0];
-        messages.push(event.data);
-        timeout = setTimeout(() => {
-            // console.log("timeout elapsed");
-            timeout = null;
-            callback(messages);
-            messages = [];
-        }, wait);
-    };
-}
-
-
-class TestSender extends Component {
+class Debug extends Component {
 
     state = {
         output: null,           // MIDI output port used for output
         data: null,
         messages: [{
             name: "read current preset",
-            message: requestPreset(0)
+            message: requestPreset(0),
+            bytesExpected: 189
         }, {
             name: "read preset A1",
-            message: requestPreset(1)
+            message: requestPreset(1),
+            bytesExpected: 189
         }, {
             name: "read stompswitch #1 of preset #5",
-            message: requestPresetObj(5, 0x0D)
+            message: requestPresetObj(5, 0x0D),
+            bytesExpected: 7
         }, {
             name: "read all presets (takes some time)",
-            message: requestAllPresets()
+            message: requestAllPresets(),
+            bytesExpected: 4536
         }],
         customMessage: ""
     };
@@ -76,9 +75,99 @@ class TestSender extends Component {
     /**
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
-    showBusy = () =>  {
-        setTimeout(() => this.props.onBusy(false), 30000);
-        this.props.onBusy(true);
+    showBusy = ({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) =>  {
+        // console.log("show busy", busyMessage);
+        setTimeout(() => this.props.onBusy({busy: false}), 20000);
+        this.props.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
+    };
+
+/*
+    handleMidiInputEvent = (event) => {
+        // console.log("TestSender.handleMidiInputEvent", event, event.data);
+        // if (event instanceof MIDIMessageEvent) {
+        if (isSysexData(event.data)) {
+            this.setState(
+                produce(draft => {
+                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
+                    // this.props.onBusy(false);
+                })
+            )
+        } else {
+            console.log("MIDI message is not a sysex message")
+        }
+        // }
+    };
+*/
+
+    handleMidiInputEvent = batchMessages(
+        messages => {
+            console.log(`total bytes received = ${messages.length}`);
+            this.setState(
+                produce(
+                    draft => {
+                        for (let m of messages) {
+                            if (isSysexData(m)) {
+                                draft.data = mergeDeep(draft.data || {}, parseSysexDump(m));
+                            } else {
+                                console.log("MIDI message is not a sysex message")
+                            }
+                        }
+                        // let pId = Object.keys(draft.data[TARGET_PRESET])[0];
+                        // draft.presetIndex = parseInt(pId, 10);
+                    }
+                )
+            );
+            // let bytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
+            // this.addInfoMessage(`${messages.length} messages received (${bytes} bytes)`);
+            this.props.onBusy({busy: false});
+        },
+        (n) => {
+            // console.log(n);
+            this.props.onBusy({busy: true, bytesReceived: n});
+        },
+        1000
+    );
+
+    onOutputConnection = (port_id) => {
+        console.log("onOutputConnection");
+        this.setState(
+            produce(draft => {
+                draft.output = port_id;
+            })
+        );
+        // this.addInfoMessage(`output ${outputName(port_id)} connected`);
+    };
+
+    onOutputDisconnection = (port_id) => {
+        console.log("onOutputDisconnection");
+        this.setState(
+            produce(draft => {
+                draft.output = null;        // we manage only one output connection at a time
+            })
+        );
+        // this.addInfoMessage(`output ${outputName(port_id)} disconnected`);
+    };
+
+    /**
+     *
+     * @param msg
+     */
+    sendSysex = msg => {
+        // console.log("sendSysex", msg);
+        if (!this.state.output) {
+            console.warn("no output enabled to send the message");
+            return;
+        }
+        let out = outputById(this.state.output);
+        if (!out) {
+            console.warn(`send: output ${this.state.output} not found`);
+            return;
+        }
+        this.showBusy();
+        this.setState(
+            {data: null},
+            () => out.sendSysex(SYSEX_SIGNATURE, msg)
+        );
     };
 
     updateCustomMessage = (event) => {
@@ -109,7 +198,10 @@ class TestSender extends Component {
 
     sendCustomMessage = () => {
         let d = this.getCustomMessageData();
-        if (d && d.length > 0) this.sendSysex(d);
+        if (d && d.length > 0) {
+            this.showBusy({busy: true, busyMessage: "receiving data...", bytesReceived: 0, bytesExpected: -1});
+            this.sendSysex(d);
+        }
         // if (this.state.customMessage) {
         //     let data = Array.from(fromHexString(this.state.customMessage, / /g));
         //     if (data && data.length > 0) {
@@ -119,72 +211,9 @@ class TestSender extends Component {
         // }
     };
 
-/*
-    handleMidiInputEvent = (event) => {
-        // console.log("TestSender.handleMidiInputEvent", event, event.data);
-        // if (event instanceof MIDIMessageEvent) {
-        if (isSysexData(event.data)) {
-            this.setState(
-                produce(draft => {
-                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
-                    // this.props.onBusy(false);
-                })
-            )
-        } else {
-            console.log("MIDI message is not a sysex message")
-        }
-        // }
-    };
-*/
-
-    handleMidiInputEvent = batchMessages(
-        messages => {
-            this.setState(
-                produce(
-                    draft => {
-                        for (let m of messages) {
-                            if (isSysexData(m)) {
-                                draft.data = mergeDeep(draft.data || {}, parseSysexDump(m));
-                            } else {
-                                console.log("MIDI message is not a sysex message")
-                            }
-                        }
-                    }
-                )
-            );
-            // let bytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
-            // this.addInfoMessage(`${messages.length} messages received (${bytes} bytes)`);
-            this.props.onBusy(false);
-        },
-        1000
-    );
-
-
-    setOutput = (port_id) => {
-        this.setState({output: port_id});
-    };
-
-    /**
-     *
-     * @param msg
-     */
-    sendSysex = msg => {
-        console.log("sendSysex", msg);
-        if (!this.state.output) return;
-        let out = outputById(this.state.output);
-        if (!out) {
-            console.warn(`send: output ${this.state.output} not found`);
-            return;
-        }
-        this.showBusy();
-        this.setState(
-            {data: null},
-            () => out.sendSysex(SYSEX_SIGNATURE, msg)
-        );
-    };
-
     sendMessage = (msg) => {
-        this.sendSysex(msg);
+        this.showBusy({busy: true, busyMessage: "receiving data...", bytesReceived: 0, bytesExpected: msg.bytesExpected});
+        this.sendSysex(msg.message);
     };
 
     /**
@@ -196,14 +225,6 @@ class TestSender extends Component {
 
         const cs = checksum(fromHexString(customMessage, / /g));
 
-/*
-        let hex_msg = '';
-        if (customMessage.length % 2) {
-            hex_msg = hs(customMessage);
-        } else {
-            hex_msg = hs(customMessage.substring(0, customMessage.length - 1)) + ' ' + customMessage.substr(-1, 1);
-        }
-*/
         let hex_msg = '';
         let s = (customMessage.toUpperCase().match(/[0-9A-F]+/g) || []).join('');
         for (let i=0; i < s.length; i++) {
@@ -212,19 +233,17 @@ class TestSender extends Component {
         }
 
         let u = toSysExMessage(this.getCustomMessageData());
-        // console.log("u", u);
         let v = u ? JSON.stringify(parseSysexDump(Uint8Array.from(toSysExMessage(this.getCustomMessageData()))), replacerDec2Hex, 4) : "";
-
 
         return (
             <div className="wrapper">
-
 
                 <div className="subheader">
                     <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
                           portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
                           onMidiInputEvent={this.handleMidiInputEvent}
-                          className="" >
+                          onOutputConnection={this.onOutputConnection}
+                          onOutputDisconnection={this.onOutputDisconnection}>
                         <div className="no-midi">Please connect your Pacer to your computer.</div>
                     </Midi>
                 </div>
@@ -236,7 +255,7 @@ class TestSender extends Component {
                         <div className="content-row-content-content">
                         {messages.map((msg, i) =>
                             <div key={i} className="send-message">
-                                <button onClick={() => this.sendMessage(msg.message)}>send</button>
+                                <button onClick={() => this.sendMessage(msg)}>send</button>
                                 <span className="code light">{ hs(SYSEX_SIGNATURE.concat(msg.message.slice(0, 1))) } </span>
                                 <span className="code">{ hs(msg.message.slice(1, -1)) } </span>
                                 <span className="code light"> {hs(msg.message.slice(-1))}</span>
@@ -250,7 +269,7 @@ class TestSender extends Component {
                         <h2>Custom message:</h2>
                         <div className="content-row-content-content">
                             <div className="send-message">
-                                <button onClick={this.sendCustomMessage} disabled={(customMessage.length % 2) !== 0}>send</button>
+                                <button onClick={this.sendCustomMessage} disabled={(s.length % 2) !== 0}>send</button>
                                 <span className="code light">{hs(SYSEX_SIGNATURE)} {hs(SYSEX_HEADER)} </span>
                                 <input type="text" className="code" size="80" value={customMessage}
                                        placeholder={"hex digits only"} onChange={this.updateCustomMessage} />
@@ -300,7 +319,7 @@ class TestSender extends Component {
                         {data &&
                         <div className="debug">
                             <h4>[Debug] sysex data received:</h4>
-                            <pre>{JSON.stringify(data, null, 4)}</pre>
+                            {/*<pre>{JSON.stringify(data, null, 4)}</pre>*/}
                         </div>
                         }
                     </div>
@@ -313,4 +332,4 @@ class TestSender extends Component {
     }
 }
 
-export default TestSender;
+export default Debug;

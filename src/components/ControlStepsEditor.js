@@ -45,12 +45,12 @@ const LEDNum = ({ current_value, onChange }) => {
 
 const MidiNote = ({ note, onChange }) => {
     return (
-        <select value={note} onChange={(event) => onChange(event.target.value)}>
+        <select value={note} onChange={(event) => onChange(event.target.value)} className="notes">
             {
                 Array.from(Array(127).keys()).map(
                     i => {
                         let n = Note.fromMidi(i, true);
-                        return <option key={i} value={i}>{n}</option>
+                        return <option key={i} value={i}>{n} ({i})</option>
                     })
             }
         </select>

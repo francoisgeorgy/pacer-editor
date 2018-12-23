@@ -2,7 +2,6 @@ import React, {Component, Fragment} from 'react';
 import PresetSelector from "../components/PresetSelector";
 import {
     ALL_PRESETS_EXPECTED_BYTES,
-    buildPresetNameSysex, getControlUpdateSysexMessages,
     getMidiSettingUpdateSysexMessages,
     isSysexData,
     mergeDeep,
@@ -27,6 +26,7 @@ import PortsGrid from "../components/PortsGrid";
 import {batchMessages, outputIsPacer} from "../utils/midi";
 import {dropOverlayStyle, MAX_FILE_SIZE} from "../utils/misc";
 import {updateMessageName} from "../utils/state";
+import UpdateMessages from "../components/UpdateMessages";
 
 function isVal(v) {
     return v !== undefined && v !== null && v !== '';
@@ -34,14 +34,18 @@ function isVal(v) {
 
 class PresetMidi extends Component {
 
-    state = {
-        output: null,       // MIDI output port used for output
-        presetIndex: null,  //
-        changed: false,     // true when the control has been edited
-        updateMessages: {},
-        data: null          // ,
-        // statusMessages: []
-    };
+    constructor(props) {
+        super(props);
+        this.inputOpenFileRef = React.createRef();
+        this.state = {
+            output: null,       // MIDI output port used for output
+            presetIndex: null,  //
+            changed: false,     // true when the control has been edited
+            updateMessages: {},
+            data: null          // ,
+            // statusMessages: []
+        };
+    }
 
     /**
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
@@ -175,14 +179,12 @@ class PresetMidi extends Component {
                 changed: false,
                 dropZoneActive: false
             },
-            () => {this.readFiles(files)}   // returned promise from readFiles() is ignored, this is normal.
+            () => { this.readFiles(files) }   // returned promise from readFiles() is ignored, this is normal.
         );
     };
 
     selectPreset = (index) => {
-
         if (!outputIsPacer(this.state.output)) return;
-
         const { data } = this.state;
         if (data && data[TARGET_PRESET] && data[TARGET_PRESET][index]) {
             this.setState(
@@ -194,10 +196,6 @@ class PresetMidi extends Component {
             this.setState(
                 produce(draft => {
                     draft.presetIndex = index;
-                    // if (index !== this.state.presetIndex) {
-                    //     draft.data = null;
-                    //     draft.changed = false;
-                    // }
                 }),
                 () => {
                     if (isVal(index)) {
@@ -205,9 +203,6 @@ class PresetMidi extends Component {
                     }
                 }
             );
-            // if (isVal(index)) {
-            //     this.readPacer(requestPreset(index), SINGLE_PRESET_EXPECTED_BYTES);
-            // }
         }
     };
 
@@ -235,8 +230,10 @@ class PresetMidi extends Component {
 
                 draft.changed = true;
 
-                if (!draft.updateMessages.hasOwnProperty(draft.presetIndex)) draft.updateMessages[draft.presetIndex] = [];
-                draft.updateMessages[draft.presetIndex] = this.getUpdateMessages(draft.presetIndex, draft.data);
+                // we use a similar data structure as in Preset.js, with controlId replaced by "midi"
+                if (!draft.updateMessages.hasOwnProperty(draft.presetIndex)) draft.updateMessages[draft.presetIndex] = {};
+                if (!draft.updateMessages[draft.presetIndex].hasOwnProperty("midi")) draft.updateMessages[draft.presetIndex]["midi"] = [];
+                draft.updateMessages[draft.presetIndex]["midi"] = getMidiSettingUpdateSysexMessages(draft.presetIndex, draft.data);
 
             })
         );
@@ -294,17 +291,24 @@ class PresetMidi extends Component {
     };
 
     updatePacer = (messages) => {
-        this.showBusy({busy: true, busyMessage: "sending data..."});
-        for (let m of messages) {
-            this.sendSysex(m);
-        }
+        this.showBusy({busy: true, busyMessage: "write Preset..."});
+        Object.getOwnPropertyNames(messages).forEach(
+            v => {
+                Object.getOwnPropertyNames(messages[v]).forEach(
+                    w => {
+                        messages[v][w].forEach(
+                            m => {
+                                this.sendSysex(m);
+                            }
+                        );
+                    }
+                );
+            }
+        );
         setTimeout(() => {
-            this.readPacer(requestPreset(this.state.presetIndex), SINGLE_PRESET_EXPECTED_BYTES);
+            // console.log("updatePacer: clear changed flag and updateMessages array");
+            this.setState({changed: false, updateMessages: {}}, () => this.readPacer(requestPreset(this.state.presetIndex), SINGLE_PRESET_EXPECTED_BYTES, "read updated preset"));
         }, 1000);
-    };
-
-    getUpdateMessages = (presetIndex, data) => {
-        return getMidiSettingUpdateSysexMessages(presetIndex, data);
     };
 
     render() {
@@ -400,21 +404,7 @@ class PresetMidi extends Component {
                         <div className="content-row-content first">
                             <div className="debug">
                                 <h4>[Debug] Update messages to send:</h4>
-                                <div className="message-to-send">
-                                    {
-                                        Object.getOwnPropertyNames(updateMessages).map(
-                                            (v, i) => {
-                                                console.log('v', v);
-                                                return updateMessages[v].map(
-                                                    (m, j) => {
-                                                        console.log('m', m);
-                                                        return (<div key={`${i}-${j}`} className="code">{hs(m)}</div>);
-                                                    }
-                                                );
-                                            }
-                                        )
-                                    }
-                                </div>
+                                <UpdateMessages messages={updateMessages} />
 {/*
                                 <div className="dump code">
                                     {

@@ -10,5 +10,4 @@ const Status = ({ messages }) =>
         }
     </div>;
 
-
 export default Status;

@@ -202,7 +202,7 @@ class Patches extends Component {
      */
     render() {
 
-        const { data, output, dropZoneActive } = this.state;
+        const { bytes, data, output, dropZoneActive } = this.state;
 
         const overlayStyle = {
             position: 'absolute',
@@ -273,13 +273,15 @@ class Patches extends Component {
                             {
                                 Array.from(Array(24+1).keys()).map(
                                 index => {
+
                                     let id = presetIndexToXY(index);
                                     let show = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
                                     let name = show ? data[TARGET_PRESET][index]["name"] : "";
 
                                     if (show) {
-                                        console.log("bytes", typeof data[TARGET_PRESET][index]["bytes"], Array.from(data[TARGET_PRESET][index]["bytes"]));
-                                        console.log("hs(bytes)", hs(Array.from(data[TARGET_PRESET][index]["bytes"])));
+                                        // console.log("bytes", typeof data[TARGET_PRESET][index]["bytes"], Array.from(data[TARGET_PRESET][index]["bytes"]));
+                                        // console.log("hs(bytes)", hs(Array.from(data[TARGET_PRESET][index]["bytes"])));
+                                        console.log("hs(bytes)", hs(Array.from(bytes)));
                                     }
 
                                     return (
@@ -287,7 +289,7 @@ class Patches extends Component {
                                             <div className="right-align">{index}</div>
                                             <div>{id}</div>
                                             {show ? <div>{name}</div> : <div className="placeholder">no data</div>}
-                                            {show ? <Download data={data[TARGET_PRESET][index]} filename={`pacer-preset-${presetIndexToXY(index)}`} addTimestamp={true}
+                                            {show ? <Download data={bytes} filename={`pacer-preset-${presetIndexToXY(index)}`} addTimestamp={true}
                                                               className="small" label="download" /> : <button className="small disabled">download</button>}
                                             {/*<button className="small">upload</button>*/}
                                             <div>{show ? hs(data[TARGET_PRESET][index]["bytes"]) : "-"}</div>

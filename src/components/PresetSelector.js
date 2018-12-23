@@ -4,10 +4,14 @@ import "./selector.css";
 import {presetXYToIndex} from "../pacer/utils";
 import {TARGET_PRESET} from "../pacer/constants";
 
-const Selector = ({ id, index, name, selected, onClick }) =>
-    <div className={selected ? "selector selected" : "selector"} onClick={() => onClick(index)}>
+const Selector = ({ id, index, hasData, name, selected, onClick }) => {
+    let c = "selector";
+    if (selected) c += " selected";
+    if (!selected && hasData) c += " loaded";
+    return (<div className={c} onClick={() => onClick(index)}>
         <span className="preset-id">{id}</span> <span className="preset-name">{name}</span>
-    </div>;
+    </div>);
+};
 
 const PresetSelector = ({ data, currentPreset, onClick }) =>
     <Fragment>
@@ -33,10 +37,10 @@ const PresetSelector = ({ data, currentPreset, onClick }) =>
                         let id = letter + (digit + 1);
                         let index = presetXYToIndex(id);
 
-                        let show = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
-                        let name = show ? data[TARGET_PRESET][index]["name"] : "";
+                        let hasData = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
+                        let name = hasData ? data[TARGET_PRESET][index]["name"] : "";
 
-                        return <Selector id={id} index={index} name={name} selected={index === currentPreset} onClick={onClick} key={index} />
+                        return <Selector id={id} index={index} hasData={hasData} name={name} selected={index === currentPreset} onClick={onClick} key={index} />
                     })
                 }
                 </Fragment>

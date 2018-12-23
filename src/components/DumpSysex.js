@@ -3,7 +3,7 @@ import "./DumpSysex.css";
 import {
     MSG_SW_NOTE,
     TARGET_PRESET,
-    MSG_TYPES, COLORS, CONTROLS_FULLNAME
+    MSG_TYPES, COLORS, CONTROLS_FULLNAME, CONTROL_MODES
 } from "../pacer/constants";
 import {h, hs} from "../utils/hexstring";
 import "./DumpSysex.css";
@@ -102,6 +102,10 @@ const ControlTable = ({ obj, config }) => {
                             </tr>
                         )}
                     )}
+                    <tr>
+                        <td colSpan={10}>control mode: {CONTROL_MODES[config["control_mode"]]}</td>
+
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -144,9 +148,9 @@ const DumpSysex = ({ data }) => {
             {
                 data && <Presets presets={data[TARGET_PRESET]} />
             }
-            {
-                JSON.stringify(data, null, 4)
-            }
+            {/*
+                data ? JSON.stringify(data, null, 4) : ""
+            */}
         </div>
     );
 };
