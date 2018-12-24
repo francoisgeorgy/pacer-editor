@@ -210,8 +210,8 @@ class Patch extends Component {
         );
     };
 
-    sendSysex = (msg, bytesExpected) => {
-        console.log("sendSysex", msg, bytesExpected);
+    sendSysex = (msg, bytesExpected = 0) => {
+        // console.log("sendSysex", msg, bytesExpected);
         if (!this.state.output) {
             console.warn("no output enabled to send the message");
             return;
@@ -232,12 +232,12 @@ class Patch extends Component {
         this.sendSysex(msg);
     };
 
-    updatePacer = (messages) => {
+    // updatePacer = (messages) => {
         // for (let m of messages) {
         //     this.sendSysex(m);
         // }
         // this.addInfoMessage(`update${messages.length > 1 ? 's' : ''} sent to Pacer`);
-    };
+    // };
 
     /**
      * @returns {*}
@@ -333,7 +333,7 @@ class Patch extends Component {
                                     {data && outputIsPacer(output) && "or"}
                                 </div>
                                 <div>
-                                    {data && outputIsPacer(output) && <button onClick={() => this.updatePacer()}>Send patch to Pacer</button>}
+                                    {data && outputIsPacer(output) && <button onClick={() => this.sendSysex(Array.from(bytes))}>Send patch to Pacer</button>}
                                 </div>
                             </div>
 
