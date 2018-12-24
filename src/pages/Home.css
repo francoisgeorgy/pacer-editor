@@ -3,8 +3,13 @@
     margin: 8px 0;
 }
 
+.home h3 {
+    font-weight: bold;
+}
+
 .content p {
-    margin: 0.5rem 0;
+    margin: 0 0 0.25rem 0;
+    line-height: 150%;
 }
 
 .empty {
@@ -13,4 +18,9 @@
 
 .doc {
     margin-bottom: 2rem;
+    /*line-height: 125%;*/
+}
+
+.doc > div {
+    margin-top: 1rem;
 }

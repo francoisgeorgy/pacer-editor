@@ -30,17 +30,39 @@ class Home extends Component {
                     <p>1. Make sure your Pacer is connected to your computer and switched-on.</p>
                     <p>2. In the application, check the MIDI settings.</p>
                     <p>You need to enable the following input and output ports:</p>
-                    <p>- under <span className="bold" >OS X</span>:</p>
+                    <p><span className="bold" >Mac</span>:</p>
                     <img src="help-ports-osx.png" alt="" />
-                    <p>- under <span className="bold" >Windows</span>:</p>
+                    <p><span className="bold" >Windows</span>:</p>
                     <img src="help-ports-windows.png" alt="" />
+                    <p>This editor listen on all MIDI ports. A future version may offer the possibility to choose a specific port.</p>
                 </div>
 
                 <h1>Editing presets</h1>
                 <div className="doc">
-                    <p>The preset #0 is the <span className="italic fluo">current</span><span className="fluo"> preset</span>.
-                        When you edit preset #0 your changes are immediately applied.</p>
-                    <p>When you edit any other presets, you edit the <span className="fluo">saved</span> settings of the presets and your changes will only be applied when you load this preset in the Pacer. It is currently not possible to load the preset from this editor.</p>
+                    <p>The preset <span className="strong">CUR</span> is the <span className="italic fluo">current</span> preset.
+                        When you edit preset <span className="strong">CUR</span> your changes are immediately applied.</p>
+                    <p>When you edit any other presets, you edit the <span className="fluo">saved</span> settings of the preset
+                        and your changes will only be applied when you <span className="fluo">load</span> this preset in the Pacer.</p>
+
+                    <p>It is currently not possible to load the preset from this editor.</p>
+
+                    <div>
+                        <h3>Example 1:</h3>
+                        <p>The currently loaded preset (CUR) is preset <span className="strong">A5</span>.</p>
+                        <p>You edit the preset <span className="strong">A5</span>.</p>
+                        <p>After you save your modifications, the display will show dots. That means the current preset does not reflect the saved preset anymore.
+                            You have to <span className="fluo">reload</span> the preset to be able to use your updated version:</p>
+                        <p>- long-press <span className="strong">Preset</span> switch, then press switch <span className="strong">A</span>, then press switch <span className="strong">5</span>.</p>
+                    </div>
+
+                    <div>
+                        <h3>Example 1:</h3>
+                        <p>The currently loaded preset (CUR) is preset <span className="strong">A1</span>.</p>
+                        <p>You edit the preset <span className="strong">D3</span>.</p>
+                        <p>After you save your modifications of preset <span className="strong">D3</span>, if you want to use it, of course you have to load it:</p>
+                        <p>- long-press <span className="strong">Preset</span> switch, then press switch <span className="strong">D</span>, then press switch <span className="strong">3</span>.</p>
+                    </div>
+
                 </div>
 
                 <h1>In case of problem</h1>
@@ -83,8 +105,8 @@ class Home extends Component {
                 <h1>Thanks</h1>
 
                 <div className="doc">
-                    Thank you to the Nektar support service for having provided precious informations regarding the SysEx data format of the Pacer.
-                    This editor would not have been possible without their support.
+                    <p>Thank you to the Nektar support service for having provided precious informations regarding the SysEx data format of the Pacer.
+                        This editor would not have been possible without their support.</p>
                 </div>
 
             </div>
