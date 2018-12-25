@@ -425,6 +425,8 @@ h3 {
 
 .preset-buttons {
     margin-top: 10px;
+    display: flex;
+    flex-direction: row;
 }
 
 .preset-buttons button {

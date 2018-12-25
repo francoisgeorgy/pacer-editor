@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Print SysEx dump</title>
+    <meta name="author" content="francois.georgy@gmail.com">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<pre id="data"></pre>
+    <script>
+        const SYSEX_START = 0xF0;
+        const SYSEX_END = 0xF7;
+
+        var midi = null;  // global MIDIAccess object
+
+        const COLS = 8;
+        const EOL = '\n';
+
+        String.prototype.padZero = function (len, c) {
+            var s = '', c = c || '0', len = (len || 2) - this.length;
+            while (s.length < len) s += c;
+            return s + this;
+        };
+
+        function h(v) {
+            return v.toString(16).toUpperCase().padZero(2);
+        }
+
+        function getHexRepr(data) {
+
+            var s = '';
+
+            var k = 0;
+            for (let i = 0; i < data.byteLength; i++) {
+
+                s += h(data[i]) + ' ';
+
+                k++;
+
+                if ((k % COLS) == 0) {
+                    s += EOL;
+                }
+            }
+
+            s += EOL;
+
+            return s;
+        }
+
+        function displaySysEx(bytes) {
+            $("#data").append(`${getHexRepr(bytes)}`);
+        }
+
+        function handleMessage(event) {
+            if (event instanceof MIDIMessageEvent) {
+                if (event.data[0] == SYSEX_START) {
+                    displaySysEx(event.data);
+                }
+            }
+        }
+
+        function subscribeInputs(midiAccess) {
+            var inputs = midiAccess.inputs.values();
+            for (var input = inputs.next(); input && !input.done; input = inputs.next()) {
+                input.value.onmidimessage = handleMessage;
+            }
+        }
+
+        $(function () {
+
+            navigator.requestMIDIAccess({ sysex: true }).then(onMIDISuccess, onMIDIFailure);
+
+            function onMIDISuccess(midiAccess) {
+                midi = midiAccess;
+                subscribeInputs(midi);
+            }
+
+            function onMIDIFailure(msg) {
+                console.warn("onMIDIFailure", msg);
+            }
+        });
+    </script>
+</body>
+</html>

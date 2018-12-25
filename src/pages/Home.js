@@ -11,17 +11,17 @@ class Home extends Component {
                 <h1>Requirements</h1>
 
                 <div className="doc">
-                    <p>This application requires a browser that support
+                    <p>This editor requires a browser that support
                         the <a href="http://webaudio.github.io/web-midi-api/" target="_blank" rel="noopener noreferrer">Web MIDI API</a>.</p>
-
                     <p>Currently, only <span className="strong">Chrome</span> and <span className="strong">Opera</span> support this standard.
                         This application will therefore <span className="italic">not</span> work in Firefox, Safari, IE or Edge.</p>
+                    <p>This editor does not work on iPad or Android tablet either.</p>
                 </div>
 
                 <h1>Limitations</h1>
 
                 <div className="doc">
-                    <p>The current version of this editor isn't able to edit the Global configuration of the Pacer.</p>
+                    <p>The current version of this editor isn't able to edit the Global configuration of the Pacer. This is planned for a future release.</p>
                     <p>This editor is provided as-is, without warranty of any kind, express or implied. If you encounter a bug, please fill a bug report with <a href="https://github.com/francoisgeorgy/pacer-editor/issues/new" target="_blank" rel="noopener noreferrer">this form</a>.</p>
                 </div>
 
@@ -91,6 +91,12 @@ class Home extends Component {
 
                 <div className="doc">
                     <p><i>To be completed...</i></p>
+                </div>
+
+                <h1>Known issues</h1>
+
+                <div className="doc">
+                    <p>- The preset D6 can not be read by sending a "read preset" sysex. You have to dump it from the Pacer.</p>
                 </div>
 
                 <h1>Contribute</h1>
