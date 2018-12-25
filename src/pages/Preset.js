@@ -359,7 +359,7 @@ class Preset extends Component {
     };
 
     sendSysex = msg => {
-        console.log("sendSysex", hs(msg));
+        // console.log("sendSysex", hs(msg));
         if (!this.state.output) {
             console.warn("no output enabled to send the message");
             return;
