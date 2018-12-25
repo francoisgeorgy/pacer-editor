@@ -722,7 +722,8 @@ function buildControlStepLedSysex(presetIndex, controlId, steps) {
         msg.push((i-1)*4 + 0x40, 1, step.led_midi_ctrl, 0x00);
         msg.push((i-1)*4 + 0x41, 1, step.led_active_color, 0x00);
         msg.push((i-1)*4 + 0x42, 1, step.led_inactive_color, 0x00);
-        msg.push((i-1)*4 + 0x43, 1, step.led_num, 0x00);
+        // msg.push((i-1)*4 + 0x43, 1, step.led_num, 0x00);
+        msg.push((i-1)*4 + 0x43, 1, step.led_num);
 
         // add checksum:
         msg.push(checksum(msg));

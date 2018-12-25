@@ -47,6 +47,10 @@ class PresetMidi extends Component {
         };
     }
 
+    clearData = () => {
+        this.setState({data: null, updateMessages: {}, changed: false});
+    };
+
     /**
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
@@ -384,6 +388,7 @@ class PresetMidi extends Component {
                                     <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
                                               label="Download preset" />
                                     */}
+                                <button onClick={this.clearData}>CLEAR</button>
                             </div>
                             {data && data[TARGET_PRESET][presetIndex] && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                         </div>

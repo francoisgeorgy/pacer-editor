@@ -319,7 +319,7 @@ class Debug extends Component {
                         {data &&
                         <div className="debug">
                             <h4>[Debug] sysex data received:</h4>
-                            {/*<pre>{JSON.stringify(data, null, 4)}</pre>*/}
+                            <pre>{JSON.stringify(data, null, 4)}</pre>
                         </div>
                         }
                     </div>

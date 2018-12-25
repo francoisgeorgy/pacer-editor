@@ -432,7 +432,12 @@ h3 {
 .preset-buttons button {
     display: block;
     margin-bottom: 12px;
+    margin-right: 16px;
 }
+
+/*.preset-buttons button#clear-data {*/
+    /*align-self: flex-end;*/
+/*}*/
 
 select, input {
     font-size: 0.875rem

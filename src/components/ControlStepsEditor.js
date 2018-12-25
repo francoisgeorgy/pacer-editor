@@ -123,6 +123,13 @@ const Step = ({ index, config, updateCallback }) => {
             <div>{d1}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type] ? MSG_TYPES_DATA_HELP[config.msg_type][1] : ''}</div></div>
             <div>{d2}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type] ? MSG_TYPES_DATA_HELP[config.msg_type][2] : ''}</div></div>
             <div>
+                <select value={config.channel} onChange={(event) => updateCallback("channel", null, event.target.value)}>
+                    {
+                        Array.from(Array(16).keys()).map(i => <option key={i} value={i}>{i}</option>)
+                    }
+                </select>
+            </div>
+            <div>
                 <LEDColor current_value={config.led_inactive_color} onChange={(value) => updateCallback("led_inactive_color", null, value)} />
             </div>
             <div>
@@ -133,13 +140,6 @@ const Step = ({ index, config, updateCallback }) => {
             </div>
             <div>
                 <LEDMidi current_value={config.led_midi_ctrl} onChange={(value) => updateCallback("led_midi_ctrl", null, value)} />
-            </div>
-            <div>
-                <select value={config.channel} onChange={(event) => updateCallback("channel", null, event.target.value)}>
-                    {
-                        Array.from(Array(16).keys()).map(i => <option key={i} value={i}>{i}</option>)
-                    }
-                </select>
             </div>
         </Fragment>
     );
@@ -164,11 +164,11 @@ class ControlStepsEditor extends Component {
                 <div className="step-col-header">Data 1</div>
                 <div className="step-col-header">Data 2</div>
                 <div className="step-col-header">Data 3</div>
+                <div className="step-col-header">MIDI Ch.</div>
                 <div className="step-col-header">LED Off</div>
                 <div className="step-col-header">LED On</div>
                 <div className="step-col-header">LED Num</div>
                 <div className="step-col-header">LED MIDI</div>
-                <div className="step-col-header">MIDI Ch.</div>
                 {Object.keys(steps).map(i =>
                     <Step key={i} index={i} config={steps[i]} updateCallback={(dataType, dataIndex, value) => this.onStepUpdate(i, dataType, dataIndex, value)} />
                 )}

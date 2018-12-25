@@ -54,6 +54,10 @@ class Preset extends Component {
         };
     }
 
+    clearData = () => {
+        this.setState({data: null, updateMessages: {}, changed: false});
+    };
+
     /**
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
@@ -301,6 +305,7 @@ class Preset extends Component {
 
                 if (!draft.updateMessages.hasOwnProperty(draft.presetIndex)) draft.updateMessages[draft.presetIndex] = {};
                 if (!draft.updateMessages[draft.presetIndex].hasOwnProperty(controlId)) draft.updateMessages[draft.presetIndex][controlId] = [];
+
                 draft.updateMessages[draft.presetIndex][controlId] = getControlUpdateSysexMessages(draft.presetIndex, controlId, draft.data);
             })
         );
@@ -466,13 +471,14 @@ class Preset extends Component {
 
                             </div>
                             <div className="preset-buttons">
-                                {output && <button className="space-right" onClick={() => this.readPacer(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read all presets from Pacer</button>}
+                                {output && <button onClick={() => this.readPacer(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read all presets from Pacer</button>}
                                 <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
                                 <button onClick={this.onInputFile}>Load preset(s) from file</button>
                                 {/* data &&
                                     <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
                                               label="Download preset" />
                                     */}
+                                <button onClick={this.clearData}>CLEAR</button>
                             </div>
                             {data && data[TARGET_PRESET][presetIndex] && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                         </div>
@@ -515,13 +521,13 @@ class Preset extends Component {
                             <div className="debug">
                                 <h4>[Debug] Update messages to send:</h4>
                                 <UpdateMessages messages={updateMessages} />
-{/*
+
                                 <div className="dump code">
                                     {
                                         JSON.stringify(updateMessages, null, 4)
                                     }
                                 </div>
-*/}
+
                             </div>
                         </div>
                         }
