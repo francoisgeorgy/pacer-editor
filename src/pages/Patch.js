@@ -1,6 +1,13 @@
 import React, {Component} from 'react';
 import {produce} from "immer";
-import {ALL_PRESETS_EXPECTED_BYTES, isSysexData, mergeDeep, parseSysexDump, requestAllPresets} from "../pacer/sysex";
+import {
+    ALL_PRESETS_EXPECTED_BYTES,
+    isSysexData,
+    mergeDeep,
+    parseSysexDump,
+    requestAllPresets,
+    splitDump
+} from "../pacer/sysex";
 import Midi from "../components/Midi";
 import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer/constants";
 import PortsGrid from "../components/PortsGrid";
@@ -54,9 +61,18 @@ class Patch extends Component {
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
     showBusy = ({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) =>  {
-        // console.log("show busy", busyMessage);
+        console.log("show busy", busyMessage);
         setTimeout(() => this.props.onBusy({busy: false}), 20000);
         this.props.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
+    };
+
+    hideBusy = (delay = 0) => {
+        console.log("hide busy");
+        if (delay < 1) {
+            this.props.onBusy({busy: false});
+        } else {
+            setTimeout(() => this.props.onBusy({busy: false}), delay);
+        }
     };
 
     handleMidiInputEvent = batchMessages(
@@ -88,7 +104,7 @@ class Patch extends Component {
 
             // this.addInfoMessage(`${messages.length} messages received (${bytes} bytes)`);
             // this.props.onBusy(false);
-            this.props.onBusy({busy: false});
+            this.hideBusy();
         },
         (n) => {
             // console.log(n);
@@ -132,9 +148,6 @@ class Patch extends Component {
                                 };
                             })
                         );
-                        // this.addInfoMessage("sysfile decoded");
-                        // } else {
-                        //     console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
                     } else {
                         this.setState(
                             produce(draft => {
@@ -211,7 +224,7 @@ class Patch extends Component {
     };
 
     sendSysex = (msg, bytesExpected = 0) => {
-        // console.log("sendSysex", msg, bytesExpected);
+        // console.log("sendSysex", msg.length > 32 ? hs(msg.slice(0, 32)) + '...' : hs(msg), bytesExpected);
         if (!this.state.output) {
             console.warn("no output enabled to send the message");
             return;
@@ -221,23 +234,39 @@ class Patch extends Component {
             console.warn(`send: output ${this.state.output} not found`);
             return;
         }
-        this.showBusy({busy: true, busyMessage: "receiving data...", bytesReceived: 0, bytesExpected});
+        if (bytesExpected > 0) this.showBusy({busy: true, busyMessage: "receiving data...", bytesReceived: 0, bytesExpected});
         this.setState(
             {data: null},
             () => out.sendSysex(SYSEX_SIGNATURE, msg)
         );
     };
 
-    sendMessage = (msg) => {
-        this.sendSysex(msg);
-    };
+    /**
+     * Send the current data
+     * @param patch
+     */
+    sendPatch = () => {
 
-    // updatePacer = (messages) => {
-        // for (let m of messages) {
-        //     this.sendSysex(m);
-        // }
-        // this.addInfoMessage(`update${messages.length > 1 ? 's' : ''} sent to Pacer`);
-    // };
+        if (!this.state.output) {
+            console.warn("no output enabled to send the message");
+            return;
+        }
+
+        let out = outputById(this.state.output);
+        if (!out) {
+            console.warn(`send: output ${this.state.output} not found`);
+            return;
+        }
+
+        this.showBusy({busy: true, busyMessage: "sending patch..."});
+        splitDump(Array.from(this.state.bytes)).forEach(
+            msg => {
+                // console.log("sendPatch", msg.length > 32 ? hs(msg.slice(0, 32)) + '...' : hs(msg));
+                out.sendSysex(SYSEX_SIGNATURE, msg);
+            }
+        );
+        this.hideBusy(1000);
+    };
 
     /**
      * @returns {*}
@@ -251,7 +280,6 @@ class Patch extends Component {
             <Dropzone
                 disableClick
                 style={{position: "relative"}}
-                // accept={accept}
                 onDrop={this.onDrop}
                 onDragEnter={this.onDragEnter}
                 onDragLeave={this.onDragLeave}>
@@ -333,7 +361,7 @@ class Patch extends Component {
                                     {data && outputIsPacer(output) && "or"}
                                 </div>
                                 <div>
-                                    {data && outputIsPacer(output) && <button onClick={() => this.sendSysex(Array.from(bytes))}>Send patch to Pacer</button>}
+                                    {data && outputIsPacer(output) && <button onClick={() => this.sendPatch()}>Send patch to Pacer</button>}
                                 </div>
                             </div>
 

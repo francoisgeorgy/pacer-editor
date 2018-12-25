@@ -493,6 +493,9 @@ class Preset extends Component {
                                         onUpdate={(value) => this.updateControlMode(controlId, value)}/>
                                 </Fragment>
                                 }
+                                {!isVal(presetIndex) &&
+                                    <div className="please">Please first select a preset.</div>
+                                }
                             </Fragment>
                         </div>
 

@@ -10,9 +10,7 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    /*width: 100px;*/
     padding: 4px 8px 4px 8px;
-    cursor: pointer;
 }
 
 .patch-content > div > div {
@@ -35,7 +33,6 @@
 }
 
 .status {
-    /*font-size: 0.85rem;*/
     margin: 24px 0;
     color: #555;
 }
@@ -45,24 +42,4 @@
 }
 
 .status.info {
-
 }
-
-/*
-
-.presets-list {
-    display: grid;
-    grid-template-columns: auto auto 100px;
-    grid-template-rows: repeat(25, 24px);
-    justify-content: start;
-    grid-column-gap: 16px;
-    !*grid-row-gap: 8px;*!
-    align-items: center;
-}
-
-.presets-list
-
-.preset-line {
-    margin: 10px 0;
-}
-*/

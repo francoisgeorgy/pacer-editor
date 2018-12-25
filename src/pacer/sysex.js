@@ -223,11 +223,8 @@ function getControlLED(data) {
     return cfg;
 }
 
-
 function getMidiSetting(data) {
-
     // console.log("getMidiSetting", hs(data));
-
     return {
         index: (data[0] - 1) / 6 + 1,       // e.g.: 7 --> 1, ..., 0x2B 43 --> 8
         config: {
@@ -238,12 +235,10 @@ function getMidiSetting(data) {
     };
 }
 
-
 function getPresetName(data) {
     const len = data[1];
     return String.fromCharCode.apply(null, data.slice(2, 2 + len));
 }
-
 
 /**
  * Parse a single sysex message
@@ -435,8 +430,6 @@ function parseSysexMessage(data) {
 
     }
 
-
-
     // console.log('MESSAGE', message);
     return message;
 
@@ -490,6 +483,50 @@ function parseSysexDump(data) {
     // console.log("parseSysexDump", JSON.stringify(presets));
 
     return presets;
+}
+
+
+/**
+ * Split a dump into individual sysex messages
+ * @param data
+ * @param stripManufacturer
+ * returns a array of sysex messages. The messages do not contains the sysex "start of sysex" 0xF0 and "end of sysex" 0xF7 bytes.
+ */
+function splitDump(data, stripManufacturer) {
+
+    // console.log("splitDump", data, hs(data));
+
+    if (data === null) return [];
+
+    let messages = [];
+
+    let i = 0;
+    let cont = true;
+    while (cont) {
+
+        i = data.indexOf(SYSEX_START, i);
+        if (i < 0) break;
+
+        i++;
+
+        let k = data.indexOf(SYSEX_END, i);
+
+        let manufacturer_id = (Array.from(data.slice(i, i+3)).map(n => h(n))).join(" ");    // Array.from() is necessary to get a non-typed array
+        if (manufacturer_id !== NEKTAR_TECHNOLOGY_INC) {
+            console.log("parseSysexDump: file does not contain a Nektar Pacer patch", i, k, manufacturer_id, "-", hs(data));
+            return null;
+        }
+
+        if (data[i+3] !== 0x7F) {
+            console.warn(`parseSysexDump: invalid byte after manufacturer id: ${data[i+1 +3]}`);
+            return null;
+        }
+
+        messages.push(data.slice(i+3, k));  // data.slice(i, k) are the data between MANUFACTURER and SYSEX_END
+
+    } // while
+
+    return messages;
 }
 
 
@@ -759,8 +796,6 @@ function getControlUpdateSysexMessages(presetIndex, controlId, data) {
     return msgs;
 }
 
-
-
 function buildMidiSettingsSysex(presetIndex, settings) {
 
     // console.log(`buildMidiSettingStepSysex(${presetIndex}, ...)`);
@@ -795,8 +830,6 @@ function buildMidiSettingsSysex(presetIndex, settings) {
         msgs.push(SYSEX_HEADER.concat(msg));
     }
 
-    // console.log("buildControlStepSysex", msgs);
-
     return msgs;
 }
 
@@ -804,8 +837,6 @@ function buildMidiSettingsSysex(presetIndex, settings) {
 function buildPresetNameSysex(presetIndex, data) {
 
     // console.log("buildPresetNameSysex", presetIndex, data);
-
-    // if (!data[TARGET_PRESET][presetIndex].changed) return null;
 
     // start with command and target:
     let msg = [
@@ -843,6 +874,7 @@ export {
     parseSysexDump,
     getControlUpdateSysexMessages,
     getMidiSettingUpdateSysexMessages,
-    buildPresetNameSysex
+    buildPresetNameSysex,
+    splitDump
 };
 

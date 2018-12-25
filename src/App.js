@@ -39,13 +39,8 @@ class App extends Component {
         busy: false,
         busyMessage: "please wait",
         bytesExpected: -1,
-        // bytesReceived: -1,
         progress: -1    // 0..100
     };
-
-    // initBusy = (busy, busyMessage, bytesExpected, bytesReceived) => {
-    //     this.setState({ busy, busyMessage, bytesExpected, bytesReceived });
-    // };
 
     /**
      *
@@ -55,72 +50,39 @@ class App extends Component {
      * @param bytesReceived
      */
     onBusy = ({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) => {
-
         // console.log("app.onBusy", busy, busyMessage, bytesExpected, bytesReceived);
 
         let show = busy !== this.state.busy;
         show = show || (busyMessage !== null && busyMessage !== this.state.busyMessage);
         show = show || (bytesExpected > 0 && bytesExpected !== this.state.bytesExpected);
 
-        // let progressString = "";
-        // if (bytesExpected > 0) {
-            // show progress in %
         let progress = -1;
         if (this.state.bytesExpected > 0 && bytesReceived > 0) {
             progress = Math.round(bytesReceived / this.state.bytesExpected * 100 / 5) * 5;
             show = show || ((progress >= 0) && (progress !== this.state.progress));
         }
-        // } else {
-        //     // show progress in bytes
-        //     let progress = 0;
-        //     if (bytesReceived > 0) {
-        //         progress = Math.round(bytesReceived / this.state.bytesExpected * 100 / 5) * 5;
-        //         // console.log("progress", draft.bytesExpected, bytesReceived, progress);
-        //         show = show || ((progress >= 0) && (progress !== this.state.progress));
-        //     }
-        // }
-
-        // console.log("show", show, busyMessage);
 
         if (show) {
-            // console.log("busy setstate", this.state, busy, busyMessage, bytesExpected, bytesReceived, progress);
             this.setState(
                 produce(draft => {
                     if (draft.busy !== busy) draft.busy = busy;
-
                     if (busyMessage !== null) draft.busyMessage = busyMessage;
-
                     if (bytesExpected > 0 && bytesExpected !== draft.bytesExpected) draft.bytesExpected = bytesExpected;
-
                     if (busy === false) {
                         draft.bytesExpected = -1;
                         progress = -1;
                     } else {
-
-                        // console.log("draft.busyMessage", draft.busyMessage);
-
                         if (bytesExpected > 0) draft.bytesExpected = bytesExpected;
-
-                        // if (bytesReceived > 0) {
-                        //     let progress = Math.round(bytesReceived / draft.bytesExpected * 100 / 5) * 5;
                         if (draft.progress !== progress) {
                             draft.progress = progress;
-                            // console.log("progress", draft.bytesExpected, bytesReceived, progress);
                         }
-                        // console.log("progress", draft.bytesExpected, bytesReceived, progress);
-                        // }
-
                     }
-
                     // let m = { type, message };
                     // let len = draft.statusMessages.push(m);
                     // if (len > MAX_STATUS_MESSAGES) draft.statusMessages.shift();
                 })
             );
         }
-
-        // if (busy !== this.state.busy) this.setState({ busy, bytesReceived });
-        // this.setState({ busy, bytesReceived });
     };
 
     /**
@@ -143,15 +105,13 @@ class App extends Component {
                         <MenuLink to="/presetmidi" label="Preset Name & MIDI" />
                         <MenuLink to="/global" label="Global config" />
                         <MenuLink to="/patch" label="Patch" />
-                        {/*<MenuLink to="/patches" label="Patches" />*/}
                         {/*<MenuLink to="/files" label="Files" />*/}
-                        {/*<MenuLink to="/chords" label="Chords" />*/}
                         <MenuLink to="/monitor" label="MIDI monitor" />
                         <MenuLink to="/dumpdecoder" label="Dump decoder" />
                         {debug && <MenuLink to="/debug" label="Debug" />}
                         {!busy && <div className="spacer"> </div>}
                         {busy && <div className="busy">{busyMessage}{progress >= 0 && <div>{progress} %</div>}</div>}
-                        <div className="header-app-name">Pacer editor 0.6.4</div>
+                        <div className="header-app-name">Pacer editor 0.7.0</div>
                     </header>
 
                         <Switch>
@@ -175,20 +135,6 @@ class App extends Component {
                                     <Global onBusy={this.onBusy} debug={debug} />
                                 )
                             }/>
-{/*
-                            <Route path="/chords" render={
-                                props => (
-                                    <Chords onBusy={this.onBusy} debug={debug} />
-                                )
-                            }/>
-*/}
-{/*
-                            <Route path="/patches" render={
-                                props => (
-                                    <Patches onBusy={this.onBusy} debug={debug} />
-                                )
-                            }/>
-*/}
                             <Route path="/patch" render={
                                 props => (
                                     <Patch onBusy={this.onBusy} debug={debug} />
