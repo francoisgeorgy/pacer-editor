@@ -31,9 +31,9 @@ class Home extends Component {
                     <p>2. In the application, check the MIDI settings.</p>
                     <p>You need to enable the following input and output ports:</p>
                     <p><span className="bold" >Mac</span>:</p>
-                    <img src="help-ports-osx.png" alt="" />
+                    <img src="ports-mac.png" alt="" />
                     <p><span className="bold" >Windows</span>:</p>
-                    <img src="help-ports-windows.png" alt="" />
+                    <img src="ports-windows.png" alt="" />
                     <p>This editor listen on all MIDI ports. A future version may offer the possibility to choose a specific port.</p>
                 </div>
 
