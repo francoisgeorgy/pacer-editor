@@ -314,7 +314,7 @@ class Debug extends Component {
                         )}
                     </div>
 */}
-
+{/*
                     <div className="content-row-content">
                         {data &&
                         <div className="debug">
@@ -323,6 +323,7 @@ class Debug extends Component {
                         </div>
                         }
                     </div>
+*/}
 
                 </div>
 

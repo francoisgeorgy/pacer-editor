@@ -521,13 +521,11 @@ class Preset extends Component {
                             <div className="debug">
                                 <h4>[Debug] Update messages to send:</h4>
                                 <UpdateMessages messages={updateMessages} />
-
                                 <div className="dump code">
-                                    {
-                                        JSON.stringify(updateMessages, null, 4)
-                                    }
+                                {/*
+                                    JSON.stringify(updateMessages, null, 4)
+                                */}
                                 </div>
-
                             </div>
                         </div>
                         }
