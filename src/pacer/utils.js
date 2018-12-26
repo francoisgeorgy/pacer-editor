@@ -4,12 +4,14 @@
  * @returns {string}
  */
 export const presetIndexToXY = index => {
-    if (index === 0) return "CUR";
+    let ii = parseInt(index);
+    if (ii === 0) return "CUR";
     //TODO: check valid range
-    let b = Math.floor((index - 1) / 6);
-    let i = (index - 1) % 6 + 1;
+    let b = Math.floor((ii - 1) / 6);
+    let i = (ii - 1) % 6 + 1;
     return String.fromCharCode(b + 65) + i.toString();
 };
+
 /**
  * Exampe: "D5" => 23
  * @param xy

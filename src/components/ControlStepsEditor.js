@@ -157,6 +157,8 @@ class ControlStepsEditor extends Component {
 
         // console.log("ControlStepsEditor", steps);
 
+        //FIXME: do not display LED for EXP and FS
+
         return (
             <div className="steps">
                 <div></div>

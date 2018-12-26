@@ -239,8 +239,10 @@ class PresetMidi extends Component {
 
                 // we use a similar data structure as in Preset.js, with controlId replaced by "midi"
                 if (!draft.updateMessages.hasOwnProperty(draft.presetIndex)) draft.updateMessages[draft.presetIndex] = {};
-                if (!draft.updateMessages[draft.presetIndex].hasOwnProperty("midi")) draft.updateMessages[draft.presetIndex]["midi"] = [];
-                draft.updateMessages[draft.presetIndex]["midi"] = getMidiSettingUpdateSysexMessages(draft.presetIndex, draft.data);
+                if (!draft.updateMessages[draft.presetIndex].hasOwnProperty("midi")) draft.updateMessages[draft.presetIndex]["midi"] = {};
+
+                //FIXME: update the methods that read updateMessages to allow object or array
+                draft.updateMessages[draft.presetIndex]["midi"]["dummy"] = getMidiSettingUpdateSysexMessages(draft.presetIndex, draft.data);
 
             })
         );
@@ -298,20 +300,28 @@ class PresetMidi extends Component {
     };
 
     updatePacer = (messages) => {
+        //FIXME: externalize this method
+
         this.showBusy({busy: true, busyMessage: "write Preset..."});
+
         Object.getOwnPropertyNames(messages).forEach(
-            v => {
-                Object.getOwnPropertyNames(messages[v]).forEach(
-                    w => {
-                        messages[v][w].forEach(
-                            m => {
-                                this.sendSysex(m);
+            presetId => {
+                Object.getOwnPropertyNames(messages[presetId]).forEach(
+                    ctrlType => {
+                        Object.getOwnPropertyNames(messages[presetId][ctrlType]).forEach(
+                            ctrl => {
+                                messages[presetId][ctrlType][ctrl].forEach(
+                                    msg => {
+                                        this.sendSysex(msg);
+                                    }
+                                );
                             }
                         );
                     }
                 );
             }
         );
+
         setTimeout(() => {
             // console.log("updatePacer: clear changed flag and updateMessages array");
             this.setState({changed: false, updateMessages: {}}, () => this.readPacer(requestPreset(this.state.presetIndex), SINGLE_PRESET_EXPECTED_BYTES, "read updated preset"));

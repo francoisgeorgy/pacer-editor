@@ -61,13 +61,11 @@ class Patch extends Component {
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
     showBusy = ({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) =>  {
-        console.log("show busy", busyMessage);
         setTimeout(() => this.props.onBusy({busy: false}), 20000);
         this.props.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
     };
 
     hideBusy = (delay = 0) => {
-        console.log("hide busy");
         if (delay < 1) {
             this.props.onBusy({busy: false});
         } else {
@@ -107,7 +105,6 @@ class Patch extends Component {
             this.hideBusy();
         },
         (n) => {
-            // console.log(n);
             this.props.onBusy({busy: true, bytesReceived: n});
         },
         1000
@@ -168,14 +165,12 @@ class Patch extends Component {
     }
 
     onChangeFile = (e) => {
-        // console.log("onChangeFile", e);
         var file = e.target.files[0];
         // noinspection JSIgnoredPromiseFromCall
         this.readFiles([file]);
     };
 
     onInputFile = (e) => {
-        // console.log("onInputFile", e);
         this.inputOpenFileRef.current.click()
     };
 
@@ -196,7 +191,6 @@ class Patch extends Component {
      * @param files
      */
     onDrop = (files) => {
-        // console.log('drop', files);
         this.setState(
             {
                 data: null,
@@ -355,7 +349,7 @@ class Patch extends Component {
                                     {outputIsPacer(output) && <button onClick={() => this.sendSysex(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read patch from Pacer</button>}
                                 </div>
                                 <div>
-                                    {data && <Download data={bytes} filename={`pacer-patch`} addTimestamp={true} className="small" label="Save patch to file" />}
+                                    {data && <Download data={bytes} filename={`pacer-patch`} addTimestamp={true} label="Save patch to file" />}
                                 </div>
                                 <div>
                                     {data && outputIsPacer(output) && "or"}

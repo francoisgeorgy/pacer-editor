@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import PresetSelector from "../components/PresetSelector";
 import {
-    ALL_PRESETS_EXPECTED_BYTES,
+    ALL_PRESETS_EXPECTED_BYTES, CONTROLS_DATA,
     getControlUpdateSysexMessages,
     isSysexData,
     mergeDeep,
@@ -9,14 +9,14 @@ import {
 } from "../pacer/sysex";
 import ControlSelector from "../components/ControlSelector";
 import {
-    ANY_MIDI_PORT,
+    ANY_MIDI_PORT, CONTROLS_WITH_SEQUENCE,
     MSG_CTRL_OFF,
     PACER_MIDI_PORT_NAME,
     SYSEX_SIGNATURE,
     TARGET_PRESET
 } from "../pacer/constants";
 import {hs} from "../utils/hexstring";
-import {produce} from "immer";
+import {produce, setAutoFreeze} from "immer";
 import {outputById} from "../utils/ports";
 import ControlStepsEditor from "../components/ControlStepsEditor";
 import Midi from "../components/Midi";
@@ -29,6 +29,11 @@ import {batchMessages, outputIsPacer} from "../utils/midi";
 import {dropOverlayStyle, MAX_FILE_SIZE} from "../utils/misc";
 import {updateMessageName} from "../utils/state";
 import UpdateMessages from "../components/UpdateMessages";
+import {presetIndexToXY} from "../pacer/utils";
+
+//FIXME: fix this:
+setAutoFreeze(false);   // needed to be able to update name and copy a preset at the same time. Otherwise immerjs freez the state in updateMessageName() and it is no longer possible to copy a preset.
+
 
 function isVal(v) {
     return v !== undefined && v !== null && v !== '';
@@ -50,7 +55,8 @@ class Preset extends Component {
             // statusMessages: [],
             // accept: '',
             // files: [],
-            dropZoneActive: false
+            dropZoneActive: false,
+            copyPresetFrom: "-1"
         };
     }
 
@@ -62,7 +68,6 @@ class Preset extends Component {
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
     showBusy = ({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) =>  {
-        // console.log("show busy", busyMessage);
         setTimeout(() => this.props.onBusy({busy: false}), 20000);
         this.props.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
     };
@@ -120,7 +125,7 @@ class Preset extends Component {
 
                         // let pId = Object.keys(draft.data[TARGET_PRESET])[0];
                         // draft.presetIndex = parseInt(pId, 10);
-                        // draft.controlId = parseInt(Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0], 10);
+                        // draft.controlId = parseInt(Object.keys(draft.data[TARGET_PRESET][pId][CONTROLS_DATA])[0], 10);
                     }
                 )
             );
@@ -129,7 +134,6 @@ class Preset extends Component {
             this.props.onBusy({busy: false});
         },
         (n) => {
-            // console.log(n);
             this.props.onBusy({busy: true, bytesReceived: n});
         },
         1000
@@ -160,7 +164,7 @@ class Preset extends Component {
                                     draft.presetIndex = parseInt(Object.keys(draft.data[TARGET_PRESET])[0], 10);
                                 }
 
-                                // let cId = Object.keys(draft.data[TARGET_PRESET][pId]["controls"])[0];
+                                // let cId = Object.keys(draft.data[TARGET_PRESET][pId][CONTROLS_DATA])[0];
                                 // draft.controlId = parseInt(cId, 10);
                             })
                         );
@@ -179,7 +183,6 @@ class Preset extends Component {
 
     onChangeFile = (e) => {
         let file = e.target.files[0];
-        // console.log(file);
         // noinspection JSIgnoredPromiseFromCall
         this.readFiles([file]);
     };
@@ -247,7 +250,6 @@ class Preset extends Component {
     };
 
     selectControl = (controlId) => {
-        // console.log(`selectControl ${controlId}`);
         if (isVal(this.state.presetIndex) && controlId) {
             this.setState({ controlId });
         }
@@ -269,44 +271,46 @@ class Preset extends Component {
         */
     };
 
+
+    updatePresetName = (name) => {
+        this.setState(updateMessageName(this.state, {name}));
+        // this.setState(updateMessageName);
+    };
+
     /**
      * dataIndex is only used when dataType == "data"
      */
     updateControlStep = (controlId, stepIndex, dataType, dataIndex, value) => {
-        console.log("Presets.updateControlStep", controlId, stepIndex, dataType, dataIndex, value);
         let v = parseInt(value, 10);
         this.setState(
             produce(draft => {
 
                 if (dataType === "data") {
-                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["data"][dataIndex] = v;
-                    // draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
+                    draft.data[TARGET_PRESET][draft.presetIndex][CONTROLS_DATA][controlId]["steps"][stepIndex]["data"][dataIndex] = v;
                 } else {
-                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
+                    draft.data[TARGET_PRESET][draft.presetIndex][CONTROLS_DATA][controlId]["steps"][stepIndex][dataType] = v;
                 }
 
                 if (dataType === "msg_type") {
                     if (v === MSG_CTRL_OFF) {
-                        draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 0;
+                        draft.data[TARGET_PRESET][draft.presetIndex][CONTROLS_DATA][controlId]["steps"][stepIndex]["active"] = 0;
                     } else {
-                        draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["active"] = 1;
+                        draft.data[TARGET_PRESET][draft.presetIndex][CONTROLS_DATA][controlId]["steps"][stepIndex]["active"] = 1;
                     }
-                    // draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
                 }
 
                 if (dataType.startsWith("led_")) {
-                    // draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex][dataType] = v;
-                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["led_changed"] = true;
+                    draft.data[TARGET_PRESET][draft.presetIndex][CONTROLS_DATA][controlId]["steps"][stepIndex]["led_changed"] = true;
                 } else {
-                    draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["steps"][stepIndex]["changed"] = true;
+                    draft.data[TARGET_PRESET][draft.presetIndex][CONTROLS_DATA][controlId]["steps"][stepIndex]["changed"] = true;
                 }
 
                 draft.changed = true;
 
                 if (!draft.updateMessages.hasOwnProperty(draft.presetIndex)) draft.updateMessages[draft.presetIndex] = {};
-                if (!draft.updateMessages[draft.presetIndex].hasOwnProperty(controlId)) draft.updateMessages[draft.presetIndex][controlId] = [];
+                if (!draft.updateMessages[draft.presetIndex].hasOwnProperty(CONTROLS_DATA)) draft.updateMessages[draft.presetIndex][CONTROLS_DATA] = {};
 
-                draft.updateMessages[draft.presetIndex][controlId] = getControlUpdateSysexMessages(draft.presetIndex, controlId, draft.data);
+                draft.updateMessages[draft.presetIndex][CONTROLS_DATA][controlId] = getControlUpdateSysexMessages(draft.presetIndex, controlId, draft.data);
             })
         );
     };
@@ -315,25 +319,74 @@ class Preset extends Component {
      * dataIndex is only used when dataType == "data"
      */
     updateControlMode = (controlId, value) => {
-        // console.log("Presets.updateControlMode", controlId, value);
         let v = parseInt(value, 10);
         this.setState(
             produce(draft => {
-                draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["control_mode"] = v;
-                draft.data[TARGET_PRESET][draft.presetIndex]["controls"][controlId]["control_mode_changed"] = true;
+                draft.data[TARGET_PRESET][draft.presetIndex][CONTROLS_DATA][controlId]["control_mode"] = v;
+                draft.data[TARGET_PRESET][draft.presetIndex][CONTROLS_DATA][controlId]["control_mode_changed"] = true;
                 draft.changed = true;
 
                 if (!draft.updateMessages.hasOwnProperty(draft.presetIndex)) draft.updateMessages[draft.presetIndex] = {};
-                if (!draft.updateMessages[draft.presetIndex].hasOwnProperty(controlId)) draft.updateMessages[draft.presetIndex][controlId] = [];
+                if (!draft.updateMessages[draft.presetIndex].hasOwnProperty(CONTROLS_DATA)) draft.updateMessages[draft.presetIndex][CONTROLS_DATA] = {};
 
-                draft.updateMessages[draft.presetIndex][controlId]  = getControlUpdateSysexMessages(draft.presetIndex, controlId, draft.data);
+                draft.updateMessages[draft.presetIndex][CONTROLS_DATA][controlId]  = getControlUpdateSysexMessages(draft.presetIndex, controlId, draft.data);
             })
         );
     };
 
-    updatePresetName = (name) => {
-        this.setState(updateMessageName(this.state, {name}));
+    copyPresetFrom = (presetIdFrom, presetIdTo) => {
+
+        //FIXME: use immerjs
+
+        const { data, updateMessages } = this.state;
+
+        if (data && data[TARGET_PRESET][presetIdFrom]) {
+
+            if (!data[TARGET_PRESET][presetIdTo]) data[TARGET_PRESET][presetIdTo] = {};
+            data[TARGET_PRESET][presetIdTo]["changed"] = true;
+
+            if (!updateMessages.hasOwnProperty(presetIdTo)) updateMessages[presetIdTo] = {};
+            if (!updateMessages[presetIdTo].hasOwnProperty(CONTROLS_DATA)) updateMessages[presetIdTo][CONTROLS_DATA] = {};
+
+            //
+            // Only copy CONTROLS (for the current version)
+            //
+            //FIXME: copy EXP and FS config
+            CONTROLS_WITH_SEQUENCE.forEach(controlId => {
+                // data[TARGET_PRESET][presetIdTo][CONTROLS_DATA][controlId] = Object.assign({}, data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA][controlId]);
+                // ugly / deep copy without shallow references:
+                data[TARGET_PRESET][presetIdTo][CONTROLS_DATA][controlId] = JSON.parse(JSON.stringify(data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA][controlId]));
+                updateMessages[presetIdTo][CONTROLS_DATA][controlId] = getControlUpdateSysexMessages(presetIdTo, controlId, data, true);
+            });
+            // Object.assign(data[TARGET_PRESET][presetIdTo], data[TARGET_PRESET][presetIdFrom]);
+
+            //we do not copy the name
+            //updateMessages[presetIdTo]["name"] = buildPresetNameSysex(presetIdTo, data);
+
+            // CONTROLS_WITH_SEQUENCE.forEach(controlId => updateMessages[presetIdTo][CONTROLS_DATA][controlId] = getControlUpdateSysexMessages(presetIdTo, controlId, data, true));
+
+            this.setState({data, updateMessages, changed: true});
+        }
     };
+
+/*
+    copyControlFrom = (presetIdFrom, presetIdTo, controlId) => {
+
+        const { data, updateMessages } = this.state;
+
+        if (data && data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA][controlId] && data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA][controlId]) {
+
+            Object.assign(data[TARGET_PRESET][presetIdTo][CONTROLS_DATA][controlId], data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA][controlId]);
+
+            if (!updateMessages.hasOwnProperty(presetIdTo)) updateMessages[presetIdTo] = {};
+            if (!updateMessages[presetIdTo].hasOwnProperty(CONTROLS_DATA)) updateMessages[presetIdTo][CONTROLS_DATA] = {};
+
+            updateMessages[presetIdTo][CONTROLS_DATA][controlId] = getControlUpdateSysexMessages(presetIdTo, controlId, data, true);
+
+            this.setState({data, updateMessages, changed: true});
+        }
+    };
+*/
 
     onInputConnection = (port_id) => {
         // this.addInfoMessage(`input ${inputName(port_id)} connected`);
@@ -344,7 +397,6 @@ class Preset extends Component {
     };
 
     onOutputConnection = (port_id) => {
-        console.log("onOutputConnection");
         this.setState(
             produce(draft => {
                 draft.output = port_id;
@@ -354,7 +406,6 @@ class Preset extends Component {
     };
 
     onOutputDisconnection = (port_id) => {
-        console.log("onOutputDisconnection");
         this.setState(
             produce(draft => {
                 draft.output = null;        // we manage only one output connection at a time
@@ -364,7 +415,6 @@ class Preset extends Component {
     };
 
     sendSysex = msg => {
-        // console.log("sendSysex", hs(msg));
         if (!this.state.output) {
             console.warn("no output enabled to send the message");
             return;
@@ -378,29 +428,34 @@ class Preset extends Component {
     };
 
     readPacer = (msg, bytesExpected, busyMessage = "reading Pacer...") => {
-        // console.log(`readPacer, ${bytesExpected} bytes expected`);
         this.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected});
         this.sendSysex(msg);
     };
 
     updatePacer = (messages) => {
-        // console.log("updatePacer");
+        //FIXME: externalize this method
+
         this.showBusy({busy: true, busyMessage: "write Preset..."});
+
         Object.getOwnPropertyNames(messages).forEach(
-            v => {
-                Object.getOwnPropertyNames(messages[v]).forEach(
-                    w => {
-                        messages[v][w].forEach(
-                            m => {
-                                this.sendSysex(m);
+            presetId => {
+                Object.getOwnPropertyNames(messages[presetId]).forEach(
+                    ctrlType => {
+                        Object.getOwnPropertyNames(messages[presetId][ctrlType]).forEach(
+                            ctrl => {
+                                messages[presetId][ctrlType][ctrl].forEach(
+                                    msg => {
+                                        this.sendSysex(msg);
+                                    }
+                                );
                             }
                         );
                     }
                 );
             }
         );
+
         setTimeout(() => {
-            // console.log("updatePacer: clear changed flag and updateMessages array");
             this.setState({changed: false, updateMessages: {}}, () => this.readPacer(requestPreset(this.state.presetIndex), SINGLE_PRESET_EXPECTED_BYTES, "read updated preset"));
         }, 1000);
     };
@@ -414,10 +469,10 @@ class Preset extends Component {
         if (data) {
             showEditor = (TARGET_PRESET in data) &&
                          (presetIndex in data[TARGET_PRESET]) &&
-                         ("controls" in data[TARGET_PRESET][presetIndex]) &&
-                         (controlId in data[TARGET_PRESET][presetIndex]["controls"]) &&
-                         ("steps" in data[TARGET_PRESET][presetIndex]["controls"][controlId]) &&
-                         (Object.keys(data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]).length === 6);
+                         (CONTROLS_DATA in data[TARGET_PRESET][presetIndex]) &&
+                         (controlId in data[TARGET_PRESET][presetIndex][CONTROLS_DATA]) &&
+                         ("steps" in data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]) &&
+                         (Object.keys(data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["steps"]).length === 6);
         }
 
         return (
@@ -487,15 +542,51 @@ class Preset extends Component {
                             <Fragment>
                                 <h2>Controls</h2>
                                 {isVal(presetIndex) && <ControlSelector currentControl={controlId} onClick={this.selectControl} />}
+
+                                {data && presetIndex in data[TARGET_PRESET] && Object.keys(data[TARGET_PRESET]).length > 1 &&
+                                <Fragment>
+                                    (experimental) <button onClick={() => this.copyPresetFrom(this.state.copyPresetFrom, presetIndex)}>copy</button> from preset <select value={this.state.copyPresetFrom} onChange={(event) => this.setState({copyPresetFrom: event.target.value})}>
+                                        <option value="">-</option>
+                                    {
+                                        Object.keys(data[TARGET_PRESET]).map((key, index) => {
+                                            if (data[TARGET_PRESET][key]) {
+                                                return (<option key={index} value={key}>{presetIndexToXY(key)} {data[TARGET_PRESET][key].name}</option>);
+                                            } else {
+                                                return null;
+                                            }
+                                        })
+                                    }
+                                    </select> <span className="small">(copy the configuration for the footswitches A..D and 1..6 only)</span>
+                                </Fragment>
+                                }
+
+{/*
+                                {data && isVal(presetIndex) && showEditor && Object.keys(data[TARGET_PRESET]).length > 1 &&
+                                <Fragment>
+                                    copy from preset <select value={""} onChange={(event) => this.copyControlFrom(event.target.value, presetIndex, controlId)}>
+                                    {
+                                        Object.keys(data[TARGET_PRESET]).map((key, index) => {
+                                            if (data[TARGET_PRESET][key]) {
+                                                return (<option key={index} value={key}>{presetIndexToXY(key)} {data[TARGET_PRESET][key].name}</option>);
+                                            } else {
+                                                return null;
+                                            }
+                                        })
+                                    }
+                                    </select> <span className="small">(only the selected control configuration will be copied)</span>
+                                </Fragment>
+                                }
+*/}
+
                                 {showEditor &&
                                 <Fragment>
                                     <ControlStepsEditor
                                         controlId={controlId}
-                                        steps={data[TARGET_PRESET][presetIndex]["controls"][controlId]["steps"]}
+                                        steps={data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["steps"]}
                                         onUpdate={(stepIndex, dataType, dataIndex, value) => this.updateControlStep(controlId, stepIndex, dataType, dataIndex, value)}/>
                                     <ControlModeEditor
                                         controlId={controlId}
-                                        mode={data[TARGET_PRESET][presetIndex]["controls"][controlId]["control_mode"]}
+                                        mode={data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["control_mode"]}
                                         onUpdate={(value) => this.updateControlMode(controlId, value)}/>
                                 </Fragment>
                                 }
@@ -522,6 +613,9 @@ class Preset extends Component {
                                 <h4>[Debug] Update messages to send:</h4>
                                 <UpdateMessages messages={updateMessages} />
                                 <div className="dump code">
+                                {/*
+                                    JSON.stringify(data, null, 4)
+                                */}
                                 {/*
                                     JSON.stringify(updateMessages, null, 4)
                                 */}

@@ -29,7 +29,7 @@ const Setting = ({ index, config, updateCallback }) => {
     if (inactive) {
         return (
             <Fragment>
-                <div className="setting-row-header">setting {index}:</div>
+                <div className="setting-row-header">message {index}:</div>
                 <div>
                     <select onChange={(event) => updateCallback("msg_type", null, event.target.value)} value={config.msg_type}>
                         {

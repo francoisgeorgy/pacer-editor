@@ -70,7 +70,7 @@ export const CONTROLS = {
     [CONTROL_ALL]: "ALL"
 };
 
-export const CONTROLS_FULLNAME = {
+export const CONTROLS_FULLNAME = {      //FIXME: use constants for the key, like CONTROLS above
     0x01: "Preset Name",
     0x0D: "Stompswitch 1",
     0x0E: "Stompswitch 2",
@@ -84,14 +84,19 @@ export const CONTROLS_FULLNAME = {
     0x16: "Stompswitch C",
     0x17: "Stompswitch D",
     0x18: "Footswitch 1",
-    0x19: "Footswitch  2",
-    0x1A: "Footswitch  3",
-    0x1B: "Footswitch  4",
+    0x19: "Footswitch 2",
+    0x1A: "Footswitch 3",
+    0x1B: "Footswitch 4",
     0x36: "Expression Pedal 1",
     0x37: "Expression Pedal 2",
     0x7E: "MIDI configuration",
     0x7F: "ALL"
 };
+
+//FIXME: add FS when ready
+export const CONTROLS_WITH_SEQUENCE = [
+    0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x14, 0x15, 0x16, 0x17  //, 0x18, 0x19, 0x1A, 0x1B
+];
 
 // subsets of CONTROLS keys:
 export const STOMPSWITCHES = [0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x14, 0x15, 0x16, 0x17];

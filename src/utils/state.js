@@ -30,12 +30,13 @@ export const updateMessageName = (state, props) => {
     return produce(state, draft => {
         // console.log("immer draft", draft.data, props.name);
         draft.data[TARGET_PRESET][draft.presetIndex]["name"] = props.name;
-        draft.data[TARGET_PRESET][draft.presetIndex]["changed"] = true;
+        draft.data[TARGET_PRESET][draft.presetIndex]["changed"] = true;     //TODO: used?
         draft.changed = true;
 
         if (!draft.updateMessages.hasOwnProperty(draft.presetIndex)) draft.updateMessages[draft.presetIndex] = {};
-        if (!draft.updateMessages[draft.presetIndex].hasOwnProperty("name")) draft.updateMessages[draft.presetIndex]["name"] = [];
+        if (!draft.updateMessages[draft.presetIndex].hasOwnProperty("name")) draft.updateMessages[draft.presetIndex]["name"] = {};
 
-        draft.updateMessages[draft.presetIndex]["name"] = buildPresetNameSysex(draft.presetIndex, draft.data);
+        //FIXME: update the methods that read updateMessages to allow object or array
+        draft.updateMessages[draft.presetIndex]["name"]["dummy"] = buildPresetNameSysex(draft.presetIndex, draft.data);
     });
 };

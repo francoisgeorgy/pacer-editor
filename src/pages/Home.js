@@ -97,6 +97,7 @@ class Home extends Component {
 
                 <div className="doc">
                     <p>- The preset D6 can not be read by sending a "read preset" sysex. You have to dump it from the Pacer.</p>
+                    <p>- LED configuration is displayed for external footswitch and expression pedals.</p>
                 </div>
 
                 <h1>Contribute</h1>

@@ -12,6 +12,11 @@
     background-color: #ffff30;
 }
 
+.small {
+    font-size: 0.75rem;
+    color: #777;
+}
+
 h1 {
     font-size: 1.75rem;
     margin: 8px 0;
