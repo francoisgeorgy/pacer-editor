@@ -511,3 +511,30 @@ button.update:hover {
 .debug pre {
     font-size: 0.85rem;
 }
+
+
+@media print {
+
+    @page {
+        size: landscape;
+        /*margin: 15mm;*/
+    }
+
+    body {
+        /*margin: 0 10mm;*/
+        /*font-size: 8pt;*/
+    }
+
+    .header,
+    .subheader,
+    .instructions,
+    .preset-buttons {
+        display: none;
+    }
+
+    /*.overview-preset,*/
+    .overview-controls {
+        page-break-inside: avoid;
+    }
+
+}

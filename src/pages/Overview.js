@@ -32,13 +32,19 @@ class Overview extends Component {
             data: null,     // json
             presetIndex: null,  //
             dropZoneActive: false,
-            decBase: true  // true --> decimal base, false --> hex base for number
+            decBase: true,  // true --> decimal base, false --> hex base for number
+            extControls: true
         };
     }
 
-    toggleBase= (e) => {
+    toggleBase = e => {
         const decBase = !this.state.decBase;
         this.setState({decBase});
+    };
+
+    toggleExtControls = e => {
+        const extControls = !this.state.extControls;
+        this.setState({extControls});
     };
 
     clearData = () => {
@@ -269,12 +275,13 @@ class Overview extends Component {
                                 <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
                                 <button onClick={this.onInputFile}>Load preset(s) from file</button>
                                 {data && <button onClick={this.clearData}>CLEAR</button>}
+                                {data && <button onClick={this.toggleExtControls}>{this.state.extControls ? "Hide external controls" : "Show external controls"}</button>}
                                 {data && <button onClick={this.toggleBase}>{this.state.decBase ? "Display numbers in hex" : "Display numbers in dec"}</button>}
                             </div>
                         </div>
 
                         <div className="content-row-content">
-                            <PresetOverview data={data} hexDisplay={!this.state.decBase}/>
+                            <PresetOverview data={data} hexDisplay={!this.state.decBase} extControls={this.state.extControls} />
                         </div>
 
                     </div>

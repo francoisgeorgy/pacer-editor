@@ -5,7 +5,14 @@ import {
     STOMPSWITCHES_BOTTOM,
     FOOTSWITCHES,
     EXPPEDALS,
-    CONTROLS, MSG_TYPES_SHORT_NAMES, MSG_TYPES_DATA_HELP, NOT_USED, CONTROL_MODES_SHORT_NAME, MSG_SW_NOTE
+    CONTROLS,
+    MSG_TYPES_SHORT_NAMES,
+    MSG_TYPES_DATA_HELP,
+    NOT_USED,
+    CONTROL_MODES_SHORT_NAME,
+    MSG_SW_NOTE,
+    COLORS,
+    COLORS_HTML
 } from "../pacer/constants";
 import {presetIndexToXY} from "../pacer/utils";
 import {STEPS_DATA} from "../pacer/sysex";
@@ -26,16 +33,31 @@ const Step = ({ step, hexDisplay }) => {
             d[i] += ' (' + Note.fromMidi(data[i], true) + ')';
         }
     }
+    let colorOn = null;
+    let colorOff = null;
+    if (step["led_active_color"] && step["led_inactive_color"]) {
+        colorOn = step["led_active_color"] === 127 ? 0x00 : step["led_active_color"];
+        colorOff = step["led_inactive_color"] === 127 ? 0x00 : step["led_inactive_color"];
+    }
+    const displayColor = colorOn > 0 && colorOff > 0;
     return (
-        <div className="overview-step">
-            <div className="overview-message">
-                {MSG_TYPES_SHORT_NAMES[t]}
-                <span>{d[0]}</span>
-                <span>{d[1]}</span>
-                <span>{d[2]}</span>
+        <Fragment>
+            <div className="overview-step">
+                <div className="overview-message">
+                    {MSG_TYPES_SHORT_NAMES[t]}
+                    <span>{d[0]}</span>
+                    <span>{d[1]}</span>
+                    <span>{d[2]}</span>
+                </div>
+                <div>ch. {step["channel"]}</div>
             </div>
-            <div>ch. {step["channel"]}</div>
-        </div>
+            {displayColor &&
+            <div className="overview-step-color">
+                <div className="color-on" style={{backgroundColor: COLORS_HTML[colorOn]}} title={COLORS[colorOn]}></div>
+                <div className="color-off" style={{backgroundColor: COLORS_HTML[colorOff]}} title={COLORS[colorOff]}></div>
+            </div>
+            }
+        </Fragment>
     );
 };
 
@@ -74,16 +96,15 @@ const Control = ({ id, control, hexDisplay }) => {
     );
 };
 
-const Controls = ({ controls, hexDisplay }) => {
+const Controls = ({ controls, hexDisplay, extControls }) => {
     if (controls === null || controls === undefined) return null;
     return (
         <div className="overview-controls">
-            {/* {{Object.keys(controls).map(obj => <ControlTable key={obj} obj={obj} config={controls[obj]} />)}} */}
+            {extControls && FOOTSWITCHES.map(obj => <Control key={obj} id={obj} control={controls[obj]} hexDisplay={hexDisplay} />)}
+            {extControls && EXPPEDALS.map(obj => <Control key={obj} id={obj} control={controls[obj]} hexDisplay={hexDisplay} />)}
             {STOMPSWITCHES_TOP.map(obj => <Control key={obj} id={obj} control={controls[obj]} hexDisplay={hexDisplay} />)}
             <div></div><div></div>
             {STOMPSWITCHES_BOTTOM.map(obj => <Control key={obj} id={obj} control={controls[obj]} hexDisplay={hexDisplay} />)}
-            {FOOTSWITCHES.map(obj => <Control key={obj} id={obj} control={controls[obj]} hexDisplay={hexDisplay} />)}
-            {EXPPEDALS.map(obj => <Control key={obj} id={obj} control={controls[obj]} hexDisplay={hexDisplay} />)}
         </div>
     );
 /*
@@ -96,32 +117,32 @@ const Controls = ({ controls, hexDisplay }) => {
 */
 };
 
-const Preset = ({ index, data, hexDisplay }) => {
+const Preset = ({ index, data, hexDisplay, extControls }) => {
     if (data === null || data === undefined) return null;
     return (
-        <Fragment>
-            <h3>Preset {presetIndexToXY(parseInt(index, 10))} (#{index}): {data["name"]}</h3>
+        <div className="overview-preset">
+            <h3>Preset {presetIndexToXY(parseInt(index, 10))} (#{index}): <span className="bold">{data["name"]}</span></h3>
             {/*<PresetName name= />*/}
-            <Controls controls={data["controls"]} hexDisplay={hexDisplay} />
+            <Controls controls={data["controls"]} hexDisplay={hexDisplay} extControls={extControls} />
             {/*<MidiSettings settings={data["midi"]}/>*/}
-        </Fragment>
-    );
-};
-
-const Presets = ({ presets, hexDisplay }) => {
-    if (presets === null || presets === undefined) return null;
-    return (
-        <div className="overview-presets">
-            {Object.keys(presets).map(idx => <Preset key={idx} index={idx} data={presets[idx]} hexDisplay={hexDisplay} />)}
         </div>
     );
 };
 
-const PresetOverview = ({ data, hexDisplay }) => {
+const Presets = ({ presets, hexDisplay, extControls }) => {
+    if (presets === null || presets === undefined) return null;
+    return (
+        <div className="overview-presets">
+            {Object.keys(presets).map(idx => <Preset key={idx} index={idx} data={presets[idx]} hexDisplay={hexDisplay} extControls={extControls} />)}
+        </div>
+    );
+};
+
+const PresetOverview = ({ data, hexDisplay, extControls }) => {
     if (data === null || data === undefined) return null;
     return (
         <div className="overview">
-            <Presets presets={data[TARGET_PRESET]} hexDisplay={hexDisplay} />
+            <Presets presets={data[TARGET_PRESET]} hexDisplay={hexDisplay} extControls={extControls} />
         </div>
     );
 };

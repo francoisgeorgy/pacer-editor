@@ -38,6 +38,17 @@
     justify-content: space-between;
 }
 
+.overview-step-color {
+    display: flex;
+    flex-direction: row;
+}
+
+.overview-step-color > div {
+    border: 1px solid #aaa;
+    flex-grow: 1;
+    min-height: 8px;
+}
+
 .overview-message > span {
     margin-left: 6px;
 }

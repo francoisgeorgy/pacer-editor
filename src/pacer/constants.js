@@ -638,6 +638,36 @@ export const COLORS = {
     0x18 : "12B Dim White",
 };
 
+
+export const COLORS_HTML = {        // https://en.wikipedia.org/wiki/Web_colors
+    0x00 : "#000000",
+    0x01 : "#FFC0CB",
+    0x02 : "rgba(255, 192, 203, 0.5)", // 50% transparent
+    0x03 : "#FF0000",
+    0x04 : "rgba(255, 0, 0, 0.5)",
+    0x05 : "#FF8C00",
+    0x06 : "rgba(255, 140, 0, 0.5)",
+    0x07 : "#FFBF00",                // https://simple.wikipedia.org/wiki/Amber_(color)
+    0x08 : "rgba(255, 191, 0, 0.5)",
+    0x09 : "#FFFF00",
+    0x0A : "rgba(255, 255, 0, 0.5)",
+    0x0B : "#00FF00",
+    0x0C : "rgba(0, 255, 0, 0.5)",
+    0x0D : "#008000",
+    0x0E : "rgba(0, 128, 0, 0.5)",
+    0x0F : "#008080",
+    0x10 : "rgba(0, 128, 128, 0.5)",
+    0x11 : "#0000FF",
+    0x12 : "rgba(0, 0, 255, 0.5)",
+    0x13 : "#E6E6FA",                // https://en.wikipedia.org/wiki/Lavender_(color)
+    0x14 : "rgba(230, 230, 250, 0.5)",
+    0x15 : "#800080",
+    0x16 : "rgba(128, 0, 128, 0.5)",
+    0x17 : "#FFFFFF",
+    0x18 : "#FFFFFF"
+};
+
+
 export const CONTROL_MODE_ELEMENT = 0x60;
 
 export const CONTROL_MODE_ALL = 0x00;
