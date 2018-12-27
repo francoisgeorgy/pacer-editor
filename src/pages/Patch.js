@@ -16,28 +16,10 @@ import {presetIndexToXY} from "../pacer/utils";
 import Dropzone from "react-dropzone";
 import "./Patch.css";
 import Download from "../components/Download";
-import {outputIsPacer} from "../utils/midi";
+import {batchMessages, outputIsPacer} from "../utils/midi";
 import {dropOverlayStyle, MAX_FILE_SIZE} from "../utils/misc";
-
-function batchMessages(callback, callbackBusy, wait) {
-
-    let messages = [];  // batch of received messages
-    let timeout;
-
-    return function() {
-        clearTimeout(timeout);
-        let event = arguments[0];
-        messages.push(event.data);
-        // console.log('rec sysex', messages.length);
-        callbackBusy(messages.length);
-        timeout = setTimeout(() => {
-            // console.log("timeout elapsed");
-            timeout = null;
-            callback(messages);
-            messages = [];
-        }, wait);
-    };
-}
+import DownloadJSON from "../components/DownloadJSON";
+import * as QueryString from "query-string";
 
 class Patch extends Component {
 
@@ -50,9 +32,7 @@ class Patch extends Component {
             output: null,   // MIDI output port used for output
             data: null,     // json
             bytes: null,  // binary, will be used to download as .syx file
-            // presets: [],            // array of {data, bytes}, array index is preset index, 0 = current preset
             dropZoneActive: false,
-            // filename: null,
             status: null
         };
     }
@@ -126,19 +106,25 @@ class Patch extends Component {
                                 severity: "error",
                                 message: `The file ${file.name} is too big.`
                             };
-                            // draft.filename = null;
-                            this.props.onBusy({busy: false});
                         })
                     );
+                    this.hideBusy();
                 } else {
                     this.showBusy({busy: true, busyMessage: "loading file..."});
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
                     if (isSysexData(data)) {
                         this.setState(
                             produce(draft => {
-                                draft.bytes = data;
+                                //draft.bytes = data;
+                                if (draft.bytes === null) {
+                                    draft.bytes = data;
+                                } else {
+                                    const a = new Uint8Array(draft.bytes.length + data.length);
+                                    a.set(draft.bytes);
+                                    a.set(data, draft.bytes.length);
+                                    draft.bytes = a;
+                                }
                                 draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
-                                // draft.filename = file.name;
                                 draft.status = {
                                     severity: "info",
                                     message: `Patch file loaded: ${file.name}`
@@ -148,7 +134,6 @@ class Patch extends Component {
                     } else {
                         this.setState(
                             produce(draft => {
-                                // draft.filename = null;
                                 draft.status = {
                                     severity: "error",
                                     message: `The file ${file.name} does not contain a patch (is not a binary sysex file)`
@@ -156,7 +141,7 @@ class Patch extends Component {
                             })
                         );
                     }
-                    this.props.onBusy({busy: false});
+                    this.hideBusy();
                     // non sysex files are ignored
                 }
                 // too big files are ignored
@@ -165,7 +150,7 @@ class Patch extends Component {
     }
 
     onChangeFile = (e) => {
-        var file = e.target.files[0];
+        let file = e.target.files[0];
         // noinspection JSIgnoredPromiseFromCall
         this.readFiles([file]);
     };
@@ -193,8 +178,7 @@ class Patch extends Component {
     onDrop = (files) => {
         this.setState(
             {
-                data: null,
-                changed: false,
+                // data: null,
                 dropZoneActive: false
             },
             () => {this.readFiles(files)}   // returned promise from readFiles() is ignored, this is normal.
@@ -230,7 +214,10 @@ class Patch extends Component {
         }
         if (bytesExpected > 0) this.showBusy({busy: true, busyMessage: "receiving data...", bytesReceived: 0, bytesExpected});
         this.setState(
-            {data: null},
+            {
+                data: null,
+                bytes: null
+            },
             () => out.sendSysex(SYSEX_SIGNATURE, msg)
         );
     };
@@ -269,6 +256,9 @@ class Patch extends Component {
 
         const { status, bytes, data, output, dropZoneActive } = this.state;
 
+        const q =  QueryString.parse(window.location.search);
+        const debug = q.debug ? q.debug === '1' : false;
+
         return (
 
             <Dropzone
@@ -298,16 +288,16 @@ class Patch extends Component {
 
                     <div className="content">
 
-                        <div className="content-row-content">
-
-                            <div className="instructions">
-                                <div className="instruction">
-                                    Presets marked "no data" are ignored. They will NOT erase the preset config in your Pacer.
-                                </div>
-                                <div className="instruction">
-                                    A patch is a full dump of the Pacer.
-                                </div>
+                        <div className="instructions">
+                            <div className="instruction">
+                                Presets marked "no data" are ignored. They will NOT erase the preset config in your Pacer.
                             </div>
+                            <div className="instruction">
+                                A patch is a full dump of the Pacer.
+                            </div>
+                        </div>
+
+                        <div className="content-row-content first">
 
                             <h2>Patch content:</h2>
                             <div className="patch-content">
@@ -350,6 +340,7 @@ class Patch extends Component {
                                 </div>
                                 <div>
                                     {data && <Download data={bytes} filename={`pacer-patch`} addTimestamp={true} label="Save patch to file" />}
+                                    {data && debug && <DownloadJSON data={data} filename={`pacer-patch`} addTimestamp={true} label="Save patch JSON to file" className={"space-left"}/>}
                                 </div>
                                 <div>
                                     {data && outputIsPacer(output) && "or"}

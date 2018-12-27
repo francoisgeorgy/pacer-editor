@@ -1,6 +1,6 @@
 {
     "name": "pacer-editor",
-    "version": "0.7.5",
+    "version": "0.8.0",
     "author": "François Georgy <francois.georgy@gmail.com> (http://sysex.io)",
     "license": "GPL-3.0-or-later",
     "private": true,

@@ -1,0 +1,43 @@
+.overview {
+    font-size: 0.85rem;
+}
+
+.overview-controls {
+    margin-bottom: 24px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    /*grid-template-rows: repeat(25, 24px);*/
+    grid-gap: 1px;
+    border: 1px solid #aaa;
+    background-color: #aaa;
+    /*justify-content: start;*/
+    /*grid-column-gap: 16px;*/
+    /*!*grid-row-gap: 8px;*!*/
+    /*align-items: center;*/
+}
+
+
+.overview-controls > div {
+    background-color: #fff;
+    padding: 4px 6px;
+}
+
+.control-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.control-name {
+    font-weight: bold;
+}
+
+.overview-step {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.overview-message > span {
+    margin-left: 6px;
+}

@@ -127,7 +127,6 @@ class Files extends Component {
                             produce(draft => {
                                 draft.binData = data;
                                 draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
-                                this.props.onBusy(false);
                             })
                         );
                         // this.addInfoMessage("sysfile decoded");

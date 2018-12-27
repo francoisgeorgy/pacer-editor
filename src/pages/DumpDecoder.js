@@ -8,6 +8,7 @@ import {hs} from "../utils/hexstring";
 import Midi from "../components/Midi";
 import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME} from "../pacer/constants";
 import PortsGrid from "../components/PortsGrid";
+import {dropOverlayStyle} from "../utils/misc";
 
 const MAX_FILE_SIZE = 5 * 1024*1024;
 
@@ -21,9 +22,16 @@ class DumpDecoder extends Component {
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
     showBusy = ({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) =>  {
-        // console.log("show busy", busyMessage);
         setTimeout(() => this.props.onBusy({busy: false}), 20000);
         this.props.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
+    };
+
+    hideBusy = (delay = 0) => {
+        if (delay < 1) {
+            this.props.onBusy({busy: false});
+        } else {
+            setTimeout(() => this.props.onBusy({busy: false}), delay);
+        }
     };
 
     /**
@@ -36,6 +44,7 @@ class DumpDecoder extends Component {
             async file => {
                 if (file.size > MAX_FILE_SIZE) {
                     console.warn(`${file.name}: file too big, ${file.size}`);
+                    this.hideBusy();
                 } else {
                     this.showBusy({busy: true, busyMessage: "loading file..."});
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
@@ -43,14 +52,12 @@ class DumpDecoder extends Component {
                         this.setState(
                             produce(draft => {
                                 draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
-                                this.props.onBusy(false);
                             })
                         );
-                        // this.addInfoMessage("sysfile decoded");
                     } else {
                         console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
                     }
-                    this.props.onBusy({busy: false});
+                    this.hideBusy();
                     // non sysex files are ignored
                 }
                 // too big files are ignored
@@ -75,10 +82,9 @@ class DumpDecoder extends Component {
      * @param files
      */
     onDrop = (files) => {
-        // console.log('drop', files);
         this.setState(
         {
-                data: null,
+                // data: null,
                 dropZoneActive: false
             },
     () => {this.readFiles(files)});
@@ -109,31 +115,17 @@ class DumpDecoder extends Component {
 
         const { data, dropZoneActive } = this.state;
 
-        const overlayStyle = {
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-            paddingTop: '1rem',
-            background: 'rgba(0,0,0,0.4)',
-            textAlign: 'center',
-            color: '#fff',
-            fontSize: '4rem'
-        };
-
         return (
 
             <Dropzone
                 disableClick
                 style={{position: "relative"}}
-                // accept={accept}
                 onDrop={this.onDrop}
                 onDragEnter={this.onDragEnter}
                 onDragLeave={this.onDragLeave}>
 
                 {dropZoneActive &&
-                <div style={overlayStyle}>
+                <div style={dropOverlayStyle}>
                     Drop sysex file...
                 </div>}
 
@@ -142,8 +134,8 @@ class DumpDecoder extends Component {
                     <div className="subheader">
                         <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
                               portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
-                              onMidiInputEvent={this.handleMidiInputEvent}
-                              className="" >
+                              messageType="sysex"
+                              onMidiInputEvent={this.handleMidiInputEvent}>
                             <div className="no-midi">Please connect your Pacer to your computer.</div>
                         </Midi>
                     </div>

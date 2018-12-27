@@ -120,8 +120,6 @@ export const batchMessages = (callback, callbackBusy, wait) => {
         clearTimeout(timeout);
         let event = arguments[0];
 
-        // console.log(event);
-
         //
         // We ignore all messages that are NOT sysex messages:
         //
@@ -131,7 +129,6 @@ export const batchMessages = (callback, callbackBusy, wait) => {
         }
 
         messages.push(event.data);
-        // console.log('rec sysex', messages.length);
 
         callbackBusy(messages.length);  // messages.length is the total number of bytes received so far
 

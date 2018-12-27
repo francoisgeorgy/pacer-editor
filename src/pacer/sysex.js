@@ -27,6 +27,7 @@ export const SYSEX_END = 0xF7;
 
 // data structure keys:
 export const CONTROLS_DATA = "controls";
+export const STEPS_DATA = "steps";
 
 // offsets from start of sysex data, right after SYSEX_START
 const CMD = 4;

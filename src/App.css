@@ -12,6 +12,10 @@
     background-color: #ffff30;
 }
 
+.dim {
+    color: #999;
+}
+
 .small {
     font-size: 0.75rem;
     color: #777;

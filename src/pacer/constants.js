@@ -181,6 +181,45 @@ export const MSG_TYPES = {
     [MSG_LOAD_CC]: "CC"
 };
 
+export const MSG_TYPES_SHORT_NAMES = {      // used in overview
+
+    [MSG_AD_MIDICC]: "CC",
+    [MSG_AD_NRPNC]: "NRPN C",
+    [MSG_AD_NRPNF]: "NRPN F",
+    [MSG_AD_PITCH]: "Pitch",
+    [MSG_AD_ATCHAN]: "AT CHAN",
+    [MSG_DAWFUNC]: "DAW",
+    [MSG_CTRL_OFF]: "Ctrl OFF",
+
+    [MSG_SW_MIDI_CC_TGGLE]: "CC tggl",
+    [MSG_SW_MIDI_CC]: "CC",
+    [MSG_SW_MIDI_CC_STEP]: "CC step",
+    [MSG_SW_NOTE]: "Note",
+    [MSG_SW_NOTE_TGGLE]: "Note tggl",
+    [MSG_SW_PRG_BANK]: "Prg bank",
+    [MSG_SW_PRG_STEP]: "Prg step",
+    [MSG_SW_NRPN_COARSE]: "NRPN C",
+    [MSG_SW_NRPN_FINE]: "NRPN F",
+    [MSG_SW_MMC]: "MMC",
+    [MSG_SW_RELAY]: "Relay",
+    [MSG_SW_PRESET_SELECT]: "Preset sel",
+    [MSG_SW_PRESET_INC_DEC]: "Preset +/-",
+    [MSG_SW_STEP_SELECT]: "Step sel",
+    [MSG_SW_STEP_INC_DEC]: "Step +/-",
+
+    [MSG_ENC_CC]: "CC",
+    [MSG_ENC_MIDICC_REL]: "CC rel",
+    [MSG_ENC_NRPNC]: "NRPN C",
+    [MSG_ENC_NRPNF]: "NRPN F",
+    [MSG_ENC_PITCH]: "Pitch",
+    [MSG_ENC_ATCHAN]: "AT chan",
+    [MSG_ENC_PROGRAM]: "Prg",
+    [MSG_ENC_PRESETSELECT]: "Preset sel",
+    [MSG_ENC_STEPSELECT]: "Step sel",
+
+    [MSG_LOAD_CC]: "CC"
+};
+
 // Message types for stompswitches
 export const MSG_TYPES_FULLNAME_SW = {
     [MSG_CTRL_OFF]: "OFF",
@@ -232,31 +271,35 @@ export const MSG_TYPES_FULLNAME_MIDI = {
 
 export const MSG_TYPES_FULLNAME_MIDI_SORTED = sortObject(MSG_TYPES_FULLNAME_MIDI);
 
+export const NOT_USED = "not used";
+
 export const MSG_TYPES_DATA_HELP = {
+
+    // each value must be a array of 3 values
 
     [MSG_AD_MIDICC]: ["", "", ""],
     [MSG_AD_NRPNC]: ["", "", ""],
     [MSG_AD_NRPNF]: ["", "", ""],
     [MSG_AD_PITCH]: ["", "", ""],
     [MSG_AD_ATCHAN]: ["", "", ""],
-    [MSG_DAWFUNC]: ["function", "not used", "not used"],
+    [MSG_DAWFUNC]: ["function", NOT_USED, NOT_USED],
     [MSG_CTRL_OFF]: ["", "", ""],
 
     [MSG_SW_MIDI_CC_TGGLE]: ["controller", "value 1", "value 2"],
     [MSG_SW_MIDI_CC]: ["controller", "down", "up"],
     [MSG_SW_MIDI_CC_STEP]: ["controller", "start", "end"],
-    [MSG_SW_NOTE]: ["note", "velocity", "not used"],
-    [MSG_SW_NOTE_TGGLE]: ["note", "velocity", "not used"],
+    [MSG_SW_NOTE]: ["note", "velocity", NOT_USED],
+    [MSG_SW_NOTE_TGGLE]: ["note", "velocity", NOT_USED],
     [MSG_SW_PRG_BANK]: ["program", "bank LSB", "bank MSB"],
-    [MSG_SW_PRG_STEP]: ["not used", "start", "end"],
+    [MSG_SW_PRG_STEP]: ["start", "end", NOT_USED],
     [MSG_SW_NRPN_COARSE]: ["value", "NRPN LSB", "NRPN MSB"],
     [MSG_SW_NRPN_FINE]: ["value", "NRPN LSB", "NRPN MSB"],
-    [MSG_SW_MMC]: ["device", "command", "not used"],
-    [MSG_SW_RELAY]: ["mode", "relay #", "not used"],
-    [MSG_SW_PRESET_SELECT]: ["preset", "not used", "not used"],
-    [MSG_SW_PRESET_INC_DEC]: ["inc/dec", "not used", "not used"],
-    [MSG_SW_STEP_SELECT]: ["target", "step", "not used"],
-    [MSG_SW_STEP_INC_DEC]: ["target", "inc/dec", "not used"],
+    [MSG_SW_MMC]: ["device", "command", NOT_USED],
+    [MSG_SW_RELAY]: ["mode", "relay #", NOT_USED],
+    [MSG_SW_PRESET_SELECT]: ["preset", NOT_USED, NOT_USED],
+    [MSG_SW_PRESET_INC_DEC]: ["inc/dec", NOT_USED, NOT_USED],
+    [MSG_SW_STEP_SELECT]: ["target", "step", NOT_USED],
+    [MSG_SW_STEP_INC_DEC]: ["target", "inc/dec", NOT_USED],
 
     [MSG_ENC_CC]: ["", "", ""],
     [MSG_ENC_MIDICC_REL]: ["", "", ""],
@@ -268,7 +311,7 @@ export const MSG_TYPES_DATA_HELP = {
     [MSG_ENC_PRESETSELECT]: ["", "", ""],
     [MSG_ENC_STEPSELECT]: ["", "", ""],
 
-    [MSG_LOAD_CC]: ["controller", "value", "not used"]
+    [MSG_LOAD_CC]: ["controller", "value", NOT_USED]
 };
 
 /*
@@ -607,4 +650,10 @@ export const CONTROL_MODES = {
     [CONTROL_MODE_ALL]: "All",
     [CONTROL_MODE_EXT_STEP]: "External Step Select",
     [CONTROL_MODE_SEQUENCE]: "Sequence",
+};
+
+export const CONTROL_MODES_SHORT_NAME = {
+    [CONTROL_MODE_ALL]: "All",
+    [CONTROL_MODE_EXT_STEP]: "ESS",
+    [CONTROL_MODE_SEQUENCE]: "Seq",
 };

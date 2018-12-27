@@ -12,6 +12,7 @@ import PresetMidi from "./pages/PresetMidi";
 import * as QueryString from "query-string";
 import Patch from "./pages/Patch";
 import {produce} from "immer";
+import Overview from "./pages/Overview";
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
     <Route
@@ -101,9 +102,10 @@ class App extends Component {
 
                     <header className="header">
                         <MenuLink activeOnlyWhenExact={true} to="/" label="Home" />
-                        <MenuLink to="/preset" label="Preset Controls" />
-                        <MenuLink to="/presetmidi" label="Preset Name & MIDI" />
-                        <MenuLink to="/global" label="Global config" />
+                        <MenuLink to="/overview" label="Overview" />
+                        <MenuLink to="/preset" label="Controls" />
+                        <MenuLink to="/presetmidi" label="MIDI" />
+                        <MenuLink to="/global" label="Global" />
                         <MenuLink to="/patch" label="Patch" />
                         {/*<MenuLink to="/files" label="Files" />*/}
                         <MenuLink to="/monitor" label="MIDI monitor" />
@@ -111,13 +113,18 @@ class App extends Component {
                         {debug && <MenuLink to="/debug" label="Debug" />}
                         {!busy && <div className="spacer"> </div>}
                         {busy && <div className="busy">{busyMessage}{progress >= 0 && <div>{progress} %</div>}</div>}
-                        <div className="header-app-name">Pacer editor 0.7.5</div>
+                        <div className="header-app-name">Pacer editor 0.8.0</div>
                     </header>
 
                         <Switch>
                             <Route exact={true} path="/" render={
                                 props => (
                                     <Home />
+                                )
+                            }/>
+                            <Route path="/overview" render={
+                                props => (
+                                    <Overview onBusy={this.onBusy} debug={debug} />
                                 )
                             }/>
                             <Route path="/preset" render={

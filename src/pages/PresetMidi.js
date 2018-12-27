@@ -24,13 +24,9 @@ import {outputById} from "../utils/ports";
 import PresetNameEditor from "../components/PresetNameEditor";
 import PortsGrid from "../components/PortsGrid";
 import {batchMessages, outputIsPacer} from "../utils/midi";
-import {dropOverlayStyle, MAX_FILE_SIZE} from "../utils/misc";
+import {dropOverlayStyle, isVal, MAX_FILE_SIZE} from "../utils/misc";
 import {updateMessageName} from "../utils/state";
 import UpdateMessages from "../components/UpdateMessages";
-
-function isVal(v) {
-    return v !== undefined && v !== null && v !== '';
-}
 
 class PresetMidi extends Component {
 
@@ -42,8 +38,7 @@ class PresetMidi extends Component {
             presetIndex: null,  //
             changed: false,     // true when the control has been edited
             updateMessages: {},
-            data: null          // ,
-            // statusMessages: []
+            data: null
         };
     }
 
@@ -55,7 +50,6 @@ class PresetMidi extends Component {
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
     showBusy = ({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) =>  {
-        // console.log("show busy", busyMessage);
         setTimeout(() => this.props.onBusy({busy: false}), 20000);
         this.props.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
     };
@@ -106,7 +100,6 @@ class PresetMidi extends Component {
             this.props.onBusy({busy: false});
         },
         (n) => {
-            // console.log(n);
             this.props.onBusy({busy: true, bytesReceived: n});
         },
         1000
@@ -151,15 +144,12 @@ class PresetMidi extends Component {
     }
 
     onChangeFile = (e) => {
-        console.log("onChangeFile", e);
         let file = e.target.files[0];
-        console.log(file);
         // noinspection JSIgnoredPromiseFromCall
         this.readFiles([file]);
     };
 
     onInputFile = (e) => {
-        console.log("onInputFile", e);
         this.inputOpenFileRef.current.click()
     };
 
@@ -261,7 +251,6 @@ class PresetMidi extends Component {
     };
 
     onOutputConnection = (port_id) => {
-        console.log("onOutputConnection");
         this.setState(
             produce(draft => {
                 draft.output = port_id;
@@ -271,7 +260,6 @@ class PresetMidi extends Component {
     };
 
     onOutputDisconnection = (port_id) => {
-        console.log("onOutputDisconnection");
         this.setState(
             produce(draft => {
                 draft.output = null;        // we manage only one output connection at a time
@@ -281,7 +269,7 @@ class PresetMidi extends Component {
     };
 
     sendSysex = msg => {
-        // console.log("sendSysex", hs(msg));
+        // console.log("sendSysex", msg.length > 32 ? hs(msg.slice(0, 32)) + '...' : hs(msg), bytesExpected);
         if (!this.state.output) {
             console.warn("no output enabled to send the message");
             return;
@@ -346,7 +334,6 @@ class PresetMidi extends Component {
             <Dropzone
                 disableClick
                 style={{position: "relative"}}
-                // accept={accept}
                 onDrop={this.onDrop}
                 onDragEnter={this.onDragEnter}
                 onDragLeave={this.onDragLeave}>
@@ -391,13 +378,9 @@ class PresetMidi extends Component {
                                 <PresetSelector data={data} currentPreset={presetIndex} onClick={this.selectPreset} />
                             </div>
                             <div className="preset-buttons">
-                                {output && <button className="space-right" onClick={() => this.readPacer(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read all presets from Pacer</button>}
+                                {output && <button onClick={() => this.readPacer(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read all presets from Pacer</button>}
                                 <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
                                 <button onClick={this.onInputFile}>Load preset(s) from file</button>
-                                {/*data &&
-                                    <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
-                                              label="Download preset" />
-                                    */}
                                 <button onClick={this.clearData}>CLEAR</button>
                             </div>
                             {data && data[TARGET_PRESET][presetIndex] && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}

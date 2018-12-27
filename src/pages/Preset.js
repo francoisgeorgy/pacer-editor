@@ -26,18 +26,13 @@ import ControlModeEditor from "../components/ControlModeEditor";
 import PresetNameEditor from "../components/PresetNameEditor";
 import PortsGrid from "../components/PortsGrid";
 import {batchMessages, outputIsPacer} from "../utils/midi";
-import {dropOverlayStyle, MAX_FILE_SIZE} from "../utils/misc";
+import {dropOverlayStyle, isVal, MAX_FILE_SIZE} from "../utils/misc";
 import {updateMessageName} from "../utils/state";
 import UpdateMessages from "../components/UpdateMessages";
 import {presetIndexToXY} from "../pacer/utils";
 
 //FIXME: fix this:
 setAutoFreeze(false);   // needed to be able to update name and copy a preset at the same time. Otherwise immerjs freez the state in updateMessageName() and it is no longer possible to copy a preset.
-
-
-function isVal(v) {
-    return v !== undefined && v !== null && v !== '';
-}
 
 class Preset extends Component {
 
