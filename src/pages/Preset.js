@@ -528,7 +528,7 @@ class Preset extends Component {
                                     <Download data={this.state.binData} filename={`pacer-preset-${presetIndexToXY(presetIndex)}`} addTimestamp={true}
                                               label="Download preset" />
                                     */}
-                                <button onClick={this.clearData}>CLEAR</button>
+                                {data && <button onClick={this.clearData}>CLEAR</button>}
                             </div>
                             {data && data[TARGET_PRESET][presetIndex] && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                         </div>

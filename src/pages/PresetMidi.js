@@ -381,7 +381,7 @@ class PresetMidi extends Component {
                                 {output && <button onClick={() => this.readPacer(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read all presets from Pacer</button>}
                                 <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
                                 <button onClick={this.onInputFile}>Load preset(s) from file</button>
-                                <button onClick={this.clearData}>CLEAR</button>
+                                {data && <button onClick={this.clearData}>CLEAR</button>}
                             </div>
                             {data && data[TARGET_PRESET][presetIndex] && <PresetNameEditor name={data[TARGET_PRESET][presetIndex]["name"]} onUpdate={(name) => this.updatePresetName(name)} />}
                         </div>

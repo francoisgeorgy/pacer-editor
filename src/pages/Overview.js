@@ -268,8 +268,8 @@ class Overview extends Component {
                                 {output && <button onClick={() => this.readPacer(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read all presets from Pacer</button>}
                                 <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}}  onChange={this.onChangeFile} />
                                 <button onClick={this.onInputFile}>Load preset(s) from file</button>
-                                <button onClick={this.clearData}>CLEAR</button>
-                                <button onClick={this.toggleBase}>{this.state.decBase ? "Display numbers in hex" : "Display numbers in dec"}</button>
+                                {data && <button onClick={this.clearData}>CLEAR</button>}
+                                {data && <button onClick={this.toggleBase}>{this.state.decBase ? "Display numbers in hex" : "Display numbers in dec"}</button>}
                             </div>
                         </div>
 
