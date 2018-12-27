@@ -100,6 +100,8 @@ class App extends Component {
             <Router>
                 <div className="app">
 
+                    {busy && <div className="busy">{busyMessage}{progress >= 0 && <div>{progress} %</div>}</div>}
+
                     <header className="header">
                         <MenuLink activeOnlyWhenExact={true} to="/" label="Home" />
                         <MenuLink to="/overview" label="Overview" />
@@ -108,12 +110,11 @@ class App extends Component {
                         <MenuLink to="/global" label="Global" />
                         <MenuLink to="/patch" label="Patch" />
                         {/*<MenuLink to="/files" label="Files" />*/}
-                        <MenuLink to="/monitor" label="MIDI monitor" />
-                        <MenuLink to="/dumpdecoder" label="Dump decoder" />
+                        <MenuLink to="/monitor" label="Monitor" />
+                        {debug && <MenuLink to="/dumpdecoder" label="Dump decoder" />}
                         {debug && <MenuLink to="/debug" label="Debug" />}
-                        {!busy && <div className="spacer"> </div>}
-                        {busy && <div className="busy">{busyMessage}{progress >= 0 && <div>{progress} %</div>}</div>}
-                        <div className="header-app-name">Pacer editor 0.8.0</div>
+                        <div className="spacer"> </div>
+                        <div className="header-app-name">Pacer editor 0.8.1</div>
                     </header>
 
                         <Switch>
@@ -157,11 +158,13 @@ class App extends Component {
                                     <Monitor onBusy={this.onBusy} debug={debug} />
                                 )
                             }/>
+                            {debug &&
                             <Route path="/dumpdecoder" render={
                                 props => (
-                                    <DumpDecoder onBusy={this.onBusy} debug={debug} />
+                                    <DumpDecoder onBusy={this.onBusy} debug={debug}/>
                                 )
                             }/>
+                            }
                             {debug &&
                             <Route path="/debug" render={
                                 props => (
