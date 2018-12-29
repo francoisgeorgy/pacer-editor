@@ -37,6 +37,10 @@ class Patch extends Component {
         };
     }
 
+    clearData = () => {
+        this.setState({data: null, updateMessages: {}, changed: false});
+    };
+
     /**
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
@@ -62,12 +66,16 @@ class Patch extends Component {
                 produce(
                     draft => {
 
-                        draft.bytes = new Uint8Array(bytes);
+                        // draft.bytes = new Uint8Array(bytes);
+                        // let bin_index = 0;
+
+                        let buffer = new Uint8Array(bytes);
                         let bin_index = 0;
 
                         for (let m of messages) {
 
-                            draft.bytes.set(m, bin_index);
+                            // draft.bytes.set(m, bin_index);
+                            buffer.set(m, bin_index);
                             bin_index += m.length;
 
                             if (isSysexData(m)) {
@@ -76,6 +84,17 @@ class Patch extends Component {
                                 console.log("MIDI message is not a sysex message")
                             }
                         }
+
+                        if (draft.bytes === null) {
+                            draft.bytes = buffer;
+                        } else {
+                            // merge sysex bytes
+                            const a = new Uint8Array(draft.bytes.length + buffer.length);
+                            a.set(draft.bytes);
+                            a.set(buffer, draft.bytes.length);
+                            draft.bytes = a;
+                        }
+
                     }
                 )
             );
@@ -119,6 +138,7 @@ class Patch extends Component {
                                 if (draft.bytes === null) {
                                     draft.bytes = data;
                                 } else {
+                                    // merge sysex bytes
                                     const a = new Uint8Array(draft.bytes.length + data.length);
                                     a.set(draft.bytes);
                                     a.set(data, draft.bytes.length);
@@ -350,6 +370,9 @@ class Patch extends Component {
                                 </div>
                             </div>
 
+                            {data && <div className="preset-buttons">
+                                <button onClick={this.clearData}>CLEAR</button>
+                            </div>}
 
                         </div>
 

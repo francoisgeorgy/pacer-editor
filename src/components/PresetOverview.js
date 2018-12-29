@@ -31,7 +31,6 @@ function hasMidiConfig(preset) {
     return false;
 }
 
-
 const Message = ({ message, hexDisplay }) => {
     if (message === null || message === undefined) return null;
     const t = message["msg_type"];
@@ -61,19 +60,6 @@ const Message = ({ message, hexDisplay }) => {
 const Step = ({ step, hexDisplay }) => {
     if (step === null || step === undefined) return null;
     if (step["active"] === 0) return null;
-/*
-    const t = step["msg_type"];
-    const used = MSG_TYPES_DATA_HELP[t];
-    const data = step["data"];
-    let d = [null, null, null];
-    for (let i=0; i<3; i++) {
-        if (used[i] === NOT_USED) continue;
-        d[i] = hexDisplay ? h(data[i]) : data[i];
-        if (i === 0 && t === MSG_SW_NOTE) {
-            d[i] += ' (' + Note.fromMidi(data[i], true) + ')';
-        }
-    }
-*/
     let colorOn = null;
     let colorOff = null;
     if (step["led_active_color"] && step["led_inactive_color"]) {
@@ -85,15 +71,6 @@ const Step = ({ step, hexDisplay }) => {
         <Fragment>
             <div className="overview-step">
                 <Message message={step} hexDisplay={hexDisplay} />
-{/*
-                <div className="overview-message">
-                    {MSG_TYPES_SHORT_NAMES[t]}
-                    <span>{d[0]}</span>
-                    <span>{d[1]}</span>
-                    <span>{d[2]}</span>
-                </div>
-                <div>ch. {step["channel"]}</div>
-*/}
             </div>
             {displayColor &&
             <div className="overview-step-color">
@@ -105,28 +82,6 @@ const Step = ({ step, hexDisplay }) => {
     );
 };
 
-/*
-    "13": {
-        "steps": {
-            "1": {
-                "channel": 0,
-                "msg_type": 69,
-                "data": [
-                    0,
-                    0,
-                    0
-                ],
-                "active": 1,
-                "led_midi_ctrl": 0,
-                "led_active_color": 127,
-                "led_inactive_color": 127,
-                "led_num": 0
-            },
-            "2": ...
-        },
-        "control_mode": 0
-    },
-*/
 const Control = ({ id, control, hexDisplay }) => {
     if (control === null || control === undefined) return null;
     return (
@@ -151,31 +106,15 @@ const Controls = ({ controls, hexDisplay, extControls }) => {
             {STOMPSWITCHES_BOTTOM.map(obj => <Control key={obj} id={obj} control={controls[obj]} hexDisplay={hexDisplay} />)}
         </div>
     );
-/*
-    return (
-        <div className="overview-controls">
-            {/!*{Object.keys(controls).map(obj => <ControlTable key={obj} obj={obj} config={controls[obj]} />)}*!/}
-            {Object.keys(controls).map(obj => <Control control={controls[obj]} />)}
-        </div>
-    );
-*/
 };
 
 const MidiSetting = ({ setting, hexDisplay }) => {
-    // console.log("MidiSetting", setting.msg_type);
     if (setting === null || setting === undefined) return null;
     if (!setting["msg_type"]) return null;
     if (setting.msg_type === MSG_CTRL_OFF) return null;
-    // console.log("MidiSetting", setting);
     return (
         <div className="overview-midi">
             <Message message={setting} hexDisplay={hexDisplay} />
-{/*
-            <div>{MSG_TYPES_SHORT_NAMES[setting.msg_type]}</div>
-            <div>{setting.msg_type}</div>
-            <div>{setting.msg_type}</div>
-            <div>{setting.msg_type}</div>
-*/}
         </div>
     );
 };
