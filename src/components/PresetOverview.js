@@ -12,16 +12,56 @@ import {
     CONTROL_MODES_SHORT_NAME,
     MSG_SW_NOTE,
     COLORS,
-    COLORS_HTML
+    COLORS_HTML, MSG_CTRL_OFF
 } from "../pacer/constants";
 import {presetIndexToXY} from "../pacer/utils";
 import {STEPS_DATA} from "../pacer/sysex";
 import {h} from "../utils/hexstring";
 import * as Note from "tonal-note";
 
+function hasMidiConfig(preset) {
+    if (preset && preset["midi"]) {
+        for (let prop in preset.midi) {
+            const m = preset.midi[prop];
+            if (m.hasOwnProperty("msg_type")) {
+                if (m.msg_type !== MSG_CTRL_OFF) return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+const Message = ({ message, hexDisplay }) => {
+    if (message === null || message === undefined) return null;
+    const t = message["msg_type"];
+    const used = MSG_TYPES_DATA_HELP[t];
+    const data = message["data"];
+    let d = [null, null, null];
+    for (let i=0; i<3; i++) {
+        if (used[i] === NOT_USED) continue;
+        d[i] = hexDisplay ? h(data[i]) : data[i];
+        if (i === 0 && t === MSG_SW_NOTE) {
+            d[i] += ' (' + Note.fromMidi(data[i], true) + ')';
+        }
+    }
+    return (
+        <Fragment>
+            <div className="overview-message">
+                {MSG_TYPES_SHORT_NAMES[t]}
+                <span>{d[0]}</span>
+                <span>{d[1]}</span>
+                <span>{d[2]}</span>
+            </div>
+            <div className="msg-midi-channel">ch. {hexDisplay ? h(message["channel"]) : message["channel"]}</div>
+        </Fragment>
+    );
+};
+
 const Step = ({ step, hexDisplay }) => {
     if (step === null || step === undefined) return null;
     if (step["active"] === 0) return null;
+/*
     const t = step["msg_type"];
     const used = MSG_TYPES_DATA_HELP[t];
     const data = step["data"];
@@ -33,6 +73,7 @@ const Step = ({ step, hexDisplay }) => {
             d[i] += ' (' + Note.fromMidi(data[i], true) + ')';
         }
     }
+*/
     let colorOn = null;
     let colorOff = null;
     if (step["led_active_color"] && step["led_inactive_color"]) {
@@ -43,6 +84,8 @@ const Step = ({ step, hexDisplay }) => {
     return (
         <Fragment>
             <div className="overview-step">
+                <Message message={step} hexDisplay={hexDisplay} />
+{/*
                 <div className="overview-message">
                     {MSG_TYPES_SHORT_NAMES[t]}
                     <span>{d[0]}</span>
@@ -50,6 +93,7 @@ const Step = ({ step, hexDisplay }) => {
                     <span>{d[2]}</span>
                 </div>
                 <div>ch. {step["channel"]}</div>
+*/}
             </div>
             {displayColor &&
             <div className="overview-step-color">
@@ -117,6 +161,38 @@ const Controls = ({ controls, hexDisplay, extControls }) => {
 */
 };
 
+const MidiSetting = ({ setting, hexDisplay }) => {
+    // console.log("MidiSetting", setting.msg_type);
+    if (setting === null || setting === undefined) return null;
+    if (!setting["msg_type"]) return null;
+    if (setting.msg_type === MSG_CTRL_OFF) return null;
+    // console.log("MidiSetting", setting);
+    return (
+        <div className="overview-midi">
+            <Message message={setting} hexDisplay={hexDisplay} />
+{/*
+            <div>{MSG_TYPES_SHORT_NAMES[setting.msg_type]}</div>
+            <div>{setting.msg_type}</div>
+            <div>{setting.msg_type}</div>
+            <div>{setting.msg_type}</div>
+*/}
+        </div>
+    );
+};
+
+const MidiSettings = ({ settings, hexDisplay }) => {
+    console.log("MidiSettings", settings);
+    if (settings === null || settings === undefined) return null;
+    return (
+        <div className="overview-midi-settings">
+            <div className="control-name">MIDI</div>
+            {Object.keys(settings).map(i =>                     // TODO: .filter(msg_type !== MSG_CTRL_OFF)
+                <MidiSetting key={i} index={i} setting={settings[i]} hexDisplay={hexDisplay} />
+            )}
+        </div>
+    );
+};
+
 const Preset = ({ index, data, hexDisplay, extControls }) => {
     if (data === null || data === undefined) return null;
     return (
@@ -124,7 +200,7 @@ const Preset = ({ index, data, hexDisplay, extControls }) => {
             <h3>Preset {presetIndexToXY(parseInt(index, 10))} (#{index}): <span className="bold">{data["name"]}</span></h3>
             {/*<PresetName name= />*/}
             <Controls controls={data["controls"]} hexDisplay={hexDisplay} extControls={extControls} />
-            {/*<MidiSettings settings={data["midi"]}/>*/}
+            {hasMidiConfig(data) && <MidiSettings settings={data["midi"]} hexDisplay={hexDisplay} />}
         </div>
     );
 };

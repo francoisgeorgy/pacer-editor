@@ -2,8 +2,16 @@
     font-size: 0.85rem;
 }
 
+.overview h3 {
+    margin-top: 24px;
+}
+
+.overview-preset:first-of-type h3 {
+    margin-top: 0.25em;
+}
+
 .overview-controls {
-    margin-bottom: 24px;
+    /*margin-bottom: 24px;*/
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     /*grid-template-rows: repeat(25, 24px);*/
@@ -49,6 +57,22 @@
     min-height: 8px;
 }
 
+.overview-midi-settings {
+    margin-top: 0.25rem;
+    border: 1px solid #aaa;
+    padding: 4px 6px;
+}
+
+.overview-midi {
+    display: flex;
+    flex-direction: row;
+    /*justify-content: space-between;*/
+}
+
 .overview-message > span {
     margin-left: 6px;
+}
+
+.overview-midi .msg-midi-channel {
+    margin-left: 0.5rem;
 }
