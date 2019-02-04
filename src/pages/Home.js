@@ -71,6 +71,7 @@ class Home extends Component {
                     <p>- Check the MIDI configuration.</p>
                     <p>- Reload the editor (F5 or Cmd-R or Ctrl-R)</p>
                     <p>- Restart the Pacer.</p>
+                    <p>- Close any other applications that may be connected to the Pacer.</p>
                     <p>If you mess up the configuration of your Pacer, do a <span className="fluo">Factory Restore</span>. See page 21 of the Pacer User Guide for the procedure.</p>
                 </div>
 
