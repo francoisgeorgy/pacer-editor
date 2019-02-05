@@ -114,7 +114,7 @@ class App extends Component {
                         {debug && <MenuLink to="/dumpdecoder" label="Dump decoder" />}
                         {debug && <MenuLink to="/debug" label="Debug" />}
                         <div className="spacer"> </div>
-                        <div className="header-app-name">Pacer editor 0.8.2</div>
+                        <div className="header-app-name">Pacer editor 0.8.3</div>
                     </header>
 
                         <Switch>
