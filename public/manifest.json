@@ -1,6 +1,7 @@
 {
     "short_name": "Pacer Editor",
-    "name": "Pacer Editor",
+    "name": "Pacer Editor by StudioCode.dev",
+    "description": "Configure your Nektar Pacer MIDI controler with your web browser.",
     "icons": [
         {
             "src": "favicon.ico",
