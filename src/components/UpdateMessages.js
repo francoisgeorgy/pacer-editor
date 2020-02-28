@@ -1,7 +1,5 @@
 import React from "react";
-import {hs} from "../utils/hexstring";
 import {CONTROLS_FULLNAME} from "../pacer/constants";
-import {presetIndexToXY} from "../pacer/utils";
 
 /*
 {
@@ -27,14 +25,12 @@ const updateMessage = (ctrlType, ctrl, messages) => {
     switch (ctrlType) {
         case "controls":
             return <div>update control {CONTROLS_FULLNAME[ctrl]}</div>;
-            break;
         case "midi":
             return <div>update midi</div>;
-            break;
         case "name":
             return <div>update name</div>;
-            break;
-        default: return null;
+        default:
+            return null;
     }
 };
 
@@ -49,12 +45,6 @@ const UpdateMessages = ({ messages }) =>
                         return Object.getOwnPropertyNames(messages[presetId][ctrlType]).map(      // control
                             (ctrl, k) => {
                                 return updateMessage(ctrlType, ctrl, messages[presetId][ctrlType][ctrl])
-                                // console.log(ctrl);
-                                // return messages[presetId][ctrlType][ctrl].map(
-                                //     (msg, h) => {
-                                //         return (<div key={`${i}-${j}-${k}-${h}`} className="code">Preset {presetIndexToXY(presetId)} {ctrlType} </div>);
-                                //     }
-                                // );
                             }
                         );
                     }
