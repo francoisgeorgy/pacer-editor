@@ -149,12 +149,12 @@ class Home extends Component {
                         <tr>
                             <td className="ctrl-type">Program Step</td>
                             <td className="ctrl-desc">Send a MIDI Program Step message ??? </td>
+                            <td className="italic">not used</td>
+                            <td>--</td>
                             <td>Start</td>
                             <td>0-127</td>
                             <td>End</td>
                             <td>0-127</td>
-                            <td className="italic">not used</td>
-                            <td>--</td>
                         </tr>
                         <tr>
                             <td className="ctrl-type">NRPN Coarse</td>
