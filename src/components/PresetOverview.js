@@ -44,6 +44,12 @@ const Message = ({ message, hexDisplay }) => {
             d[i] += ' (' + Note.fromMidi(data[i], true) + ')';
         }
     }
+    let channel = '';
+    if (hexDisplay) {
+        channel = h(message["channel"]);
+    } else {
+        channel = message["channel"] === 0 ? 'global' : message["channel"];
+    }
     return (
         <Fragment>
             <div className="overview-message">
@@ -52,7 +58,7 @@ const Message = ({ message, hexDisplay }) => {
                 <span>{d[1]}</span>
                 <span>{d[2]}</span>
             </div>
-            <div className="msg-midi-channel">ch. {hexDisplay ? h(message["channel"]) : message["channel"]}</div>
+            <div className="msg-midi-channel">ch. {channel}</div>
         </Fragment>
     );
 };

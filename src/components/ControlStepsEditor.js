@@ -125,7 +125,7 @@ const Step = ({ index, config, updateCallback }) => {
             <div>
                 <select value={config.channel} onChange={(event) => updateCallback("channel", null, event.target.value)}>
                     {
-                        Array.from(Array(16).keys()).map(i => <option key={i} value={i}>{i}</option>)
+                        Array.from(Array(17).keys()).map(i => <option key={i} value={i}>{i === 0 ? 'global' : i}</option>)
                     }
                 </select>
             </div>

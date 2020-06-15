@@ -82,7 +82,7 @@ const Setting = ({ index, config, updateCallback }) => {
             <div>
                 <select onChange={(event) => updateCallback("channel", null, event.target.value)} value={config.channel}>
                     {
-                        Array.from(Array(16).keys()).map(i => <option key={i} value={i}>{i}</option>)
+                        Array.from(Array(17).keys()).map(i => <option key={i} value={i}>{i === 0 ? 'global' : i}</option>)
                     }
                 </select>
             </div>
