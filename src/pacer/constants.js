@@ -291,7 +291,7 @@ export const MSG_TYPES_DATA_HELP = {
     [MSG_SW_NOTE]: ["note", "velocity", NOT_USED],
     [MSG_SW_NOTE_TGGLE]: ["note", "velocity", NOT_USED],
     [MSG_SW_PRG_BANK]: ["program", "bank LSB", "bank MSB"],
-    [MSG_SW_PRG_STEP]: ["start", "end", NOT_USED],
+    [MSG_SW_PRG_STEP]: [NOT_USED, "start", "end"],
     [MSG_SW_NRPN_COARSE]: ["value", "NRPN LSB", "NRPN MSB"],
     [MSG_SW_NRPN_FINE]: ["value", "NRPN LSB", "NRPN MSB"],
     [MSG_SW_MMC]: ["device", "command", NOT_USED],
