@@ -16,6 +16,7 @@ class Home extends Component {
                     <p>Currently, only <span className="strong">Chrome</span> and <span className="strong">Opera</span> support this standard.
                         This application will therefore <span className="italic">not</span> work in Firefox, Safari, IE or Edge.</p>
                     <p>This editor does not work on iPad or Android tablet either.</p>
+                    <p>Ensure your Pacer is running the <a href="https://nektartech.com/updating-firmware-pacer/" target="_blank" rel="noopener noreferrer">latest firmware v10112</a>.</p>
                 </div>
 
                 <h1>Limitations</h1>
@@ -63,6 +64,190 @@ class Home extends Component {
                         <p>- long-press <span className="strong">Preset</span> switch, then press switch <span className="strong">D</span>, then press switch <span className="strong">3</span>.</p>
                     </div>
 
+                </div>
+
+                <h1>Controls settings</h1>
+                <div className="doc">
+                    <p>Each control (buttons 1-6 & A-D, external FS1-FS4 & EXP1-EXP2) can be configured with up to 6 steps.</p>
+                    <p>At the most basic level, each step has a <span className="italic fluo">type</span> value that determines the message or action the step will send or execute, as well as 3 data fields
+                        that configure the options and parameters for the step depending on the selected type.</p>
+
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Data 1 Desc.</th>
+                            <th>Data 1 Values</th>
+                            <th>Data 2 Desc.</th>
+                            <th>Data 2 Values</th>
+                            <th>Data 3 Desc.</th>
+                            <th>Data 3 Values</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td className="strong">CC Toggle</td>
+                            <td>Sends a MIDI CC message that toggles between two values each time the button is pressed</td>
+                            <td>MIDI CC</td>
+                            <td>0-127</td>
+                            <td>Value to send on Press 1</td>
+                            <td>0-127</td>
+                            <td>Value to send on Press 2</td>
+                            <td>0-127</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">CC Trigger</td>
+                            <td>Sends a MIDI CC message when the button is pressed</td>
+                            <td>MIDI CC</td>
+                            <td>0-127</td>
+                            <td>Value to send when pressing down</td>
+                            <td>0-127</td>
+                            <td>Value to send when releasing</td>
+                            <td>0-127</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">CC Step</td>
+                            <td> ??? </td>
+                            <td>MIDI CC</td>
+                            <td>0-127</td>
+                            <td>Start value</td>
+                            <td>0-127</td>
+                            <td>End value</td>
+                            <td>0-127</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">Note</td>
+                            <td>Send a note when the button is pressed, stop when released</td>
+                            <td>Note</td>
+                            <td>0-127</td>
+                            <td>Velocity</td>
+                            <td>0-127</td>
+                            <td>not used</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">Note Toggle</td>
+                            <td>Send a note when the button is pressed, stop when pressed again</td>
+                            <td>Note</td>
+                            <td>0-127</td>
+                            <td>Velocity</td>
+                            <td>0-127</td>
+                            <td>not used</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">Program & Bank</td>
+                            <td>Send a MIDI Program Change message when the button is pressed</td>
+                            <td>Program</td>
+                            <td>0-127</td>
+                            <td>Bank LSB</td>
+                            <td>0-127</td>
+                            <td>Bank MSB</td>
+                            <td>0-127</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">Program Step</td>
+                            <td>Send a MIDI Program Step message ??? </td>
+                            <td>Start</td>
+                            <td>0-127</td>
+                            <td>End</td>
+                            <td>0-127</td>
+                            <td>not used</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">NRPN Coarse</td>
+                            <td>Send a MIDI Non-Registered Parameter Number Coarse message</td>
+                            <td>Value</td>
+                            <td>0-127</td>
+                            <td>LSB</td>
+                            <td>0-127</td>
+                            <td>MSB</td>
+                            <td>0-127</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">NRPN Fine</td>
+                            <td>Send a MIDI Non-Registered Parameter Number Fine message</td>
+                            <td>Value</td>
+                            <td>0-127</td>
+                            <td>LSB</td>
+                            <td>0-127</td>
+                            <td>MSB</td>
+                            <td>0-127</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">MIDI Machine Control</td>
+                            <td>Send a MIDI Machine Control message</td>
+                            <td>Device ID</td>
+                            <td>0-127</td>
+                            <td>Command</td>
+                            <td>0-127</td>
+                            <td>not used</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">Relay Outputs</td>
+                            <td>Action a Pacer Relay</td>
+                            <td>Mode</td>
+                            <td>N.O.: 1 // N.C.: 2 // Lat.: 3</td>
+                            <td>Relay</td>
+                            <td>R1: 0 // R2: 1 // R3: 2 // R4: 3</td>
+                            <td>not used</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">Preset Select</td>
+                            <td>Switch to the target Preset</td>
+                            <td>Target</td>
+                            <td>(Bank * 6) + Num; where Bank A = 0, Bank B = 1..</td>
+                            <td>not used</td>
+                            <td>--</td>
+                            <td>not used</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">Preset Inc/Dec</td>
+                            <td>Switch to the next/previous Preset</td>
+                            <td>Direction</td>
+                            <td>Increment: ?? // Decrement: ??</td>
+                            <td>not used</td>
+                            <td>--</td>
+                            <td>not used</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">Step Select</td>
+                            <td>?? Action a specific Step for a Control</td>
+                            <td>Control Target</td>
+                            <td>?? A-D, 1-6, FS1-4, EXP1-2</td>
+                            <td>Step</td>
+                            <td>?? 1-6 (0-indexed?)</td>
+                            <td>not used</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">Step Inc/Dec</td>
+                            <td>?? Action the next/prev Step for a Control</td>
+                            <td>Control Target</td>
+                            <td>?? A-D, 1-6, FS1-4, EXP1-2</td>
+                            <td>Direction</td>
+                            <td>Increment: ?? // Decrement: ??</td>
+                            <td>not used</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td className="strong">OFF</td>
+                            <td>Disable the control, do not action nor send anything</td>
+                            <td>not used</td>
+                            <td>--</td>
+                            <td>not used</td>
+                            <td>--</td>
+                            <td>not used</td>
+                            <td>--</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <h1>In case of problem</h1>
