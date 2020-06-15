@@ -72,43 +72,43 @@ class Home extends Component {
                     <p>At the most basic level, each step has a <span className="italic fluo">type</span> value that determines the message or action the step will send or execute, as well as 3 data fields
                         that configure the options and parameters for the step depending on the selected type.</p>
 
-                    <table>
+                    <table className="doc-controls">
                         <thead>
                         <tr>
-                            <th>Type</th>
-                            <th>Description</th>
-                            <th>Data 1 Desc.</th>
-                            <th>Data 1 Values</th>
-                            <th>Data 2 Desc.</th>
-                            <th>Data 2 Values</th>
-                            <th>Data 3 Desc.</th>
-                            <th>Data 3 Values</th>
+                            <th><br />Type</th>
+                            <th><br />Description</th>
+                            <th>Data 1<br />desc.</th>
+                            <th>Data 1<br />values</th>
+                            <th>Data 2<br />desc.</th>
+                            <th>Data 2<br />values</th>
+                            <th>Data 3<br />desc.</th>
+                            <th>Data 3<br />values</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
-                            <td className="strong">CC Toggle</td>
-                            <td>Sends a MIDI CC message that toggles between two values each time the button is pressed</td>
+                            <td className="ctrl-type">CC Toggle</td>
+                            <td className="ctrl-desc">Sends a MIDI CC message that toggles between two values each time the button is pressed</td>
                             <td>MIDI CC</td>
                             <td>0-127</td>
-                            <td>Value to send on Press 1</td>
+                            <td className="allow-break">Value to send on Press 1</td>
                             <td>0-127</td>
-                            <td>Value to send on Press 2</td>
+                            <td className="allow-break">Value to send on Press 2</td>
                             <td>0-127</td>
                         </tr>
                         <tr>
-                            <td className="strong">CC Trigger</td>
-                            <td>Sends a MIDI CC message when the button is pressed</td>
+                            <td className="ctrl-type">CC Trigger</td>
+                            <td className="ctrl-desc">Sends a MIDI CC message when the button is pressed</td>
                             <td>MIDI CC</td>
                             <td>0-127</td>
-                            <td>Value to send when pressing down</td>
+                            <td className="allow-break">Value to send when pressing down</td>
                             <td>0-127</td>
-                            <td>Value to send when releasing</td>
+                            <td className="allow-break">Value to send when releasing</td>
                             <td>0-127</td>
                         </tr>
                         <tr>
-                            <td className="strong">CC Step</td>
-                            <td> ??? </td>
+                            <td className="ctrl-type">CC Step</td>
+                            <td className="ctrl-desc"> ??? </td>
                             <td>MIDI CC</td>
                             <td>0-127</td>
                             <td>Start value</td>
@@ -117,28 +117,28 @@ class Home extends Component {
                             <td>0-127</td>
                         </tr>
                         <tr>
-                            <td className="strong">Note</td>
-                            <td>Send a note when the button is pressed, stop when released</td>
+                            <td className="ctrl-type">Note</td>
+                            <td className="ctrl-desc">Send a note when the button is pressed, stop when released</td>
                             <td>Note</td>
                             <td>0-127</td>
                             <td>Velocity</td>
                             <td>0-127</td>
-                            <td>not used</td>
+                            <td className="italic">not used</td>
                             <td>--</td>
                         </tr>
                         <tr>
-                            <td className="strong">Note Toggle</td>
-                            <td>Send a note when the button is pressed, stop when pressed again</td>
+                            <td className="ctrl-type">Note Toggle</td>
+                            <td className="ctrl-desc">Send a note when the button is pressed, stop when pressed again</td>
                             <td>Note</td>
                             <td>0-127</td>
                             <td>Velocity</td>
                             <td>0-127</td>
-                            <td>not used</td>
+                            <td className="italic">not used</td>
                             <td>--</td>
                         </tr>
                         <tr>
-                            <td className="strong">Program & Bank</td>
-                            <td>Send a MIDI Program Change message when the button is pressed</td>
+                            <td className="ctrl-type">Program & Bank</td>
+                            <td className="ctrl-desc">Send a MIDI Program Change message when the button is pressed</td>
                             <td>Program</td>
                             <td>0-127</td>
                             <td>Bank LSB</td>
@@ -147,18 +147,18 @@ class Home extends Component {
                             <td>0-127</td>
                         </tr>
                         <tr>
-                            <td className="strong">Program Step</td>
-                            <td>Send a MIDI Program Step message ??? </td>
+                            <td className="ctrl-type">Program Step</td>
+                            <td className="ctrl-desc">Send a MIDI Program Step message ??? </td>
                             <td>Start</td>
                             <td>0-127</td>
                             <td>End</td>
                             <td>0-127</td>
-                            <td>not used</td>
+                            <td className="italic">not used</td>
                             <td>--</td>
                         </tr>
                         <tr>
-                            <td className="strong">NRPN Coarse</td>
-                            <td>Send a MIDI Non-Registered Parameter Number Coarse message</td>
+                            <td className="ctrl-type">NRPN Coarse</td>
+                            <td className="ctrl-desc">Send a MIDI Non-Registered Parameter Number Coarse message</td>
                             <td>Value</td>
                             <td>0-127</td>
                             <td>LSB</td>
@@ -167,8 +167,8 @@ class Home extends Component {
                             <td>0-127</td>
                         </tr>
                         <tr>
-                            <td className="strong">NRPN Fine</td>
-                            <td>Send a MIDI Non-Registered Parameter Number Fine message</td>
+                            <td className="ctrl-type">NRPN Fine</td>
+                            <td className="ctrl-desc">Send a MIDI Non-Registered Parameter Number Fine message</td>
                             <td>Value</td>
                             <td>0-127</td>
                             <td>LSB</td>
@@ -177,73 +177,73 @@ class Home extends Component {
                             <td>0-127</td>
                         </tr>
                         <tr>
-                            <td className="strong">MIDI Machine Control</td>
-                            <td>Send a MIDI Machine Control message</td>
+                            <td className="ctrl-type">MIDI Machine Control</td>
+                            <td className="ctrl-desc">Send a MIDI Machine Control message</td>
                             <td>Device ID</td>
                             <td>0-127</td>
                             <td>Command</td>
                             <td>0-127</td>
-                            <td>not used</td>
+                            <td className="italic">not used</td>
                             <td>--</td>
                         </tr>
                         <tr>
-                            <td className="strong">Relay Outputs</td>
-                            <td>Action a Pacer Relay</td>
+                            <td className="ctrl-type">Relay Outputs</td>
+                            <td className="ctrl-desc">Action a Pacer Relay</td>
                             <td>Mode</td>
-                            <td>N.O.: 1 // N.C.: 2 // Lat.: 3</td>
+                            <td>N.O.: 1<br />N.C.: 2<br />Lat.: 3</td>
                             <td>Relay</td>
-                            <td>R1: 0 // R2: 1 // R3: 2 // R4: 3</td>
-                            <td>not used</td>
+                            <td>R1: 0<br />R2: 1<br />R3: 2<br />R4: 3</td>
+                            <td className="italic">not used</td>
                             <td>--</td>
                         </tr>
                         <tr>
-                            <td className="strong">Preset Select</td>
-                            <td>Switch to the target Preset</td>
+                            <td className="ctrl-type">Preset Select</td>
+                            <td className="ctrl-desc">Switch to the target Preset</td>
                             <td>Target</td>
-                            <td>(Bank * 6) + Num; where Bank A = 0, Bank B = 1..</td>
-                            <td>not used</td>
+                            <td><span className="no-break">(Bank * 6) + Num</span><br />Bank A=0,<br />Bank B=1..</td>
+                            <td className="italic">not used</td>
                             <td>--</td>
-                            <td>not used</td>
+                            <td className="italic">not used</td>
                             <td>--</td>
                         </tr>
                         <tr>
-                            <td className="strong">Preset Inc/Dec</td>
-                            <td>Switch to the next/previous Preset</td>
+                            <td className="ctrl-type">Preset Inc/Dec</td>
+                            <td className="ctrl-desc">Switch to the next/previous Preset</td>
                             <td>Direction</td>
-                            <td>Increment: ?? // Decrement: ??</td>
-                            <td>not used</td>
+                            <td>Increment: ??<br />Decrement: ??</td>
+                            <td className="italic">not used</td>
                             <td>--</td>
-                            <td>not used</td>
+                            <td className="italic">not used</td>
                             <td>--</td>
                         </tr>
                         <tr>
-                            <td className="strong">Step Select</td>
-                            <td>?? Action a specific Step for a Control</td>
+                            <td className="ctrl-type">Step Select</td>
+                            <td className="ctrl-desc">?? Action a specific Step for a Control</td>
                             <td>Control Target</td>
-                            <td>?? A-D, 1-6, FS1-4, EXP1-2</td>
+                            <td>?? A-D,<br />1-6,<br />FS1-4,<br />EXP1-2</td>
                             <td>Step</td>
                             <td>?? 1-6 (0-indexed?)</td>
-                            <td>not used</td>
+                            <td className="italic">not used</td>
                             <td>--</td>
                         </tr>
                         <tr>
-                            <td className="strong">Step Inc/Dec</td>
-                            <td>?? Action the next/prev Step for a Control</td>
+                            <td className="ctrl-type">Step Inc/Dec</td>
+                            <td className="ctrl-desc">?? Action the next/prev Step for a Control</td>
                             <td>Control Target</td>
-                            <td>?? A-D, 1-6, FS1-4, EXP1-2</td>
+                            <td>?? A-D,<br />1-6,<br />FS1-4,<br />EXP1-2</td>
                             <td>Direction</td>
-                            <td>Increment: ?? // Decrement: ??</td>
-                            <td>not used</td>
+                            <td>Increment: ??<br />Decrement: ??</td>
+                            <td className="italic">not used</td>
                             <td>--</td>
                         </tr>
                         <tr>
-                            <td className="strong">OFF</td>
-                            <td>Disable the control, do not action nor send anything</td>
-                            <td>not used</td>
+                            <td className="ctrl-type">OFF</td>
+                            <td className="ctrl-desc">Disable the control, do not action nor send anything</td>
+                            <td className="italic">not used</td>
                             <td>--</td>
-                            <td>not used</td>
+                            <td className="italic">not used</td>
                             <td>--</td>
-                            <td>not used</td>
+                            <td className="italic">not used</td>
                             <td>--</td>
                         </tr>
                         </tbody>

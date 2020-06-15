@@ -24,3 +24,31 @@
 .doc > div {
     margin-top: 1rem;
 }
+
+table.doc-controls th {
+    border-bottom: 1px solid #aaa;
+    text-align: left;
+    padding-bottom: 3px;
+}
+
+table.doc-controls td {
+    padding: 3px 6px 3px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+table.doc-controls td:last-child {
+    padding-right: 0;
+}
+
+table.doc-controls td {
+    white-space: nowrap;
+}
+
+table.doc-controls td.ctrl-desc {
+    white-space: normal;
+}
+
+td.ctrl-type {
+    font-weight: bold;
+    white-space: nowrap;
+}

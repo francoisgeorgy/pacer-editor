@@ -16,6 +16,14 @@
     color: #999;
 }
 
+.no-break {
+    white-space: nowrap!important;
+}
+
+.allow-break {
+    white-space: normal!important;
+}
+
 .small {
     font-size: 0.75rem;
     color: #777;
