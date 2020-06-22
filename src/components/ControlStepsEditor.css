@@ -18,7 +18,9 @@
     margin-top: 24px;
 }
 
-.steps > div {}
+.steps > div {
+    justify-self: end;
+}
 
 .steps input[type='text'] {
     padding: 0 4px;
@@ -36,7 +38,8 @@
 }
 
 .data-help {
-    font-size: 0.66rem;
+    /*font-size: 0.66rem;*/
+    font-size: 0.85rem;
     text-align: right;
     color: #665;
     margin-top: 1px;

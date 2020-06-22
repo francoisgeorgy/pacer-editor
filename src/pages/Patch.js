@@ -8,18 +8,17 @@ import {
     requestAllPresets,
     splitDump
 } from "../pacer/sysex";
-import Midi from "../components/Midi";
-import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer/constants";
-import PortsGrid from "../components/PortsGrid";
+import {SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer/constants";
 import {outputById} from "../utils/ports";
 import {presetIndexToXY} from "../pacer/utils";
 import Dropzone from "react-dropzone";
-import "./Patch.css";
 import Download from "../components/Download";
-import {batchMessages, outputIsPacer} from "../utils/midi";
+import {batchMessages, midiConnected} from "../utils/midi";
 import {dropOverlayStyle, MAX_FILE_SIZE} from "../utils/misc";
 import DownloadJSON from "../components/DownloadJSON";
 import * as QueryString from "query-string";
+import "./Patch.css";
+import {inject, observer} from "mobx-react";
 
 class Patch extends Component {
 
@@ -29,7 +28,7 @@ class Patch extends Component {
         super(props);
         this.inputOpenFileRef = React.createRef();
         this.state = {
-            output: null,   // MIDI output port used for output
+            // output: null,   // MIDI output port used for output
             data: null,     // json
             bytes: null,  // binary, will be used to download as .syx file
             dropZoneActive: false,
@@ -37,13 +36,16 @@ class Patch extends Component {
         };
     }
 
+/*
     clearData = () => {
         this.setState({data: null, updateMessages: {}, changed: false});
     };
+*/
 
     /**
      * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
      */
+/*
     showBusy = ({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) =>  {
         setTimeout(() => this.props.onBusy({busy: false}), 20000);
         this.props.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
@@ -56,6 +58,7 @@ class Patch extends Component {
             setTimeout(() => this.props.onBusy({busy: false}), delay);
         }
     };
+*/
 
     handleMidiInputEvent = batchMessages(
         messages => {
@@ -104,7 +107,7 @@ class Patch extends Component {
             this.hideBusy();
         },
         (n) => {
-            this.props.onBusy({busy: true, bytesReceived: n});
+            // this.props.onBusy({busy: true, bytesReceived: n});
         },
         1000
     );
@@ -127,9 +130,9 @@ class Patch extends Component {
                             };
                         })
                     );
-                    this.hideBusy();
+                    // this.hideBusy();
                 } else {
-                    this.showBusy({busy: true, busyMessage: "loading file..."});
+                    // this.showBusy({busy: true, busyMessage: "loading file..."});
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
                     if (isSysexData(data)) {
                         this.setState(
@@ -161,7 +164,7 @@ class Patch extends Component {
                             })
                         );
                     }
-                    this.hideBusy();
+                    // this.hideBusy();
                     // non sysex files are ignored
                 }
                 // too big files are ignored
@@ -205,6 +208,7 @@ class Patch extends Component {
         );
     };
 
+/*
     onOutputConnection = (port_id) => {
         this.setState(
             produce(draft => {
@@ -241,6 +245,7 @@ class Patch extends Component {
             () => out.sendSysex(SYSEX_SIGNATURE, msg)
         );
     };
+*/
 
     /**
      * Send the current data
@@ -274,7 +279,9 @@ class Patch extends Component {
      */
     render() {
 
-        const { status, bytes, data, output, dropZoneActive } = this.state;
+        const { status, bytes, dropZoneActive } = this.state;
+        const output = this.props.state.midi.output;
+        const data = this.props.state.data;
 
         const q =  QueryString.parse(window.location.search);
         const debug = q.debug ? q.debug === '1' : false;
@@ -294,32 +301,19 @@ class Patch extends Component {
                 </div>}
 
                 <div className="wrapper">
-
-                    <div className="subheader">
-                        <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
-                              portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
-                              onMidiInputEvent={this.handleMidiInputEvent}
-                              onOutputConnection={this.onOutputConnection}
-                              onOutputDisconnection={this.onOutputDisconnection}
-                              className="" >
-                            <div className="no-midi">Please connect your Pacer to your computer.</div>
-                        </Midi>
-                    </div>
-
                     <div className="content">
-
-                        <div className="instructions">
-                            <div className="instruction">
-                                Presets marked "no data" are ignored. They will NOT erase the preset config in your Pacer.
-                            </div>
-                            <div className="instruction">
-                                A patch is a full dump of the Pacer.
-                            </div>
-                        </div>
 
                         <div className="content-row-content first">
 
                             <h2>Patch content:</h2>
+
+                            <div className="row">
+                                <div className="local-help">
+                                    A patch is a full dump of the Pacer.<br />
+                                    Presets marked "no data" are ignored. They will NOT erase the preset config in your Pacer.
+                                </div>
+                            </div>
+
                             <div className="patch-content">
                             {
                                 Array.from(Array(24+1).keys()).map(
@@ -353,20 +347,20 @@ class Patch extends Component {
                                     <button onClick={this.onInputFile}>Load patch from file</button>
                                 </div>
                                 <div>
-                                    {outputIsPacer(output) && "or"}
+                                    {midiConnected(output) && "or"}
                                 </div>
                                 <div>
-                                    {outputIsPacer(output) && <button onClick={() => this.sendSysex(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read patch from Pacer</button>}
+                                    {midiConnected(output) && <button onClick={() => this.sendSysex(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read patch from Pacer</button>}
                                 </div>
                                 <div>
                                     {data && <Download data={bytes} filename={`pacer-patch`} addTimestamp={true} label="Save patch to file" />}
                                     {data && debug && <DownloadJSON data={data} filename={`pacer-patch`} addTimestamp={true} label="Save patch JSON to file" className={"space-left"}/>}
                                 </div>
                                 <div>
-                                    {data && outputIsPacer(output) && "or"}
+                                    {data && midiConnected(output) && "or"}
                                 </div>
                                 <div>
-                                    {data && outputIsPacer(output) && <button onClick={() => this.sendPatch()}>Send patch to Pacer</button>}
+                                    {data && midiConnected(output) && <button onClick={() => this.sendPatch()}>Send patch to Pacer</button>}
                                 </div>
                             </div>
 
@@ -385,4 +379,4 @@ class Patch extends Component {
     }
 }
 
-export default Patch;
+export default inject('state')(observer(Patch));

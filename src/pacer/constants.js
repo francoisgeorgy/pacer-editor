@@ -25,6 +25,101 @@ export const TARGETS = {
     [TARGET_BACKUP]: "full backup"
 };
 
+export const TARGET_NAME = [
+    "switch 1",     // 1
+    "switch 2",     // 2
+    "switch 3",     // 3
+    "switch 4",     // 4
+    "switch 5",     // 5
+    "switch 6",     // 6
+    null,           // 7
+    "switch A",     // 8
+    "switch B",     // 9
+    "switch C",     // 10    A
+    "switch D",     // 11    B
+    "FS 1",         // 12    C
+    "FS 2",         // 13    D
+    "FS 3",         // 14    E
+    "FS 4",         // 15    F
+    "EXP 1",        // 16   10
+    "EXP 2"         // 17   11
+];
+/*
+export const TARGET_NAME = [
+    null,           // 0
+    "switch 1",     // 1
+    "switch 2",     // 2
+    "switch 3",     // 3
+    "switch 4",     // 4
+    "switch 5",     // 5
+    "switch 6",     // 6
+    null,           // 7
+    "switch A",     // 8
+    "switch B",     // 9
+    "switch C",     // 10    A
+    "switch D",     // 11    B
+    "FS 1",         // 12    C
+    "FS 2",         // 13    D
+    "FS 3",         // 14    E
+    "FS 4",         // 15    F
+    "EXP 1",        // 16   10
+    "EXP 2"         // 17   11
+];
+*/
+
+/*
+export const TARGET_NAME_LONG = [
+    "",
+    "SW-1",
+    "SW-2",
+    "SW-3",
+    "SW-4",
+    "SW-5",
+    "SW-6",
+    "",
+    "SW-A",
+    "SW-B",
+    "SW-C",
+    "SW-D",
+    "Footswitch 1",
+    "Footswitch 2",
+    "Footswitch 3",
+    "Footswitch 4",
+    "Expression Pedal 1",
+    "Expression Pedal 2"
+];
+*/
+
+export const PRESET_TARGET = [
+    "Current",      // 0x01
+    "Track",        // 0x02
+    "Transport",    // 0x03
+    "A1", // 0x04
+    "A2", // 0x05
+    "A3", // 0x06
+    "A4", // 0x07
+    "A5", // 0x08
+    "A6", // 0x09
+    "B1", // 0x0A
+    "B2", // 0x0B
+    "B3", // 0x0C
+    "B4", // 0x0D
+    "B5", // 0x0E
+    "B6", // 0x0F
+    "C1", // 0x10
+    "C2", // 0x11
+    "C3", // 0x12
+    "C4", // 0x13
+    "C5", // 0x14
+    "C6", // 0x15
+    "D1", // 0x16
+    "D2", // 0x17
+    "D3", // 0x18
+    "D4", // 0x19
+    "D5", // 0x1A
+    "D6"    // 0x1B
+]
+
 export const CONTROL_NAME = 0x01;
 export const CONTROL_STOMPSWITCH_1 = 0x0D;
 export const CONTROL_STOMPSWITCH_2 = 0x0E;
@@ -98,22 +193,23 @@ export const CONTROLS_WITH_SEQUENCE = [
     0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x14, 0x15, 0x16, 0x17  //, 0x18, 0x19, 0x1A, 0x1B
 ];
 
-// subsets of CONTROLS keys:
-export const STOMPSWITCHES = [0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x14, 0x15, 0x16, 0x17];
-export const STOMPSWITCHES_TOP = [0x14, 0x15, 0x16, 0x17];
-export const STOMPSWITCHES_BOTTOM = [0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12];
-export const FOOTSWITCHES = [0x18, 0x19, 0x1A, 0x1B];
-export const EXPPEDALS = [0x36, 0x37];
+// subsets of CONTROLS keys:        // we convert to string because this ID will be used as object property (keys)
+export const STOMPSWITCHES = [0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x14, 0x15, 0x16, 0x17].map(String);
+export const STOMPSWITCHES_TOP = [0x14, 0x15, 0x16, 0x17].map(String);
+export const STOMPSWITCHES_BOTTOM = [0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12].map(String);
+export const FOOTSWITCHES = [0x18, 0x19, 0x1A, 0x1B].map(String);
+export const EXPPEDALS = [0x36, 0x37].map(String);
 
-// message types:
-export const MSG_AD_MIDICC = 0x00;
-export const MSG_AD_NRPNC = 0x03;
-export const MSG_AD_NRPNF = 0x04;
-export const MSG_AD_PITCH = 0x01;
+// message types EXP PEDALS:
+export const MSG_AD_MIDI_CC = 0x00;
+export const MSG_AD_NRPN_COARSE = 0x03;
+export const MSG_AD_NRPN_FINE = 0x04;
+export const MSG_AD_PITCH_BEND = 0x01;
 export const MSG_AD_ATCHAN = 0x02;
 export const MSG_DAWFUNC = 0x7E;
 export const MSG_CTRL_OFF = 0x61;
 
+// message types STOMPSWITCHES and FOOTSWITCHES:
 export const MSG_SW_MIDI_CC_TGGLE = 0x47;
 export const MSG_SW_MIDI_CC = 0x40;
 export const MSG_SW_MIDI_CC_STEP = 0x48;
@@ -130,24 +226,25 @@ export const MSG_SW_PRESET_INC_DEC = 0x56;
 export const MSG_SW_STEP_SELECT = 0x63;
 export const MSG_SW_STEP_INC_DEC = 0x64;
 
+// message types ENCODER:
 export const MSG_ENC_CC = 0x12;
 export const MSG_ENC_MIDICC_REL = 0x11;
-export const MSG_ENC_NRPNC = 0x15;
-export const MSG_ENC_NRPNF = 0x16;
+export const MSG_ENC_NRPN_COARSE = 0x15;
+export const MSG_ENC_NRPN_FINE = 0x16;
 export const MSG_ENC_PITCH = 0x13;
 export const MSG_ENC_ATCHAN = 0x14;
 export const MSG_ENC_PROGRAM = 0x10;
-export const MSG_ENC_PRESETSELECT = 0x17;
-export const MSG_ENC_STEPSELECT = 0x18;
+export const MSG_ENC_PRESET_SELECT = 0x17;
+export const MSG_ENC_STEP_SELECT = 0x18;
 
 export const MSG_LOAD_CC = 0x65;
 
 export const MSG_TYPES = {
 
-    [MSG_AD_MIDICC]: "CC",
-    [MSG_AD_NRPNC]: "NRPN C",
-    [MSG_AD_NRPNF]: "NRPN F",
-    [MSG_AD_PITCH]: "PITCH",
+    [MSG_AD_MIDI_CC]: "CC",
+    [MSG_AD_NRPN_COARSE]: "NRPN C",
+    [MSG_AD_NRPN_FINE]: "NRPN F",
+    [MSG_AD_PITCH_BEND]: "PITCH",
     [MSG_AD_ATCHAN]: "AT CHAN",
     [MSG_DAWFUNC]: "DAW FUNC",
     [MSG_CTRL_OFF]: "CTRL_OFF",
@@ -170,26 +267,26 @@ export const MSG_TYPES = {
 
     [MSG_ENC_CC]: "CC",
     [MSG_ENC_MIDICC_REL]: "CC REL",
-    [MSG_ENC_NRPNC]: "NRPN C",
-    [MSG_ENC_NRPNF]: "NRPN F",
+    [MSG_ENC_NRPN_COARSE]: "NRPN C",
+    [MSG_ENC_NRPN_FINE]: "NRPN F",
     [MSG_ENC_PITCH]: "PITCH",
     [MSG_ENC_ATCHAN]: "AT CHAN",
     [MSG_ENC_PROGRAM]: "PRG",
-    [MSG_ENC_PRESETSELECT]: "PRESET SEL",
-    [MSG_ENC_STEPSELECT]: "STEP SEL",
+    [MSG_ENC_PRESET_SELECT]: "PRESET SEL",
+    [MSG_ENC_STEP_SELECT]: "STEP SEL",
 
     [MSG_LOAD_CC]: "CC"
 };
 
 export const MSG_TYPES_SHORT_NAMES = {      // used in overview
 
-    [MSG_AD_MIDICC]: "CC",
-    [MSG_AD_NRPNC]: "NRPN C",
-    [MSG_AD_NRPNF]: "NRPN F",
-    [MSG_AD_PITCH]: "Pitch",
+    [MSG_AD_MIDI_CC]: "CC",
+    [MSG_AD_NRPN_COARSE]: "NRPN C",
+    [MSG_AD_NRPN_FINE]: "NRPN F",
+    [MSG_AD_PITCH_BEND]: "Pitch",
     [MSG_AD_ATCHAN]: "AT CHAN",
     [MSG_DAWFUNC]: "DAW",
-    [MSG_CTRL_OFF]: "Ctrl OFF",
+    [MSG_CTRL_OFF]: "OFF",
 
     [MSG_SW_MIDI_CC_TGGLE]: "CC tggl",
     [MSG_SW_MIDI_CC]: "CC",
@@ -209,20 +306,28 @@ export const MSG_TYPES_SHORT_NAMES = {      // used in overview
 
     [MSG_ENC_CC]: "CC",
     [MSG_ENC_MIDICC_REL]: "CC rel",
-    [MSG_ENC_NRPNC]: "NRPN C",
-    [MSG_ENC_NRPNF]: "NRPN F",
+    [MSG_ENC_NRPN_COARSE]: "NRPN C",
+    [MSG_ENC_NRPN_FINE]: "NRPN F",
     [MSG_ENC_PITCH]: "Pitch",
     [MSG_ENC_ATCHAN]: "AT chan",
     [MSG_ENC_PROGRAM]: "Prg",
-    [MSG_ENC_PRESETSELECT]: "Preset sel",
-    [MSG_ENC_STEPSELECT]: "Step sel",
+    [MSG_ENC_PRESET_SELECT]: "Preset sel",
+    [MSG_ENC_STEP_SELECT]: "Step sel",
 
     [MSG_LOAD_CC]: "CC"
 };
 
 // Message types for stompswitches
-export const MSG_TYPES_FULLNAME_SW = {
+export const MSG_TYPES_FULLNAME = {
     [MSG_CTRL_OFF]: "OFF",
+
+    [MSG_AD_MIDI_CC]: "CC",
+    [MSG_AD_NRPN_COARSE]: "NRPN Coarse",
+    [MSG_AD_NRPN_FINE]: "NRPN Fine",
+    [MSG_AD_PITCH_BEND]: "Pitch Bend",
+    [MSG_AD_ATCHAN]: "Channel AfterTouch",
+    [MSG_DAWFUNC]: "DAW Function",
+
     [MSG_SW_MIDI_CC_TGGLE]: "CC Toggle",
     [MSG_SW_MIDI_CC]: "CC Trigger",
     [MSG_SW_MIDI_CC_STEP]: "CC Step",
@@ -237,23 +342,20 @@ export const MSG_TYPES_FULLNAME_SW = {
     [MSG_SW_PRESET_SELECT]: "Preset Select",
     [MSG_SW_PRESET_INC_DEC]: "Preset Inc/Dec",
     [MSG_SW_STEP_SELECT]: "Step Select",
-    [MSG_SW_STEP_INC_DEC]: "Step Inc/Dec"
-};
+    [MSG_SW_STEP_INC_DEC]: "Step Inc/Dec",
 
-export const MSG_TYPES_FULLNAME_SW_SORTED = sortObject(MSG_TYPES_FULLNAME_SW);
-
-
-export const MSG_TYPES_FULLNAME_ENC = {
     [MSG_ENC_CC]: "CC",
     [MSG_ENC_MIDICC_REL]: "CC REL",
-    [MSG_ENC_NRPNC]: "NRPN Coarse",
-    [MSG_ENC_NRPNF]: "NRPN Fine",
+    [MSG_ENC_NRPN_COARSE]: "NRPN Coarse",
+    [MSG_ENC_NRPN_FINE]: "NRPN Fine",
     [MSG_ENC_PITCH]: "Pitch Bend",
     [MSG_ENC_ATCHAN]: "AT Chan.",
     [MSG_ENC_PROGRAM]: "Program",
-    [MSG_ENC_PRESETSELECT]: "Preset Sel",
-    [MSG_ENC_STEPSELECT]: "Step Sel"
+    [MSG_ENC_PRESET_SELECT]: "Preset Sel",
+    [MSG_ENC_STEP_SELECT]: "Step Sel"
 };
+
+// export const MSG_TYPES_FULLNAME_SW_SORTED = sortObject(MSG_TYPES_FULLNAME);
 
 
 // Preset Midi Settings
@@ -276,14 +378,14 @@ export const NOT_USED = "not used";
 export const MSG_TYPES_DATA_HELP = {
 
     // each value must be a array of 3 values
-
-    [MSG_AD_MIDICC]: ["", "", ""],
-    [MSG_AD_NRPNC]: ["", "", ""],
-    [MSG_AD_NRPNF]: ["", "", ""],
-    [MSG_AD_PITCH]: ["", "", ""],
-    [MSG_AD_ATCHAN]: ["", "", ""],
-    [MSG_DAWFUNC]: ["function", NOT_USED, NOT_USED],
     [MSG_CTRL_OFF]: ["", "", ""],
+
+    [MSG_AD_MIDI_CC]: ["Controller", "Min", "Max"],
+    [MSG_AD_NRPN_COARSE]: ["Max", "NRPN LSB", "NRPN MSB"],
+    [MSG_AD_NRPN_FINE]: ["Max", "NRPN LSB", "NRPN MSB"],
+    [MSG_AD_PITCH_BEND]: [NOT_USED, "Min", "Max"],
+    [MSG_AD_ATCHAN]: [NOT_USED, "Min", "Max"],
+    [MSG_DAWFUNC]: ["function", NOT_USED, NOT_USED],
 
     [MSG_SW_MIDI_CC_TGGLE]: ["controller", "value 1", "value 2"],
     [MSG_SW_MIDI_CC]: ["controller", "down", "up"],
@@ -303,16 +405,134 @@ export const MSG_TYPES_DATA_HELP = {
 
     [MSG_ENC_CC]: ["", "", ""],
     [MSG_ENC_MIDICC_REL]: ["", "", ""],
-    [MSG_ENC_NRPNC]: ["", "", ""],
-    [MSG_ENC_NRPNF]: ["", "", ""],
+    [MSG_ENC_NRPN_COARSE]: ["", "", ""],
+    [MSG_ENC_NRPN_FINE]: ["", "", ""],
     [MSG_ENC_PITCH]: ["", "", ""],
     [MSG_ENC_ATCHAN]: ["", "", ""],
     [MSG_ENC_PROGRAM]: ["", "", ""],
-    [MSG_ENC_PRESETSELECT]: ["", "", ""],
-    [MSG_ENC_STEPSELECT]: ["", "", ""],
+    [MSG_ENC_PRESET_SELECT]: ["", "", ""],
+    [MSG_ENC_STEP_SELECT]: ["", "", ""],
 
     [MSG_LOAD_CC]: ["controller", "value", NOT_USED]
 };
+
+export const MSG_TYPES_DATA_USAGE = {
+
+    // each value must be a array of 3 values
+
+    [MSG_AD_MIDI_CC]: [true, true, true],
+    [MSG_AD_NRPN_COARSE]: [true, true, true],
+    [MSG_AD_NRPN_FINE]: [true, true, true],
+    [MSG_AD_PITCH_BEND]: [true, true, true],
+    [MSG_AD_ATCHAN]: [true, true, true],
+    [MSG_DAWFUNC]: [true, false, false],
+    [MSG_CTRL_OFF]: [true, true, true],
+
+    [MSG_SW_MIDI_CC_TGGLE]: [true, true, true],
+    [MSG_SW_MIDI_CC]: [true, true, true],
+    [MSG_SW_MIDI_CC_STEP]: [true, true, true],
+    [MSG_SW_NOTE]: [true, true, false],
+    [MSG_SW_NOTE_TGGLE]: [true, true, false],
+    [MSG_SW_PRG_BANK]: [true, true, true],
+    [MSG_SW_PRG_STEP]: [false, true, true],
+    [MSG_SW_NRPN_COARSE]: [true, true, true],
+    [MSG_SW_NRPN_FINE]: [true, true, true],
+    [MSG_SW_MMC]: [true, true, false],
+    [MSG_SW_RELAY]: [true, true, false],
+    [MSG_SW_PRESET_SELECT]: [true, false, false],
+    [MSG_SW_PRESET_INC_DEC]: [true, false, false],
+    [MSG_SW_STEP_SELECT]: [true, true, false],
+    [MSG_SW_STEP_INC_DEC]: [true, true, false],
+
+    [MSG_ENC_CC]: [true, true, true],
+    [MSG_ENC_MIDICC_REL]: [true, true, true],
+    [MSG_ENC_NRPN_COARSE]: [true, true, true],
+    [MSG_ENC_NRPN_FINE]: [true, true, true],
+    [MSG_ENC_PITCH]: [true, true, true],
+    [MSG_ENC_ATCHAN]: [true, true, true],
+    [MSG_ENC_PROGRAM]: [true, true, true],
+    [MSG_ENC_PRESET_SELECT]: [true, true, true],
+    [MSG_ENC_STEP_SELECT]: [true, true, true],
+
+    [MSG_LOAD_CC]: [true, true, false]
+};
+
+
+
+// MSG_DAWFUNC,
+//     MSG_ENC_CC,
+// MSG_ENC_MIDICC_REL,
+// MSG_ENC_NRPNC,
+// MSG_ENC_NRPNF,
+// MSG_ENC_PITCH,
+// MSG_ENC_ATCHAN,
+// MSG_ENC_PROGRAM,
+// MSG_ENC_PRESETSELECT,
+// MSG_ENC_STEPSELECT,
+//
+// MSG_LOAD_CC,
+
+
+export const MSG_TYPES_STOMPSWITCH = [
+    MSG_SW_MIDI_CC_TGGLE,
+    MSG_SW_MIDI_CC,
+    MSG_SW_MIDI_CC_STEP,
+    MSG_SW_NOTE,
+    MSG_SW_NOTE_TGGLE,
+    MSG_SW_PRG_BANK,
+    MSG_SW_PRG_STEP,
+    MSG_SW_NRPN_COARSE,
+    MSG_SW_NRPN_FINE,
+    MSG_SW_MMC,
+    MSG_SW_RELAY,
+    MSG_SW_PRESET_SELECT,
+    MSG_SW_PRESET_INC_DEC,
+    MSG_SW_STEP_SELECT,
+    MSG_SW_STEP_INC_DEC,
+    MSG_CTRL_OFF
+];
+
+export const MSG_TYPES_FOOTWITCH = [
+    MSG_SW_MIDI_CC_TGGLE,
+    MSG_SW_MIDI_CC,
+    MSG_SW_MIDI_CC_STEP,
+    MSG_SW_NOTE,
+    MSG_SW_NOTE_TGGLE,
+    MSG_SW_PRG_BANK,
+    MSG_SW_PRG_STEP,
+    MSG_SW_NRPN_COARSE,
+    MSG_SW_NRPN_FINE,
+    MSG_SW_MMC,
+    MSG_SW_RELAY,
+    MSG_SW_PRESET_SELECT,
+    MSG_SW_PRESET_INC_DEC,
+    MSG_SW_STEP_SELECT,
+    MSG_SW_STEP_INC_DEC,
+    MSG_CTRL_OFF
+];
+
+export const MSG_TYPES_EXP_PEDAL = [
+    MSG_AD_MIDI_CC,
+    MSG_AD_NRPN_COARSE,
+    MSG_AD_NRPN_FINE,
+    MSG_AD_PITCH_BEND,
+    MSG_AD_ATCHAN,
+    MSG_CTRL_OFF
+];
+
+export const RELAY_MODE_LABEL = [
+    "Auto Detect",
+    "Normally Open",
+    "Normally Closed",
+    "Latching"
+];
+
+export const RELAY_MODE_LABEL_SHORT = [
+    "Auto",
+    "N. Open",
+    "N. Closed",
+    "Latching"
+];
 
 /*
 export const CONTROL_ELEMENT = {
@@ -677,7 +897,7 @@ export const CONTROL_MODE_EXT_STEP = 0x02;
 export const CONTROL_MODE_SEQUENCE = 0x01;
 
 export const CONTROL_MODES = {
-    [CONTROL_MODE_ALL]: "All",
+    [CONTROL_MODE_ALL]: "All steps in one shot",
     [CONTROL_MODE_EXT_STEP]: "External Step Select",
     [CONTROL_MODE_SEQUENCE]: "Sequence",
 };

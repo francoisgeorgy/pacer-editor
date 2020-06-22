@@ -2,13 +2,15 @@ import React, {Component, Fragment} from 'react';
 import {
     COLORS,
     MSG_CTRL_OFF,
-    MSG_SW_NOTE,
-    MSG_SW_NOTE_TGGLE, MSG_TYPES_DATA_HELP,
-    MSG_TYPES_FULLNAME_SW,
-    MSG_TYPES_FULLNAME_SW_SORTED
+    MSG_TYPES_DATA_HELP,
+    MSG_TYPES_FULLNAME, TARGET_PRESET
 } from "../pacer/constants";
-import * as Note from "tonal-note";
 import "./ControlStepsEditor.css";
+import {getAvailableMessageTypes} from "../pacer/model";
+import {DataInputField} from "./DataInputField";
+import {inject, observer} from "mobx-react";
+import {CONTROLS_DATA} from "../pacer/sysex";
+import {state} from "../stores/StateStore";
 
 const LEDMidi = ({ current_value, onChange }) => {
     return (
@@ -22,12 +24,7 @@ const LEDMidi = ({ current_value, onChange }) => {
 const LEDColor = ({ current_value, onChange }) => {
     return (
         <select value={current_value} onChange={(event) => onChange(event.target.value)}>
-            {
-                Object.keys(COLORS).map(
-                    key => {
-                        return <option key={key} value={key}>{COLORS[key]}</option>
-                    })
-            }
+            {Object.keys(COLORS).map(colorIndex => <option key={colorIndex} value={colorIndex}>{COLORS[colorIndex]}</option>)}
         </select>
     );
 };
@@ -43,6 +40,7 @@ const LEDNum = ({ current_value, onChange }) => {
     );
 };
 
+/*
 const MidiNote = ({ note, onChange }) => {
     return (
         <select value={note} onChange={(event) => onChange(event.target.value)} className="notes">
@@ -56,23 +54,33 @@ const MidiNote = ({ note, onChange }) => {
         </select>
     );
 };
+*/
 
-const Step = ({ index, config, updateCallback }) => {
+const Step = observer(({ presetIndex, controlId, stepIndex, config }) => {
+
+    // console.log(presetIndex, controlId, stepIndex, typeof presetIndex, typeof controlId, typeof stepIndex, JSON.stringify(config));
+
+    const updateData = (dataIndex, value) => {
+        state.updateControlStep(controlId, stepIndex, "data", dataIndex, value, presetIndex);
+    }
+    const updateChannel = (value) => {
+        state.updateControlStep(controlId, stepIndex, "channel", null, value, presetIndex);
+    }
+    const updateLED = (led, value) => {
+        state.updateControlStep(controlId, stepIndex, led, null, value, presetIndex);
+    }
 
     let inactive = config.msg_type === MSG_CTRL_OFF;
+
+    // console.log("config.msg_type", config.msg_type, inactive, getAvailableMessageTypes(controlId));
 
     if (inactive) {
         return (
             <Fragment>
-                <div className="step-row-header">Step {index}:</div>
+                <div className="step-row-header">Step {stepIndex}:</div>
                 <div>
-                    <select value={config.msg_type} onChange={(event) => updateCallback("msg_type", null, event.target.value)}>
-                        {
-                            Object.keys(MSG_TYPES_FULLNAME_SW).map(
-                                key => {
-                                    return <option key={key} value={key}>{MSG_TYPES_FULLNAME_SW[key]}</option>
-                                })
-                        }
+                    <select value={config.msg_type} onChange={(event) => state.updateControlStepMessageType(controlId, stepIndex, event.target.value, presetIndex)}>
+                        {getAvailableMessageTypes(controlId).map(mtype => <option key={mtype} value={mtype}>{MSG_TYPES_FULLNAME[mtype]}</option>)}
                     </select>
                 </div>
                 <div>
@@ -95,67 +103,54 @@ const Step = ({ index, config, updateCallback }) => {
         );
     }
 
+    if (!config.data) return null;
+
     let d0, d1, d2;
-    if ((config.msg_type === MSG_SW_NOTE) || (config.msg_type === MSG_SW_NOTE_TGGLE)) {
-        d0 = <MidiNote note={config.data[0]} onChange={(value) => updateCallback("data", 0, value)} />;
-        d1 = <input type="text" value={config.data[1]} onChange={(event) => updateCallback("data", 1, event.target.value)} />;
-        d2 = '';
-    } else {
-        d0 = <input type="text" value={config.data[0]} onChange={(event) => updateCallback("data", 0, event.target.value)} />;
-        d1 = <input type="text" value={config.data[1]} onChange={(event) => updateCallback("data", 1, event.target.value)} />;
-        d2 = <input type="text" value={config.data[2]} onChange={(event) => updateCallback("data", 2, event.target.value)} />;
-    }
+    d0 = <DataInputField msgType={config.msg_type} value={config.data[0]} dataIndex={0} onChange={updateData} />;
+    d1 = <DataInputField msgType={config.msg_type} value={config.data[1]} dataIndex={1} onChange={updateData} />;
+    d2 = <DataInputField msgType={config.msg_type} value={config.data[2]} dataIndex={2} onChange={updateData} />;
+
+    // console.log("config.msg_type", config.msg_type, typeof config.msg_type);
 
     return (
         <Fragment>
-            <div className="step-row-header">Step {index}:</div>
+            <div className="step-row-header">Step {stepIndex}:</div>
             <div>
-                <select value={config.msg_type} onChange={(event) => updateCallback("msg_type", null, event.target.value)}>
-                {
-                    MSG_TYPES_FULLNAME_SW_SORTED.map(
-                        v => {
-                            return <option key={v.key} value={v.key}>{v.value}</option>
-                        })
-                }
+                <select value={config.msg_type} onChange={(event) => state.updateControlStepMessageType(controlId, stepIndex, event.target.value, presetIndex)}>
+                    {getAvailableMessageTypes(controlId).map(mtype => <option key={mtype} value={mtype}>{MSG_TYPES_FULLNAME[mtype]}</option>)}
                 </select>
             </div>
             <div>{d0}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type] ? MSG_TYPES_DATA_HELP[config.msg_type][0] : ''}</div></div>
             <div>{d1}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type] ? MSG_TYPES_DATA_HELP[config.msg_type][1] : ''}</div></div>
             <div>{d2}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type] ? MSG_TYPES_DATA_HELP[config.msg_type][2] : ''}</div></div>
             <div>
-                <select value={config.channel} onChange={(event) => updateCallback("channel", null, event.target.value)}>
-                    {
-                        Array.from(Array(17).keys()).map(i => <option key={i} value={i}>{i === 0 ? 'global' : i}</option>)
-                    }
+                <select value={config.channel} onChange={(event) => updateChannel(event.target.value)}>
+                    {Array.from(Array(17).keys()).map(i => <option key={i} value={i}>{i === 0 ? 'global' : i}</option>)}
                 </select>
             </div>
             <div>
-                <LEDColor current_value={config.led_inactive_color} onChange={(value) => updateCallback("led_inactive_color", null, value)} />
+                <LEDColor current_value={config.led_inactive_color} onChange={(value) => updateLED("led_inactive_color", value)} />
             </div>
             <div>
-                <LEDColor current_value={config.led_active_color} onChange={(value) => updateCallback("led_active_color", null, value)} />
+                <LEDColor current_value={config.led_active_color} onChange={(value) => updateLED("led_active_color", value)} />
             </div>
             <div>
-                <LEDNum current_value={config.led_num} onChange={(value) => updateCallback("led_num", null, value)} />
+                <LEDNum current_value={config.led_num} onChange={(value) => updateLED("led_num", value)} />
             </div>
             <div>
-                <LEDMidi current_value={config.led_midi_ctrl} onChange={(value) => updateCallback("led_midi_ctrl", null, value)} />
+                <LEDMidi current_value={config.led_midi_ctrl} onChange={(value) => updateLED("led_midi_ctrl", value)} />
             </div>
         </Fragment>
     );
-};
+});
 
 class ControlStepsEditor extends Component {
 
-    onStepUpdate = (stepIndex, dataType, dataIndex, value) => {
-        this.props.onUpdate(stepIndex, dataType, dataIndex, value);    // stepIndex, dataIndex, value
-    };
-
     render() {
 
-        const steps = this.props.steps;
+        const steps = this.props.state.data[TARGET_PRESET][this.props.presetIndex][CONTROLS_DATA][this.props.controlId]["steps"];
 
-        // console.log("ControlStepsEditor", steps);
+        // console.log(JSON.stringify(steps), Object.keys(steps));
 
         //FIXME: do not display LED for EXP and FS
 
@@ -171,12 +166,12 @@ class ControlStepsEditor extends Component {
                 <div className="step-col-header">LED On</div>
                 <div className="step-col-header">LED Num</div>
                 <div className="step-col-header">LED MIDI</div>
-                {Object.keys(steps).map(i =>
-                    <Step key={i} index={i} config={steps[i]} updateCallback={(dataType, dataIndex, value) => this.onStepUpdate(i, dataType, dataIndex, value)} />
+                {Object.keys(steps).map(stepIndex =>
+                    <Step key={stepIndex} presetIndex={this.props.presetIndex} controlId={this.props.controlId} stepIndex={stepIndex} config={steps[stepIndex]} />
                 )}
             </div>
         );
     }
 }
 
-export default ControlStepsEditor;
+export default inject('state')(observer(ControlStepsEditor));

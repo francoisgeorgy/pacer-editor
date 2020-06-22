@@ -1,5 +1,8 @@
 import React from "react";
 import {CONTROLS_FULLNAME} from "../pacer/constants";
+import {observer} from "mobx-react";
+import {presetIndexToXY} from "../pacer/utils";
+import {state} from "../stores/StateStore";
 
 /*
 {
@@ -21,37 +24,44 @@ import {CONTROLS_FULLNAME} from "../pacer/constants";
 
 */
 
-const updateMessage = (ctrlType, ctrl, messages) => {
+const updateMessage = (presetId, ctrlType, ctrl, messages) => {
     switch (ctrlType) {
         case "controls":
-            return <div>update control {CONTROLS_FULLNAME[ctrl]}</div>;
+            return <div key={`${presetId}-${ctrl}-ctrl`}>- preset {presetIndexToXY(presetId)}, control {CONTROLS_FULLNAME[ctrl]}</div>;
         case "midi":
-            return <div>update midi</div>;
+            return <div key={`${presetId}-${ctrl}-midi`}>- preset {presetIndexToXY(presetId)}, midi</div>;
         case "name":
-            return <div>update name</div>;
+            return <div key={`${presetId}-${ctrl}-name`}>- preset {presetIndexToXY(presetId)}, name</div>;
         default:
             return null;
     }
 };
 
-const UpdateMessages = ({ messages }) =>
-    <div className="message-to-send">
-    {
-        //FIXME: allow object or array
-        Object.getOwnPropertyNames(messages).map(       // preset
-            (presetId, i) => {
-                return Object.getOwnPropertyNames(messages[presetId]).map(     // control type
-                    (ctrlType, j) => {
-                        return Object.getOwnPropertyNames(messages[presetId][ctrlType]).map(      // control
-                            (ctrl, k) => {
-                                return updateMessage(ctrlType, ctrl, messages[presetId][ctrlType][ctrl])
-                            }
-                        );
-                    }
-                );
-            }
-        )
+const UpdateMessages = observer(() => {
+    if (state.updateMessages && Object.getOwnPropertyNames(state.updateMessages).length) {
+        return (
+            <div className="messages-to-send">
+                <div className="update-messages-title">Updates that will be sent to the Pacer:</div>
+                {
+                    //FIXME: allow object or array
+                    Object.getOwnPropertyNames(state.updateMessages).map(       // preset
+                        (presetId, i) => {
+                            return Object.getOwnPropertyNames(state.updateMessages[presetId]).map(     // control type
+                                (ctrlType, j) => {
+                                    return Object.getOwnPropertyNames(state.updateMessages[presetId][ctrlType]).map(      // control
+                                        (ctrl, k) => {
+                                            return updateMessage(presetId, ctrlType, ctrl, state.updateMessages[presetId][ctrlType][ctrl])
+                                        }
+                                    );
+                                }
+                            );
+                        }
+                    )
+                }
+            </div>);
+    } else {
+        return null;
     }
-    </div>;
+});
 
 export default UpdateMessages;

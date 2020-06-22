@@ -4,7 +4,7 @@ export const MAX_FILE_SIZE = 200 * 1024;
 // export const MAX_STATUS_MESSAGES = 40;
 
 export function isVal(v) {
-    return v !== undefined && v !== null && v !== '';
+    return v !== undefined && v !== null && v !== '' && v >= 0;
 }
 
 export function sortObject(obj) {

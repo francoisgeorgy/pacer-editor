@@ -1,6 +1,4 @@
 import * as WebMidi from "webmidi";
-import {PACER_MIDI_PORT_NAME} from "../pacer/constants";
-import {portById} from "./ports";
 import {SYSEX_START} from "../pacer/sysex";
 
 export const MESSAGE = {
@@ -105,19 +103,27 @@ export const groupPortsByName = () => {
  * @param port
  * returns true if the midi port is the Pacer
  */
-export const outputIsPacer = portId => {
-    let port = portById(portId);
-    return port ? port.name.match(new RegExp(PACER_MIDI_PORT_NAME, 'i')) : false
+export const midiConnected = portId => {
+    return true;
+    //FIXME: return true if at least one output and one input are connected
+
+    // let port = portById(portId);
+    // return port ? port.name.match(new RegExp(PACER_MIDI_PORT_NAME, 'i')) : false
 };
 
 
 export const batchMessages = (callback, callbackBusy, wait) => {
 
+    // console.log("batchMessages: init", wait);
+
     let messages = [];  // batch of received messages
     let timeout;
 
     return function() {
+
+        // console.log("batchMessages: clear timeout");
         clearTimeout(timeout);
+
         let event = arguments[0];
 
         //
@@ -133,11 +139,14 @@ export const batchMessages = (callback, callbackBusy, wait) => {
         callbackBusy(messages.length);  // messages.length is the total number of bytes received so far
 
         timeout = setTimeout(() => {
-            // console.log("timeout elapsed");
+            console.log("batchMessages: timeout elapsed");
             timeout = null;
             callback(messages);
             messages = [];
         }, wait);
+
+        // console.log("batchMessages: done");
+
     };
 };
 

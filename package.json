@@ -1,6 +1,6 @@
 {
     "name": "pacer-editor",
-    "version": "0.9.3",
+    "version": "1.0.0",
     "author": "François Georgy <francois.georgy@gmail.com> (http://studiocode.dev)",
     "license": "GPL-3.0-or-later",
     "private": true,
@@ -8,6 +8,8 @@
     "dependencies": {
         "immer": "^1.8.0",
         "midi-manufacturers": "^1.1.0",
+        "mobx": "^5.15.4",
+        "mobx-react": "^6.2.2",
         "object-hash": "^1.3.1",
         "parse-midi": "^1.0.6",
         "query-string": "6.2.0",
@@ -24,7 +26,7 @@
         "webmidi": "^2.3.0"
     },
     "scripts": {
-        "start": "PORT=3001 react-scripts start",
+        "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",

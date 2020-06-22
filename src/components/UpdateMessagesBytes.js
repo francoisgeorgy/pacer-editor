@@ -22,7 +22,7 @@ import {hs} from "../utils/hexstring";
 */
 
 const UpdateMessagesBytes = ({ messages }) =>
-    <div className="message-to-send">
+    <div className="messages-to-send">
     {
         //FIXME: allow object or array
         Object.getOwnPropertyNames(messages).map(       // preset

@@ -1,23 +1,16 @@
 import React, {Component} from 'react';
 import {
     checksum,
-    isSysexData,
-    mergeDeep,
     parseSysexDump,
     requestAllPresets,
     requestPreset,
     requestPresetObj, SYSEX_END, SYSEX_START
 } from "../pacer/sysex";
-import {ANY_MIDI_PORT, SYSEX_SIGNATURE} from "../pacer/constants";
-import {outputById} from "../utils/ports";
+import {SYSEX_SIGNATURE} from "../pacer/constants";
 import {fromHexString, h, hs} from "../utils/hexstring";
 import "./Debug.css";
-import {produce} from "immer";
 import DumpSysex from "../components/DumpSysex";
-import {PACER_MIDI_PORT_NAME, SYSEX_HEADER} from "../pacer/constants";
-import Midi from "../components/Midi";
-import PortsGrid from "../components/PortsGrid";
-import {batchMessages} from "../utils/midi";
+import {SYSEX_HEADER} from "../pacer/constants";
 
 function replacerDec2Hex(key, value) {
     return typeof value === 'number' ? '0x' + h(value) : value;
@@ -81,24 +74,8 @@ class Debug extends Component {
         this.props.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
     };
 
-/*
-    handleMidiInputEvent = (event) => {
-        // console.log("TestSender.handleMidiInputEvent", event, event.data);
-        // if (event instanceof MIDIMessageEvent) {
-        if (isSysexData(event.data)) {
-            this.setState(
-                produce(draft => {
-                    draft.data = mergeDeep(draft.data || {}, parseSysexDump(event.data));
-                    // this.props.onBusy(false);
-                })
-            )
-        } else {
-            console.log("MIDI message is not a sysex message")
-        }
-        // }
-    };
-*/
 
+/*
     handleMidiInputEvent = batchMessages(
         messages => {
             console.log(`total bytes received = ${messages.length}`);
@@ -127,7 +104,9 @@ class Debug extends Component {
         },
         1000
     );
+*/
 
+/*
     onOutputConnection = (port_id) => {
         console.log("onOutputConnection");
         this.setState(
@@ -147,11 +126,13 @@ class Debug extends Component {
         );
         // this.addInfoMessage(`output ${outputName(port_id)} disconnected`);
     };
+*/
 
-    /**
+/*
+    /!**
      *
      * @param msg
-     */
+     *!/
     sendSysex = msg => {
         // console.log("sendSysex", msg);
         if (!this.state.output) {
@@ -169,6 +150,7 @@ class Debug extends Component {
             () => out.sendSysex(SYSEX_SIGNATURE, msg)
         );
     };
+*/
 
     updateCustomMessage = (event) => {
         let s = (event.target.value.toUpperCase().match(/[0-9A-F ]+/g) || []).join('');
@@ -213,7 +195,7 @@ class Debug extends Component {
 
     sendMessage = (msg) => {
         this.showBusy({busy: true, busyMessage: "receiving data...", bytesReceived: 0, bytesExpected: msg.bytesExpected});
-        this.sendSysex(msg.message);
+        this.props.state.sendSysex(msg.message);
     };
 
     /**
@@ -238,6 +220,7 @@ class Debug extends Component {
         return (
             <div className="wrapper">
 
+{/*
                 <div className="subheader">
                     <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME}
                           portsRenderer={(groupedPorts, clickHandler) => <PortsGrid groupedPorts={groupedPorts} clickHandler={clickHandler} />}
@@ -247,6 +230,7 @@ class Debug extends Component {
                         <div className="no-midi">Please connect your Pacer to your computer.</div>
                     </Midi>
                 </div>
+*/}
 
                 <div className="content">
 

@@ -1,21 +1,23 @@
 import React, {Component} from 'react';
+import {inject, observer} from "mobx-react";
+import {TARGET_PRESET} from "../pacer/constants";
 
 class PresetNameEditor extends Component {
 
     onNameUpdate = (event) => {
-        // console.log(`PresetNameEditor.onSettingUpdate`, event.target.value);
-        this.props.onUpdate(event.target.value.length > 5 ? event.target.value.substr(0, 5) : event.target.value);
+        this.props.state.updatePresetName(this.props.presetIndex, event.target.value.length > 5 ? event.target.value.substr(0, 5) : event.target.value);
     };
 
     render() {
-        const name = this.props.name;
+        console.log("PresetNameEditor render");
+        const name= this.props.state.data[TARGET_PRESET][this.props.presetIndex]["name"];
         return (
-            <div className="preset-name">
-                <p>The preset name is limited to 5 characters.</p>
-                <span className="strong">Name:</span> <input value={name} onChange={this.onNameUpdate} size={8} />
+            <div className="preset-name-editor">
+                <input defaultValue={name} onChange={this.onNameUpdate} size={8} />
+                The preset name is limited to 5 characters.
             </div>
         );
     }
 }
 
-export default PresetNameEditor;
+export default inject('state')(observer(PresetNameEditor));

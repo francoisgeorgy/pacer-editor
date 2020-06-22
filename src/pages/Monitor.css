@@ -1,3 +1,12 @@
+.monitor-link {
+    margin: 50px 15px 30px 0;
+}
+
+.monitor-link a {
+    color: blue;
+}
+
+/*
 .messages {
     margin: 20px 0 10px 0;
 }
@@ -7,3 +16,4 @@
 .msg-data {
     margin-left: 2rem;
 }
+*/

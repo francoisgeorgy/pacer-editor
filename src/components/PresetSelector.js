@@ -1,52 +1,82 @@
-import React, {Fragment} from "react";
-import "./PresetSelector.css";
-import "./selector.css";
+import React, {Component, Fragment} from "react";
+import {inject, observer} from "mobx-react";
 import {presetXYToIndex} from "../pacer/utils";
 import {TARGET_PRESET} from "../pacer/constants";
+import {state} from "../stores/StateStore";
+import "./PresetSelector.css";
 
-const Selector = ({ id, index, hasData, name, selected, onClick }) => {
+// TODO: is observer needed here?
+const Selector = observer(({ xyId, presetIndex, hasData, name, onClick }) => {
+
+    // console.log("Selector", xyId, presetIndex, state.currentPreset, typeof presetIndex, typeof state.currentPreset);
+
     let c = "selector";
+    const selected = presetIndex === state.currentPreset;
     if (selected) c += " selected";
     if (!selected && hasData) c += " loaded";
-    return (<div className={c} onClick={() => onClick(index)}>
-        <span className="preset-id">{id}</span> <span className="preset-name">{name}</span>
+
+    return (<div className={c} onClick={() => onClick(presetIndex)}>
+        <span className="preset-id">{xyId}</span> <span className="preset-name">{name}</span>
     </div>);
-};
 
-const PresetSelector = ({ data, currentPreset, onClick }) =>
-    <Fragment>
-        <div className="preset-selectors">
-            <Selector id={"CUR"} index={0} name={""} selected={0 === currentPreset} onClick={onClick} key={0} />
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        {
-            ['A', 'B', 'C', 'D'].map(
-            letter =>
-                <Fragment key={letter}>
-{/*
-                {
-                    (letter !== 'A') && <div></div>
-                }
-*/}
-                {
-                    Array.from(Array(6).keys()).map(
-                    digit => {
-                        let id = letter + (digit + 1);
-                        let index = presetXYToIndex(id);
+});
 
-                        let hasData = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
-                        let name = hasData ? data[TARGET_PRESET][index]["name"] : "";
+class PresetSelector extends Component {
 
-                        return <Selector id={id} index={index} hasData={hasData} name={name} selected={index === currentPreset} onClick={onClick} key={index} />
-                    })
-                }
-                </Fragment>
-            )
+    selectPreset = (index) => {     // index must be a string
+        this.props.state.selectPreset(index);
+        const data = this.props.state.data;
+        if (index === "24") {
+            this.props.state.showD6Info();
+            return;
         }
-        </div>
-    </Fragment>;
+        if (!(!this.props.state.forceReread && data && data[TARGET_PRESET] && data[TARGET_PRESET][index])) {
+            this.props.state.readPreset(index, "reading Pacer...");
+        }
+    };
 
-export default PresetSelector;
+    render() {
+        const {data, currentPreset} = this.props.state;
+        // console.log("PresetSelector render", currentPreset, typeof currentPreset);
+        return (
+            <div>
+            <div className="selectors">
+                <div className="preset-selectors">
+                    <Selector xyId={"CURRENT"} presetIndex={"0"} name={""} xselected={!!currentPreset} onClick={this.selectPreset} key={0}/>
+                    <div></div>
+                    <div></div>
+                    <div className="force-read">
+                        <label>
+                            <input type="checkbox" checked={this.props.state.forceReread} onChange={this.props.state.toggleForceReread} />
+                            Always read from Pacer
+                        </label>
+                    </div>
+                    {
+                        ['A', 'B', 'C', 'D'].map(
+                            letter =>
+                                <Fragment key={letter}>
+                                {
+                                    Array.from(Array(6).keys()).map(
+                                        digit => {
+                                            let xyId = letter + (digit + 1);
+                                            let index = presetXYToIndex(xyId);
+                                            let hasData = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
+                                            let name = hasData ? data[TARGET_PRESET][index]["name"] : "";
+                                            return <Selector xyId={xyId} presetIndex={index} hasData={hasData} name={name} key={index} onClick={this.selectPreset} />
+                                        })
+                                }
+                                </Fragment>
+                        )
+                    }
+                </div>
+            </div>
+                {/* this.props.state.showD6Info &&
+                <div>
+                    eqiuh iuehjrqg iuqehrg iuqerh giqeurhg iqeurgh iqerh giqeurh giqeurh giqeurhgierugh
+                </div> */}
+            </div>
+        );
+    }
+}
+
+export default inject('state')(observer(PresetSelector));

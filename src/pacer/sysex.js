@@ -253,12 +253,16 @@ function parseSysexMessage(data) {
 
     //TODO: verify checksum
 
+    // console.log("parseSysexMessage", data, JSON.stringify(data));
+
     const message = {};
 
     let cmd = data[CMD];
     let tgt = data[TGT];
     let idx = data[IDX];
     let obj = data[OBJ];
+
+    // console.log("parseSysexMessage", idx);
 
     switch (cmd) {
         case COMMAND_SET:
@@ -281,7 +285,7 @@ function parseSysexMessage(data) {
         // console.warn("parseSysexMessage: invalid/ignored idx", idx);
     }
 
-    message[tgt][idx] = {
+    message[tgt][idx] = {   //NOTE: idx is transformed in string here (Property names must be strings, https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
         // bytes: data      // FIXME: consolidate data per preset
     };
 
@@ -427,6 +431,8 @@ function parseSysexMessage(data) {
 
     }
 
+    // console.log(JSON.stringify(message));
+
     return message;
 
 } // parseSysex()
@@ -452,7 +458,6 @@ function parseSysexDump(data) {
         if (i < 0) break;
 
         i++;
-
         let k = data.indexOf(SYSEX_END, i);
 
         let manufacturer_id = (Array.from(data.slice(i, i+3)).map(n => h(n))).join(" ");    // Array.from() is necessary to get a non-typed array
@@ -500,7 +505,6 @@ function splitDump(data, stripManufacturer) {
         if (i < 0) break;
 
         i++;
-
         let k = data.indexOf(SYSEX_END, i);
 
         let manufacturer_id = (Array.from(data.slice(i, i+3)).map(n => h(n))).join(" ");    // Array.from() is necessary to get a non-typed array

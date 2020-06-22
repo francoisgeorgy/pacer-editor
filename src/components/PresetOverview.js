@@ -6,18 +6,20 @@ import {
     FOOTSWITCHES,
     EXPPEDALS,
     CONTROLS,
-    MSG_TYPES_SHORT_NAMES,
     MSG_TYPES_DATA_HELP,
     NOT_USED,
-    CONTROL_MODES_SHORT_NAME,
     MSG_SW_NOTE,
     COLORS,
-    COLORS_HTML, MSG_CTRL_OFF
+    COLORS_HTML, MSG_CTRL_OFF, CONTROL_MODES
 } from "../pacer/constants";
-import {presetIndexToXY} from "../pacer/utils";
+import {MessageSummary, presetIndexToXY} from "../pacer/utils";
 import {STEPS_DATA} from "../pacer/sysex";
 import {h} from "../utils/hexstring";
 import * as Note from "tonal-note";
+import {observer} from "mobx-react";
+import {withRouter} from "react-router-dom";
+import {state} from "../stores/StateStore";
+
 
 function hasMidiConfig(preset) {
     if (preset && preset["midi"]) {
@@ -31,11 +33,17 @@ function hasMidiConfig(preset) {
     return false;
 }
 
-const Message = ({ message, hexDisplay }) => {
-    if (message === null || message === undefined) return null;
+const Message = observer(({ message, hexDisplay }) => {
+
+    if (message === null || message === undefined || (message.constructor === Object && Object.keys(message).length === 0)) return null;
+
     const t = message["msg_type"];
+
+    // console.log("Message type", t, message, message["msg_type"], message.msg_type, JSON.stringify(message), typeof message, Object.keys(message));
+
     const used = MSG_TYPES_DATA_HELP[t];
     const data = message["data"];
+
     let d = [null, null, null];
     for (let i=0; i<3; i++) {
         if (used[i] === NOT_USED) continue;
@@ -44,77 +52,96 @@ const Message = ({ message, hexDisplay }) => {
             d[i] += ' (' + Note.fromMidi(data[i], true) + ')';
         }
     }
+
     let channel = '';
     if (hexDisplay) {
         channel = h(message["channel"]);
     } else {
-        channel = message["channel"] === 0 ? 'global' : message["channel"];
+        channel = message["channel"] === 0 ? 'global ch.' : `ch. ${message["channel"]}`;
     }
+
+    let colorOn = null;
+    let colorOff = null;
+    if (message["led_active_color"] && message["led_inactive_color"]) {
+        colorOn = message["led_active_color"] === 127 ? 0x00 : message["led_active_color"];
+        colorOff = message["led_inactive_color"] === 127 ? 0x00 : message["led_inactive_color"];
+    }
+    const displayColor = colorOn > 0 && colorOff > 0;
+
+    // console.log(message["led_active_color"], message["led_inactive_color"], colorOn, colorOff);
+
     return (
         <Fragment>
             <div className="overview-message">
-                {MSG_TYPES_SHORT_NAMES[t]}
-                <span>{d[0]}</span>
-                <span>{d[1]}</span>
-                <span>{d[2]}</span>
+                <div className="overview-message-type">{MessageSummary(message)}</div>
             </div>
-            <div className="msg-midi-channel">ch. {channel}</div>
+            {message["msg_type"] !== MSG_CTRL_OFF &&
+            <div className="overview-message-ch-colors">
+                <div className="msg-midi-channel">{channel}</div>
+                {displayColor &&
+                <div className="overview-step-color">
+                    <div className="color-on" style={{backgroundColor: COLORS_HTML[colorOn]}} title={COLORS[colorOn]}></div>
+                    <div className="color-off" style={{backgroundColor: COLORS_HTML[colorOff]}} title={COLORS[colorOff]}></div>
+                </div>}
+            </div>}
         </Fragment>
     );
-};
+});
 
-const Step = ({ step, hexDisplay }) => {
+const Step = observer(({ step, hexDisplay }) => {
     if (step === null || step === undefined) return null;
     if (step["active"] === 0) return null;
-    let colorOn = null;
-    let colorOff = null;
-    if (step["led_active_color"] && step["led_inactive_color"]) {
-        colorOn = step["led_active_color"] === 127 ? 0x00 : step["led_active_color"];
-        colorOff = step["led_inactive_color"] === 127 ? 0x00 : step["led_inactive_color"];
-    }
-    const displayColor = colorOn > 0 && colorOff > 0;
     return (
-        <Fragment>
-            <div className="overview-step">
-                <Message message={step} hexDisplay={hexDisplay} />
-            </div>
-            {displayColor &&
-            <div className="overview-step-color">
-                <div className="color-on" style={{backgroundColor: COLORS_HTML[colorOn]}} title={COLORS[colorOn]}></div>
-                <div className="color-off" style={{backgroundColor: COLORS_HTML[colorOff]}} title={COLORS[colorOff]}></div>
-            </div>
-            }
-        </Fragment>
+        <div className="overview-step">
+            <Message message={step} hexDisplay={hexDisplay} />
+        </div>
     );
-};
+});
 
-const Control = ({ id, control, hexDisplay }) => {
+const Control = withRouter(observer(({ history, presetIndex, controlIndex, control, hexDisplay, stompswitch=true } = {}) => {
+
+    const gotoPreset = () => {
+        state.selectPreset(presetIndex);
+        state.selectControl(controlIndex);
+        history.push('/preset');
+    }
+
     if (control === null || control === undefined) return null;
+
+    if (!control[STEPS_DATA]) return null;
+
+    const n_active_steps = Object.keys(control[STEPS_DATA]).filter(n => control[STEPS_DATA][n]["active"]>0).length;
+
     return (
-        <div>
+        <div className={`overview-control ${stompswitch?'stompswitch':''}`} onClick={gotoPreset} title="click to edit">
             <div className="control-header">
-                <div className="control-name">{CONTROLS[id]}</div>
-                <div><span className="dim">steps:</span> {CONTROL_MODES_SHORT_NAME[control["control_mode"]]}</div>
+                <div className="control-name">{CONTROLS[controlIndex]}</div>
+                {/*<div className="control-name"><Link to="/preset">{CONTROLS[id]}</Link></div>*/}
+                {n_active_steps > 1 && <div>{CONTROL_MODES[control["control_mode"]]}</div>}
             </div>
             {Object.keys(control[STEPS_DATA]).map(n => <Step key={n} step={control[STEPS_DATA][n]} hexDisplay={hexDisplay} />)}
         </div>
     );
-};
 
-const Controls = ({ controls, hexDisplay, extControls }) => {
+}));
+
+const Controls = observer(({ presetIndex, controls, hexDisplay, extControls }) => {
     if (controls === null || controls === undefined) return null;
+    // console.log("Controls", presetIndex, typeof presetIndex);
+    const props = {presetIndex, hexDisplay};
     return (
         <div className="overview-controls">
-            {extControls && FOOTSWITCHES.map(obj => <Control key={obj} id={obj} control={controls[obj]} hexDisplay={hexDisplay} />)}
-            {extControls && EXPPEDALS.map(obj => <Control key={obj} id={obj} control={controls[obj]} hexDisplay={hexDisplay} />)}
-            {STOMPSWITCHES_TOP.map(obj => <Control key={obj} id={obj} control={controls[obj]} hexDisplay={hexDisplay} />)}
-            <div></div><div></div>
-            {STOMPSWITCHES_BOTTOM.map(obj => <Control key={obj} id={obj} control={controls[obj]} hexDisplay={hexDisplay} />)}
+            {extControls && FOOTSWITCHES.map(controlId => <Control key={controlId} controlIndex={controlId} control={controls[controlId]} {...props} stompswitch={false} />)}
+            {extControls && EXPPEDALS.map(controlId => <Control key={controlId} controlIndex={controlId} control={controls[controlId]} {...props} stompswitch={false} />)}
+            <div></div>
+            {STOMPSWITCHES_TOP.map(controlId => <Control key={controlId} controlIndex={controlId} control={controls[controlId]} {...props} />)}
+            <div></div>
+            {STOMPSWITCHES_BOTTOM.map(controlId => <Control key={controlId} controlIndex={controlId} control={controls[controlId]} {...props} />)}
         </div>
     );
-};
+});
 
-const MidiSetting = ({ setting, hexDisplay }) => {
+const MidiSetting = observer(({ setting, hexDisplay }) => {
     if (setting === null || setting === undefined) return null;
     if (!setting["msg_type"]) return null;
     if (setting.msg_type === MSG_CTRL_OFF) return null;
@@ -123,10 +150,10 @@ const MidiSetting = ({ setting, hexDisplay }) => {
             <Message message={setting} hexDisplay={hexDisplay} />
         </div>
     );
-};
+});
 
-const MidiSettings = ({ settings, hexDisplay }) => {
-    console.log("MidiSettings", settings);
+const MidiSettings = observer(({ settings, hexDisplay }) => {
+    // console.log("MidiSettings", settings);
     if (settings === null || settings === undefined) return null;
     return (
         <div className="overview-midi-settings">
@@ -136,36 +163,37 @@ const MidiSettings = ({ settings, hexDisplay }) => {
             )}
         </div>
     );
-};
+});
 
-const Preset = ({ index, data, hexDisplay, extControls }) => {
+const Preset = observer(({ index, data, hexDisplay, extControls }) => {
     if (data === null || data === undefined) return null;
+    // console.log("Preset", index, typeof index);
     return (
         <div className="overview-preset">
-            <h3>Preset {presetIndexToXY(parseInt(index, 10))} (#{index}): <span className="bold">{data["name"]}</span></h3>
-            {/*<PresetName name= />*/}
-            <Controls controls={data["controls"]} hexDisplay={hexDisplay} extControls={extControls} />
+            <h3>{presetIndexToXY(parseInt(index, 10))}: <span className="bold">{data["name"]}</span></h3>
+            <Controls presetIndex={index} controls={data["controls"]} hexDisplay={hexDisplay} extControls={extControls} />
             {hasMidiConfig(data) && <MidiSettings settings={data["midi"]} hexDisplay={hexDisplay} />}
         </div>
     );
-};
+});
 
-const Presets = ({ presets, hexDisplay, extControls }) => {
+const Presets = observer(({ presets, hexDisplay, extControls }) => {
     if (presets === null || presets === undefined) return null;
     return (
         <div className="overview-presets">
-            {Object.keys(presets).map(idx => <Preset key={idx} index={idx} data={presets[idx]} hexDisplay={hexDisplay} extControls={extControls} />)}
+            {Object.keys(presets).map(presetIndex => <Preset key={presetIndex} index={presetIndex} data={presets[presetIndex]} hexDisplay={hexDisplay} extControls={extControls} />)}
         </div>
     );
-};
+});
 
-const PresetOverview = ({ data, hexDisplay, extControls }) => {
+const PresetOverview = observer(({ data, hexDisplay, extControls }) => {
     if (data === null || data === undefined) return null;
+    // console.log("PresetOverview render");
     return (
         <div className="overview">
             <Presets presets={data[TARGET_PRESET]} hexDisplay={hexDisplay} extControls={extControls} />
         </div>
     );
-};
+});
 
 export default PresetOverview;

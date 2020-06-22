@@ -19,6 +19,12 @@ class Home extends Component {
                     <p>Ensure your Pacer is running the <a href="https://nektartech.com/updating-firmware-pacer/" target="_blank" rel="noopener noreferrer">latest firmware v10112</a>.</p>
                 </div>
 
+                <h1>Known issues</h1>
+
+                <div className="doc">
+                    <p>The preset D6 can not be read.</p>
+                </div>
+
                 <h1>Limitations</h1>
 
                 <div className="doc">
@@ -27,15 +33,12 @@ class Home extends Component {
                 </div>
 
                 <h1>Connecting your Pacer</h1>
+
                 <div className="doc">
-                    <p>1. Make sure your Pacer is connected to your computer and switched-on.</p>
-                    <p>2. In the application, check the MIDI settings.</p>
-                    <p>You need to enable the following input and output ports:</p>
-                    <p><span className="bold" >Mac</span>:</p>
-                    <img src="ports-mac.png" alt="" />
-                    <p><span className="bold" >Windows</span>:</p>
-                    <img src="ports-windows.png" alt="" />
+                    <p>Make sure your Pacer is connected to your computer and switched-on.</p>
                     <p>This editor listen on all MIDI ports. A future version may offer the possibility to choose a specific port.</p>
+                    <p>In case of problem, when either the application or Pacer does not respond or communicate, try to reload the application (refresh the page) or reboot the Pacer.</p>
+                    <p>You can find info about WebMIDI at <a href="https://studiocode.dev/support/webmidi/" target="_blank" rel="noopener noreferrer">studiocode.dev/support/webmidi</a></p>
                 </div>
 
                 <h1>Editing presets</h1>
@@ -44,9 +47,7 @@ class Home extends Component {
                         When you edit preset <span className="strong">CUR</span> your changes are immediately applied.</p>
                     <p>When you edit any other presets, you edit the <span className="fluo">saved</span> settings of the preset
                         and your changes will only be applied when you <span className="fluo">load</span> this preset in the Pacer.</p>
-
                     <p>It is currently not possible to load the preset from this editor.</p>
-
                     <div>
                         <h3>Example 1:</h3>
                         <p>The currently loaded preset (CUR) is preset <span className="strong">A5</span>.</p>

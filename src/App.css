@@ -59,40 +59,79 @@ h3 {
     display: flex;
     flex-direction: row;
     align-items: baseline;
-    background-color: #333;
-    border: none;
+    /*background-color: #3a3a3a;*/
+    /*border: none;*/
+    /*border-bottom: 1px solid #ccc;*/
 }
 
 .header-app-name {
     float: right;
     margin: 0 16px;
-    font-style: italic;
-    color: #c7c7c7;
+    font-size: 1.25rem;
+    color: #000;
+}
+
+.header-app-name a {
+    color: blue;
+}
+
+.header-app-name a:visited {
+    color: blue;
 }
 
 .header-link {
     padding: 14px 0;
     margin: 0;
+    font-size: 1.25rem;
+    font-weight: bold;;
 }
 
 .header-link:hover {
-    background-color: #000;
+    /*background-color: #303030;*/
+}
+
+.header-link:hover a {
+    border-bottom: 2px solid blue;
+}
+
+.header-link {
+    padding: 14px 30px 14px 0;
 }
 
 .header-link a {
-    padding: 14px 16px;
+    display: block;
     margin: 0;
     text-decoration: none;
-    color: #fff;
+    /*color: #fff;*/
+    color: blue;
+    padding-bottom: 2px;
+    /*border-bottom: 2px solid #3a3a3a;*/
 }
 
-.header-link.active {
-    background-color: #0030ff;
+.header-link a:visited {
+    color: blue;
 }
 
 .header-link.active a {
-    color: #fff;
+    /*color: #fff;*/
+    color: #000;
+    border-bottom: 2px solid #000;
 }
+
+
+.subheader {
+    /*background-color: #e0e0e0;*/
+    /*padding-bottom: 1px;*/
+    /*padding: 10px 15px;*/
+    /*padding: 15px 0;*/
+}
+
+/*
+.subheader > div {
+    padding: 9px 14px 7px 8px;
+}
+*/
+
 
 .spacer {
     flex-grow: 10;
@@ -116,6 +155,8 @@ h3 {
     font-weight: bold;
 }
 
+/*
+full screen busy indicator
 .busy {
     position: absolute;
     top: 0;
@@ -125,26 +166,27 @@ h3 {
     z-index: 10000;
     padding-top: 30vh;
     text-align: center;
-    /*background-color: orangered;*/
+    !*background-color: orangered;*!
     background-color: #777777;
     opacity: 0.5;
     color: white;
     font-size: 8rem;
+}
+*/
+
+.busy {
+    margin-left: 10px;
+    background-color: yellow;
+    color: #330000;
+    padding: 5px 10px;
+    font-size: 1.25rem;
+    align-self: center;
 }
 
 .wrapper {
     /*flex-grow: 10;*/
     /*display: flex;*/
     /*flex-direction: row;*/
-}
-
-.subheader {
-    background-color: #e0e0e0;
-    padding-bottom: 1px;
-}
-
-.subheader > div {
-    padding: 9px 14px 7px 8px;
 }
 
 .download-upload {
@@ -185,11 +227,32 @@ h3 {
     color: #333333;
 }
 
+/*
 .content-row {
     position: relative;
     display: flex;
     flex-direction: row;
 }
+*/
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.align-row-bottom {
+    align-content: flex-end;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+.align-col-bottom {
+    justify-content: flex-end;
+}
+
 
 .background {
     position: absolute;
@@ -198,6 +261,14 @@ h3 {
     overflow: hidden;
     font-size: 3rem;
     color: #fff;
+}
+
+.local-help {
+    margin: 10px 0;
+    padding: 5px;
+    background-color: #ffffaa;
+    font-size: 0.85rem;
+    line-height: 150%;
 }
 
 .content h2 {
@@ -278,14 +349,6 @@ h3 {
     align-self: center;
 }
 
-.no-midi {
-    margin: 0;
-    border: 8px solid #e0e0e0;
-    padding: 4px;
-    background-color: #fff900;
-    color: #000;
-    text-align: center;
-}
 
 .all-ports {
     display: flex;
@@ -441,9 +504,13 @@ h3 {
 }
 
 .preset-buttons {
-    margin-top: 10px;
-    display: flex;
-    flex-direction: row;
+    /*margin-top: 10px;*/
+    /*display: flex;*/
+    /*flex-direction: row;*/
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-content: end;
+
 }
 
 .preset-buttons button {
@@ -457,7 +524,9 @@ h3 {
 /*}*/
 
 select, input {
-    font-size: 0.875rem
+    /*font-size: 0.875rem;*/
+    font-size: 1rem;
+    padding: 2px 0;
 }
 
 button {
@@ -472,6 +541,7 @@ button {
     font-size: 0.85rem;
     margin-top: 5px;
     margin-bottom: 5px;
+    cursor: pointer;
 }
 
 /*
@@ -492,6 +562,22 @@ button.disabled, button.disabled:hover {
 button:hover {
 }
 
+button.read {
+    background: linear-gradient(to bottom, #acff99, #59ff30);
+    border: 1px solid #999;
+    padding: 4px 8px;
+    font-size: 1rem;
+    color: #000;
+}
+
+button.read:hover {
+    background: linear-gradient(to bottom, #59ff30, #acff99);
+    border: 1px solid #999;
+    padding: 4px 8px;
+    font-size: 1rem;
+    color: #000;
+}
+
 button.update {
     background: linear-gradient(to bottom, #ffdd99, #ffaa00);
     border: 1px solid #999;
@@ -510,6 +596,11 @@ button.update:hover {
 
 .right-align {
     text-align: right;
+}
+
+.green-button {
+    background-color: #acf1ac;
+    border: 1px solid green;
 }
 
 .debug {

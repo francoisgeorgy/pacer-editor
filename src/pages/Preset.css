@@ -9,8 +9,13 @@
     flex-direction: row;
 }
 
-.message-to-send {
+.messages-to-send {
+    font-size: 0.85rem;
     margin-top: 8px;
+}
+
+.update-messages-title {
+    margin-bottom: 10px;
 }
 
 .actions {

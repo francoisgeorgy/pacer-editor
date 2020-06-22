@@ -1,14 +1,14 @@
-import React from "react";
-import "./DumpSysex.css";
+import React, {Component} from "react";
+import {inject, observer} from "mobx-react";
 import {
     MSG_SW_NOTE,
-    TARGET_PRESET,
-    MSG_TYPES, COLORS, CONTROLS_FULLNAME, CONTROL_MODES
+    MSG_TYPES, COLORS, CONTROLS_FULLNAME, CONTROL_MODES, TARGET_PRESET
 } from "../pacer/constants";
 import {h, hs} from "../utils/hexstring";
 import "./DumpSysex.css";
 import * as Note from "tonal-note";
 import {presetIndexToXY} from "../pacer/utils";
+import "./DumpSysex.css";
 
 /*
 const PresetName = ({ name }) => {
@@ -142,18 +142,22 @@ const Presets = ({ presets }) => {
     );
 };
 
-const DumpSysex = ({ data }) => {
-    return (
-        <div className="dump code">
-            {
-                data && <Presets presets={data[TARGET_PRESET]} />
-            }
-            {/*
-                data ? JSON.stringify(data, null, 4) : ""
-            */}
-        </div>
-    );
+class DumpSysex extends Component {
+// const DumpSysex = ({ data }) => {
+    render() {
+        const data = this.props.state.data;
+        // return <pre>{JSON.stringify(data, null, 4)}</pre>;
+        if (!data) return null;
+        console.log("DumpSysex render");
+        return (
+            <div className="dump code">
+                <div>
+                    {Object.keys(data[TARGET_PRESET]).map(idx => <Preset key={idx} index={idx} data={data[TARGET_PRESET][idx]} />)}
+                </div>
+            </div>
+        );
+    }
 };
 
-
-export default DumpSysex;
+export default inject('state')(observer(DumpSysex));
+// export default DumpSysex;

@@ -1,3 +1,20 @@
+## Requests
+
+Read preset 0x17:
+
+    sendmidi dev MIDI1 syx hex 00 01 77 7F 02 01 17 7F 67
+
+Read preset 0x18 (D6)
+
+    sendmidi dev MIDI1 syx hex 00 01 77 7F 02 01 18 7F 66
+
+The Pacer never responds when we request the preset D6. Bug?
+
+Read ALL presets:
+
+    sendmidi dev MIDI1 syx hex 00 01 77 7F 02 01 7F 7E
+
+
 ## Convert ASCII plain text hex dump to binary files:
 
     $ xxd -r -p A1.syx.hex > A1.syx
