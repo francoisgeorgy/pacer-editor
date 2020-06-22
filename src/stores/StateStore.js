@@ -29,7 +29,7 @@ class StateStore {
         };
         // this.pacerPresent = false;
         this.busy = false;
-        this.busyMessage = "please wait";
+        this.busyMessage = "Receiving data, please wait...";
         this.bytesExpected = -1;
         this.progress = -1;    // 0..100
         //TODO:
@@ -99,12 +99,6 @@ class StateStore {
             }
         }
     };
-
-/*
-    changeBusyMessage(msg) {
-        this.busyMessage = msg;
-    }
-*/
 
     showBusy({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) {
         setTimeout(() => this.onBusy({busy: false}), 20000);
@@ -272,12 +266,7 @@ class StateStore {
         // );
     }
 
-    /**
-     *
-     * @param msg
-     */
     sendSysex = msg => {
-        // console.log("sendSysex", msg);
         if (!this.midi.output) {
             console.warn("no output enabled to send the message");
             return;
@@ -287,17 +276,10 @@ class StateStore {
             console.warn(`send: output ${this.midi.output} not found`);
             return;
         }
-        //FIXME: busy indicator
-        // this.showBusy();
-        // this.data = null;
         out.sendSysex(SYSEX_SIGNATURE, msg);
-        // this.setState(
-        //     {data: null},
-        //     () => out.sendSysex(SYSEX_SIGNATURE, msg)
-        // );
     };
 
-    readPacer = (msg, bytesExpected, busyMessage = "Reading Pacer...") => {
+    readPacer = (msg, bytesExpected, busyMessage = "Please wait...") => {
         this.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected});
         this.sendSysex(msg);
     };
@@ -309,11 +291,6 @@ class StateStore {
         }
     }
 
-    /**
-     *
-     * @param files
-     * @returns {Promise<void>}
-     */
     async readFiles(files) {
         // let data = this.data;
         await Promise.all(files.map(

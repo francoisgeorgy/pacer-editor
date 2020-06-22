@@ -52,7 +52,7 @@ class ActionButtons extends Component {
 
                 {canRead &&
                 <button className="read"
-                       onClick={() => this.props.state.readPacer(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}
+                       onClick={() => this.props.state.readPacer(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES, "Reading Pacer...")}
                        title="Read all presets from Pacer">Read Pacer</button>}
                 {!canRead && <div></div>}
 
