@@ -3,7 +3,7 @@
 Read preset 0x17:
 
     sendmidi dev MIDI1 syx hex 00 01 77 7F 02 01 17 7F 67
-
+    
 Read preset 0x18 (D6)
 
     sendmidi dev MIDI1 syx hex 00 01 77 7F 02 01 18 7F 66
