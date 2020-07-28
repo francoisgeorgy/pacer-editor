@@ -11,13 +11,19 @@ const Selector = observer(({ xyId, presetIndex, hasData, name, onClick }) => {
     // console.log("Selector", xyId, presetIndex, state.currentPreset, typeof presetIndex, typeof state.currentPreset);
 
     let c = "selector";
-    const selected = presetIndex === state.currentPreset;
+    const selected = presetIndex === state.currentPresetIndex;
     if (selected) c += " selected";
     if (!selected && hasData) c += " loaded";
 
-    return (<div className={c} onClick={() => onClick(presetIndex)}>
-        <span className="preset-id">{xyId}</span> <span className="preset-name">{name}</span>
-    </div>);
+    if (xyId === "CURRENT" && name) {
+        return (<div className={c} onClick={() => onClick(presetIndex)}>
+            CUR: {name}
+        </div>);
+    } else {
+        return (<div className={c} onClick={() => onClick(presetIndex)}>
+            <span className="preset-id">{xyId}</span> <span className="preset-name">{name}</span>
+        </div>);
+    }
 
 });
 
@@ -36,13 +42,19 @@ class PresetSelector extends Component {
     };
 
     render() {
-        const {data, currentPreset} = this.props.state;
+        const {data, currentPresetIndex} = this.props.state;
         // console.log("PresetSelector render", currentPreset, typeof currentPreset);
+
+        let curHasData = data && data[TARGET_PRESET] && data[TARGET_PRESET][0];
+
+        let currName = curHasData ? data[TARGET_PRESET][0]["name"] : "";
+
+
         return (
             <div>
             <div className="selectors">
                 <div className="preset-selectors">
-                    <Selector xyId={"CURRENT"} presetIndex={"0"} name={""} xselected={!!currentPreset} onClick={this.selectPreset} key={0}/>
+                    <Selector xyId={"CURRENT"} presetIndex={"0"} name={currName} xselected={!!currentPresetIndex} onClick={this.selectPreset} key={0}/>
                     <div></div>
                     <div></div>
                     <div className="force-read">
@@ -70,10 +82,6 @@ class PresetSelector extends Component {
                     }
                 </div>
             </div>
-                {/* this.props.state.showD6Info &&
-                <div>
-                    eqiuh iuehjrqg iuqehrg iuqerh giqeurhg iqeurgh iqerh giqeurh giqeurh giqeurhgierugh
-                </div> */}
             </div>
         );
     }

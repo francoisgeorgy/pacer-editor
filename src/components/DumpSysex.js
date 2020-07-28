@@ -133,14 +133,14 @@ const Preset = ({ index, data }) => {
     );
 };
 
-const Presets = ({ presets }) => {
-    if (presets === null || presets === undefined) return null;
-    return (
-        <div>
-            {Object.keys(presets).map(idx => <Preset key={idx} index={idx} data={presets[idx]} />)}
-        </div>
-    );
-};
+// const Presets = ({ presets }) => {
+//     if (presets === null || presets === undefined) return null;
+//     return (
+//         <div>
+//             {Object.keys(presets).map(idx => <Preset key={idx} index={idx} data={presets[idx]} />)}
+//         </div>
+//     );
+// };
 
 class DumpSysex extends Component {
 // const DumpSysex = ({ data }) => {

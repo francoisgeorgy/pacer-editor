@@ -44,7 +44,7 @@ class PresetMidi extends Component {
 
     render() {
 
-        const presetIndex = this.props.state.currentPreset;
+        const presetIndex = this.props.state.currentPresetIndex;
         const data = this.props.state.data;
 
         let showEditor = false;

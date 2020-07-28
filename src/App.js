@@ -17,6 +17,7 @@ import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME} from "./pacer/constants";
 import BusyIndicator from "./components/BusyIndicator";
 import * as QueryString from "query-string";
 import './App.css';
+import Instructions from "./components/Instructions";
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
     <Route
@@ -71,6 +72,7 @@ class App extends Component {
                             <BusyIndicator />
                         </div>
 
+                        <div className="main-content-wrapper">
                         <Switch>
                             <Route exact={true} path="/" render={props => <Overview debug={debug}/>} />
                             <Route path="/preset"        render={props => <Preset debug={debug}/>} />
@@ -83,6 +85,12 @@ class App extends Component {
                             <Route exact={true} path="/help"     render={props => <Home />} />
                             <Route component={NoMatch} />
                         </Switch>
+
+                        {/*<Instructions />*/}
+
+                        {/*<Debug />*/}
+
+                        </div>
 
                         <Footer />
 

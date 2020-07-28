@@ -165,12 +165,28 @@ const MidiSettings = observer(({ settings, hexDisplay }) => {
     );
 });
 
+
+const PresetTitle = withRouter(observer(({ history, presetIndex, presetName} = {}) => {
+
+    const gotoPreset = () => {
+        state.selectPreset(presetIndex);
+        state.selectControl(1);
+        history.push('/preset');
+    }
+
+    return (
+        <h3 onClick={gotoPreset} title="click to edit">{presetIndexToXY(parseInt(presetIndex, 10))}: <span className="bold">{presetName}</span></h3>
+    );
+
+}));
+
 const Preset = observer(({ index, data, hexDisplay, extControls }) => {
     if (data === null || data === undefined) return null;
     // console.log("Preset", index, typeof index);
     return (
         <div className="overview-preset">
-            <h3>{presetIndexToXY(parseInt(index, 10))}: <span className="bold">{data["name"]}</span></h3>
+            <PresetTitle presetIndex={index} presetName={data["name"]} />
+            {/*<h3>{presetIndexToXY(parseInt(index, 10))}: <span className="bold">{data["name"]}</span></h3>*/}
             <Controls presetIndex={index} controls={data["controls"]} hexDisplay={hexDisplay} extControls={extControls} />
             {hasMidiConfig(data) && <MidiSettings settings={data["midi"]} hexDisplay={hexDisplay} />}
         </div>

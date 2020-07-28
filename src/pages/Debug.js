@@ -11,6 +11,7 @@ import {fromHexString, h, hs} from "../utils/hexstring";
 import "./Debug.css";
 import DumpSysex from "../components/DumpSysex";
 import {SYSEX_HEADER} from "../pacer/constants";
+import {inject, observer} from "mobx-react";
 
 function replacerDec2Hex(key, value) {
     return typeof value === 'number' ? '0x' + h(value) : value;
@@ -203,7 +204,10 @@ class Debug extends Component {
      */
     render() {
 
-        const { data, messages, customMessage } = this.state;
+        console.log("Debug render");
+
+        const { messages, customMessage } = this.state;
+        const { data } = this.props.state;
 
         const cs = checksum(fromHexString(customMessage, / /g));
 
@@ -233,6 +237,12 @@ class Debug extends Component {
 */}
 
                 <div className="content">
+
+                    <div className="content-row-content">
+                        <div className="debug">
+                            <pre>{JSON.stringify(data, null, 4)}</pre>
+                        </div>
+                    </div>
 
                     <div className="content-row-content first">
                         <h2>Test messages:</h2>
@@ -317,4 +327,5 @@ class Debug extends Component {
     }
 }
 
-export default Debug;
+export default inject('state')(observer(Debug));
+

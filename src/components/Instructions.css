@@ -1,0 +1,42 @@
+.instructions {
+    /*margin-top: 24px;*/
+    padding: 8px 0;
+    /*background-color: #333;*/
+    /*border-top: 1px solid #777;*/
+    width: 100%;
+    /*text-align: center;*/
+    /*color: #999;*/
+    /*font-size: 0.75rem;*/
+    /*display: flex;*/
+    /*flex-direction: row;*/
+    /*flex-grow: 1;*/
+
+    color: #7979c3;
+}
+
+.instructions h2 {
+    font-size: 1.5rem;
+    margin-top: 24px;
+    border-top: 1px solid #7979c3;
+}
+
+.instructions .gh {
+    /*flex-grow: 10;*/
+    float: right;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    /*opacity: 0.5;*/
+    /*color: #222;*/
+}
+
+.instructions a {
+    fill: #7777ff;
+    color: #7777ff;
+}
+
+.instructions svg {
+    margin: 0 0 0 10px;
+    /*fill: blue;*/
+}
+

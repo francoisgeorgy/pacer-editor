@@ -1,3 +1,10 @@
+* {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
+    -o-user-select: none;
+    user-select: none;
+}
 
 .italic {
     font-style: italic;
@@ -40,11 +47,11 @@ h2 {
 }
 
 h3 {
-    font-size: 1.0rem;
+    font-size: 1.5rem;
     line-height: 1.5;
-    margin-top: 0.25em;
-    margin-bottom: 0.25em;
-    color: #333;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    /*color: #333;*/
 }
 
 .app {
@@ -207,6 +214,10 @@ full screen busy indicator
     margin-right: 16px;
 }
 
+.main-content-wrapper {
+    flex-grow: 1;
+}
+
 .content {
     min-height: 50vh;
     /*flex-grow: 2;*/
@@ -222,7 +233,7 @@ full screen busy indicator
     float: right;
     width: 400px;
     background-color: #eaeaea;
-    box-shadow: inset 2px 0px 5px 0px rgba(120,120,120,0.75);
+    box-shadow: inset 2px 0 5px 0 rgba(120,120,120,0.75);
     padding: 16px;
     color: #333333;
 }
@@ -263,6 +274,11 @@ full screen busy indicator
     color: #fff;
 }
 
+.mini-help {
+    color: #53b039;
+    font-weight: normal;
+}
+
 .local-help {
     margin: 10px 0;
     padding: 5px;
@@ -271,14 +287,12 @@ full screen busy indicator
     line-height: 150%;
 }
 
-.content h2 {
-    /*margin-bottom: 0.25em;*/
-    /*padding: 16px 8px 0 16px;*/
-    /*margin: 8px 0 8px 0;*/
+.content h2,
+.instructions h2 {
     margin-top: 12px;
     padding-bottom: 2px;
-    border-bottom: 1px solid #777;
-    font-size: 1rem;
+    /*border-bottom: 1px solid #777;*/
+    font-size: 1.75rem;
     font-weight: bold;
 }
 
@@ -299,17 +313,12 @@ full screen busy indicator
     border-top: none;
 }
 
+/*
 .instructions {
     float:right;
     max-width: 25%;
     margin-top: 8px;
-    /*padding: 16px;*/
-    /*background-color: #ccf6e4;*/
     border-left: 8px solid #fff;
-    /*color: darkolivegreen;*/
-    /*font-style: italic;*/
-    /*font-size: 0.85rem;*/
-    /*line-height: 130%;*/
     display: flex;
     flex-direction: column;
 }
@@ -323,6 +332,7 @@ full screen busy indicator
     line-height: 130%;
     margin-bottom: 12px;
 }
+*/
 
 .please {
     margin:24px 0;
@@ -437,7 +447,7 @@ full screen busy indicator
 }
 
 .port-enabled {
-    box-shadow: 0px 0px 8px 3px orange;
+    box-shadow: 0 0 8px 3px orange;
 }
 
 .port > div {

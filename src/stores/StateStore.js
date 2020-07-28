@@ -18,7 +18,7 @@ class StateStore {
     constructor() {
         this.data = null;
         // this.presetIndex = null;
-        this.currentPreset = "";    // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
+        this.currentPresetIndex = "";    // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
         this.currentControl = "";   // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
         this.updateMessages = {};
         this.midi = {
@@ -115,7 +115,7 @@ class StateStore {
 
     selectPreset(presetIndex) { // String
         // console.log("selectPreset", presetIndex, typeof presetIndex);
-        this.currentPreset = presetIndex;
+        this.currentPresetIndex = presetIndex;
     }
 
     selectControl(controlIndex) {
@@ -124,24 +124,24 @@ class StateStore {
     }
 
     /**
-     * Update the control mode of the currentControl of the currentPreset
+     * Update the control mode of the currentControl of the currentPresetIndex
      * @param value
      */
     setControlMode(value) {
-        this.data[TARGET_PRESET][this.currentPreset][CONTROLS_DATA][this.currentControl]["control_mode"] = value;
-        this.data[TARGET_PRESET][this.currentPreset][CONTROLS_DATA][this.currentControl]["control_mode_changed"] = true;
-        this.addControlUpdateMessage(this.currentControl, getControlUpdateSysexMessages(this.currentPreset, this.currentControl, this.data));
+        this.data[TARGET_PRESET][this.currentPresetIndex][CONTROLS_DATA][this.currentControl]["control_mode"] = value;
+        this.data[TARGET_PRESET][this.currentPresetIndex][CONTROLS_DATA][this.currentControl]["control_mode_changed"] = true;
+        this.addControlUpdateMessage(this.currentControl, getControlUpdateSysexMessages(this.currentPresetIndex, this.currentControl, this.data));
         this.changed = true;
     }
 
     addControlUpdateMessage(controlId, msg) {
-        if (!this.updateMessages.hasOwnProperty(this.currentPreset)) {
-            this.updateMessages[this.currentPreset] = {};
+        if (!this.updateMessages.hasOwnProperty(this.currentPresetIndex)) {
+            this.updateMessages[this.currentPresetIndex] = {};
         }
-        if (!this.updateMessages[this.currentPreset].hasOwnProperty(CONTROLS_DATA)) {
-            this.updateMessages[this.currentPreset][CONTROLS_DATA] = {};
+        if (!this.updateMessages[this.currentPresetIndex].hasOwnProperty(CONTROLS_DATA)) {
+            this.updateMessages[this.currentPresetIndex][CONTROLS_DATA] = {};
         }
-        this.updateMessages[this.currentPreset][CONTROLS_DATA][controlId] = msg;
+        this.updateMessages[this.currentPresetIndex][CONTROLS_DATA][controlId] = msg;
     }
 
     updatePresetName(presetIndex, name) {
@@ -168,7 +168,7 @@ class StateStore {
     /**
      * dataIndex is only used when dataType == "data"
      */
-    updateControlStepMessageType(controlId, stepIndex, value, preset = this.currentPreset) {
+    updateControlStepMessageType(controlId, stepIndex, value, preset = this.currentPresetIndex) {
 
         // console.log(`updateControlStep(${controlId}, ${stepIndex}, ${dataType}, ${dataIndex}, ${value})`);
 
@@ -192,7 +192,7 @@ class StateStore {
     /**
      * dataIndex is only used when dataType == "data"
      */
-    updateControlStep(controlId, stepIndex, dataType, dataIndex, value, preset = this.currentPreset) {
+    updateControlStep(controlId, stepIndex, dataType, dataIndex, value, preset = this.currentPresetIndex) {
 
         console.log(`updateControlStep(${controlId}, ${stepIndex}, ${dataType}, ${dataIndex}, ${value})`);
 
@@ -234,7 +234,7 @@ class StateStore {
 
         let v = parseInt(value, 10);
 
-        const P = this.currentPreset;
+        const P = this.currentPresetIndex;
 
         // console.log("updateMidiSettings", settingIndex, dataType, dataIndex, value, v, P);
 
@@ -346,7 +346,7 @@ class StateStore {
             () => {
                 this.changed = false;
                 this.updateMessages = {};
-                this.readPreset(this.currentPreset);
+                this.readPreset(this.currentPresetIndex);
             },
             1000
         );
@@ -356,7 +356,7 @@ class StateStore {
 
 decorate(StateStore, {
     data: observable,
-    currentPreset: observable,
+    currentPresetIndex: observable,
     currentControl: observable,
     // presetIndex: observable,
     updateMessages: observable,

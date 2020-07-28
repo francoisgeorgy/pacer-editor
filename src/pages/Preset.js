@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react';
 import {inject, observer} from "mobx-react";
 import {CONTROLS_DATA} from "../pacer/sysex";
 import ControlSelector from "../components/ControlSelector";
-import {TARGET_PRESET} from "../pacer/constants";
+import {CONTROLS_FULLNAME, TARGET_PRESET} from "../pacer/constants";
 import {setAutoFreeze} from "immer";
 import ControlStepsEditor from "../components/ControlStepsEditor";
 import Dropzone from "react-dropzone";
@@ -96,11 +96,12 @@ class Preset extends Component {
 
     render() {
 
-        const presetIndex = this.props.state.currentPreset;
+        const presetIndex = this.props.state.currentPresetIndex;
         const controlId = this.props.state.currentControl;
         const data = this.props.state.data;
 
         const showEditor =
+            isVal(presetIndex) &&
             data &&
             (TARGET_PRESET in data) &&
             (presetIndex in data[TARGET_PRESET]) &&
@@ -114,8 +115,10 @@ class Preset extends Component {
             (TARGET_PRESET in data) &&
             (presetIndex in data[TARGET_PRESET]) &&
             ("name" in data[TARGET_PRESET][presetIndex])) {
-            presetLabel = presetIndexToXY(presetIndex) + " " + data[TARGET_PRESET][presetIndex]["name"];
+            presetLabel = presetIndexToXY(presetIndex) + ": " + data[TARGET_PRESET][presetIndex]["name"];
         }
+
+        const showControls = isVal(presetIndex);
 
         return (
             <Dropzone
@@ -137,13 +140,14 @@ class Preset extends Component {
 
                         {data && data[TARGET_PRESET][presetIndex] &&
                         <div className="content-row-content">
-                            <h2>Preset Name</h2>
-                            <PresetNameEditor presetIndex={presetIndex} />
+                            <h2>Preset {presetLabel}</h2>
+                            <PresetNameEditor />
                         </div>}
 
+                        {data && data[TARGET_PRESET][presetIndex] &&
                         <div className="content-row-content">
                             <Fragment>
-                                <h2>Controls for preset {presetLabel}</h2>
+                                {/*<h2>Controls for preset {presetLabel}</h2>*/}
                                 {isVal(presetIndex) && <ControlSelector />}
 
 {/*
@@ -165,8 +169,7 @@ class Preset extends Component {
                                 }
 */}
 
-                                {showEditor &&
-                                <ControlStepsEditor presetIndex={presetIndex} controlId={controlId} />}
+                                {showEditor && <h3>{CONTROLS_FULLNAME[controlId]}:</h3>}
 
                                 {showEditor &&
                                 <ControlModeEditor
@@ -174,14 +177,17 @@ class Preset extends Component {
                                     mode={data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["control_mode"]}
                                     onUpdate={(value) => this.updateControlMode(controlId, value)}/>}
 
+                                {showEditor &&
+                                <ControlStepsEditor presetIndex={presetIndex} controlId={controlId} />}
+
                                 {!isVal(presetIndex) && <div className="please">Select a preset.</div>}
 
                             </Fragment>
-                        </div>
+                        </div>}
 
                         {this.props.state.changed && this.props.state.midi.output !== 0 &&         // FIXME: midiConnected(output) &&
                         <div className="content-row-content">
-                            <h2>Send the updated config to the Pacer</h2>
+                            {/*<h2>Send the updated config to the Pacer</h2>*/}
                             <div className="actions">
                                 <button className="update" onClick={() => this.props.state.updatePacer()}>Update Pacer</button>
                             </div>

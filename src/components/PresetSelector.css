@@ -61,8 +61,13 @@
     margin-top: 10px;
 }
 
+.preset-name-editor label {
+    font-weight: bold;
+}
+
 .preset-name-editor input {
     margin-right: 10px;
+    padding-left: 5px;
 }
 
 .d6info {

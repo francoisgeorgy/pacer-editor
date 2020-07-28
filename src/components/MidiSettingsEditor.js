@@ -84,7 +84,7 @@ class MidiSettingsEditor extends Component {
 
     render() {
 
-        const settings = this.props.state.data[TARGET_PRESET][this.props.state.currentPreset]["midi"]
+        const settings = this.props.state.data[TARGET_PRESET][this.props.state.currentPresetIndex]["midi"]
 
         return (
             <div className="settings">
