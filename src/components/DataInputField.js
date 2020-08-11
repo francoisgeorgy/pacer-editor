@@ -78,15 +78,15 @@ export const DataInputField = ({ msgType, value, dataIndex, onChange }) => {
             }
 
         case MSG_SW_STEP_INC_DEC:
-            if (dataIndex !== 0) {
-                return <input type="text" value={value} onChange={(event) => onChange(dataIndex, event.target.value)} />;
-            } else {
+            if (dataIndex === 0) {
                 return (
-                    <select value={value} onChange={(event) => onChange("data", dataIndex, event.target.value)}>{
+                    <select value={value} onChange={(event) => onChange(dataIndex, event.target.value)}>{
                         TARGET_NAME.map((target, index) => {
                             return target ? <option key={index} value={index}>{target}</option> : null
                         })
                     }</select>);
+            } else {
+                return <input type="text" value={value} onChange={(event) => onChange(dataIndex, event.target.value)}/>;
             }
 
         case MSG_SW_RELAY:
