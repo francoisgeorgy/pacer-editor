@@ -10,14 +10,12 @@ import Footer from "./components/Footer";
 import Global from "./pages/Global";
 import DumpDecoder from "./pages/DumpDecoder";
 import PresetMidi from "./pages/PresetMidi";
-import Patch from "./pages/Patch";
 import Overview from "./pages/Overview";
 import Midi from "./components/Midi";
 import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME} from "./pacer/constants";
 import BusyIndicator from "./components/BusyIndicator";
 import * as QueryString from "query-string";
 import './App.css';
-import Instructions from "./components/Instructions";
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
     <Route

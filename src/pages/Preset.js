@@ -118,7 +118,7 @@ class Preset extends Component {
             presetLabel = presetIndexToXY(presetIndex) + ": " + data[TARGET_PRESET][presetIndex]["name"];
         }
 
-        const showControls = isVal(presetIndex);
+        // const showControls = isVal(presetIndex);
 
         return (
             <Dropzone
