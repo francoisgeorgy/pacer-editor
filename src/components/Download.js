@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import {inject, observer} from "mobx-react";
 
 class Download extends Component {
 
@@ -43,4 +44,4 @@ class Download extends Component {
 
 }
 
-export default Download;
+export default inject('state')(observer(Download));

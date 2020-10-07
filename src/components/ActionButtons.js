@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 import {ALL_PRESETS_EXPECTED_BYTES, requestAllPresets} from "../pacer/sysex";
+import Download from "./Download";
+import DownloadJSON from "./DownloadJSON";
 
 class ActionButtons extends Component {
 
@@ -63,6 +65,7 @@ class ActionButtons extends Component {
                 <button onClick={this.onInputFile}>Load preset(s) from file</button>
 
                 <div>
+                    {/*{data && <Download data={data} filename={`pacer-patch`} addTimestamp={true} label="Save to file" />}*/}
                 </div>
 
                 {data && <button onClick={this.clearData}>CLEAR ALL</button>}

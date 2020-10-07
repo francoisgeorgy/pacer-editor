@@ -305,14 +305,16 @@ class Patch extends Component {
 
                         <div className="content-row-content first">
 
-                            <h2>Patch content:</h2>
+                            <h2>Import/Export full config</h2>
 
+{/*
                             <div className="row">
                                 <div className="local-help">
                                     A patch is a full dump of the Pacer.<br />
                                     Presets marked "no data" are ignored. They will NOT erase the preset config in your Pacer.
                                 </div>
                             </div>
+*/}
 
                             <div className="patch-content">
                             {

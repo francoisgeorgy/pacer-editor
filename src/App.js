@@ -16,6 +16,7 @@ import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME} from "./pacer/constants";
 import BusyIndicator from "./components/BusyIndicator";
 import * as QueryString from "query-string";
 import './App.css';
+import Patch from "./pages/Patch";
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
     <Route
@@ -53,8 +54,8 @@ class App extends Component {
                             <MenuLink activeOnlyWhenExact={true} to="/" label="Overview" />
                             <MenuLink to="/preset"          label="Preset Controls" />
                             <MenuLink to="/presetmidi"      label="Preset MIDI" />
-                            <MenuLink to="/global"          label="Global" />
-                            {/*<MenuLink to="/patch"           label="Patch" />*/}
+                            {/*<MenuLink to="/global"          label="Global" />*/}
+                            <MenuLink to="/sysex"           label="Sysex dump" />
                             <MenuLink to="/monitor"         label="Monitor" />
                             {debug && <MenuLink to="/dumpdecoder" label="Dump decoder" />}
                             {debug && <MenuLink to="/debug" label="Debug" />}
@@ -75,8 +76,8 @@ class App extends Component {
                             <Route exact={true} path="/" render={props => <Overview debug={debug}/>} />
                             <Route path="/preset"        render={props => <Preset debug={debug}/>} />
                             <Route path="/presetmidi"    render={props => <PresetMidi debug={debug} />} />
-                            <Route path="/global"        render={props => <Global debug={debug} />} />
-                            {/*<Route path="/patch"         render={props => <Patch debug={debug} />} />*/}
+                            {/*<Route path="/global"        render={props => <Global debug={debug} />} />*/}
+                            <Route path="/sysex"         render={props => <Patch debug={debug} />} />
                             <Route path="/monitor"       render={props => <Monitor debug={debug}/>} />
                             {debug && <Route path="/dumpdecoder" render={props => <DumpDecoder debug={debug}/>} />}
                             {debug && <Route path="/debug"       render={props => <Debug debug={debug} />} />}
