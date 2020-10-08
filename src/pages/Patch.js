@@ -1,24 +1,18 @@
 import React, {Component} from 'react';
-import {produce} from "immer";
 import {
     ALL_PRESETS_EXPECTED_BYTES,
-    isSysexData,
-    mergeDeep,
-    parseSysexDump,
-    requestAllPresets,
-    splitDump
+    requestAllPresets
 } from "../pacer/sysex";
-import {SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer/constants";
-import {outputById} from "../utils/ports";
+import {TARGET_PRESET} from "../pacer/constants";
 import {presetIndexToXY} from "../pacer/utils";
 import Dropzone from "react-dropzone";
 import Download from "../components/Download";
-import {batchMessages, midiConnected} from "../utils/midi";
-import {dropOverlayStyle, MAX_FILE_SIZE} from "../utils/misc";
+import {midiConnected} from "../utils/midi";
+import {dropOverlayStyle} from "../utils/misc";
 import DownloadJSON from "../components/DownloadJSON";
+import {inject, observer} from "mobx-react";
 import * as QueryString from "query-string";
 import "./Patch.css";
-import {inject, observer} from "mobx-react";
 
 class Patch extends Component {
 
@@ -29,37 +23,15 @@ class Patch extends Component {
         this.inputOpenFileRef = React.createRef();
         this.state = {
             // output: null,   // MIDI output port used for output
-            data: null,     // json
-            bytes: null,  // binary, will be used to download as .syx file
+            // data: null,     // json
+            // bytes: null,  // binary, will be used to download as .syx file
             dropZoneActive: false,
             status: null
         };
     }
 
+
 /*
-    clearData = () => {
-        this.setState({data: null, updateMessages: {}, changed: false});
-    };
-*/
-
-    /**
-     * Ad-hoc method to show the busy flag and set a timeout to make sure the busy flag is hidden after a timeout.
-     */
-/*
-    showBusy = ({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) =>  {
-        setTimeout(() => this.props.onBusy({busy: false}), 20000);
-        this.props.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
-    };
-
-    hideBusy = (delay = 0) => {
-        if (delay < 1) {
-            this.props.onBusy({busy: false});
-        } else {
-            setTimeout(() => this.props.onBusy({busy: false}), delay);
-        }
-    };
-*/
-
     handleMidiInputEvent = batchMessages(
         messages => {
 
@@ -111,12 +83,14 @@ class Patch extends Component {
         },
         1000
     );
+*/
 
     /**
      *
      * @param files
      * @returns {Promise<void>}
      */
+/*
     async readFiles(files) {
         await Promise.all(files.map(
             async file => {
@@ -171,15 +145,17 @@ class Patch extends Component {
             }
         ));
     }
+*/
 
     onChangeFile = (e) => {
         let file = e.target.files[0];
         // noinspection JSIgnoredPromiseFromCall
-        this.readFiles([file]);
+        //TODO
+        // this.readFiles([file]);
     };
 
     onInputFile = (e) => {
-        this.inputOpenFileRef.current.click()
+        this.inputOpenFileRef.current.click();
     };
 
     onDragEnter = () => {
@@ -204,53 +180,19 @@ class Patch extends Component {
                 // data: null,
                 dropZoneActive: false
             },
-            () => {this.readFiles(files)}   // returned promise from readFiles() is ignored, this is normal.
+            () => {
+                //TODO
+                // this.readFiles(files)
+            }   // returned promise from readFiles() is ignored, this is normal.
         );
     };
 
-/*
-    onOutputConnection = (port_id) => {
-        this.setState(
-            produce(draft => {
-                draft.output = port_id;
-            })
-        );
-    };
-
-    onOutputDisconnection = (port_id) => {
-        this.setState(
-            produce(draft => {
-                draft.output = null;
-            })
-        );
-    };
-
-    sendSysex = (msg, bytesExpected = 0) => {
-        // console.log("sendSysex", msg.length > 32 ? hs(msg.slice(0, 32)) + '...' : hs(msg), bytesExpected);
-        if (!this.state.output) {
-            console.warn("no output enabled to send the message");
-            return;
-        }
-        let out = outputById(this.state.output);
-        if (!out) {
-            console.warn(`send: output ${this.state.output} not found`);
-            return;
-        }
-        if (bytesExpected > 0) this.showBusy({busy: true, busyMessage: "receiving data...", bytesReceived: 0, bytesExpected});
-        this.setState(
-            {
-                data: null,
-                bytes: null
-            },
-            () => out.sendSysex(SYSEX_SIGNATURE, msg)
-        );
-    };
-*/
 
     /**
      * Send the current data
      * @param patch
      */
+/*
     sendPatch = () => {
 
         if (!this.state.output) {
@@ -273,6 +215,7 @@ class Patch extends Component {
         );
         this.hideBusy(1000);
     };
+*/
 
     /**
      * @returns {*}
@@ -307,14 +250,16 @@ class Patch extends Component {
 
                             <h2>Import/Export full config</h2>
 
-{/*
                             <div className="row">
+                                Full Pacer import and export.
+{/*
                                 <div className="local-help">
                                     A patch is a full dump of the Pacer.<br />
                                     Presets marked "no data" are ignored. They will NOT erase the preset config in your Pacer.
                                 </div>
-                            </div>
 */}
+                            </div>
+
 
                             <div className="patch-content">
                             {

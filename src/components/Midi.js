@@ -11,11 +11,27 @@ import "./Midi.css";
 class Midi extends Component {
 
     handleMidiInputEvent = batchMessages(
+
         messages => {
             // console.log("handleMidiInputEvent", messages);
 
+            let numberBytes = 0;
+            let bin_index = 0;
+            let buffer = null;
+            if (this.props.state.saveBytes) {
+                numberBytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
+                buffer = new Uint8Array(numberBytes);
+                bin_index = 0;
+            }
+
             let data = this.props.state.data;
             for (let m of messages) {
+
+                if (this.props.state.saveBytes) {
+                    buffer.set(m, bin_index);
+                    bin_index += m.length;
+                }
+
                 if (isSysexData(m)) {
                     data = mergeDeep(data || {}, parseSysexDump(m))
                 } else {
@@ -23,7 +39,19 @@ class Midi extends Component {
                 }
             }
 
-            console.log("merge done");
+            if (this.props.state.saveBytes) {
+                if (this.props.state.bytes === null) {
+                    this.props.state.bytes = buffer;
+                } else {
+                    // merge sysex bytes
+                    const a = new Uint8Array(this.props.state.bytes.length + buffer.length);
+                    a.set(this.props.state.bytes);
+                    a.set(buffer, this.props.state.bytes.length);
+                    this.props.state.bytes = a;
+                }
+            }
+
+            console.log(`handleMidiInputEvent: ${messages.length} messages merged`);
 
             // When requesting a config via MIDI (and not via a file drag&drop), we do not
             // update the preset and control ID from the MIDI sysex received.
