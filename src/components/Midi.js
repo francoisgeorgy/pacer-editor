@@ -68,6 +68,7 @@ class Midi extends Component {
         (n) => {
             //TODO:
             // console.log("handleMidiInputEvent", n);
+            // console.log("batchMessages onBusy", n);
             this.props.state.onBusy({busy: true, bytesReceived: n});
         },
         1000

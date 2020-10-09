@@ -260,6 +260,23 @@ class Patch extends Component {
 */}
                             </div>
 
+                            <div>
+                                <div>
+                                    <h3>Pacer --> file</h3>
+                                    {midiConnected(output) && <button onClick={() => this.props.state.readFullDump()}>Read Pacer</button>}
+                                    <Download disabled={!data} data={bytes} filename={`pacer-patch`} addTimestamp={true} label="Save to file" className="space-left" />
+                                </div>
+                                <div>
+                                    <h3>File --> Pacer</h3>
+                                    <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}} onChange={this.onChangeFile} />
+                                    <button onClick={this.onInputFile}>Load file</button>
+                                    <button disabled={!(data && midiConnected(output))} onClick={() => this.sendPatch()} className="space-left">Send to Pacer</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3>Data:</h3>
+                            </div>
 
                             <div className="patch-content">
                             {
@@ -288,31 +305,8 @@ class Patch extends Component {
                             </div>
                             }
 
-                            <div className="patch-actions">
-                                <div>
-                                    <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}} onChange={this.onChangeFile} />
-                                    <button onClick={this.onInputFile}>Load patch from file</button>
-                                </div>
-                                <div>
-                                    {midiConnected(output) && "or"}
-                                </div>
-                                <div>
-                                    {midiConnected(output) && <button onClick={() => this.sendSysex(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES)}>Read patch from Pacer</button>}
-                                </div>
-                                <div>
-                                    {data && <Download data={bytes} filename={`pacer-patch`} addTimestamp={true} label="Save patch to file" />}
-                                    {data && debug && <DownloadJSON data={data} filename={`pacer-patch`} addTimestamp={true} label="Save patch JSON to file" className={"space-left"}/>}
-                                </div>
-                                <div>
-                                    {data && midiConnected(output) && "or"}
-                                </div>
-                                <div>
-                                    {data && midiConnected(output) && <button onClick={() => this.sendPatch()}>Send patch to Pacer</button>}
-                                </div>
-                            </div>
-
-                            {data && <div className="preset-buttons">
-                                <button onClick={this.clearData}>CLEAR</button>
+                            {data && <div className="Xpreset-buttons">
+                                <button onClick={() => this.props.state.clear()}>CLEAR DATA</button>
                             </div>}
 
                         </div>

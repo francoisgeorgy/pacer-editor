@@ -37,9 +37,15 @@ class Download extends Component {
     };
 
     render() {
-        return (
-            <button onClick={this.handleClick} className={this.props.className}>{this.props.label}</button>
-        );
+        if (this.props.disabled) {
+            return (
+                <button disabled={true} className={this.props.className}>{this.props.label}</button>
+            );
+        } else {
+            return (
+                <button onClick={this.handleClick} className={this.props.className}>{this.props.label}</button>
+            );
+        }
     }
 
 }

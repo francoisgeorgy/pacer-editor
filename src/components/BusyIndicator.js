@@ -4,6 +4,7 @@ import {inject, observer} from "mobx-react";
 class BusyIndicator extends Component {
 
     render() {
+
         const { busy, busyMessage, progress } = this.props.state;
         return busy ?
             <div className="busy">

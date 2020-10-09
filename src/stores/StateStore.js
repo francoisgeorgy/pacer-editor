@@ -20,7 +20,6 @@ class StateStore {
         this.data = null;
         this.bytes = null;  // binary, will be used to download as .syx file
         this.saveBytes = false; // if true will update this.bytes when receiving a message; used for full sysex dump
-        this.saveBytes = false; // if true will update this.bytes when receiving a message; used for full sysex dump
         // this.presetIndex = null;
         this.currentPresetIndex = "";    // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
         this.currentControl = "";   // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
@@ -57,6 +56,8 @@ class StateStore {
     clear() {
         console.log("state: clear data");
         this.data = null;
+        this.bytes = null;
+        this.saveBytes = false;
         this.updateMessages = {};
     }
 
@@ -76,7 +77,8 @@ class StateStore {
     }
 
     onBusy({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) {
-        // console.log("app.onBusy", busy, busyMessage, bytesExpected, bytesReceived);
+
+        // console.log("StateStore.onBusy", busy, busyMessage, bytesExpected, bytesReceived);
 
         let show = busy !== this.busy;
         show = show || (busyMessage !== null && busyMessage !== this.busyMessage);
@@ -280,6 +282,7 @@ class StateStore {
             console.warn(`send: output ${this.midi.output} not found`);
             return;
         }
+        console.log("sendSysex", msg);
         out.sendSysex(SYSEX_SIGNATURE, msg);
     };
 
@@ -379,7 +382,8 @@ class StateStore {
      * @param busyMessage
      */
     readFullDump = (busyMessage = "Please wait...") => {
-        this.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, ALL_PRESETS_EXPECTED_BYTES});
+        console.log("readFullDump()");
+        this.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected: ALL_PRESETS_EXPECTED_BYTES});
         this.bytes = null;
         this.saveBytes = true;
         this.sendSysex(requestAllPresets());
