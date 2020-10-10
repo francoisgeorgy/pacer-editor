@@ -16,7 +16,8 @@ export const padZero = (str, len, char) => {
 };
 
 export const h = v => {
-    return (v === null || v === undefined) ? "" : padZero(v.toString(16).toUpperCase(), 2);
+    // return (v === null || v === undefined) ? "" : padZero(v.toString(16).toUpperCase(), 2);
+    return (v === null || v === undefined) ? "" : padZero(v.toString(16), 2);
 };
 
 export const hs = data => (data === null || data === undefined) ? "" : (Array.from(data).map(n => h(n))).join(" ");    // Array.from() is necessary to get a non-typed array
@@ -40,3 +41,14 @@ export const fromHexString = function(string, sep) {
     }
     return a;
 };
+
+export const toHexDump = function(data) {
+    let s = [];
+    if (!data || data.length < 1) return s;
+    let i = 0;
+    do {
+        s.push(`${padZero(i.toString(16), 8)}: ${hs(data.slice(i, i+16))}`);
+        i+= 16;
+    } while (i < data.length);
+    return s;
+}

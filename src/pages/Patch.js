@@ -13,6 +13,8 @@ import DownloadJSON from "../components/DownloadJSON";
 import {inject, observer} from "mobx-react";
 import * as QueryString from "query-string";
 import "./Patch.css";
+import {toHexDump} from "../utils/hexstring";
+import BusyIndicator from "../components/BusyIndicator";
 
 class Patch extends Component {
 
@@ -264,13 +266,14 @@ class Patch extends Component {
                                 <div>
                                     <h3>Pacer --> file</h3>
                                     {midiConnected(output) && <button onClick={() => this.props.state.readFullDump()}>Read Pacer</button>}
-                                    <Download disabled={!data} data={bytes} filename={`pacer-patch`} addTimestamp={true} label="Save to file" className="space-left" />
+                                    <BusyIndicator />
+                                    <Download disabled={!this.props.state.bytes} data={this.props.state.bytes} filename={`pacer-patch`} addTimestamp={true} label="Save to file" className="space-left" />
                                 </div>
                                 <div>
                                     <h3>File --> Pacer</h3>
                                     <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}} onChange={this.onChangeFile} />
                                     <button onClick={this.onInputFile}>Load file</button>
-                                    <button disabled={!(data && midiConnected(output))} onClick={() => this.sendPatch()} className="space-left">Send to Pacer</button>
+                                    <button disabled={!(data && midiConnected(output))} onClick={() => this.props.state.sendDump()} className="space-left">Send to Pacer</button>
                                 </div>
                             </div>
 
@@ -313,6 +316,11 @@ class Patch extends Component {
 
                     </div>
 
+                </div>
+
+                <div>
+                    bytes: {this.props.state.bytes ? this.props.state.bytes.length : '-1'}
+                    <pre>{toHexDump(this.props.state.bytes).map(s => s+'\n')}</pre>
                 </div>
 
             </Dropzone>

@@ -8,6 +8,8 @@ Read preset 0x18 (D6)
 
     sendmidi dev MIDI1 syx hex 00 01 77 7F 02 01 18 7F 66
 
+
+
 The Pacer never responds when we request the preset D6. Bug?
 
 Read ALL presets:
@@ -226,3 +228,31 @@ Set B1 SW1 step 1 OFF color:
     F0 00 01 77 
     7F 01 01 07 0D 40 01 01 00 41 01 09 00 42 01 0A 00 43 01 01 00 4B 
     F7                 
+
+
+## Read current globals
+
+    $ sendmidi dev MIDI1 syx hex 00 01 77 7F 02 05 00 79
+    
+    
+    system-exclusive hex 00 01 77 7F 01 05 01 01 01 01 01 00 09 01 00 00 30 01 00 00 62 01 04 00 63 01 01 6E dec
+    system-exclusive hex 00 01 77 7F 01 05 01 23 01 01 00 00 02 01 00 00 03 01 00 00 04 01 00 48 dec
+    system-exclusive hex 00 01 77 7F 01 05 01 25 01 01 01 00 02 01 01 00 03 01 01 00 04 01 01 42 dec
+    system-exclusive hex 00 01 77 7F 01 05 01 26 01 01 00 00 02 01 17 00 03 01 00 00 04 01 03 00 05 01 1A 0B dec
+    system-exclusive hex 00 01 77 7F 01 05 01 27 01 01 01 00 02 01 01 4B dec
+    system-exclusive hex 00 01 77 7F 01 05 02 01 01 01 01 00 09 01 00 00 30 01 00 00 62 01 04 00 63 01 01 6D dec
+    system-exclusive hex 00 01 77 7F 01 05 02 23 01 01 00 00 02 01 00 00 03 01 00 00 04 01 00 47 dec
+    system-exclusive hex 00 01 77 7F 01 05 02 25 01 01 01 00 02 01 01 00 03 01 01 00 04 01 01 41 dec
+    system-exclusive hex 00 01 77 7F 01 05 02 26 01 01 00 00 02 01 17 00 03 01 00 00 04 01 03 00 05 01 1A 0A dec
+    system-exclusive hex 00 01 77 7F 01 05 02 27 01 01 01 00 02 01 01 4A dec
+    system-exclusive hex 00 01 77 7F 01 05 03 01 01 01 01 00 09 01 00 00 30 01 00 00 62 01 04 00 63 01 01 6C dec
+    system-exclusive hex 00 01 77 7F 01 05 03 23 01 01 00 00 02 01 00 00 03 01 00 00 04 01 00 46 dec
+    system-exclusive hex 00 01 77 7F 01 05 03 25 01 01 01 00 02 01 01 00 03 01 01 00 04 01 01 40 dec
+    system-exclusive hex 00 01 77 7F 01 05 03 26 01 01 00 00 02 01 17 00 03 01 00 00 04 01 03 00 05 01 1A 09 dec
+    system-exclusive hex 00 01 77 7F 01 05 03 27 01 01 01 00 02 01 01 49 dec
+    system-exclusive hex 00 01 77 7F 01 05 04 01 01 01 01 00 09 01 00 00 30 01 00 00 62 01 04 00 63 01 01 6B dec
+    system-exclusive hex 00 01 77 7F 01 05 04 23 01 01 00 00 02 01 00 00 03 01 00 00 04 01 00 45 dec
+    system-exclusive hex 00 01 77 7F 01 05 04 25 01 01 01 00 02 01 01 00 03 01 01 00 04 01 01 3F dec
+    system-exclusive hex 00 01 77 7F 01 05 04 26 01 01 00 00 02 01 17 00 03 01 00 00 04 01 03 00 05 01 1A 08 dec
+    system-exclusive hex 00 01 77 7F 01 05 04 27 01 01 01 00 02 01 01 48 dec
+

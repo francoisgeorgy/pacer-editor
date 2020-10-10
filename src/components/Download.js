@@ -5,6 +5,8 @@ class Download extends Component {
 
     handleClick = (event) => {
 
+        console.log("Download: ", this.props.data.length);
+
         let url = window.URL.createObjectURL(new Blob([this.props.data], {type: "application/octet-stream"}));
 
         let filename = this.props.filename;

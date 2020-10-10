@@ -282,9 +282,39 @@ class StateStore {
             console.warn(`send: output ${this.midi.output} not found`);
             return;
         }
-        console.log("sendSysex", msg);
+        console.log("sendSysex", msg, hs(msg));
         out.sendSysex(SYSEX_SIGNATURE, msg);
     };
+
+    sendSysex2 = msg => {
+        if (!this.midi.output) {
+            console.warn("no output enabled to send the message");
+            return;
+        }
+        let out = outputById(this.midi.output);
+        if (!out) {
+            console.warn(`send: output ${this.midi.output} not found`);
+            return;
+        }
+        console.log("sendSysex2", msg, hs(msg));
+        // out.sendSysex(SYSEX_SIGNATURE, msg);
+    };
+
+/*
+    sendAny = msg => {
+        if (!this.midi.output) {
+            console.warn("no output enabled to send the message");
+            return;
+        }
+        let out = outputById(this.midi.output);
+        if (!out) {
+            console.warn(`send: output ${this.midi.output} not found`);
+            return;
+        }
+        console.log("sendAny", msg);
+        out.send(msg);
+    };
+*/
 
     readPacer = (msg, bytesExpected, busyMessage = "Please wait...") => {
         this.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected});
@@ -413,13 +443,13 @@ class StateStore {
 
         this.saveBytes = false;
 
-        this.showBusy({busy: true, busyMessage: "sending patch..."});
+        this.showBusy({busy: true, busyMessage: "sending dump..."});
         splitDump(Array.from(this.bytes)).forEach(
             msg => {
-                this.sendSysex(SYSEX_SIGNATURE, msg);
+                console.log("sendDump: msg", hs(msg));
+                this.sendSysex2(msg);
             }
         );
-
         this.hideBusy(1000);
 
     };
