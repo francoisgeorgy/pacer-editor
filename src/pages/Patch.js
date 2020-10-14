@@ -153,7 +153,7 @@ class Patch extends Component {
         let file = e.target.files[0];
         // noinspection JSIgnoredPromiseFromCall
         //TODO
-        // this.readFiles([file]);
+        this.props.state.readFiles([file]);
     };
 
     onInputFile = (e) => {
@@ -223,6 +223,8 @@ class Patch extends Component {
      * @returns {*}
      */
     render() {
+
+        console.log("patch render");
 
         const { status, bytes, dropZoneActive } = this.state;
         const output = this.props.state.midi.output;

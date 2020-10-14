@@ -331,6 +331,8 @@ class StateStore {
 
     async readFiles(files) {
 
+        // console.log("readFiles", files);
+
         this.bytes = null;
 
         // let data = this.data;
@@ -340,16 +342,25 @@ class StateStore {
                     console.warn(`${file.name}: file too big, ${file.size}`);
                     this.hideBusy();
                 } else {
+
+                    console.log("readFiles: reading");
+
                     this.showBusy({busy: true, busyMessage: "loading file..."});
 
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
 
                     if (isSysexData(data)) {
+
+                        console.log("readFiles: file is sysex");
+
                         this.data = mergeDeep(this.data || {}, parseSysexDump(data))
                         // this.data = mergeDeep(this.data || {}, parseSysexDump(data));
                         // this.addInfoMessage("sysfile decoded");
 
+                        console.log("readFiles: bytes", this.bytes);
+
                         if (this.bytes === null) {
+                            console.log("readFiles: bytes=data", this.bytes, data);
                             this.bytes = data;
                         } else {
                             // merge sysex bytes
@@ -459,6 +470,7 @@ class StateStore {
 } // class StateStore
 
 decorate(StateStore, {
+    bytes: observable,
     data: observable,
     currentPresetIndex: observable,
     currentControl: observable,
