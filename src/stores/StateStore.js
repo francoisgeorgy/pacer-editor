@@ -21,6 +21,14 @@ class StateStore {
         this.bytes = null;  // binary, will be used to download as .syx file
         this.saveBytes = false; // if true will update this.bytes when receiving a message; used for full sysex dump
         // this.presetIndex = null;
+
+        this.bytesPresets = [[], [], [],    // current, track, transport
+                             [], [], [], [], [], [],    // A1..A6
+                             [], [], [], [], [], [],    // B1..B6
+                             [], [], [], [], [], [],    // C1..C6
+                             [], [], [], [], [], []]    // D1..D6
+        this.bytesGlobal = [];
+
         this.currentPresetIndex = "";    // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
         this.currentControl = "";   // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
         this.updateMessages = {};
@@ -43,6 +51,11 @@ class StateStore {
         this.D6InfoVisible = false;
         this.D6InfoHidden = false;
     }
+
+    //TODO:
+    // bytes:
+    // bytesPresets = [preset-index][]
+    // bytesGlobals = []
 
     // pacerConnected() {
     //     return this.midi.output > 0 && this.midi.input > 0;
@@ -471,6 +484,10 @@ class StateStore {
 
 decorate(StateStore, {
     bytes: observable,
+
+    bytesPresets: observable,
+    bytesGlobal: observable,
+
     data: observable,
     currentPresetIndex: observable,
     currentControl: observable,

@@ -610,6 +610,7 @@ export function requestPreset(presetIndex) {
 
 /**
  * return the sysex message to send to the Pacer to request some data
+ * ONLY FOR DEBUG
  */
 export function requestPresetObj(presetIndex, controlId) {
 

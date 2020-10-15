@@ -15,22 +15,24 @@ class Midi extends Component {
         messages => {
             // console.log("handleMidiInputEvent", messages);
 
+            //FIXME: only save in bytes array if we receive a sysex. Ignore all other MIDI messages (CC, NOTE, ...)
+
             let numberBytes = 0;
             let bin_index = 0;
             let buffer = null;
-            if (this.props.state.saveBytes) {
+            // if (this.props.state.saveBytes) {
                 numberBytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
                 buffer = new Uint8Array(numberBytes);
                 bin_index = 0;
-            }
+            // }
 
             let data = this.props.state.data;
             for (let m of messages) {
 
-                if (this.props.state.saveBytes) {
+                // if (this.props.state.saveBytes) {
                     buffer.set(m, bin_index);
                     bin_index += m.length;
-                }
+                // }
 
                 if (isSysexData(m)) {
                     data = mergeDeep(data || {}, parseSysexDump(m))
@@ -39,7 +41,7 @@ class Midi extends Component {
                 }
             }
 
-            if (this.props.state.saveBytes) {
+            // if (this.props.state.saveBytes) {
                 if (this.props.state.bytes === null) {
                     this.props.state.bytes = buffer;
                 } else {
@@ -49,7 +51,7 @@ class Midi extends Component {
                     a.set(buffer, this.props.state.bytes.length);
                     this.props.state.bytes = a;
                 }
-            }
+            // }
 
             console.log(`handleMidiInputEvent: ${messages.length} messages merged`);
 

@@ -1,5 +1,9 @@
 ## Requests
 
+Read preset 0x07:
+
+    sendmidi dev MIDI1 syx hex 00 01 77 7F 02 01 07 7F 77
+    
 Read preset 0x17:
 
     sendmidi dev MIDI1 syx hex 00 01 77 7F 02 01 17 7F 67
