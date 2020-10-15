@@ -190,6 +190,10 @@ full screen busy indicator
     align-self: center;
 }
 
+.inline-busy {
+    display: inline;
+}
+
 .wrapper {
     /*flex-grow: 10;*/
     /*display: flex;*/
@@ -520,13 +524,25 @@ full screen busy indicator
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-content: end;
-
 }
 
+/*
 .preset-buttons button {
     display: block;
     margin-bottom: 12px;
     margin-right: 16px;
+    padding: 4px 8px;
+    font-size: 1rem;
+}
+*/
+
+.action-button {
+    /*display: block;*/
+    width: 180px;
+    margin-bottom: 12px;
+    margin-right: 16px;
+    padding: 4px 8px;
+    font-size: 1rem;
 }
 
 /*.preset-buttons button#clear-data {*/
@@ -575,32 +591,32 @@ button:hover {
 button.read {
     background: linear-gradient(to bottom, #acff99, #59ff30);
     border: 1px solid #999;
-    padding: 4px 8px;
-    font-size: 1rem;
+    /*padding: 4px 8px;*/
+    /*font-size: 1rem;*/
     color: #000;
 }
 
 button.read:hover {
     background: linear-gradient(to bottom, #59ff30, #acff99);
     border: 1px solid #999;
-    padding: 4px 8px;
-    font-size: 1rem;
+    /*padding: 4px 8px;*/
+    /*font-size: 1rem;*/
     color: #000;
 }
 
 button.update {
     background: linear-gradient(to bottom, #ffdd99, #ffaa00);
     border: 1px solid #999;
-    padding: 4px 8px;
-    font-size: 1rem;
+    /*padding: 4px 8px;*/
+    /*font-size: 1rem;*/
     color: #000;
 }
 
 button.update:hover {
     background: linear-gradient(to bottom, #ffaa00, #ffdd99);
     border: 1px solid #999;
-    padding: 4px 8px;
-    font-size: 1rem;
+    /*padding: 4px 8px;*/
+    /*font-size: 1rem;*/
     color: #000;
 }
 

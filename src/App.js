@@ -55,7 +55,7 @@ class App extends Component {
                             <MenuLink to="/preset"          label="Preset Controls" />
                             <MenuLink to="/presetmidi"      label="Preset MIDI" />
                             {/*<MenuLink to="/global"          label="Global" />*/}
-                            <MenuLink to="/sysex"           label="Sysex dump" />
+                            <MenuLink to="/patch"           label="Import/Export" />
                             <MenuLink to="/monitor"         label="Monitor" />
                             {debug && <MenuLink to="/dumpdecoder" label="Dump decoder" />}
                             {debug && <MenuLink to="/debug" label="Debug" />}
@@ -77,7 +77,7 @@ class App extends Component {
                             <Route path="/preset"        render={props => <Preset debug={debug}/>} />
                             <Route path="/presetmidi"    render={props => <PresetMidi debug={debug} />} />
                             {/*<Route path="/global"        render={props => <Global debug={debug} />} />*/}
-                            <Route path="/sysex"         render={props => <Patch debug={debug} />} />
+                            <Route path="/patch"         render={props => <Patch debug={debug} />} />
                             <Route path="/monitor"       render={props => <Monitor debug={debug}/>} />
                             {debug && <Route path="/dumpdecoder" render={props => <DumpDecoder debug={debug}/>} />}
                             {debug && <Route path="/debug"       render={props => <Debug debug={debug} />} />}

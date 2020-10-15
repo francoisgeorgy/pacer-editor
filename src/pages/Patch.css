@@ -1,3 +1,4 @@
+
 .patch-content {
     display: grid;
     grid: repeat(4, 1fr) / repeat(6, auto);

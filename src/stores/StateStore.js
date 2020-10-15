@@ -329,6 +329,18 @@ class StateStore {
         }
     }
 
+    /**
+     * Request a full dump and save the data in state.bytes
+     * @param busyMessage
+     */
+    readFullDump = (busyMessage = "Please wait...") => {
+        // console.log("readFullDump()");
+        this.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected: ALL_PRESETS_EXPECTED_BYTES});
+        this.bytes = null;
+        this.saveBytes = true;
+        this.sendSysex(requestAllPresets());
+    };
+
     async readFiles(files) {
 
         // console.log("readFiles", files);
@@ -417,18 +429,6 @@ class StateStore {
         );
     }
 
-
-    /**
-     * Request a full dump and save the data in state.bytes
-     * @param busyMessage
-     */
-    readFullDump = (busyMessage = "Please wait...") => {
-        console.log("readFullDump()");
-        this.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected: ALL_PRESETS_EXPECTED_BYTES});
-        this.bytes = null;
-        this.saveBytes = true;
-        this.sendSysex(requestAllPresets());
-    };
 
     /**
      * Send the current data saved in state.bytes

@@ -250,33 +250,38 @@ class Patch extends Component {
                 <div className="wrapper">
                     <div className="content">
 
-                        <div className="content-row-content first">
+                        <div className="content-row-content first dump-wrapper">
 
-                            <h2>Import/Export full config</h2>
+                            <h2>Import/Export all presets at once</h2>
 
-                            <div className="row">
-                                Full Pacer import and export.
-{/*
-                                <div className="local-help">
-                                    A patch is a full dump of the Pacer.<br />
-                                    Presets marked "no data" are ignored. They will NOT erase the preset config in your Pacer.
-                                </div>
-*/}
+                            <div className="">
+                                <p>
+                                    This page allows you to import/export all the Pacer presets at once.
+                                </p>
+                                <p>
+                                    Please note that, due to a limitation with the current Pacer firmware, the preset D6 can not be read by this application. A future firmware update should fix this.
+                                </p>
+                                <p>
+                                    Presets marked "no data" are ignored and will not be sent to your Pacer.
+                                </p>
+                                <p>
+                                    The Global Config is not read or written by this tool. A future update may offer this possibility.
+                                </p>
                             </div>
 
                             <div>
-                                <div>
-                                    <h3>Pacer --> file</h3>
-                                    {midiConnected(output) && <button onClick={() => this.props.state.readFullDump()}>Read Pacer</button>}
-                                    <BusyIndicator />
-                                    <Download disabled={!this.props.state.bytes} data={this.props.state.bytes} filename={`pacer-patch`} addTimestamp={true} label="Save to file" className="space-left" />
-                                </div>
-                                <div>
-                                    <h3>File --> Pacer</h3>
-                                    <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}} onChange={this.onChangeFile} />
-                                    <button onClick={this.onInputFile}>Load file</button>
-                                    <button disabled={!(data && midiConnected(output))} onClick={() => this.props.state.sendDump()} className="space-left">Send to Pacer</button>
-                                </div>
+                                <h3>Pacer &#x279C; file :</h3>
+                                {midiConnected(output) && <button className="action-button read" onClick={() => this.props.state.readFullDump()}>Read Pacer</button>}
+                                {this.props.state.bytes && <Download data={this.props.state.bytes} filename={`pacer-patch`} addTimestamp={true} label="Save to file" />}
+                                {/*{this.props.state.bytes && <Download disabled={!this.props.state.bytes} data={this.props.state.bytes} filename={`pacer-patch`} addTimestamp={true} label="Save to file" className="space-left" />}*/}
+                                <BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />
+                            </div>
+                            <div>
+                                <h3>File &#x279C; Pacer :</h3>
+                                <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}} onChange={this.onChangeFile} />
+                                <button className="action-button" onClick={this.onInputFile}>Load sysex file</button>
+                                {data && midiConnected(output) && <button className="action-button update" onClick={() => this.props.state.sendDump()}>Send to Pacer</button>}
+                                {/*<button disabled={!(data && midiConnected(output))} onClick={() => this.props.state.sendDump()} className="space-left">Send to Pacer</button>*/}
                             </div>
 
                             <div>

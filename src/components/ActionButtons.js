@@ -53,22 +53,22 @@ class ActionButtons extends Component {
             <div className="preset-buttons">
 
                 {canRead &&
-                <button className="read"
-                       onClick={() => this.props.state.readPacer(requestAllPresets(), ALL_PRESETS_EXPECTED_BYTES, "Reading Pacer...")}
+                <button className="action-button read"
+                       onClick={() => this.props.state.readFullDump()}
                        title="Read all presets from Pacer">Read Pacer</button>}
                 {!canRead && <div></div>}
 
-                {canWrite && <button className="update" onClick={() => this.props.state.updatePacer()}>Update Pacer</button>}
+                {canWrite && <button className="action-button update" onClick={() => this.props.state.updatePacer()}>Update Pacer</button>}
                 {!canWrite && <div></div>}
 
                 <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}} onChange={this.onChangeFile} />
-                <button onClick={this.onInputFile}>Load preset(s) from file</button>
+                <button className="action-button" onClick={this.onInputFile}>Load sysex file</button>
 
                 <div>
                     {/*{data && <Download data={data} filename={`pacer-patch`} addTimestamp={true} label="Save to file" />}*/}
                 </div>
 
-                {data && <button onClick={this.clearData}>CLEAR ALL</button>}
+                {data && <button className="action-button" onClick={this.clearData}>CLEAR ALL</button>}
                 {!data && <div></div>}
 
                 <div>

@@ -7,10 +7,10 @@ class BusyIndicator extends Component {
 
         const { busy, busyMessage, progress } = this.props.state;
         return busy ?
-            <div className="busy">
-                {busyMessage}
+            <div className={this.props.className || 'busy'}>
+                {this.props.busyMessage ? this.props.busyMessage : busyMessage}
                 {/*{<span> {progress} %</span>}*/}
-                {progress >= 0 && <span> {progress} %</span>}
+                {progress >= 0 && <span> {progress}%</span>}
             </div>
             : null;
     }
