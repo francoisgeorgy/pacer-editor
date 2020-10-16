@@ -14,7 +14,7 @@ import {
     CONTROL_STOMPSWITCH_6,
     CONTROL_STOMPSWITCH_A,
     CONTROLS,
-    SYSEX_HEADER,
+    SYSEX_HEADER, TARGET_GLOBAL,
     TARGET_PRESET,
     TARGETS
 } from "./constants";
@@ -86,6 +86,16 @@ function isSysexData(data) {
     if (data[0] !== SYSEX_START) return false;
     if (data[data.byteLength - 1] !== SYSEX_END) return false;
     return true;
+}
+
+
+function parseMessage(data) {
+    return {
+        isSysex: (data[0] === SYSEX_START) && (data[data.byteLength - 1] === SYSEX_END),
+        isPreset: data[TGT] === TARGET_PRESET,
+        isGlobal: data[TGT] === TARGET_GLOBAL,
+        presetNum: data[IDX]
+    }
 }
 
 /*
@@ -262,7 +272,7 @@ function parseSysexMessage(data) {
     let idx = data[IDX];
     let obj = data[OBJ];
 
-    // console.log("parseSysexMessage", idx);
+    console.log("parseSysexMessage cmd, tgt, idx, obj", cmd, tgt, idx, obj, hs(data));
 
     switch (cmd) {
         case COMMAND_SET:
@@ -472,6 +482,11 @@ function parseSysexDump(data) {
         }
 
         let config = parseSysexMessage(data.slice(i, k));  // data.slice(i, k) are the data between SYSEX_START and SYSEX_END
+
+        // console.log("parseSysexDump", config);
+
+        // const p = parseMessage(data.slice(i, k));
+        // console.log("parsed", p);
 
         if (config) {
             mergeDeep(presets, config);
@@ -838,6 +853,7 @@ function getMidiSettingUpdateSysexMessages(presetIndex, data) {
 
 
 export {
+    parseMessage,
     isSysexData,
     parseSysexDump,
     getControlUpdateSysexMessages,

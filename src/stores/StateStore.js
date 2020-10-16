@@ -6,7 +6,7 @@ import {
     buildPresetNameSysex,
     CONTROLS_DATA, getControlUpdateSysexMessages, getMidiSettingUpdateSysexMessages,
     isSysexData,
-    mergeDeep,
+    mergeDeep, parseMessage,
     parseSysexDump, requestAllPresets,
     requestPreset,
     SINGLE_PRESET_EXPECTED_BYTES, splitDump
@@ -17,7 +17,28 @@ import {hs} from "../utils/hexstring";
 class StateStore {
 
     constructor() {
+
+        // {
+        //     "1":{                            // TARGET_PRESET
+        //         "0":{                        // CURRENT preset
+        //             "name":"NOTES",
+        //             "controls":{...},
+        //             "midi":{...}
+        //         },
+        //         "1":{                        // A1
+        //             "name":"PRGM1",
+        //             "controls":{...},
+        //             "midi":{...}
+        //         },
+        //         ...
+        //     },
+        //     "5":{                            // TARGET_GLOBAL
+        //         ...
+        //     }
+        // }
+
         this.data = null;
+
         this.bytes = null;  // binary, will be used to download as .syx file
         this.saveBytes = false; // if true will update this.bytes when receiving a message; used for full sysex dump
         // this.presetIndex = null;
@@ -373,6 +394,9 @@ class StateStore {
                     this.showBusy({busy: true, busyMessage: "loading file..."});
 
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
+
+                    // const p = parseMessage(data);
+                    // console.log("parsed", p);
 
                     if (isSysexData(data)) {
 

@@ -5,6 +5,7 @@ import {dropOverlayStyle} from "../utils/misc";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import PresetOverview from "../components/PresetOverview";
 import "./Overview.css";
+import {state as globalState} from "../stores/StateStore";
 
 class Overview extends Component {
 
@@ -67,6 +68,10 @@ class Overview extends Component {
                     </div>
 
                 </div>
+
+
+                <pre>{JSON.stringify(this.props.state.data, null, 4)}</pre>
+
 
             </Dropzone>
         );

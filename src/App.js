@@ -15,8 +15,8 @@ import Midi from "./components/Midi";
 import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME} from "./pacer/constants";
 import BusyIndicator from "./components/BusyIndicator";
 import * as QueryString from "query-string";
-import './App.css';
 import Patch from "./pages/Patch";
+import './App.css';
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
     <Route

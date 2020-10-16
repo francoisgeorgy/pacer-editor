@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import * as WebMidi from "webmidi";
 import {portById} from "../utils/ports";
 import {batchMessages} from "../utils/midi";
-import {isSysexData, mergeDeep, parseSysexDump} from "../pacer/sysex";
+import {isSysexData, mergeDeep, parseMessage, parseSysexDump} from "../pacer/sysex";
 import {hs} from "../utils/hexstring";
 import {inject, observer} from "mobx-react";
 import "./Midi.css";
@@ -33,6 +33,9 @@ class Midi extends Component {
                     buffer.set(m, bin_index);
                     bin_index += m.length;
                 // }
+
+                // const p = parseMessage(m);
+                // console.log("parsed", p);
 
                 if (isSysexData(m)) {
                     data = mergeDeep(data || {}, parseSysexDump(m))
