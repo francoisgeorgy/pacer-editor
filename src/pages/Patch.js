@@ -1,20 +1,14 @@
 import React, {Component} from 'react';
-import {
-    ALL_PRESETS_EXPECTED_BYTES,
-    requestAllPresets
-} from "../pacer/sysex";
 import {TARGET_PRESET} from "../pacer/constants";
 import {presetIndexToXY} from "../pacer/utils";
 import Dropzone from "react-dropzone";
-import Download from "../components/Download";
 import {midiConnected} from "../utils/midi";
 import {dropOverlayStyle} from "../utils/misc";
-import DownloadJSON from "../components/DownloadJSON";
 import {inject, observer} from "mobx-react";
 import * as QueryString from "query-string";
-import "./Patch.css";
-import {toHexDump} from "../utils/hexstring";
 import BusyIndicator from "../components/BusyIndicator";
+import DownloadAllPresets from "../components/DownloadAllPresets";
+import "./Patch.css";
 
 class Patch extends Component {
 
@@ -272,7 +266,8 @@ class Patch extends Component {
                             <div>
                                 <h3>Pacer &#x279C; file :</h3>
                                 {midiConnected(output) && <button className="action-button read" onClick={() => this.props.state.readFullDump()}>Read Pacer</button>}
-                                {this.props.state.bytes && <Download data={this.props.state.bytes} filename={`pacer-patch`} addTimestamp={true} label="Save to file" />}
+                                <DownloadAllPresets />
+                                {/*{!this.props.state.isBytesPresetEmpty() && <Download data={this.props.state.getBytesPresetsAsBlob} filename={`pacer-patch`} addTimestamp={true} label="Save to file" />}*/}
                                 {/*{this.props.state.bytes && <Download disabled={!this.props.state.bytes} data={this.props.state.bytes} filename={`pacer-patch`} addTimestamp={true} label="Save to file" className="space-left" />}*/}
                                 <BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />
                             </div>
@@ -325,10 +320,12 @@ class Patch extends Component {
 
                 </div>
 
+{/*
                 <div>
                     bytes: {this.props.state.bytes ? this.props.state.bytes.length : '-1'}
                     <pre>{toHexDump(this.props.state.bytes).map(s => s+'\n')}</pre>
                 </div>
+*/}
 
             </Dropzone>
         );

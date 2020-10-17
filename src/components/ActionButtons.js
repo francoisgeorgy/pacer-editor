@@ -1,8 +1,5 @@
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
-import {ALL_PRESETS_EXPECTED_BYTES, requestAllPresets} from "../pacer/sysex";
-import Download from "./Download";
-import DownloadJSON from "./DownloadJSON";
 
 class ActionButtons extends Component {
 

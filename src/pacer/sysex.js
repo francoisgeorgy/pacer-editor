@@ -88,13 +88,18 @@ function isSysexData(data) {
     return true;
 }
 
+// sysex contains START and END markers
+function getBytesIndex(sysex) {
+    // if ((data[0] !== SYSEX_START) || (data[data.byteLength - 1] !== SYSEX_END)) return null;
 
-function parseMessage(data) {
+    // 00 01 77 7f 01 01 13 01 01 05 47 2d 4d 53 54 7c
+
+    // console.log("getBytesIndex", hs(data));
     return {
-        isSysex: (data[0] === SYSEX_START) && (data[data.byteLength - 1] === SYSEX_END),
-        isPreset: data[TGT] === TARGET_PRESET,
-        isGlobal: data[TGT] === TARGET_GLOBAL,
-        presetNum: data[IDX]
+        isPresetName: sysex[TGT+1] === TARGET_PRESET && sysex[OBJ+1] === 1,
+        isPreset: sysex[TGT+1] === TARGET_PRESET,
+        isGlobal: sysex[TGT+1] === TARGET_GLOBAL,
+        presetNum: sysex[IDX+1]
     }
 }
 
@@ -272,7 +277,7 @@ function parseSysexMessage(data) {
     let idx = data[IDX];
     let obj = data[OBJ];
 
-    console.log("parseSysexMessage cmd, tgt, idx, obj", cmd, tgt, idx, obj, hs(data));
+    // console.log("parseSysexMessage cmd, tgt, idx, obj", cmd, tgt, idx, obj, hs(data));
 
     switch (cmd) {
         case COMMAND_SET:
@@ -485,11 +490,23 @@ function parseSysexDump(data) {
 
         // console.log("parseSysexDump", config);
 
+
         // const p = parseMessage(data.slice(i, k));
         // console.log("parsed", p);
 
         if (config) {
             mergeDeep(presets, config);
+
+            // const tgt = parseInt(Object.keys(config)[0], 10);
+            // const idx = parseInt(Object.keys(config[tgt])[0], 10);
+            // console.log("parseSysexDump", tgt, idx);
+            // if (tgt === TARGET_PRESET) {
+            //     this.bytesPresets[`${idx}`].push(data.slice(i, k));
+            // } else if (tgt === TARGET_GLOBAL) {
+            //     this.bytesGlobal.push(data.slice(i, k));
+            // }
+            // console.log("bytesPresets", this.bytesPresets);
+
         }
 
     } // while
@@ -853,7 +870,7 @@ function getMidiSettingUpdateSysexMessages(presetIndex, data) {
 
 
 export {
-    parseMessage,
+    getBytesIndex,
     isSysexData,
     parseSysexDump,
     getControlUpdateSysexMessages,

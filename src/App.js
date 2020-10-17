@@ -7,7 +7,6 @@ import Debug from "./pages/Debug";
 import Preset from "./pages/Preset";
 import Monitor from "./pages/Monitor";
 import Footer from "./components/Footer";
-import Global from "./pages/Global";
 import DumpDecoder from "./pages/DumpDecoder";
 import PresetMidi from "./pages/PresetMidi";
 import Overview from "./pages/Overview";

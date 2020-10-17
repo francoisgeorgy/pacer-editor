@@ -21,6 +21,17 @@ export function sortObject(obj) {
     return arr;
 }
 
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat
+// Array.isArray() does not work with typed arrays; replaced with typeof === 'object'
+//
+export function flatDeep(arr, d = 1) {
+    // console.log("flatDeep", d);
+    return d > 0 ?
+               arr.reduce(
+                   (acc, val) => acc.concat(typeof val === 'object' ? flatDeep(val, d - 1) : val), []
+               ) :
+           arr.slice();
+}
 
 export const dropOverlayStyle = {
     position: 'absolute',

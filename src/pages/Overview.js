@@ -6,6 +6,7 @@ import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import PresetOverview from "../components/PresetOverview";
 import "./Overview.css";
 import {state as globalState} from "../stores/StateStore";
+import {toHexDump} from "../utils/hexstring";
 
 class Overview extends Component {
 
@@ -43,6 +44,8 @@ class Overview extends Component {
 
     render() {
 
+        console.log("overview render");
+
         return (
             <Dropzone
                 disableClick
@@ -70,7 +73,12 @@ class Overview extends Component {
                 </div>
 
 
-                <pre>{JSON.stringify(this.props.state.data, null, 4)}</pre>
+                    {/* this.props.state.bytesPresets.map((p, i) =>
+                        <div>
+                            {i}
+                            {p.map(b => <pre>{toHexDump(b).map(s => s+'\n')}</pre>)}
+                        </div>
+                    ) */}
 
 
             </Dropzone>

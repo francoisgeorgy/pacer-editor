@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import * as WebMidi from "webmidi";
 import {portById} from "../utils/ports";
 import {batchMessages} from "../utils/midi";
-import {isSysexData, mergeDeep, parseMessage, parseSysexDump} from "../pacer/sysex";
+import {isSysexData, mergeDeep, parseSysexDump} from "../pacer/sysex";
 import {hs} from "../utils/hexstring";
 import {inject, observer} from "mobx-react";
 import "./Midi.css";
@@ -17,44 +17,57 @@ class Midi extends Component {
 
             //FIXME: only save in bytes array if we receive a sysex. Ignore all other MIDI messages (CC, NOTE, ...)
 
-            let numberBytes = 0;
-            let bin_index = 0;
-            let buffer = null;
-            // if (this.props.state.saveBytes) {
-                numberBytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
-                buffer = new Uint8Array(numberBytes);
-                bin_index = 0;
-            // }
+            // let numberBytes = 0;
+            // let bin_index = 0;
+            // let buffer = null;
+            // // if (this.props.state.saveBytes) {
+            //     numberBytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
+            //     buffer = new Uint8Array(numberBytes);
+            //     bin_index = 0;
+            // // }
 
             let data = this.props.state.data;
             for (let m of messages) {
 
-                // if (this.props.state.saveBytes) {
-                    buffer.set(m, bin_index);
-                    bin_index += m.length;
-                // }
+                // // if (this.props.state.saveBytes) {
+                //     buffer.set(m, bin_index);
+                //     bin_index += m.length;
+                // // }
 
                 // const p = parseMessage(m);
                 // console.log("parsed", p);
 
                 if (isSysexData(m)) {
                     data = mergeDeep(data || {}, parseSysexDump(m))
+
+                    this.props.state.storeBytes(m);
+                    // const bi = getBytesIndex(m);
+                    // if (bi) {
+                    //     if (bi.isGlobal) {
+                    //         this.props.state.bytesPresets[bi.presetNum].push(m);
+                    //     } else if (bi.isGlobal) {
+                    //         this.props.state.bytesGlobal.push(m);
+                    //     } else {
+                    //         console.warn("getBytesIndex: unsupported message", m);
+                    //     }
+                    // }
+
                 } else {
                     console.log("MIDI message is not a sysex message", hs(m))
                 }
             }
 
-            // if (this.props.state.saveBytes) {
-                if (this.props.state.bytes === null) {
-                    this.props.state.bytes = buffer;
-                } else {
-                    // merge sysex bytes
-                    const a = new Uint8Array(this.props.state.bytes.length + buffer.length);
-                    a.set(this.props.state.bytes);
-                    a.set(buffer, this.props.state.bytes.length);
-                    this.props.state.bytes = a;
-                }
-            // }
+            // // if (this.props.state.saveBytes) {
+            //     if (this.props.state.bytes === null) {
+            //         this.props.state.bytes = buffer;
+            //     } else {
+            //         // merge sysex bytes
+            //         const a = new Uint8Array(this.props.state.bytes.length + buffer.length);
+            //         a.set(this.props.state.bytes);
+            //         a.set(buffer, this.props.state.bytes.length);
+            //         this.props.state.bytes = a;
+            //     }
+            // // }
 
             console.log(`handleMidiInputEvent: ${messages.length} messages merged`);
 

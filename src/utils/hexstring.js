@@ -42,13 +42,13 @@ export const fromHexString = function(string, sep) {
     return a;
 };
 
-export const toHexDump = function(data) {
+export const toHexDump = function(data, width = 16) {
     let s = [];
     if (!data || data.length < 1) return s;
     let i = 0;
     do {
-        s.push(`${padZero(i.toString(16), 8)}: ${hs(data.slice(i, i+16))}`);
-        i+= 16;
+        s.push(`${padZero(i.toString(width), 8)}: ${hs(data.slice(i, i+width))}`);
+        i+= width;
     } while (i < data.length);
     return s;
 }
