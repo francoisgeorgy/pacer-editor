@@ -5,7 +5,7 @@ import Download from "./Download";
 class DownloadAllPresets extends Component {
 
     render() {
-        console.log("DownloadAllPresets render");
+        // console.log("DownloadAllPresets render");
         if (this.props.state.isBytesPresetEmpty()) return null;
         return (
             <Download data={() => this.props.state.getBytesPresetsAsBlob()} filename={`pacer-patch`} addTimestamp={true} label="Save to file" />

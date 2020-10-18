@@ -5,148 +5,23 @@ import Dropzone from "react-dropzone";
 import {midiConnected} from "../utils/midi";
 import {dropOverlayStyle} from "../utils/misc";
 import {inject, observer} from "mobx-react";
-import * as QueryString from "query-string";
 import BusyIndicator from "../components/BusyIndicator";
 import DownloadAllPresets from "../components/DownloadAllPresets";
 import "./Patch.css";
 
 class Patch extends Component {
 
-    // one data structure per preset
-
     constructor(props) {
         super(props);
         this.inputOpenFileRef = React.createRef();
         this.state = {
-            // output: null,   // MIDI output port used for output
-            // data: null,     // json
-            // bytes: null,  // binary, will be used to download as .syx file
             dropZoneActive: false,
             status: null
         };
     }
 
-
-/*
-    handleMidiInputEvent = batchMessages(
-        messages => {
-
-            let bytes = messages.reduce((accumulator, element) => accumulator + element.length, 0);
-
-            this.setState(
-                produce(
-                    draft => {
-
-                        // draft.bytes = new Uint8Array(bytes);
-                        // let bin_index = 0;
-
-                        let buffer = new Uint8Array(bytes);
-                        let bin_index = 0;
-
-                        for (let m of messages) {
-
-                            // draft.bytes.set(m, bin_index);
-                            buffer.set(m, bin_index);
-                            bin_index += m.length;
-
-                            if (isSysexData(m)) {
-                                draft.data = mergeDeep(draft.data || {}, parseSysexDump(m));
-                            } else {
-                                console.log("MIDI message is not a sysex message")
-                            }
-                        }
-
-                        if (draft.bytes === null) {
-                            draft.bytes = buffer;
-                        } else {
-                            // merge sysex bytes
-                            const a = new Uint8Array(draft.bytes.length + buffer.length);
-                            a.set(draft.bytes);
-                            a.set(buffer, draft.bytes.length);
-                            draft.bytes = a;
-                        }
-
-                    }
-                )
-            );
-
-            // this.addInfoMessage(`${messages.length} messages received (${bytes} bytes)`);
-            // this.props.onBusy(false);
-            this.hideBusy();
-        },
-        (n) => {
-            // this.props.onBusy({busy: true, bytesReceived: n});
-        },
-        1000
-    );
-*/
-
-    /**
-     *
-     * @param files
-     * @returns {Promise<void>}
-     */
-/*
-    async readFiles(files) {
-        await Promise.all(files.map(
-            async file => {
-                if (file.size > MAX_FILE_SIZE) {
-                    console.warn(`${file.name}: file too big, ${file.size}`);
-                    this.setState(
-                        produce(draft => {
-                            draft.status = {
-                                severity: "error",
-                                message: `The file ${file.name} is too big.`
-                            };
-                        })
-                    );
-                    // this.hideBusy();
-                } else {
-                    // this.showBusy({busy: true, busyMessage: "loading file..."});
-                    const data = new Uint8Array(await new Response(file).arrayBuffer());
-                    if (isSysexData(data)) {
-                        this.setState(
-                            produce(draft => {
-                                //draft.bytes = data;
-                                if (draft.bytes === null) {
-                                    draft.bytes = data;
-                                } else {
-                                    // merge sysex bytes
-                                    const a = new Uint8Array(draft.bytes.length + data.length);
-                                    a.set(draft.bytes);
-                                    a.set(data, draft.bytes.length);
-                                    draft.bytes = a;
-                                }
-                                draft.data = mergeDeep(draft.data || {}, parseSysexDump(data));
-                                draft.status = {
-                                    severity: "info",
-                                    message: `Patch file loaded: ${file.name}`
-                                };
-                            })
-                        );
-                    } else {
-                        this.setState(
-                            produce(draft => {
-                                draft.status = {
-                                    severity: "error",
-                                    message: `The file ${file.name} does not contain a patch (is not a binary sysex file)`
-                                };
-                            })
-                        );
-                    }
-                    // this.hideBusy();
-                    // non sysex files are ignored
-                }
-                // too big files are ignored
-            }
-        ));
-    }
-*/
-
     onChangeFile = (e) => {
         let file = e.target.files[0];
-        // noinspection JSIgnoredPromiseFromCall
-        //TODO
         this.props.state.readFiles([file]);
     };
 
@@ -173,59 +48,29 @@ class Patch extends Component {
     onDrop = (files) => {
         this.setState(
             {
-                // data: null,
                 dropZoneActive: false
             },
             () => {
                 //TODO
-                // this.readFiles(files)
+                this.props.state.readFiles(files);
             }   // returned promise from readFiles() is ignored, this is normal.
         );
     };
 
+    sendDump = () => {
+        this.props.state.sendDump();
+    }
 
-    /**
-     * Send the current data
-     * @param patch
-     */
-/*
-    sendPatch = () => {
-
-        if (!this.state.output) {
-            console.warn("no output enabled to send the message");
-            return;
-        }
-
-        let out = outputById(this.state.output);
-        if (!out) {
-            console.warn(`send: output ${this.state.output} not found`);
-            return;
-        }
-
-        this.showBusy({busy: true, busyMessage: "sending patch..."});
-        splitDump(Array.from(this.state.bytes)).forEach(
-            msg => {
-                // console.log("sendPatch", msg.length > 32 ? hs(msg.slice(0, 32)) + '...' : hs(msg));
-                out.sendSysex(SYSEX_SIGNATURE, msg);
-            }
-        );
-        this.hideBusy(1000);
-    };
-*/
-
-    /**
-     * @returns {*}
-     */
     render() {
 
-        console.log("patch render");
+        // console.log("patch render");
 
-        const { status, bytes, dropZoneActive } = this.state;
+        const { status, dropZoneActive } = this.state;
         const output = this.props.state.midi.output;
         const data = this.props.state.data;
 
-        const q =  QueryString.parse(window.location.search);
-        const debug = q.debug ? q.debug === '1' : false;
+        // const q =  QueryString.parse(window.location.search);
+        // const debug = q.debug ? q.debug === '1' : false;
 
         return (
 
@@ -253,10 +98,7 @@ class Patch extends Component {
                                     This page allows you to import/export all the Pacer presets at once.
                                 </p>
                                 <p>
-                                    Please note that, due to a limitation with the current Pacer firmware, the preset D6 can not be read by this application. A future firmware update should fix this.
-                                </p>
-                                <p>
-                                    Presets marked "no data" are ignored and will not be sent to your Pacer.
+                                    Please note that, due to a limitation with the current Pacer firmware, the preset D6 cannot be read by this application. A future firmware update should fix this.
                                 </p>
                                 <p>
                                     The Global Config is not read or written by this tool. A future update may offer this possibility.
@@ -272,15 +114,19 @@ class Patch extends Component {
                                 <BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />
                             </div>
                             <div>
-                                <h3>File &#x279C; Pacer :</h3>
+                                <h3>file &#x279C; Pacer :</h3>
                                 <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}} onChange={this.onChangeFile} />
                                 <button className="action-button" onClick={this.onInputFile}>Load sysex file</button>
-                                {data && midiConnected(output) && <button className="action-button update" onClick={() => this.props.state.sendDump()}>Send to Pacer</button>}
+                                {data && midiConnected(output) && <button className="action-button update" onClick={this.sendDump}>Send to Pacer</button>}
                                 {/*<button disabled={!(data && midiConnected(output))} onClick={() => this.props.state.sendDump()} className="space-left">Send to Pacer</button>*/}
+                                {this.props.state.sendProgress && <span>{this.props.state.sendProgress}</span>}
                             </div>
 
                             <div>
-                                <h3>Data:</h3>
+                                <h3>Data included in the dump:</h3>
+                                <p>
+                                    Presets marked "no data" are ignored and will not be sent to your Pacer or included in the sysex file.
+                                </p>
                             </div>
 
                             <div className="patch-content">

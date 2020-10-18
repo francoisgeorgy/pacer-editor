@@ -3,6 +3,8 @@ export const MAX_FILE_SIZE = 200 * 1024;
 
 // export const MAX_STATUS_MESSAGES = 40;
 
+export const wait = ms => new Promise(r => setTimeout(r, ms));
+
 export function isVal(v) {
     return v !== undefined && v !== null && v !== '' && v >= 0;
 }

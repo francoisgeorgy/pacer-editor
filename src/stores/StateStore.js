@@ -9,9 +9,9 @@ import {
     mergeDeep,
     parseSysexDump, requestAllPresets,
     requestPreset,
-    SINGLE_PRESET_EXPECTED_BYTES, SYSEX_END, SYSEX_START
+    SINGLE_PRESET_EXPECTED_BYTES, splitDump, SYSEX_END, SYSEX_START
 } from "../pacer/sysex";
-import {flatDeep, MAX_FILE_SIZE} from "../utils/misc";
+import {flatDeep, MAX_FILE_SIZE, wait} from "../utils/misc";
 import {hs} from "../utils/hexstring";
 
 class StateStore {
@@ -39,16 +39,14 @@ class StateStore {
 
         this.data = null;
 
-        // this.bytes = null;  // binary, will be used to download as .syx file
-        // this.saveBytes = false; // if true will update this.bytes when receiving a message; used for full sysex dump
-        // this.presetIndex = null;
-
         this.bytesPresets = [[], [], [],    // current, track, transport
                              [], [], [], [], [], [],    // A1..A6
                              [], [], [], [], [], [],    // B1..B6
                              [], [], [], [], [], [],    // C1..C6
                              [], [], [], [], [], []]    // D1..D6
         this.bytesGlobal = [];
+
+        this.sendProgress = null;
 
         this.currentPresetIndex = "";    // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
         this.currentControl = "";   // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
@@ -99,8 +97,6 @@ class StateStore {
     clear() {
         console.log("state: clear data");
         this.data = null;
-        // this.bytes = null;
-        // this.saveBytes = false;
         this.clearBytes();
         this.updateMessages = {};
     }
@@ -158,6 +154,7 @@ class StateStore {
     hideBusy(delay = 0) {
         if (delay < 1) {
             this.onBusy({busy: false});
+            // this.sendProgress = null;
         } else {
             setTimeout(() => this.onBusy({busy: false}), delay);
         }
@@ -316,7 +313,7 @@ class StateStore {
         // );
     }
 
-    sendSysex = msg => {
+    sendSysex = (msg, sendForReal = true) => {
         if (!this.midi.output) {
             console.warn("no output enabled to send the message");
             return;
@@ -326,22 +323,8 @@ class StateStore {
             console.warn(`send: output ${this.midi.output} not found`);
             return;
         }
-        console.log("sendSysex", msg, hs(msg));
-        out.sendSysex(SYSEX_SIGNATURE, msg);
-    };
-
-    sendSysex2 = msg => {
-        if (!this.midi.output) {
-            console.warn("no output enabled to send the message");
-            return;
-        }
-        let out = outputById(this.midi.output);
-        if (!out) {
-            console.warn(`send: output ${this.midi.output} not found`);
-            return;
-        }
-        console.log("sendSysex2", msg, hs(msg));
-        // out.sendSysex(SYSEX_SIGNATURE, msg);
+        // console.log("sendSysex", msg, hs(msg));
+        if (sendForReal) out.sendSysex(SYSEX_SIGNATURE, msg);
     };
 
 /*
@@ -380,25 +363,20 @@ class StateStore {
     readFullDump = (busyMessage = "Please wait...") => {
         // console.log("readFullDump()");
         this.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected: ALL_PRESETS_EXPECTED_BYTES});
-        // this.bytes = null;
-        // this.saveBytes = true;
         this.clearBytes();
         this.sendSysex(requestAllPresets());
     };
 
 
     getBytesPresetsAsBlob() {
-        // console.log("getBytesPresetsAsBlob()");
-        // return flatDeep(this.bytesPresets, Infinity);
-        // return this.bytesPresets.flat();
-        const a = [];
-        this.bytesPresets.forEach(
-            p => p.forEach(
-                b => a.push(...b)
-            )
-        );
-        // console.log("getBytesPresetsAsBlob()", a);
-        return a;
+        // const a = [];
+        // this.bytesPresets.forEach(
+        //     p => p.forEach(
+        //         b => a.push(...b)
+        //     )
+        // );
+        // return a;
+        return new Uint8Array(flatDeep(this.bytesPresets, 100));
     }
 
     isBytesPresetEmpty() {
@@ -410,41 +388,29 @@ class StateStore {
         let i = 0;
         let cont = true;
         while (cont) {
-
             i = messages.indexOf(SYSEX_START, i);
             if (i < 0) break;
 
             i++;
             let k = messages.indexOf(SYSEX_END, i);
-
             let m = messages.slice(i-1, k+1)
-
             const bi = getBytesIndex(m);
             if (bi) {
-                // console.log("bi", bi);
                 if (bi.isPresetName) {
-                    console.log("receiving a preset; clear bytes");
+                    // console.log("receiving a preset; clear bytes");
                     this.bytesPresets[bi.presetNum] = [];
                 }
                 if (bi.isPreset) {
-                    // this.bytesPresets[bi.presetNum].push(0xff, ...m, 0xff);
                     this.bytesPresets[bi.presetNum].push(m);
-                    // console.log("storeBytes: preset", ...m);
-                    // console.log("storeBytes: preset", this.bytesPresets);
                 } else if (bi.isGlobal) {
                     this.bytesGlobal.push(m);
-                    console.log("storeBytes: global");
+                    // console.log("storeBytes: global");
                 } else {
                     console.warn("storeBytes: unsupported message", m);
                 }
             }
 
         }
-
-        console.log("storeBytes", this.getBytesPresetsAsBlob());
-        // console.log("storeBytes", this.bytesPresets);
-        // console.log("storeBytes flat", flatDeep(this.bytesPresets.slice(), 10));
-
     }
 
     async readFiles(files) {
@@ -467,32 +433,10 @@ class StateStore {
 
                     const data = new Uint8Array(await new Response(file).arrayBuffer());
 
-                    // const p = parseMessage(data);
-                    // console.log("parsed", p);
-
                     if (isSysexData(data)) {
-
-                        console.log("readFiles: file is sysex");
-
+                        // console.log("readFiles: file is sysex");
                         this.data = mergeDeep(this.data || {}, parseSysexDump(data))
-                        // this.data = mergeDeep(this.data || {}, parseSysexDump(data));
-                        // this.addInfoMessage("sysfile decoded");
-
-                        // console.log("readFiles: bytes", this.bytes);
-
                         this.storeBytes(data);
-
-                        // if (this.bytes === null) {
-                        //     console.log("readFiles: bytes=data", this.bytes, data);
-                        //     this.bytes = data;
-                        // } else {
-                        //     // merge sysex bytes
-                        //     const a = new Uint8Array(this.bytes.length + data.length);
-                        //     a.set(this.bytes);
-                        //     a.set(data, this.bytes.length);
-                        //     this.bytes = a;
-                        // }
-
                     } else {
                         console.log("readFiles: not a sysex file", hs(data.slice(0, 5)));
                     }
@@ -504,7 +448,6 @@ class StateStore {
         ));
         // this.props.state.data = data;
     }
-
 
     updatePacer() {
         //FIXME: externalize this method
@@ -540,12 +483,13 @@ class StateStore {
         );
     }
 
-
     /**
      * Send the current data saved in state.bytes
      * @param patch
      */
-    sendDump = () => {
+    sendDump = async () => {
+
+        // console.log("sendDump");
 
         if (!this.midi.output) {
             console.warn("sendPatch: no output enabled to send the message");
@@ -558,26 +502,27 @@ class StateStore {
         //     return;
         // }
 
-/*
-        if (this.bytes === null || this.bytes.length < 1) {
-            console.warn("sendPatch: no bytes to send");
-            return;
+        // this.showBusy({busy: true, busyMessage: "sending dump..."});
+
+        this.sendProgress = 'building sysex messages...';
+        await wait(20); // to force an update to of the UI to display the above message
+
+        // console.log(this.sendProgress);
+
+        const messages = splitDump(Array.from(this.getBytesPresetsAsBlob()));
+
+        let i = 0;
+        let t = messages.length;
+
+        for (const message of messages) {
+            i++;
+            this.sendProgress = `sending message ${i} of ${t} (${Math.round(i*100/t)}%)`;
+            this.sendSysex(message);
+            await wait(10);
         }
 
-        this.saveBytes = false;
-
-        this.showBusy({busy: true, busyMessage: "sending dump..."});
-        splitDump(Array.from(this.bytes)).forEach(
-            msg => {
-                console.log("sendDump: msg", hs(msg));
-                this.sendSysex2(msg);
-            }
-        );
-        this.hideBusy(1000);
-*/
-
+        setTimeout(() => this.sendProgress = null, 2000);
     };
-
 
 
 } // class StateStore
@@ -587,6 +532,8 @@ decorate(StateStore, {
 
     bytesPresets: observable,
     bytesGlobal: observable,
+    sendProgress: observable,
+    // sendProgressTotal: observable,
 
     data: observable,
     currentPresetIndex: observable,

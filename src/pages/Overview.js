@@ -5,8 +5,6 @@ import {dropOverlayStyle} from "../utils/misc";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import PresetOverview from "../components/PresetOverview";
 import "./Overview.css";
-import {state as globalState} from "../stores/StateStore";
-import {toHexDump} from "../utils/hexstring";
 
 class Overview extends Component {
 

@@ -9,7 +9,6 @@ class BusyIndicator extends Component {
         return busy ?
             <div className={this.props.className || 'busy'}>
                 {this.props.busyMessage ? this.props.busyMessage : busyMessage}
-                {/*{<span> {progress} %</span>}*/}
                 {progress >= 0 && <span> {progress}%</span>}
             </div>
             : null;

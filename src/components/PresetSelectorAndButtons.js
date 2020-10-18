@@ -16,7 +16,7 @@ export const PresetSelectorAndButtons = observer(() => {
                     </div>
                     {state.D6InfoVisible &&
                     <div className="d6info">
-                        Due to a yet unsolved problem, the editor can not read the preset D6. <br />
+                        Due to a yet unsolved problem, the editor cannot read the preset D6. <br />
                         However, you can ask the Pacer to send the preset. Use the encoder knob
                         to select DUMP<br />in the top-level menu and then send either a full dump or only the D6 preset.
                         <div className="dismiss" onClick={() => state.hideD6Info()}>[hide]</div>

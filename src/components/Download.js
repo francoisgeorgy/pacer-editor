@@ -1,24 +1,12 @@
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
-import {flatDeep} from "../utils/misc";
 
 class Download extends Component {
 
     handleClick = (event) => {
 
-        // const d = typeof this.props.data === 'function' ? this.props.data() : this.props.data;
-        // console.log("Download: ", this.props.data, d.length, d);
-        // let url = window.URL.createObjectURL(new Blob([d], {type: "application/octet-stream"}));
-
-        // const d = this.props.state.getBytesPresetsAsBlob();
-        const byteArray = new Uint8Array(flatDeep(this.props.state.bytesPresets, 10));
-        // console.log("Download: ", typeof d, d.length, d);
-        console.log("Download: ", byteArray);
-        let url = window.URL.createObjectURL(new Blob([byteArray], {type: "application/octet-stream"}));
-
-        // const d = flatDeep(this.props.state.bytesPresets, 10);
-        // console.log("Download: ", typeof d, d.length, d, d.buffer);
-        // let url = window.URL.createObjectURL(new Blob([d], {type: "application/octet-stream"}));
+        const d = typeof this.props.data === 'function' ? this.props.data() : this.props.data;
+        let url = window.URL.createObjectURL(new Blob([d], {type: "application/octet-stream"}));
 
         let filename = this.props.filename;
 

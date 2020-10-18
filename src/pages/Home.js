@@ -22,7 +22,7 @@ class Home extends Component {
                 <h1>Known issues</h1>
 
                 <div className="doc">
-                    <p>The preset D6 can not be read.</p>
+                    <p>The preset D6 cannot be read.</p>
                 </div>
 
                 <h1>Limitations</h1>
@@ -283,7 +283,7 @@ class Home extends Component {
                 <h1>Known issues</h1>
 
                 <div className="doc">
-                    <p>- The preset D6 can not be read by sending a "read preset" sysex. You have to dump it from the Pacer.</p>
+                    <p>- The preset D6 cannot be read by sending a "read preset" sysex. You have to dump it from the Pacer.</p>
                     <p>- LED configuration is displayed for external footswitch and expression pedals.</p>
                 </div>
 
