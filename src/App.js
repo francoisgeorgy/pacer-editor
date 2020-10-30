@@ -16,6 +16,7 @@ import BusyIndicator from "./components/BusyIndicator";
 import * as QueryString from "query-string";
 import Patch from "./pages/Patch";
 import './App.css';
+import {MidiSupportWarning} from "./components/MidiSupportWarning";
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
     <Route
@@ -48,6 +49,8 @@ class App extends Component {
             <Provider state={globalState}>
                 <Router>
                     <div className="app">
+
+                        <MidiSupportWarning />
 
                         <header className="header">
                             <MenuLink activeOnlyWhenExact={true} to="/" label="Overview" />
