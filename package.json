@@ -22,7 +22,7 @@
         "tonal-dictionary": "^2.1.2",
         "tonal-note": "^2.1.2",
         "tonal-scale": "^2.1.2",
-        "underscore": "^1.9.1",
+        "underscore": "^1.12.1",
         "webmidi": "^2.3.0"
     },
     "scripts": {
