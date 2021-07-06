@@ -1,9 +1,10 @@
+import * as serviceWorker from './serviceWorker';
 import 'mobx-react-lite/batchingForReactDom';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
-import * as serviceWorker from './serviceWorker';
+import "typeface-open-sans-condensed";
+import './index.css';
 
 function noop() {}
 if (process.env.NODE_ENV !== 'development') {

@@ -70,7 +70,8 @@ html {
     -webkit-text-size-adjust: 100%;
 }
 body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    /*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+    font-family: sans-serif;
     font-weight: 400;
     font-style: normal;
     /*font-size: 16px;*/

@@ -22,6 +22,7 @@
         "tonal-dictionary": "^2.1.2",
         "tonal-note": "^2.1.2",
         "tonal-scale": "^2.1.2",
+        "typeface-open-sans-condensed": "^1.1.13",
         "underscore": "^1.12.1",
         "webmidi": "^2.3.0"
     },

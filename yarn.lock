@@ -11131,6 +11131,11 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
+typeface-open-sans-condensed@^1.1.13:
+  version "1.1.13"
+  resolved "https://registry.yarnpkg.com/typeface-open-sans-condensed/-/typeface-open-sans-condensed-1.1.13.tgz#965ad2953c433a9ba9df28f46a0f3946ae1bfac8"
+  integrity sha512-7gl9wcHYIXLLHUTG9pQzbPz117ZFXyPcFGjlHouqn00BawEJFLEL3hcrE1J3zyNVzj25MtnA0BxOpeptMzs/xA==
+
 uglify-es@^3.3.4:
   version "3.3.9"
   resolved "https://registry.yarnpkg.com/uglify-es/-/uglify-es-3.3.9.tgz#0c1c4f0700bed8dbc124cdb304d2592ca203e677"
