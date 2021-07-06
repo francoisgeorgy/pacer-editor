@@ -41,6 +41,9 @@
         "not op_mini all"
     ],
     "devDependencies": {
-        "gh-pages": "^2.0.1"
+        "gh-pages": "^2.0.1",
+        "gulp": "^4.0.2",
+        "gulp-inline-source": "^4.0.0",
+        "gulp-replace": "^1.1.3"
     }
 }
