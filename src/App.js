@@ -64,7 +64,7 @@ class App extends Component {
                             <MenuLink to="/help"            label="Help" />
                             <div className="spacer"> </div>
                             <div className="header-app-name">
-                                Pacer editor {process.env.REACT_APP_VERSION} by <a href="https://studiocode.dev/" target="_blank" rel="noopener noreferrer">StudioCode.dev</a>
+                                Pacer editor by <a href="https://studiocode.dev/" target="_blank" rel="noopener noreferrer">StudioCode.dev</a>
                             </div>
                         </header>
 
