@@ -101,12 +101,12 @@ class Patch extends Component {
                                     Please note that, due to a limitation with the current Pacer firmware, the preset D6 cannot be read by this application. A future firmware update should fix this.
                                 </p>
                                 <p>
-                                    The Global Config is not read or written by this tool. A future update may offer this possibility.
+                                    The Global Config is not read or written by this tool. A future update will hopefully fix this.
                                 </p>
                             </div>
 
                             <div>
-                                <h3>Pacer &#x279C; file :</h3>
+                                <h3>Pacer &#x279C; save to file :</h3>
                                 {midiConnected(output) && <button className="action-button read" onClick={() => this.props.state.readFullDump()}>Read Pacer</button>}
                                 <DownloadAllPresets />
                                 {/*{!this.props.state.isBytesPresetEmpty() && <Download data={this.props.state.getBytesPresetsAsBlob} filename={`pacer-patch`} addTimestamp={true} label="Save to file" />}*/}
@@ -114,7 +114,7 @@ class Patch extends Component {
                                 <BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />
                             </div>
                             <div>
-                                <h3>file &#x279C; Pacer :</h3>
+                                <h3>Read file &#x279C; Pacer :</h3>
                                 <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}} onChange={this.onChangeFile} />
                                 <button className="action-button" onClick={this.onInputFile}>Load sysex file</button>
                                 {data && midiConnected(output) && <button className="action-button update" onClick={this.sendDump}>Send to Pacer</button>}
