@@ -37,7 +37,7 @@ class LoadFactoryDefaultsButton extends Component {
 
         const data = this.props.state.data;
 
-        if (!data) return null;
+        if (data) return null;
 
         return (
             <div className="Xpreset-buttons">
