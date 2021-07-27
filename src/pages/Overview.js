@@ -5,6 +5,7 @@ import {dropOverlayStyle} from "../utils/misc";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import PresetOverview from "../components/PresetOverview";
 import "./Overview.css";
+import LoadFactoryDefaultsButton from "../components/LoadFactoryDefaultsButton";
 
 class Overview extends Component {
 
@@ -41,9 +42,6 @@ class Overview extends Component {
     };
 
     render() {
-
-        console.log("overview render");
-
         return (
             <Dropzone
                 disableClick
@@ -51,34 +49,19 @@ class Overview extends Component {
                 onDrop={this.onDrop}
                 onDragEnter={this.onDragEnter}
                 onDragLeave={this.onDragLeave}>
-
                 {this.state.dropZoneActive &&
                 <div style={dropOverlayStyle}>
                     Drop sysex file...
                 </div>}
-
                 <div className="wrapper">
                     <div className="content">
-
                         <PresetSelectorAndButtons />
-
                         <div className="content-row-content">
                             <PresetOverview data={this.props.state.data} hexDisplay={!this.props.state.decBase} extControls={this.props.state.extControls} />
                         </div>
-
+                        <LoadFactoryDefaultsButton />
                     </div>
-
                 </div>
-
-
-                    {/* this.props.state.bytesPresets.map((p, i) =>
-                        <div>
-                            {i}
-                            {p.map(b => <pre>{toHexDump(b).map(s => s+'\n')}</pre>)}
-                        </div>
-                    ) */}
-
-
             </Dropzone>
         );
     }

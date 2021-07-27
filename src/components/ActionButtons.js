@@ -29,8 +29,6 @@ class ActionButtons extends Component {
         const extControls = !this.state.extControls;
         this.setState({extControls});
     };
-*/
-/*
     toggleBase = e => {
         const decBase = !this.state.decBase;
         this.setState({decBase});
@@ -61,25 +59,24 @@ class ActionButtons extends Component {
                 <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}} onChange={this.onChangeFile} />
                 <button className="action-button" onClick={this.onInputFile}>Load sysex file</button>
 
-                <div>
-                    {/*{data && <Download data={data} filename={`pacer-patch`} addTimestamp={true} label="Save to file" />}*/}
-                </div>
+                <div>{/* empty grid cell */}</div>
 
                 {data && <button className="action-button" onClick={this.clearData}>CLEAR ALL</button>}
-                {!data && <div></div>}
+                {!data && <div>{/* empty grid cell */}</div>}
 
                 <div>
                 </div>
-{/*
-                <div className="preset-buttons col align-col-bottom">
-                    <div>Click any preset to load only this preset.</div>
-                    {data && <button onClick={this.toggleExtControls}>{this.state.extControls ? "Hide external controls" : "Show external controls"}</button>}
-                    {data && <button onClick={this.toggleBase}>{this.state.decBase ? "Display numbers in hex" : "Display numbers in dec"}</button>}
-                </div>
-*/}
             </div>
         );
     }
 }
+
+/*
+    <div className="preset-buttons col align-col-bottom">
+        <div>Click any preset to load only this preset.</div>
+        {data && <button onClick={this.toggleExtControls}>{this.state.extControls ? "Hide external controls" : "Show external controls"}</button>}
+        {data && <button onClick={this.toggleBase}>{this.state.decBase ? "Display numbers in hex" : "Display numbers in dec"}</button>}
+    </div>
+*/
 
 export default inject('state')(observer(ActionButtons));

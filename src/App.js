@@ -58,7 +58,7 @@ class App extends Component {
                             <MenuLink to="/presetmidi"      label="Preset MIDI" />
                             {/*<MenuLink to="/global"          label="Global" />*/}
                             <MenuLink to="/patch"           label="Import/Export" />
-                            <MenuLink to="/monitor"         label="Monitor" />
+                            {/*<MenuLink to="/monitor"         label="Monitor" />*/}
                             {debug && <MenuLink to="/dumpdecoder" label="Dump decoder" />}
                             {debug && <MenuLink to="/debug" label="Debug" />}
                             <MenuLink to="/help"            label="Help" />
