@@ -1,9 +1,19 @@
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 import {isSysexData, mergeDeep, parseSysexDump} from "../pacer/sysex";
+import FACTORY_PRESETS from "../factory-presets.json";
 
 class LoadFactoryDefaultsButton extends Component {
 
+    loadFactoryDefaults = () => {
+        // console.log("FACTORY_PRESETS", typeof FACTORY_PRESETS, FACTORY_PRESETS);
+        const data = Uint8Array.from(Object.values(FACTORY_PRESETS));
+        // console.log("data", data);
+        this.props.state.data = mergeDeep(parseSysexDump(data));
+        this.props.state.storeBytes(data);
+    }
+
+/*
     loadFactoryDefaults = async () => {
 
         let response = await fetch("patches/factory-defaults.syx");
@@ -11,7 +21,14 @@ class LoadFactoryDefaultsButton extends Component {
 
         console.log("loadFactoryDefaults", response);
 
-        const data = new Uint8Array(await response.arrayBuffer());
+
+        const d = await response.arrayBuffer();
+        console.log("loadFactoryDefaults", typeof d, d);
+
+        console.log(JSON.stringify({d}));
+
+        const data = new Uint8Array(d);
+        // const data = new Uint8Array(await response.arrayBuffer(d));
 
         console.log("loadFactoryDefaults", data);
 
@@ -32,6 +49,7 @@ class LoadFactoryDefaultsButton extends Component {
             //     console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
         }
     };
+*/
 
     render() {
 
@@ -40,7 +58,7 @@ class LoadFactoryDefaultsButton extends Component {
         if (data) return null;
 
         return (
-            <div className="Xpreset-buttons">
+            <div>
                 <button className="action-button" onClick={this.loadFactoryDefaults}>Load Factory defaults</button>
             </div>
         );
