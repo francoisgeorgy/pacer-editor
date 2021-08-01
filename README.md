@@ -1,6 +1,6 @@
 # Pacer web editor
 
-Configure your Nektar Pacer MIDI controler with your web browser. 
+Configure your Nektar Pacer MIDI controller with your web browser. 
 
 
 # Requirements
