@@ -6,12 +6,12 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import "typeface-open-sans-condensed";
 import './index.css';
 
-// function noop() {}
-// if (process.env.NODE_ENV !== 'development') {
-//     console.log = noop;
-//     console.warn = noop;
-//     console.error = noop;
-// }
+function noop() {}
+if (process.env.NODE_ENV !== 'development') {
+    console.log = noop;
+    console.warn = noop;
+    console.error = noop;
+}
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
