@@ -9,13 +9,13 @@
             "type": "image/x-icon"
         },
         {
-            "src": "midi-192.png",
+            "src": "icon-192x192.png",
             "type": "image/png",
             "purpose": "maskable any",
             "sizes": "192x192"
         },
         {
-            "src": "midi-512.png",
+            "src": "icon-512x512.png",
             "type": "image/png",
             "purpose": "maskable any",
             "sizes": "512x512"
