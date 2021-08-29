@@ -20,7 +20,9 @@ Read ALL presets:
 
     sendmidi dev MIDI1 syx hex 00 01 77 7F 02 01 7F 7E
 
-new, undocumented:
+### Read Full dump:
+
+Note: the doc says 0x07 instead of 0x7F.
 
     sendmidi dev MIDI1 syx hex 00 01 77 7F 02 7F 
 
