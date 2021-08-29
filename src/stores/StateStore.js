@@ -4,12 +4,20 @@ import {MSG_CTRL_OFF, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer/constants";
 import {
     ALL_PRESETS_EXPECTED_BYTES,
     buildPresetNameSysex,
-    CONTROLS_DATA, getBytesIndex, getControlUpdateSysexMessages, getMidiSettingUpdateSysexMessages,
+    CONTROLS_DATA,
+    FULL_DUMP_EXPECTED_BYTES,
+    getBytesIndex,
+    getControlUpdateSysexMessages,
+    getMidiSettingUpdateSysexMessages,
     isSysexData,
     mergeDeep,
-    parseSysexDump, requestAllPresets,
+    parseSysexDump,
+    requestAllPresets,
     requestPreset,
-    SINGLE_PRESET_EXPECTED_BYTES, splitDump, SYSEX_END, SYSEX_START
+    SINGLE_PRESET_EXPECTED_BYTES,
+    splitDump,
+    SYSEX_END,
+    SYSEX_START
 } from "../pacer/sysex";
 import {flatDeep, MAX_FILE_SIZE, wait} from "../utils/misc";
 import {hs} from "../utils/hexstring";
@@ -362,7 +370,7 @@ class StateStore {
      */
     readFullDump = (busyMessage = "Please wait...") => {
         // console.log("readFullDump()");
-        this.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected: ALL_PRESETS_EXPECTED_BYTES});
+        this.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected: FULL_DUMP_EXPECTED_BYTES});
         this.clearBytes();
         this.sendSysex(requestAllPresets());
     };

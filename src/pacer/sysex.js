@@ -14,13 +14,14 @@ import {
     CONTROL_STOMPSWITCH_6,
     CONTROL_STOMPSWITCH_A,
     CONTROLS,
-    SYSEX_HEADER, TARGET_GLOBAL,
+    SYSEX_HEADER, TARGET_BACKUP, TARGET_GLOBAL,
     TARGET_PRESET,
     TARGETS
 } from "./constants";
 
 export const SINGLE_PRESET_EXPECTED_BYTES = 189;    // FIXME: unit is not bytes but messages
 export const ALL_PRESETS_EXPECTED_BYTES = 4536;     // FIXME: unit is not bytes but messages
+export const FULL_DUMP_EXPECTED_BYTES = 4762;     // FIXME: unit is not bytes but messages
 
 export const SYSEX_START = 0xF0;
 export const SYSEX_END = 0xF7;
@@ -615,10 +616,14 @@ function splitDump(data) {
  *
  */
 export function requestAllPresets() {
+    // let msg = [
+    //     COMMAND_GET,
+    //     TARGET_PRESET,
+    //     CONTROL_ALL
+    // ];
     let msg = [
         COMMAND_GET,
-        TARGET_PRESET,
-        CONTROL_ALL
+        TARGET_BACKUP
     ];
     let cs = checksum(msg);
     msg.push(cs);

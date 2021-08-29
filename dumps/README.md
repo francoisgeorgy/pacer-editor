@@ -20,6 +20,9 @@ Read ALL presets:
 
     sendmidi dev MIDI1 syx hex 00 01 77 7F 02 01 7F 7E
 
+new, undocumented:
+
+    sendmidi dev MIDI1 syx hex 00 01 77 7F 02 7F 
 
 ## Convert ASCII plain text hex dump to binary files:
 

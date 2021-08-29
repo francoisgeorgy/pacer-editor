@@ -17,7 +17,8 @@ export const COMMAND_GET = 0x02;
 
 export const TARGET_PRESET = 0x01;
 export const TARGET_GLOBAL = 0x05;
-export const TARGET_BACKUP = 0x07;
+export const TARGET_BACKUP = 0x7F;
+// export const TARGET_BACKUP = 0x07;
 
 export const TARGETS = {
     [TARGET_PRESET]: "preset",
