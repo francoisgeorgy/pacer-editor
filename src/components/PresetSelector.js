@@ -33,8 +33,11 @@ class PresetSelector extends Component {
         this.props.state.selectPreset(index);
         const data = this.props.state.data;
         if (index === "24") {
-            this.props.state.showD6Info();
-            return;
+            // console.log("D6 loaded?", data && data[TARGET_PRESET] && data[TARGET_PRESET][index]);
+            if (!(data && data[TARGET_PRESET] && data[TARGET_PRESET][index])) {
+                this.props.state.showD6Info();
+                return;
+            }
         }
         if (!(!this.props.state.forceReread && data && data[TARGET_PRESET] && data[TARGET_PRESET][index])) {
             this.props.state.readPreset(index, "reading Pacer...");

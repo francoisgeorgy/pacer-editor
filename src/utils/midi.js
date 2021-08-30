@@ -136,7 +136,7 @@ export const batchMessages = (callback, callbackBusy, wait) => {
 
         messages.push(event.data);
 
-        console.log("batchMessages, bytes received:", messages.length);
+        // console.log("batchMessages, bytes received:", messages.length);
 
         callbackBusy(messages.length);  // messages.length is the total number of bytes received so far
 

@@ -27,6 +27,7 @@ class Midi extends Component {
             // // }
 
             let data = this.props.state.data;
+
             for (let m of messages) {
 
                 // // if (this.props.state.saveBytes) {
