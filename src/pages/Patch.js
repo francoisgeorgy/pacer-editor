@@ -91,38 +91,40 @@ class Patch extends Component {
 
                         <div className="content-row-content first dump-wrapper">
 
-                            <h2>Import/Export all presets at once</h2>
+                            <h2>Import/Export presets</h2>
 
                             <div className="">
                                 <p>
-                                    This page allows you to import/export all the Pacer presets at once.
+                                    This page allows you to import/export all the Pacer presets, or a selection, at once.
                                 </p>
                                 <p>
-                                    Please note that, due to a limitation with the current Pacer firmware, the preset D6 cannot be read by this application. A future firmware update should fix this.
-                                </p>
-                                <p>
-                                    The Global Config is not read or written by this tool. A future update will hopefully fix this.
+                                    The Global Config is not read or written by this tool.
                                 </p>
                             </div>
 
-                            <div>
+                            <div className="mt-10">
                                 <h3>Pacer &#x279C; save to file :</h3>
-                                {midiConnected(output) && <button className="action-button read" onClick={() => this.props.state.readFullDump()}>Read Pacer</button>}
-                                <DownloadAllPresets />
-                                {/*{!this.props.state.isBytesPresetEmpty() && <Download data={this.props.state.getBytesPresetsAsBlob} filename={`pacer-patch`} addTimestamp={true} label="Save to file" />}*/}
-                                {/*{this.props.state.bytes && <Download disabled={!this.props.state.bytes} data={this.props.state.bytes} filename={`pacer-patch`} addTimestamp={true} label="Save to file" className="space-left" />}*/}
-                                <BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />
+                                {this.props.state.connected &&
+                                <div>
+                                    {this.props.state.connected && <button className="action-button Xread" onClick={() => this.props.state.readFullDump()}>Read Pacer</button>}
+                                    <DownloadAllPresets />
+                                    <BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />
+                                </div>}
+                                {!this.props.state.connected &&
+                                <div className="mb-15 italic">
+                                    Pacer not connected.
+                                </div>}
                             </div>
-                            <div>
+
+                            <div className="mt-10">
                                 <h3>Read file &#x279C; Pacer :</h3>
                                 <input ref={this.inputOpenFileRef} type="file" style={{display:"none"}} onChange={this.onChangeFile} />
                                 <button className="action-button" onClick={this.onInputFile}>Load sysex file</button>
-                                {data && midiConnected(output) && <button className="action-button update" onClick={this.sendDump}>Send to Pacer</button>}
-                                {/*<button disabled={!(data && midiConnected(output))} onClick={() => this.props.state.sendDump()} className="space-left">Send to Pacer</button>*/}
+                                {data && this.props.state.connected && <button className="action-button Xupdate" onClick={this.sendDump}>Send to Pacer</button>}
                                 {this.props.state.sendProgress && <span>{this.props.state.sendProgress}</span>}
                             </div>
 
-                            <div>
+                            <div className="mt-10">
                                 <h3>Data included in the dump:</h3>
                                 <p>
                                     Presets marked "no data" are ignored and will not be sent to your Pacer or included in the sysex file.

@@ -19,11 +19,13 @@ class Home extends Component {
                     <p>Ensure your Pacer is running the <a href="https://nektartech.com/updating-firmware-pacer/" target="_blank" rel="noopener noreferrer">latest firmware v10112</a>.</p>
                 </div>
 
+{/*
                 <h1>Known issues</h1>
 
                 <div className="doc">
-                    <p>The preset D6 cannot be read.</p>
+                    <p>The preset D6 cannot be read alone.</p>
                 </div>
+*/}
 
                 <h1>Limitations</h1>
 

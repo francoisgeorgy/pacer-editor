@@ -211,12 +211,16 @@ class Midi extends Component {
         if (this.props.state.midi.input) {
             this.disconnectInput(portById(this.props.state.midi.input));
         }
-        const port = portById(event.target.value);
-        if (port) {
-            this.props.state.midi.input = port.id;
-            this.connectInput(port);
+        if (event.target.value && event.target.value !== "0") {
+            const port = portById(event.target.value);
+            if (port) {
+                this.props.state.midi.input = port.id;
+                this.connectInput(port);
+            } else {
+                console.warn("selectInputPort: port not found", event.target.value);
+            }
         } else {
-            console.warn("selectInputPort: port not found", event.target.value);
+            this.props.state.midi.input = 0;
         }
     };
 
@@ -224,12 +228,16 @@ class Midi extends Component {
         if (this.props.state.midi.output) {
             this.disconnectOutput(portById(this.props.state.midi.output));
         }
-        const port = portById(event.target.value);
-        if (port) {
-            this.props.state.midi.output = port.id;
-            this.connectOutput(port);
+        if (event.target.value && event.target.value !== "0") {
+            const port = portById(event.target.value);
+            if (port) {
+                this.props.state.midi.output = port.id;
+                this.connectOutput(port);
+            } else {
+                console.warn("selectOutputPort: port not found", event.target.value);
+            }
         } else {
-            console.warn("selectOutputPort: port not found", event.target.value);
+            this.props.state.midi.output = 0;
         }
     };
 

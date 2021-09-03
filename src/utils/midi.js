@@ -104,7 +104,10 @@ export const groupPortsByName = () => {
  * returns true if the midi port is the Pacer
  */
 export const midiConnected = portId => {
-    return true;
+    // return true;
+
+    return !!portId;
+
     //FIXME: return true if at least one output and one input are connected
 
     // let port = portById(portId);

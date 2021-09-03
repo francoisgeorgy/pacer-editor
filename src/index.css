@@ -116,3 +116,15 @@ button {
 button:focus {
     outline: 0;
 }
+
+.mt-10 {
+    margin-top: 10px;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.mb-15 {
+    margin-bottom: 15px;
+}
