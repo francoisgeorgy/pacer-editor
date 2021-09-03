@@ -68,9 +68,12 @@ class App extends Component {
                             </div>
                         </header>
 
-                        <div className="subheader row">
+                        <div className="subheader row align-center">
                             <Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME} />
                             <BusyIndicator />
+                            <div className="grow right-align text-large">
+                                <a className="external" href="https://studiocode.dev/midi-monitor/" target="midi_monitor">MIDI Monitor</a>
+                            </div>
                         </div>
 
                         <div className="main-content-wrapper">

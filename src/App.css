@@ -8,6 +8,10 @@
     user-select: none;
 }
 
+.text-large {
+    font-size: 1.25rem;
+}
+
 .italic {
     font-style: italic;
 }
@@ -75,18 +79,27 @@ h3 {
 
 .header-app-name {
     float: right;
-    margin: 0 16px;
+    /*margin: 0 16px;*/
     font-size: 1.25rem;
     color: #000;
 }
 
-.header-app-name a {
+.header-app-name a,
+.subheader a {
     color: blue;
 }
 
-.header-app-name a:visited {
+.header-app-name a:visited,
+.subheader a:visited {
     color: blue;
 }
+
+/*
+a.external::after {
+    content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+    margin: 0 3px 0 5px;
+}
+*/
 
 .header-link {
     padding: 14px 0;
@@ -259,6 +272,14 @@ full screen busy indicator
 
 .align-row-bottom {
     align-content: flex-end;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.grow {
+    flex-grow: 1;
 }
 
 .col {
