@@ -861,7 +861,8 @@ export const COLORS = {
 
 
 export const COLORS_HTML = {        // https://en.wikipedia.org/wiki/Web_colors
-    0x00 : "#000000",
+    // 0x00 : "#000000",
+    0x00 : "transparent",
     0x01 : "#FFC0CB",
     0x02 : "rgba(255, 192, 203, 0.5)", // 50% transparent
     0x03 : "#FF0000",

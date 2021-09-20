@@ -62,11 +62,11 @@ const Message = observer(({ message, hexDisplay }) => {
 
     let colorOn = null;
     let colorOff = null;
-    if (message["led_active_color"] && message["led_inactive_color"]) {
+    if (message["led_active_color"] || message["led_inactive_color"]) {
         colorOn = message["led_active_color"] === 127 ? 0x00 : message["led_active_color"];
         colorOff = message["led_inactive_color"] === 127 ? 0x00 : message["led_inactive_color"];
     }
-    const displayColor = colorOn > 0 && colorOff > 0;
+    const displayColor = colorOn > 0 || colorOff > 0;
 
     // console.log(message["led_active_color"], message["led_inactive_color"], colorOn, colorOff);
 
@@ -80,8 +80,8 @@ const Message = observer(({ message, hexDisplay }) => {
                 <div className="msg-midi-channel">{channel}</div>
                 {displayColor &&
                 <div className="overview-step-color">
-                    <div className="color-on" style={{backgroundColor: COLORS_HTML[colorOn]}} title={COLORS[colorOn]}></div>
-                    <div className="color-off" style={{backgroundColor: COLORS_HTML[colorOff]}} title={COLORS[colorOff]}></div>
+                    <div className="color-off" style={{backgroundColor: COLORS_HTML[colorOff]}} title={`OFF color is ${COLORS[colorOff]}`}></div>
+                    <div className="color-on" style={{backgroundColor: COLORS_HTML[colorOn]}} title={`ON color is ${COLORS[colorOn]}`}></div>
                 </div>}
             </div>}
         </Fragment>
