@@ -22,3 +22,12 @@
     /*margin-top: 20px;*/
 }
 
+.detail-view {
+    margin-top: 10px;
+    border-top: 1px solid #aaa;
+}
+
+.detail-view h3 {
+    margin-top: 0px;
+    margin-bottom: 15px;
+}

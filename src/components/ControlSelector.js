@@ -22,7 +22,7 @@ class ControlSelector extends Component {
     render() {
         const c = this.props.state.currentControl;
         return (
-            <div className="controls">
+            <div className="controls blue-selectors">
                 {FOOTSWITCHES.map(key => <Control key={key} name={CONTROLS[key]} controlIndex={key} selected={key === c} onSelect={this.selectControl} />)}
                 {EXPPEDALS.map(key => <Control key={key} name={CONTROLS[key]} controlIndex={key} selected={key === c} onSelect={this.selectControl} />)}
                 <div className="no-control">&nbsp;</div>

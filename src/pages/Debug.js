@@ -12,6 +12,7 @@ import "./Debug.css";
 import DumpSysex from "../components/DumpSysex";
 import {SYSEX_HEADER} from "../pacer/constants";
 import {inject, observer} from "mobx-react";
+import DownloadJSON from "../components/DownloadJSON";
 
 function replacerDec2Hex(key, value) {
     return typeof value === 'number' ? '0x' + h(value) : value;
@@ -199,6 +200,10 @@ class Debug extends Component {
         this.props.state.sendSysex(msg.message);
     };
 
+    iniData = () => {
+
+    }
+
     /**
      * @returns {*}
      */
@@ -238,12 +243,18 @@ class Debug extends Component {
 
                 <div className="content">
 
+                    <div>
+                        <button onClick={() => this.props.state.initData()}>init data</button>
+                    </div>
+
                     <div className="content-row-content">
                         <div className="debug">
+                            {/*<DownloadJSON label="download as json" filename="data" data={this.props.state.data}/>*/}
                             <pre>{JSON.stringify(data, null, 4)}</pre>
                         </div>
                     </div>
 
+{/*
                     <div className="content-row-content first">
                         <h2>Test messages:</h2>
                         <div className="content-row-content-content">
@@ -258,7 +269,9 @@ class Debug extends Component {
                         )}
                         </div>
                     </div>
+*/}
 
+{/*
                     <div className="content-row-content">
                         <h2>Custom message:</h2>
                         <div className="content-row-content-content">
@@ -276,11 +289,13 @@ class Debug extends Component {
 
                             <div className="debug">
                                 {v ? <pre>{v}</pre> : <div>Invalid message. Send at your own risk.</div>}
-                                {/*<pre>{hs(toSysExMessage(this.getCustomMessageData()))}</pre>*/}
+                                <pre>{hs(toSysExMessage(this.getCustomMessageData()))}</pre>
                             </div>
                         </div>
                     </div>
+*/}
 
+{/*
                     <div className="content-row-content">
                         <h2>Response:</h2>
                         <div className="content-row-content-content">
@@ -289,6 +304,7 @@ class Debug extends Component {
                             </div>
                         </div>
                     </div>
+*/}
 
                     <div className="content-row-content">
                     </div>

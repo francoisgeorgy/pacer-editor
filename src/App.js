@@ -91,7 +91,7 @@ class App extends Component {
                         </Switch>
 
                         {/*<Instructions />*/}
-                        <Debug />
+                        {/*<Debug />*/}
 
                         </div>
 

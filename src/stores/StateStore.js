@@ -20,6 +20,7 @@ import {
 } from "../pacer/sysex";
 import {flatDeep, MAX_FILE_SIZE, wait} from "../utils/misc";
 import {hs} from "../utils/hexstring";
+import React from "react";
 
 class StateStore {
 
@@ -76,6 +77,8 @@ class StateStore {
         this.changed = false;
         this.D6InfoVisible = false;
         this.D6InfoHidden = false;
+
+        this.detailView = false;
     }
 
     //TODO:
@@ -108,6 +111,47 @@ class StateStore {
         this.updateMessages = {};
     }
 
+    initData() {
+
+        Object.values(this.data[TARGET_PRESET])
+            .forEach(preset => {
+                preset['name'] = 'toto'
+                Object.values(preset['controls'])
+                    .forEach(control => {
+                        control['control_mode'] = 0;
+                        Object.values(control['steps'])
+                            .forEach(step => {
+                                step["channel"] = 0;
+                                    step["msg_type"] = MSG_CTRL_OFF;
+                                    step["data"] = [0,0,0];
+                                    step["active"] = 0;
+                                    step["led_midi_ctrl"] = 0;
+                                    step["led_active_color"] = 0;
+                                    step["led_inactive_color"] = 0;
+                                    step["led_num"] = 0;
+                            });
+                    });
+            });
+
+        // this.data = parse(this.data.slice());
+
+        // this.bytesPresets = [[], [], [],    // current, track, transport
+        //     [], [], [], [], [], [],    // A1..A6
+        //     [], [], [], [], [], [],    // B1..B6
+        //     [], [], [], [], [], [],    // C1..C6
+        //     [], [], [], [], [], []]    // D1..D6
+        // const presets = [];
+        // for (let i=0; i<27; i++) {
+        //     const preset = [];
+        //     // for (let k=0; k<27; i++) {
+        //     //
+        //     // }
+        //     presets.push(preset);
+        // }
+        // this.bytesPresets = presets;
+        // this.bytesGlobal = [];
+    }
+
     showD6Info() {
         // if hidden, keep it hidden
         if (!this.D6InfoHidden) this.D6InfoVisible = true;
@@ -117,6 +161,10 @@ class StateStore {
     hideD6Info() {
         this.D6InfoVisible = false;
         this.D6InfoHidden = true;
+    }
+
+    toggleDetailView = () => {
+        this.detailView = !this.detailView;
     }
 
     toggleForceReread = () => {
@@ -561,7 +609,8 @@ decorate(StateStore, {
     extControls: observable,
     forceReread: observable,
     changed: observable,
-    D6InfoVisible: observable
+    D6InfoVisible: observable,
+    detailView: observable
 });
 
 // export default new StateStore();

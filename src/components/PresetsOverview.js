@@ -185,12 +185,12 @@ const PresetTitle = withRouter(observer(({ history, presetIndex, presetName} = {
 
 }));
 
-const Preset = observer(({ index, data, hexDisplay, extControls }) => {
+export const PresetOverview = observer(({ index, data, hexDisplay, extControls, title }) => {
     if (data === null || data === undefined) return null;
     // console.log("Preset", index, typeof index);
     return (
         <div className="overview-preset">
-            <PresetTitle presetIndex={index} presetName={data["name"]} />
+            {title && <PresetTitle presetIndex={index} presetName={data["name"]} />}
             {/*<h3>{presetIndexToXY(parseInt(index, 10))}: <span className="bold">{data["name"]}</span></h3>*/}
             <Controls presetIndex={index} controls={data["controls"]} hexDisplay={hexDisplay} extControls={extControls} />
             {hasMidiConfig(data) && <MidiSettings settings={data["midi"]} hexDisplay={hexDisplay} />}
@@ -204,13 +204,13 @@ const Presets = observer(({ presets, hexDisplay, extControls, currentPreset }) =
         <div className="overview-presets">
             {Object.keys(presets)
                 .filter(presetIndex => presetIndex === currentPreset || currentPreset === '')
-                .map(presetIndex => <Preset key={presetIndex} index={presetIndex} data={presets[presetIndex]} hexDisplay={hexDisplay} extControls={extControls} />)}
+                .map(presetIndex => <PresetOverview key={presetIndex} index={presetIndex} data={presets[presetIndex]} title={true} hexDisplay={hexDisplay} extControls={extControls} />)}
         </div>
     );
     // {Object.keys(presets).map(presetIndex => <Preset key={presetIndex} index={presetIndex} data={presets[presetIndex]} hexDisplay={hexDisplay} extControls={extControls} />)}
 });
 
-const PresetOverview = observer(({ data, hexDisplay, extControls, currentPreset }) => {
+const PresetsOverview = observer(({ data, hexDisplay, extControls, currentPreset }) => {
     if (data === null || data === undefined) return null;
     // console.log("PresetOverview render");
     return (
@@ -220,4 +220,4 @@ const PresetOverview = observer(({ data, hexDisplay, extControls, currentPreset 
     );
 });
 
-export default PresetOverview;
+export default PresetsOverview;

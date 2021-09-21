@@ -20,10 +20,10 @@ GLOBAL
 global idx
     
     0x00	<global-obj>			Current Preset	Changes RAM and EEPROM--modifies global setting and global config
-    0x01				Global Preset 1	Changes EEPROM.  Changes RAM if Global Preset 1 is currently active.--only modifies global config
-    0x02				Global Preset 2	Changes EEPROM.  Changes RAM if Global Preset 2 is currently active.--only modifies global config
-    0x03				Global Preset 3	Changes EEPROM.  Changes RAM if Global Preset 3 is currently active.--only modifies global config
-    0x04				Global Preset 4	Changes EEPROM.  Changes RAM if Global Preset 4 is currently active.--only modifies global config
+    0x01				Global Preset 1	Changes EEPROM. Changes RAM if Global Preset 1 is currently active.--only modifies global config
+    0x02				Global Preset 2	Changes EEPROM. Changes RAM if Global Preset 2 is currently active.--only modifies global config
+    0x03				Global Preset 3	Changes EEPROM. Changes RAM if Global Preset 3 is currently active.--only modifies global config
+    0x04				Global Preset 4	Changes EEPROM. Changes RAM if Global Preset 4 is currently active.--only modifies global config
     0x7F				ALL	Changes EEPROM and RAM
 
 global obj

@@ -3,7 +3,7 @@ import {inject, observer} from "mobx-react";
 import Dropzone from "react-dropzone";
 import {dropOverlayStyle} from "../utils/misc";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
-import PresetOverview from "../components/PresetOverview";
+import PresetsOverview from "../components/PresetsOverview";
 import LoadFactoryDefaultsButton from "../components/LoadFactoryDefaultsButton";
 import "./Overview.css";
 
@@ -58,10 +58,10 @@ class Overview extends Component {
                     <div className="content">
                         <PresetSelectorAndButtons />
                         <div className="content-row-content">
-                            <PresetOverview data={this.props.state.data}
-                                            hexDisplay={!this.props.state.decBase}
-                                            extControls={this.props.state.extControls}
-                                            currentPreset={this.props.state.currentPresetIndex}/>
+                            <PresetsOverview data={this.props.state.data}
+                                             hexDisplay={!this.props.state.decBase}
+                                             extControls={this.props.state.extControls}
+                                             currentPreset={this.props.state.currentPresetIndex}/>
                         </div>
                         <LoadFactoryDefaultsButton />
                     </div>

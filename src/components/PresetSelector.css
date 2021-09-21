@@ -49,8 +49,18 @@
     color: #000;
 }
 
+.blue-selectors .selector {
+    background-color: #ede9ff;
+}
+
 .selector:hover {
     background-color: lightblue;
+    border: 1px solid #aaa;
+}
+
+.blue-selectors .selector:hover {
+    background-color: blue;
+    color: white;
     border: 1px solid #aaa;
 }
 
@@ -60,8 +70,14 @@
 }
 
 .selector.selected {
-    background-color: green;       /* present selected color overrides preset hover color */
+    background-color: green!important;       /* present selected color overrides preset hover color */
     border: 1px solid green;
+    color: white;
+}
+
+.blue-selectors .selector.selected {
+    background-color: blue!important;       /* present selected color overrides preset hover color */
+    border: 1px solid darkblue;
     color: white;
 }
 

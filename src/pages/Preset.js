@@ -13,6 +13,7 @@ import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import UpdateMessages from "../components/UpdateMessages";
 import {presetIndexToXY} from "../pacer/utils";
 import "./Preset.css";
+import PresetsOverview, {PresetOverview} from "../components/PresetsOverview";
 
 //FIXME: fix this:
 setAutoFreeze(false);   // needed to be able to update name and copy a preset at the same time. Otherwise immerjs freez the state in updateMessageName() and it is no longer possible to copy a preset.
@@ -180,6 +181,11 @@ class Preset extends Component {
                                 {showEditor &&
                                 <ControlStepsEditor presetIndex={presetIndex} controlId={controlId} />}
 
+                                {!showEditor &&
+                                <div className="mt-10 mb10">
+                                    Select a control above to edit its configuration.
+                                </div>}
+
                                 {!isVal(presetIndex) && <div className="please">Select a preset.</div>}
 
                             </Fragment>
@@ -191,6 +197,17 @@ class Preset extends Component {
                             <div className="actions">
                                 <button className="update" onClick={() => this.props.state.updatePacer()}>Update Pacer</button>
                             </div>
+                        </div>}
+
+                        {data && data[TARGET_PRESET][presetIndex] &&
+                        <div class="detail-view">
+                            <div className="row align-baseline">
+                                <h3 className="mr-20">Detailed view:</h3>
+                                <button className="btn-small" onClick={() => this.props.state.toggleDetailView()}>{this.props.state.detailView ? 'hide' : 'show'}</button>
+                            </div>
+                            {this.props.state.detailView &&
+                            <PresetOverview key={presetIndex} index={presetIndex} data={data[TARGET_PRESET][presetIndex]}
+                                            title={false} hexDisplay={false} extControls={true} />}
                         </div>}
 
                         {/* this.props.debug && this.props.state.changed &&

@@ -291,6 +291,10 @@ full screen busy indicator
     align-items: center;
 }
 
+.align-baseline {
+    align-items: baseline;
+}
+
 .grow {
     flex-grow: 1;
 }
@@ -604,6 +608,13 @@ button {
     margin-top: 5px;
     margin-bottom: 5px;
     cursor: pointer;
+}
+
+button.btn-small {
+    padding: 0 10px;
+    margin: 0;
+    height: 100%;
+    font-size: 1rem;
 }
 
 /*
