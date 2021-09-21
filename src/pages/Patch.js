@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {TARGET_PRESET} from "../pacer/constants";
 import {presetIndexToXY} from "../pacer/utils";
 import Dropzone from "react-dropzone";
-import {midiConnected} from "../utils/midi";
 import {dropOverlayStyle} from "../utils/misc";
 import {inject, observer} from "mobx-react";
 import BusyIndicator from "../components/BusyIndicator";
@@ -66,7 +65,7 @@ class Patch extends Component {
         // console.log("patch render");
 
         const { status, dropZoneActive } = this.state;
-        const output = this.props.state.midi.output;
+        // const output = this.props.state.midi.output;
         const data = this.props.state.data;
 
         // const q =  QueryString.parse(window.location.search);

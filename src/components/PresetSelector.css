@@ -17,7 +17,8 @@
 }
 
 .preset-selectors > div.force-read {
-    grid-column: span 3;
+    /*grid-column: span 3;*/
+    grid-column: span 2;
     width: auto;
     justify-self: right;
     user-select: none;
@@ -25,6 +26,18 @@
 
 .force-read input {
     margin-right: 10px;
+}
+
+.preset-selectors > div.clear-selection {
+    grid-column: span 2;
+    width: auto;
+    justify-self: left;
+    user-select: none;
+}
+
+.clear-selection button {
+    margin: 0;
+    padding: 0 10px;
 }
 
 .selector {

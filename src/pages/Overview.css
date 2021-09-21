@@ -10,6 +10,8 @@
     padding-left: 10px;
     margin-bottom: 15px;
     cursor: pointer;
+
+    display: flex;
 }
 
 .overview-preset:first-of-type h3 {
@@ -144,6 +146,6 @@
     margin-right: 5px;
 }
 
-.overview-step-color div.color-off {
+.overview-step-color div.color-0 {
     border-style: dashed;
 }

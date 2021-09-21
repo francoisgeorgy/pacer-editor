@@ -21,6 +21,10 @@
     font-weight: bold;
 }
 
+.font-normal {
+    font-weight: normal;
+}
+
 .fluo {
     background-color: #ffff30;
 }
@@ -40,6 +44,15 @@
 .small {
     font-size: 0.75rem;
     color: #777;
+}
+
+.text-555 {
+    color: #555;
+}
+
+.bullet {
+    margin: 0 5px;
+    color: #333;
 }
 
 h1 {

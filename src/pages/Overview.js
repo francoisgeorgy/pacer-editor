@@ -4,8 +4,8 @@ import Dropzone from "react-dropzone";
 import {dropOverlayStyle} from "../utils/misc";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import PresetOverview from "../components/PresetOverview";
-import "./Overview.css";
 import LoadFactoryDefaultsButton from "../components/LoadFactoryDefaultsButton";
+import "./Overview.css";
 
 class Overview extends Component {
 
@@ -42,6 +42,7 @@ class Overview extends Component {
     };
 
     render() {
+        // console.log("Overview: current preset", this.props.state.currentPresetIndex);
         return (
             <Dropzone
                 disableClick
@@ -57,7 +58,10 @@ class Overview extends Component {
                     <div className="content">
                         <PresetSelectorAndButtons />
                         <div className="content-row-content">
-                            <PresetOverview data={this.props.state.data} hexDisplay={!this.props.state.decBase} extControls={this.props.state.extControls} />
+                            <PresetOverview data={this.props.state.data}
+                                            hexDisplay={!this.props.state.decBase}
+                                            extControls={this.props.state.extControls}
+                                            currentPreset={this.props.state.currentPresetIndex}/>
                         </div>
                         <LoadFactoryDefaultsButton />
                     </div>

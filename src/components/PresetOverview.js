@@ -80,8 +80,8 @@ const Message = observer(({ message, hexDisplay }) => {
                 <div className="msg-midi-channel">{channel}</div>
                 {displayColor &&
                 <div className="overview-step-color">
-                    <div className="color-off" style={{backgroundColor: COLORS_HTML[colorOff]}} title={`OFF color is ${COLORS[colorOff]}`}></div>
-                    <div className="color-on" style={{backgroundColor: COLORS_HTML[colorOn]}} title={`ON color is ${COLORS[colorOn]}`}></div>
+                    <div className={`color-off ${colorOff === 0 ? 'color-0' : ''}`} style={{backgroundColor: COLORS_HTML[colorOff]}} title={`OFF color is ${COLORS[colorOff]}`}></div>
+                    <div className={`color-off ${colorOn === 0 ? 'color-0' : ''}`} style={{backgroundColor: COLORS_HTML[colorOn]}} title={`ON color is ${COLORS[colorOn]}`}></div>
                 </div>}
             </div>}
         </Fragment>
@@ -174,8 +174,13 @@ const PresetTitle = withRouter(observer(({ history, presetIndex, presetName} = {
         history.push('/preset');
     }
 
+    let additionalInfos = null;
+    if (presetIndex === "0") {
+        additionalInfos = <span className="grow right-align mt-5 mr-15 font-normal small text-555">This is the currently loaded preset. Changes here are not saved in permanent memory.</span>;
+    }
+
     return (
-        <h3 onClick={gotoPreset} title="click to edit">{presetIndexToXY(parseInt(presetIndex, 10))}: <span className="bold">{presetName}</span></h3>
+        <h3 onClick={gotoPreset} title="click to edit">{presetIndexToXY(parseInt(presetIndex, 10))}<span className="bullet">•</span><span className="bold"> {presetName}</span>{additionalInfos}</h3>
     );
 
 }));
@@ -193,21 +198,24 @@ const Preset = observer(({ index, data, hexDisplay, extControls }) => {
     );
 });
 
-const Presets = observer(({ presets, hexDisplay, extControls }) => {
+const Presets = observer(({ presets, hexDisplay, extControls, currentPreset }) => {
     if (presets === null || presets === undefined) return null;
     return (
         <div className="overview-presets">
-            {Object.keys(presets).map(presetIndex => <Preset key={presetIndex} index={presetIndex} data={presets[presetIndex]} hexDisplay={hexDisplay} extControls={extControls} />)}
+            {Object.keys(presets)
+                .filter(presetIndex => presetIndex === currentPreset || currentPreset === '')
+                .map(presetIndex => <Preset key={presetIndex} index={presetIndex} data={presets[presetIndex]} hexDisplay={hexDisplay} extControls={extControls} />)}
         </div>
     );
+    // {Object.keys(presets).map(presetIndex => <Preset key={presetIndex} index={presetIndex} data={presets[presetIndex]} hexDisplay={hexDisplay} extControls={extControls} />)}
 });
 
-const PresetOverview = observer(({ data, hexDisplay, extControls }) => {
+const PresetOverview = observer(({ data, hexDisplay, extControls, currentPreset }) => {
     if (data === null || data === undefined) return null;
     // console.log("PresetOverview render");
     return (
         <div className="overview">
-            <Presets presets={data[TARGET_PRESET]} hexDisplay={hexDisplay} extControls={extControls} />
+            <Presets presets={data[TARGET_PRESET]} hexDisplay={hexDisplay} extControls={extControls} currentPreset={currentPreset} />
         </div>
     );
 });

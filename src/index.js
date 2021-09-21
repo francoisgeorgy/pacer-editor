@@ -1,4 +1,4 @@
-import 'mobx-react-lite/batchingForReactDom';
+// import 'mobx-react-lite/batchingForReactDom';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';

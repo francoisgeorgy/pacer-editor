@@ -1,6 +1,6 @@
 
 .controls {
-    margin: 10px 0;
+    margin: 10px 0 20px 0;
     display: grid;
     grid: repeat(3, 1fr) / repeat(6, auto);
     justify-content: start;

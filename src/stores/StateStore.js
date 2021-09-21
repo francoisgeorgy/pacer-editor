@@ -2,7 +2,6 @@ import {computed, decorate, observable} from "mobx";
 import {outputById} from "../utils/ports";
 import {MSG_CTRL_OFF, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer/constants";
 import {
-    ALL_PRESETS_EXPECTED_BYTES,
     buildPresetNameSysex,
     CONTROLS_DATA,
     FULL_DUMP_EXPECTED_BYTES,
@@ -166,6 +165,10 @@ class StateStore {
         } else {
             setTimeout(() => this.onBusy({busy: false}), delay);
         }
+    }
+
+    clearPresetSelection() {
+        this.currentPresetIndex = "";
     }
 
     selectPreset(presetIndex) { // String

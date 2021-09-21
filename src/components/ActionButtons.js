@@ -22,6 +22,7 @@ class ActionButtons extends Component {
 
     clearData = () => {
         this.props.state.clear();
+        this.props.state.clearPresetSelection();
     };
 
 /*

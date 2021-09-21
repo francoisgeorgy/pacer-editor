@@ -96,46 +96,61 @@ export const MessageSummary = message => {
     const data = message["data"];
     switch (message["msg_type"]) {
 
-        case MSG_AD_MIDI_CC: return `CC${data[0]} min ${data[1]} max ${data[2]}`;
+        // case MSG_AD_MIDI_CC: return `CC${data[0]} min ${data[1]} max ${data[2]}`;
+        case MSG_AD_MIDI_CC: return `CC${data[0]} ${data[1]} to ${data[2]}`;
+
         case MSG_AD_NRPN_COARSE: return `NRPN C max ${data[0]} ${data[1]}: ${data[2]}`;
         case MSG_AD_NRPN_FINE: return `NRPN F max ${data[0]} ${data[1]}:${data[2]}`;
-        case MSG_AD_PITCH_BEND: return `PITCH min ${data[1]} max ${data[2]}`;
-        case MSG_AD_ATCHAN: return `AT CHAN min ${data[1]} max ${data[2]}`;
-        case MSG_DAWFUNC: return `DAW FUNC ${data[0]}`;
+        case MSG_AD_PITCH_BEND: return `Pitch min ${data[1]} max ${data[2]}`;
+        case MSG_AD_ATCHAN: return `AT Chan min ${data[1]} max ${data[2]}`;
+        case MSG_DAWFUNC: return `DAW Func ${data[0]}`;
         case MSG_CTRL_OFF: return `OFF`;
 
         case MSG_SW_MIDI_CC_TGGLE: return `CC${data[0]} toggle ${data[1]} \u21C4 ${data[2]}`;
         case MSG_SW_MIDI_CC: return `CC${data[0]} ${DOWN_ARROW}${data[1]} ${UP_ARROW}${data[2]}`;
         case MSG_SW_MIDI_CC_STEP: return `CC${data[0]} step ${data[1]} to ${data[2]}`;
 
-        case MSG_SW_NOTE: return `NOTE ${data[0]} vel ${data[1]}`;
-        case MSG_SW_NOTE_TGGLE: return `NOTE TOGGLE ${data[0]} vel ${data[1]}`;
+        case MSG_SW_NOTE: return `Note ${data[0]} vel ${data[1]}`;
+        case MSG_SW_NOTE_TGGLE: return `Note Toggle ${data[0]} vel ${data[1]}`;
 
-        case MSG_SW_PRG_BANK: return `PRG BANK ${data[0]} ${data[1]}:${data[2]}`;
-        case MSG_SW_PRG_STEP: return `PRG STEP ${data[1]} to ${data[2]}`;
+        // case MSG_SW_PRG_BANK: return `PRG BANK ${data[0]} ${data[1]}:${data[2]}`;
+        case MSG_SW_PRG_BANK:
+            if (data[2] || data[2])
+                return `Prog & Bank ${data[0]} ${data[1]}:${data[2]}`;
+            else
+                return `Prog Change ${data[0]}`;
+
+        case MSG_SW_PRG_STEP: return `Prog step ${data[1]} to ${data[2]}`;
 
         case MSG_SW_NRPN_COARSE: return `NRPN C ${data[0]} ${data[1]}:${data[2]}`;
         case MSG_SW_NRPN_FINE: return `NRPN F ${data[0]} ${data[1]}:${data[2]}`;
 
         case MSG_SW_MMC: return `MMC ID ${data[0]} cmd ${data[1]}`;
 
-        case MSG_SW_RELAY: return `RELAY ${data[1]} ${RELAY_MODE_LABEL[data[0]]}`;
+        case MSG_SW_RELAY: return `Relay ${data[1]} ${RELAY_MODE_LABEL[data[0]]}`;
 
-        case MSG_SW_PRESET_SELECT: return `PRESET SELECT ${PRESET_TARGET[data[0]]}`;
-        case MSG_SW_PRESET_INC_DEC: return `PRESET ${data[0]?'DEC':'INC'}`;
+        case MSG_SW_PRESET_SELECT:
+            switch (data[0]) {
+                case 1: return `Select ${PRESET_TARGET[1]}`;
+                case 2: return `Select ${PRESET_TARGET[2]}`;
+                default: return `Preset Select ${PRESET_TARGET[data[0]]}`;
+            }
+
+        case MSG_SW_PRESET_INC_DEC:
+            return `Preset ${data[0]?'Dec':'Inc'}`;
 
         case MSG_SW_STEP_SELECT: return `${TARGET_NAME[data[0]]} step ${data[1]}`;
-        case MSG_SW_STEP_INC_DEC: return `STEP ${data[1]?'DEC':'INC'} '${TARGET_NAME[data[0]]}'`;
+        case MSG_SW_STEP_INC_DEC: return `Step ${data[1]?'Dec':'Inc'} '${TARGET_NAME[data[0]]}'`;
 
         case MSG_ENC_CC: return `MSG_ENC_CC ${data[0]} ${data[1]} ${data[2]}`;
-        case MSG_ENC_MIDICC_REL: return `CC REL ${data[0]}`;
+        case MSG_ENC_MIDICC_REL: return `CC Rel ${data[0]}`;
         case MSG_ENC_NRPN_COARSE: return `NRPN C max ${data[0]} ${data[1]}:${data[2]}`;
         case MSG_ENC_NRPN_FINE: return `NRPN F max ${data[0]} ${data[1]}:${data[2]}`;
-        case MSG_ENC_PITCH: return `PITCH min ${data[1]} max ${data[2]}`;
-        case MSG_ENC_ATCHAN: return `AT CHAN min ${data[1]} max ${data[2]}`;
-        case MSG_ENC_PROGRAM: return `PRG ${data[1]} to ${data[2]}`;
-        case MSG_ENC_PRESET_SELECT: return `PRESET SEL ${data[1]} to ${data[2]}`;
-        case MSG_ENC_STEP_SELECT: return `STEP SELECT '${TARGET_NAME[data[0]]}', ${data[1]} to ${data[2]}`;
+        case MSG_ENC_PITCH: return `Pitch min ${data[1]} max ${data[2]}`;
+        case MSG_ENC_ATCHAN: return `AT Chan min ${data[1]} max ${data[2]}`;
+        case MSG_ENC_PROGRAM: return `Prg ${data[1]} to ${data[2]}`;
+        case MSG_ENC_PRESET_SELECT: return `Preset Sel ${data[1]} to ${data[2]}`;
+        case MSG_ENC_STEP_SELECT: return `Step Select '${TARGET_NAME[data[0]]}', ${data[1]} to ${data[2]}`;
 
         case MSG_LOAD_CC: return `CC${data[0]} ${data[1]}`;
 

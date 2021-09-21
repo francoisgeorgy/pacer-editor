@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
-import {isSysexData, mergeDeep, parseSysexDump} from "../pacer/sysex";
+import {mergeDeep, parseSysexDump} from "../pacer/sysex";
 import FACTORY_PRESETS from "../factory-presets.json";
 
 class LoadFactoryDefaultsButton extends Component {

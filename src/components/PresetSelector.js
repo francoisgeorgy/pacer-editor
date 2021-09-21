@@ -44,6 +44,10 @@ class PresetSelector extends Component {
         }
     };
 
+    clearSelection = () => {
+        this.props.state.clearPresetSelection();
+    }
+
     render() {
         const {data, currentPresetIndex} = this.props.state;
         // console.log("PresetSelector render", currentPreset, typeof currentPreset);
@@ -58,7 +62,9 @@ class PresetSelector extends Component {
             <div className="selectors">
                 <div className="preset-selectors">
                     <Selector xyId={"CURRENT"} presetIndex={"0"} name={currName} xselected={!!currentPresetIndex} onClick={this.selectPreset} key={0}/>
-                    <div></div>
+                    <div className="clear-selection">
+                        {currentPresetIndex && <button onClick={this.clearSelection}>clear selection</button>}
+                    </div>
                     <div></div>
                     <div className="force-read">
                         <label>
