@@ -62,10 +62,13 @@ class PresetSelector extends Component {
             <div className="selectors">
                 <div className="preset-selectors">
                     <Selector xyId={"CURRENT"} presetIndex={"0"} name={currName} xselected={!!currentPresetIndex} onClick={this.selectPreset} key={0}/>
+
                     <div className="clear-selection">
-                        {currentPresetIndex && <button onClick={this.clearSelection}>clear selection</button>}
+                        {this.props.showClearButton && currentPresetIndex && <button onClick={this.clearSelection}>clear selection</button>}
                     </div>
+
                     <div></div>
+
                     <div className="force-read">
                         <label>
                             <input type="checkbox" checked={this.props.state.forceReread} onChange={this.props.state.toggleForceReread} />

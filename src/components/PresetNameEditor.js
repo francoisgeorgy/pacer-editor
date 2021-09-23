@@ -16,12 +16,21 @@ class PresetNameEditor extends Component {
         // console.log("PresetNameEditor render", presetIndex, this.props.state.data[TARGET_PRESET][presetIndex]);
 
         const name= this.props.state.data[TARGET_PRESET][presetIndex]["name"];
+
         return (
             <div className="preset-name-editor">
-                <label>Name:</label> <input value={name} onChange={this.onNameUpdate} size={8} />
+                <h3 className="control-name">Name:</h3>
+                <input defaultValue={name} onChange={this.onNameUpdate} size={8} />
                 max 5 characters
             </div>
         );
+
+        // return (
+        //     <div className="preset-name-editor">
+        //         <label>Name:</label> <input value={name} onChange={this.onNameUpdate} size={8} />
+        //         max 5 characters
+        //     </div>
+        // );
     }
 }
 

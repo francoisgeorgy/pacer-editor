@@ -2,6 +2,7 @@
     /*font-size: 0.85rem;*/
 }
 
+/*
 .overview h3 {
     margin-top: 25px;
     font-size: 1.5rem;
@@ -12,9 +13,25 @@
     cursor: pointer;
     display: flex;
 }
+*/
+h3.preset-title {
+    /*margin-top: 25px;*/
+    margin-top: 10px;
+    font-size: 1.5rem;
+    background-color: #eceaf5;
+    border-top: 1px solid #bbb;
+    padding-left: 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    display: flex;
+}
 
 .overview-preset:first-of-type h3 {
-    margin-top: 0.25em;
+    /*margin-top: 0.25em;*/
+}
+
+.overview-preset {
+    margin-bottom: 30px;
 }
 
 .overview-controls {
@@ -149,8 +166,31 @@
     border-style: dashed;
 }
 
+.detail-view .overview-controls {
+    grid-column-gap: 7px;
+    grid-row-gap: 7px;  /* 15px minus 2x 4px border */
+}
+
+.detail-view .overview-control {
+    /*border: 1px solid blue;*/
+    border: 4px solid white;
+    color: #333;
+    background-color: #ede9ff;
+}
+
+.detail-view .overview-control.selected {
+    /*border: 1px solid blue;*/
+    /*background-color: blue!important;       !* present selected color overrides preset hover color *!*/
+    border-color: blue;
+    /*color: white;*/
+}
+
 .detail-view .overview-message-type {
     color: #555;
     /*font-weight: normal;*/
     /*font-family: inherit;*/
+}
+
+.detail-view .overview-step {
+    border-bottom-color: #8181ff;
 }

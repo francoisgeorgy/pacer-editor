@@ -125,6 +125,10 @@ button:focus {
     margin-top: 10px;
 }
 
+.mt-20 {
+    margin-top: 20px;
+}
+
 .mb-10 {
     margin-bottom: 10px;
 }
@@ -143,6 +147,14 @@ button:focus {
 
 .ml-20 {
     margin-left: 20px;
+}
+
+.mr-5 {
+    margin-right: 5px;
+}
+
+.mr-10 {
+    margin-right: 10px;
 }
 
 .mr-20 {

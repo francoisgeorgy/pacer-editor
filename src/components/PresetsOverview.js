@@ -113,7 +113,7 @@ const Control = withRouter(observer(({ history, presetIndex, controlIndex, contr
     const n_active_steps = Object.keys(control[STEPS_DATA]).filter(n => control[STEPS_DATA][n]["active"]>0).length;
 
     return (
-        <div className={`overview-control ${stompswitch?'stompswitch':''}`} onClick={gotoPreset} title="click to edit">
+        <div className={`overview-control ${stompswitch?'stompswitch':''} ${state.currentControl === controlIndex ? 'selected' : ''}`} onClick={gotoPreset} title="click to edit">
             <div className="control-header">
                 <div className="control-name">{CONTROLS[controlIndex]}</div>
                 {/*<div className="control-name"><Link to="/preset">{CONTROLS[id]}</Link></div>*/}
@@ -170,7 +170,7 @@ const PresetTitle = withRouter(observer(({ history, presetIndex, presetName} = {
 
     const gotoPreset = () => {
         state.selectPreset(presetIndex);
-        state.selectControl(1);
+        state.selectControl("13");
         history.push('/preset');
     }
 
@@ -180,7 +180,9 @@ const PresetTitle = withRouter(observer(({ history, presetIndex, presetName} = {
     }
 
     return (
-        <h3 onClick={gotoPreset} title="click to edit">{presetIndexToXY(parseInt(presetIndex, 10))}<span className="bullet">•</span><span className="bold"> {presetName}</span>{additionalInfos}</h3>
+        <h3 className="preset-title" onClick={gotoPreset} title="click to edit">
+            {presetIndexToXY(parseInt(presetIndex, 10))}<span className="bullet">•</span><span className="bold"> {presetName}</span>{additionalInfos}
+        </h3>
     );
 
 }));
@@ -189,7 +191,7 @@ export const PresetOverview = observer(({ index, data, hexDisplay, extControls, 
     if (data === null || data === undefined) return null;
     // console.log("Preset", index, typeof index);
     return (
-        <div className="overview-preset">
+        <div className={`overview-preset ${state.currentPresetIndex === index ? 'selected' : ''}`}>
             {title && <PresetTitle presetIndex={index} presetName={data["name"]} />}
             {/*<h3>{presetIndexToXY(parseInt(index, 10))}: <span className="bold">{data["name"]}</span></h3>*/}
             <Controls presetIndex={index} controls={data["controls"]} hexDisplay={hexDisplay} extControls={extControls} />

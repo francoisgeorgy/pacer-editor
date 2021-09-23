@@ -57,7 +57,7 @@ class StateStore {
         this.sendProgress = null;
 
         this.currentPresetIndex = "";    // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
-        this.currentControl = "";   // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
+        this.currentControl = "13";   // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
         this.updateMessages = {};
         this.midi = {
             inputs: [],         // array of MIDI inputs (filtered from WebMidi object)
@@ -165,6 +165,10 @@ class StateStore {
 
     toggleDetailView = () => {
         this.detailView = !this.detailView;
+    }
+
+    setDetailView = (bool) => {
+        this.detailView = bool;
     }
 
     toggleForceReread = () => {

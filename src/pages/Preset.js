@@ -12,8 +12,9 @@ import {dropOverlayStyle, isVal} from "../utils/misc";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import UpdateMessages from "../components/UpdateMessages";
 import {presetIndexToXY} from "../pacer/utils";
+import {PresetOverview} from "../components/PresetsOverview";
+import Switch from "react-switch";
 import "./Preset.css";
-import PresetsOverview, {PresetOverview} from "../components/PresetsOverview";
 
 //FIXME: fix this:
 setAutoFreeze(false);   // needed to be able to update name and copy a preset at the same time. Otherwise immerjs freez the state in updateMessageName() and it is no longer possible to copy a preset.
@@ -97,8 +98,10 @@ class Preset extends Component {
 
     render() {
 
+        // console.log("this.props.state.currentControl", this.props.state.currentControl);
+
         const presetIndex = this.props.state.currentPresetIndex;
-        const controlId = this.props.state.currentControl;
+        const controlId = this.props.state.currentControl;  // ? this.props.state.currentControl : 1;
         const data = this.props.state.data;
 
         const showEditor =
@@ -111,6 +114,7 @@ class Preset extends Component {
             ("steps" in data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]) &&
             (Object.keys(data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["steps"]).length === 6);
 
+/*
         let presetLabel = "";
         if (data &&
             (TARGET_PRESET in data) &&
@@ -118,6 +122,7 @@ class Preset extends Component {
             ("name" in data[TARGET_PRESET][presetIndex])) {
             presetLabel = presetIndexToXY(presetIndex) + ": " + data[TARGET_PRESET][presetIndex]["name"];
         }
+*/
 
         // const showControls = isVal(presetIndex);
 
@@ -135,33 +140,47 @@ class Preset extends Component {
                 </div>}
 
                 <div className="wrapper">
-                    <div className="content">
+                    <div className="content preset-editor">
 
-                        <PresetSelectorAndButtons />
+                        <PresetSelectorAndButtons showClearButton={false} />
 
                         {data && data[TARGET_PRESET][presetIndex] &&
                         <div className="content-row-content">
-                            <h2>Preset {presetLabel}</h2>
+                            {/*<h2>Preset {presetLabel}</h2>*/}
+                            <h3 className="preset-title">
+                                {presetIndexToXY(presetIndex)}<span className="bullet">•</span><span className="bold"> {data[TARGET_PRESET][presetIndex]["name"]}</span>
+                            </h3>
                             <PresetNameEditor />
+                        </div>}
+
+                        {data && data[TARGET_PRESET][presetIndex] &&
+                        <div className="row align-center mt-20">
+                            <h3 className="controls-label">Controls:</h3>
+                            <Switch onChange={(checked) => this.props.state.setDetailView(checked)} checked={this.props.state.detailView}
+                                    width={48} height={20} className="ml-20 mr-10" />
+                            show details
+
+                            {/*<button className="btn-small ml-20" onClick={() => this.props.state.toggleDetailView()}>{this.props.state.detailView ? 'simple selectors' : 'detailed selectors'}</button>*/}
                         </div>}
 
                         {data && data[TARGET_PRESET][presetIndex] &&
                         <div className="content-row-content">
 
-
-                            {isVal(presetIndex) && data && data[TARGET_PRESET][presetIndex] &&
-                            <div class="detail-view">
+                            {/*{isVal(presetIndex) && data && data[TARGET_PRESET][presetIndex] &&*/}
+                            {/*<div class="detail-view">*/}
+{/*
                                 <div className="row align-baseline">
                                     <h3 className="mr-20">Preset {presetIndexToXY(presetIndex)} detailed view:</h3>
                                     <button className="btn-small" onClick={() => this.props.state.toggleDetailView()}>{this.props.state.detailView ? 'hide' : 'show'}</button>
                                 </div>
-                                {this.props.state.detailView &&
-                                <div className="Xpx-20 Xpb-20">
-                                    <PresetOverview key={presetIndex} index={presetIndex} data={data[TARGET_PRESET][presetIndex]}
-                                                    title={false} hexDisplay={false} extControls={true} />
-                                </div>}
-                            </div>}
+*/}
+                            {/*</div>}*/}
 
+                            {this.props.state.detailView &&
+                            <div className="detail-view">
+                                <PresetOverview key={presetIndex} index={presetIndex} data={data[TARGET_PRESET][presetIndex]}
+                                                title={false} hexDisplay={false} extControls={true} />
+                            </div>}
 
                             <Fragment>
                                 {/*<h2>Controls for preset {presetLabel}</h2>*/}
@@ -186,7 +205,7 @@ class Preset extends Component {
                                 }
 */}
 
-                                {showEditor && <h3>{CONTROLS_FULLNAME[controlId]}:</h3>}
+                                {showEditor && <h3 className="control-name">{CONTROLS_FULLNAME[controlId]}:</h3>}
 
                                 {showEditor &&
                                 <ControlModeEditor

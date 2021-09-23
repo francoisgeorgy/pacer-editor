@@ -124,7 +124,7 @@ export const batchMessages = (callback, callbackBusy, wait) => {
 
     return function() {
 
-        // console.log("batchMessages: clear timeout");
+        console.log("batchMessages: clear timeout");
         clearTimeout(timeout);
 
         let event = arguments[0];
@@ -150,7 +150,7 @@ export const batchMessages = (callback, callbackBusy, wait) => {
             messages = [];
         }, wait);
 
-        // console.log("batchMessages: done");
+        console.log("batchMessages: done");
 
     };
 };

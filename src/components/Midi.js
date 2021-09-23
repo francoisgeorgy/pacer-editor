@@ -6,6 +6,7 @@ import {isSysexData, mergeDeep, parseSysexDump} from "../pacer/sysex";
 import {hs} from "../utils/hexstring";
 import {inject, observer} from "mobx-react";
 import "./Midi.css";
+import {wait} from "../utils/misc";
 
 
 class Midi extends Component {

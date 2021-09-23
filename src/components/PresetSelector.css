@@ -44,7 +44,8 @@
     /*background-color: #eeeeff;*/
     /*border: 1px solid #bbbbff;*/
     background-color: #fafafa;
-    border: 1px solid #e7e7e7;
+    /*background-color: #c8e6c9;*/
+    border: 1px solid #cccccc;
     /*color: #555;*/
     color: #000;
 }
@@ -66,12 +67,14 @@
 
 .selector.loaded {
     color: #000;
-    background-color: #eceaf5;
+    /*background-color: #eceaf5;*/
+    background-color: #c8e6c9;
 }
 
 .selector.selected {
-    background-color: green!important;       /* present selected color overrides preset hover color */
-    border: 1px solid green;
+    /*background-color: green!important;       !* present selected color overrides preset hover color *!*/
+    background-color: #008000!important;       /* present selected color overrides preset hover color */
+    border: 1px solid #008000;
     color: white;
 }
 
