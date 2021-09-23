@@ -91,7 +91,7 @@ class Midi extends Component {
             // console.log("batchMessages onBusy", n);
             this.props.state.onBusy({busy: true, bytesReceived: n});
         },
-        1000
+        300
     );
 
     connectInput = port => {

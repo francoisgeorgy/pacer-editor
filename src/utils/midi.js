@@ -124,8 +124,8 @@ export const batchMessages = (callback, callbackBusy, wait) => {
 
     return function() {
 
-        console.log("batchMessages: clear timeout");
-        clearTimeout(timeout);
+        // console.log("batchMessages: clear timeout");
+        // clearTimeout(timeout);
 
         let event = arguments[0];
 
@@ -142,6 +142,10 @@ export const batchMessages = (callback, callbackBusy, wait) => {
         // console.log("batchMessages, bytes received:", messages.length);
 
         callbackBusy(messages.length);  // messages.length is the total number of bytes received so far
+
+        if (timeout) return;
+
+        console.log("batchMessages: set timeout");
 
         timeout = setTimeout(() => {
             console.log("batchMessages: timeout elapsed");

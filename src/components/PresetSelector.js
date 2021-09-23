@@ -61,7 +61,8 @@ class PresetSelector extends Component {
             <div>
             <div className="selectors">
                 <div className="preset-selectors">
-                    <Selector xyId={"CURRENT"} presetIndex={"0"} name={currName} xselected={!!currentPresetIndex} onClick={this.selectPreset} key={0}/>
+
+                    <Selector xyId={"CURRENT"} presetIndex={"0"} hasData={data && data[TARGET_PRESET] && data[TARGET_PRESET][0]} name={currName} xselected={!!currentPresetIndex} onClick={this.selectPreset} key={0}/>
 
                     <div className="clear-selection">
                         {this.props.showClearButton && currentPresetIndex && <button onClick={this.clearSelection}>clear selection</button>}
