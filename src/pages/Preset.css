@@ -23,11 +23,14 @@
 }
 
 .detail-view {
-    margin-top: 10px;
-    border-top: 1px solid #aaa;
+    margin-top: 20px;
+    /*border-top: 1px solid #aaa;*/
+    /*padding: 10px;*/
+    /*background-color: #f0f0f0;*/
 }
 
 .detail-view h3 {
     margin-top: 0px;
     margin-bottom: 15px;
 }
+

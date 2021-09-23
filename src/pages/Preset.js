@@ -147,9 +147,25 @@ class Preset extends Component {
 
                         {data && data[TARGET_PRESET][presetIndex] &&
                         <div className="content-row-content">
+
+
+                            {isVal(presetIndex) && data && data[TARGET_PRESET][presetIndex] &&
+                            <div class="detail-view">
+                                <div className="row align-baseline">
+                                    <h3 className="mr-20">Preset {presetIndexToXY(presetIndex)} detailed view:</h3>
+                                    <button className="btn-small" onClick={() => this.props.state.toggleDetailView()}>{this.props.state.detailView ? 'hide' : 'show'}</button>
+                                </div>
+                                {this.props.state.detailView &&
+                                <div className="Xpx-20 Xpb-20">
+                                    <PresetOverview key={presetIndex} index={presetIndex} data={data[TARGET_PRESET][presetIndex]}
+                                                    title={false} hexDisplay={false} extControls={true} />
+                                </div>}
+                            </div>}
+
+
                             <Fragment>
                                 {/*<h2>Controls for preset {presetLabel}</h2>*/}
-                                {isVal(presetIndex) && <ControlSelector />}
+                                {!this.props.state.detailView && isVal(presetIndex) && <ControlSelector />}
 
 {/*
                                 {data && presetIndex in data[TARGET_PRESET] && Object.keys(data[TARGET_PRESET]).length > 1 &&
@@ -197,17 +213,6 @@ class Preset extends Component {
                             <div className="actions">
                                 <button className="update" onClick={() => this.props.state.updatePacer()}>Update Pacer</button>
                             </div>
-                        </div>}
-
-                        {data && data[TARGET_PRESET][presetIndex] &&
-                        <div class="detail-view">
-                            <div className="row align-baseline">
-                                <h3 className="mr-20">Detailed view:</h3>
-                                <button className="btn-small" onClick={() => this.props.state.toggleDetailView()}>{this.props.state.detailView ? 'hide' : 'show'}</button>
-                            </div>
-                            {this.props.state.detailView &&
-                            <PresetOverview key={presetIndex} index={presetIndex} data={data[TARGET_PRESET][presetIndex]}
-                                            title={false} hexDisplay={false} extControls={true} />}
                         </div>}
 
                         {/* this.props.debug && this.props.state.changed &&

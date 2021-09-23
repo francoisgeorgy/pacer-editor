@@ -10,7 +10,6 @@
     padding-left: 10px;
     margin-bottom: 15px;
     cursor: pointer;
-
     display: flex;
 }
 
@@ -148,4 +147,10 @@
 
 .overview-step-color div.color-0 {
     border-style: dashed;
+}
+
+.detail-view .overview-message-type {
+    color: #555;
+    /*font-weight: normal;*/
+    /*font-family: inherit;*/
 }
