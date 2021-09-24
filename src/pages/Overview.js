@@ -56,7 +56,9 @@ class Overview extends Component {
                 </div>}
                 <div className="wrapper">
                     <div className="content">
-                        <PresetSelectorAndButtons showClearButton={true} />
+                        <div className="mb-20">
+                            <PresetSelectorAndButtons showClearButton={true} overview={true} />
+                        </div>
                         <div className="content-row-content">
                             <PresetsOverview data={this.props.state.data}
                                              hexDisplay={!this.props.state.decBase}

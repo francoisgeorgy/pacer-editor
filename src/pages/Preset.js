@@ -15,6 +15,7 @@ import {presetIndexToXY} from "../pacer/utils";
 import {PresetOverview} from "../components/PresetsOverview";
 import Switch from "react-switch";
 import "./Preset.css";
+import LoadFactoryDefaultsButton from "../components/LoadFactoryDefaultsButton";
 
 //FIXME: fix this:
 setAutoFreeze(false);   // needed to be able to update name and copy a preset at the same time. Otherwise immerjs freez the state in updateMessageName() and it is no longer possible to copy a preset.
@@ -144,6 +145,8 @@ class Preset extends Component {
 
                         <PresetSelectorAndButtons showClearButton={false} />
 
+                        <LoadFactoryDefaultsButton />
+
                         {data && data[TARGET_PRESET][presetIndex] &&
                         <div className="content-row-content">
                             {/*<h2>Preset {presetLabel}</h2>*/}
@@ -155,9 +158,9 @@ class Preset extends Component {
 
                         {data && data[TARGET_PRESET][presetIndex] &&
                         <div className="row align-center mt-20">
-                            <h3 className="controls-label">Controls:</h3>
+                            <div className="edit-section-title">Controls:</div>
                             <Switch onChange={(checked) => this.props.state.setDetailView(checked)} checked={this.props.state.detailView}
-                                    width={48} height={20} className="ml-20 mr-10" />
+                                    width={48} height={20} className="ml-30 mr-10" />
                             show details
 
                             {/*<button className="btn-small ml-20" onClick={() => this.props.state.toggleDetailView()}>{this.props.state.detailView ? 'simple selectors' : 'detailed selectors'}</button>*/}
@@ -205,7 +208,9 @@ class Preset extends Component {
                                 }
 */}
 
-                                {showEditor && <h3 className="control-name">{CONTROLS_FULLNAME[controlId]}:</h3>}
+                                {showEditor && <div className="edit-section-title control-name border-b">
+                                    {CONTROLS_FULLNAME[controlId]}:
+                                </div>}
 
                                 {showEditor &&
                                 <ControlModeEditor

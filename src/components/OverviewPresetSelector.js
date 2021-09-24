@@ -4,6 +4,7 @@ import {presetXYToIndex} from "../pacer/utils";
 import {TARGET_PRESET} from "../pacer/constants";
 import {state} from "../stores/StateStore";
 import "./PresetSelector.css";
+import Switch from "react-switch";
 
 // TODO: is observer needed here?
 const Selector = observer(({ xyId, presetIndex, hasData, name, onClick }) => {
@@ -11,7 +12,8 @@ const Selector = observer(({ xyId, presetIndex, hasData, name, onClick }) => {
     // console.log("Selector", xyId, presetIndex, state.currentPreset, typeof presetIndex, typeof state.currentPreset);
 
     let c = "selector";
-    const selected = presetIndex === state.currentPresetIndex;
+    // const selected = presetIndex === state.currentPresetIndex;
+    const selected = state.overviewSelection.includes(presetIndex);
     if (selected) c += " selected";
     if (!selected && hasData) c += " loaded";
 
@@ -27,10 +29,10 @@ const Selector = observer(({ xyId, presetIndex, hasData, name, onClick }) => {
 
 });
 
-class PresetSelector extends Component {
+class OverviewPresetSelector extends Component {
 
     selectPreset = (index) => {     // index must be a string
-        this.props.state.selectPreset(index);
+        this.props.state.togglePresetOverviewSelection(index);
         const data = this.props.state.data;
         if (index === "24") {
             // console.log("D6 loaded?", data && data[TARGET_PRESET] && data[TARGET_PRESET][index]);
@@ -62,7 +64,7 @@ class PresetSelector extends Component {
             <div className="selectors">
                 <div className="preset-selectors">
 
-                    <Selector xyId={"CURRENT"} presetIndex={"0"} hasData={data && data[TARGET_PRESET] && data[TARGET_PRESET][0]} name={currName} xselected={!!currentPresetIndex} onClick={this.selectPreset} key={0}/>
+                    <Selector xyId={"CURRENT"} presetIndex={"0"} hasData={data && data[TARGET_PRESET] && data[TARGET_PRESET][0]} name={currName} xselected={!!currentPresetIndex} onClick={this.selectPreset} key={0} />
 
 {/*
                     <div className="clear-selection">
@@ -73,11 +75,13 @@ class PresetSelector extends Component {
                     <div></div>
                     <div></div>
 
-                    <div className="force-read align-self-center">
-                        <label>
-                            <input type="checkbox" checked={this.props.state.forceReread} onChange={this.props.state.toggleForceReread} />
+                    <div className="force-read Xalign-self-center row align-center">
+                        {/*<label>*/}
+                            {/*<input type="checkbox" checked={this.props.state.forceReread} onChange={this.props.state.toggleForceReread} />*/}
+                            <Switch onChange={(checked) => this.props.state.toggleForceReread(checked)} checked={this.props.state.forceReread} width={48} height={20}
+                                    className="mr-10 align-self-center" />
                             Always read from Pacer
-                        </label>
+                        {/*</label>*/}
                     </div>
                     {
                         ['A', 'B', 'C', 'D'].map(
@@ -103,4 +107,4 @@ class PresetSelector extends Component {
     }
 }
 
-export default inject('state')(observer(PresetSelector));
+export default inject('state')(observer(OverviewPresetSelector));

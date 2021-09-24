@@ -42,5 +42,11 @@ h3.controls-label {
 
 h3.control-name {
     font-weight: bold;
-    margin: 20px 0;
+    margin: 20px 0 10px 0;
+}
+
+.edit-section-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 10px 0 10px 0;
 }

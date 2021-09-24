@@ -3,15 +3,17 @@ import {state} from "../stores/StateStore";
 import PresetSelector from "./PresetSelector";
 import ActionButtons from "./ActionButtons";
 import React from "react";
+import OverviewPresetSelector from "./OverviewPresetSelector";
 
 export const PresetSelectorAndButtons = observer((props) => {
     return (
-        <div className="content-row-content first">
+        <div className="content-row-content first mb-20">
             <h2>Presets</h2>
             <div className="row align-bottom">
                 <div>
                     <div className="row align-bottom">
-                        <PresetSelector showClearButton={props.showClearButton} />
+                        {props.overview && <OverviewPresetSelector showClearButton={props.showClearButton} />}
+                        {!props.overview && <PresetSelector showClearButton={props.showClearButton} />}
                         <ActionButtons />
                     </div>
                     {state.D6InfoVisible &&

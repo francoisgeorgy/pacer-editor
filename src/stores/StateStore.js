@@ -56,6 +56,8 @@ class StateStore {
 
         this.sendProgress = null;
 
+        this.overviewSelection = [];  // presets selected in overview
+
         this.currentPresetIndex = "";    // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
         this.currentControl = "13";   // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
         this.updateMessages = {};
@@ -175,6 +177,10 @@ class StateStore {
         this.forceReread = !this.forceReread;
     }
 
+    setForceReread = (bool) => {
+        this.forceReread = bool;
+    }
+
     onBusy({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) {
 
         // console.log("StateStore.onBusy", busy, busyMessage, bytesExpected, bytesReceived);
@@ -217,6 +223,18 @@ class StateStore {
         } else {
             setTimeout(() => this.onBusy({busy: false}), delay);
         }
+    }
+
+    togglePresetOverviewSelection(presetIndex) { // String
+        console.log("togglePresetOverviewSelection", presetIndex, typeof presetIndex);
+        //this.currentPresetIndex = presetIndex;
+        const i = this.overviewSelection.indexOf(presetIndex);
+        if (i >= 0) {
+            this.overviewSelection.splice(i, 1);
+        } else {
+            this.overviewSelection.push(presetIndex);
+        }
+        console.log(this.overviewSelection);
     }
 
     clearPresetSelection() {
@@ -599,6 +617,7 @@ decorate(StateStore, {
     // sendProgressTotal: observable,
 
     data: observable,
+    overviewSelection: observable,
     currentPresetIndex: observable,
     currentControl: observable,
     // presetIndex: observable,

@@ -6,19 +6,19 @@
     margin: 6px 30px 10px 0;
 }
 
+/*
 .preset-selectors > div {
     display: flex;
-    /*justify-content: center;*/
     justify-content: flex-start;
     align-items: center;
     width: 120px;
     padding: 4px 8px 4px 8px;
     cursor: pointer;
 }
+*/
 
 .preset-selectors > div.force-read {
-    /*grid-column: span 3;*/
-    grid-column: span 2;
+    grid-column: span 3;
     width: auto;
     justify-self: right;
     user-select: none;
@@ -41,11 +41,20 @@
 }
 
 .selector {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 120px;
+    padding: 5px 8px;
+    cursor: pointer;
+}
+
+.selector {
     /*background-color: #eeeeff;*/
     /*border: 1px solid #bbbbff;*/
-    background-color: #fafafa;
+    background-color: #eeeeee;
     /*background-color: #c8e6c9;*/
-    border: 1px solid #cccccc;
+    /*border: 1px solid #cccccc;*/
     /*color: #555;*/
     color: #000;
 }
@@ -56,7 +65,7 @@
 
 .selector:hover {
     background-color: lightblue;
-    border: 1px solid #aaa;
+    /*border: 1px solid #aaa;*/
 }
 
 .blue-selectors .selector:hover {
@@ -74,7 +83,7 @@
 .selector.selected {
     /*background-color: green!important;       !* present selected color overrides preset hover color *!*/
     background-color: #008000!important;       /* present selected color overrides preset hover color */
-    border: 1px solid #008000;
+    /*border: 1px solid #008000;*/
     color: white;
 }
 

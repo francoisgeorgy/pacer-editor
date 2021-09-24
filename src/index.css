@@ -117,6 +117,14 @@ button:focus {
     outline: 0;
 }
 
+.no-border {
+    border: none;
+}
+
+.border-b {
+    border-bottom: 1px solid #777;
+}
+
 .mt-5 {
     margin-top: 5px;
 }
@@ -133,6 +141,10 @@ button:focus {
     margin-bottom: 10px;
 }
 
+.mb-20 {
+    margin-bottom: 20px;
+}
+
 .mb-15 {
     margin-bottom: 15px;
 }
@@ -147,6 +159,10 @@ button:focus {
 
 .ml-20 {
     margin-left: 20px;
+}
+
+.ml-30 {
+    margin-left: 30px;
 }
 
 .mr-5 {

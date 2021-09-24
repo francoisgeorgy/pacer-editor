@@ -19,7 +19,7 @@ class PresetNameEditor extends Component {
 
         return (
             <div className="preset-name-editor">
-                <h3 className="control-name">Name:</h3>
+                <div className="edit-section-title">Name:</div>
                 <input defaultValue={name} onChange={this.onNameUpdate} size={8} />
                 max 5 characters
             </div>

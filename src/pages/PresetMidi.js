@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 import Dropzone from "react-dropzone";
-import {TARGET_PRESET} from "../pacer/constants";
+import {CONTROLS_FULLNAME, TARGET_PRESET} from "../pacer/constants";
 import MidiSettingsEditor from "../components/MidiSettingsEditor";
 import {dropOverlayStyle} from "../utils/misc";
 import UpdateMessages from "../components/UpdateMessages";
 import {inject, observer} from "mobx-react";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import "./Preset.css";
+import LoadFactoryDefaultsButton from "../components/LoadFactoryDefaultsButton";
+import {presetIndexToXY} from "../pacer/utils";
 
 class PresetMidi extends Component {
 
@@ -72,13 +74,23 @@ class PresetMidi extends Component {
                 <div className="wrapper">
                     <div className="content">
 
-                        <PresetSelectorAndButtons />
+                        <PresetSelectorAndButtons showClearButton={false} />
+
+                        <LoadFactoryDefaultsButton />
 
                         {showEditor &&
                         <div className="content-row-content">
-                            <h2>Preset MIDI settings</h2>
-                            <MidiSettingsEditor />
+                            <h3 className="preset-title">
+                                {presetIndexToXY(presetIndex)}<span className="bullet">•</span><span className="bold"> {data[TARGET_PRESET][presetIndex]["name"]}</span>
+                            </h3>
+                            {/*<h2>Preset MIDI settings</h2>*/}
                         </div>}
+
+                        {showEditor && <div className="edit-section-title control-name no-border">
+                            Preset MIDI settings:
+                        </div>}
+
+                        {showEditor && <MidiSettingsEditor />}
 
                         {this.props.state.changed && this.props.state.midi.output !== 0 &&         // FIXME: midiConnected(output) &&
                         <div className="content-row-content">

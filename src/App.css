@@ -295,6 +295,10 @@ full screen busy indicator
     align-items: baseline;
 }
 
+.align-self-center {
+    align-self: center;
+}
+
 .grow {
     flex-grow: 1;
 }
@@ -350,7 +354,8 @@ full screen busy indicator
     /*flex-grow: 10;*/
     /*border-top: 1px solid #999;*/
     /*background: linear-gradient(160deg, #ffffff 33%,#e5e5e5 100%);*/
-    padding: 8px 0;
+    /*padding: 8px 0;*/
+    /*background-color: orangered;*/
 }
 
 .content-row-content.first {

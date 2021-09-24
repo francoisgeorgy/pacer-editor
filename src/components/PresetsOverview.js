@@ -202,10 +202,11 @@ export const PresetOverview = observer(({ index, data, hexDisplay, extControls, 
 
 const Presets = observer(({ presets, hexDisplay, extControls, currentPreset }) => {
     if (presets === null || presets === undefined) return null;
+    console.log("state.overviewSelection", state.overviewSelection, state.overviewSelection.length);
     return (
         <div className="overview-presets">
             {Object.keys(presets)
-                .filter(presetIndex => presetIndex === currentPreset || currentPreset === '')
+                .filter(presetIndex => (state.overviewSelection.length < 1) || state.overviewSelection.includes(presetIndex))
                 .map(presetIndex => <PresetOverview key={presetIndex} index={presetIndex} data={presets[presetIndex]} title={true} hexDisplay={hexDisplay} extControls={extControls} />)}
         </div>
     );
