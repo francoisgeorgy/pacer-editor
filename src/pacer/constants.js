@@ -1,4 +1,4 @@
-import {sortObject} from "../utils/misc";
+import {object2Array, sortObject} from "../utils/misc";
 
 export const ANY_MIDI_PORT = ".*";
 
@@ -361,18 +361,33 @@ export const MSG_TYPES_FULLNAME = {
 
 // Preset Midi Settings
 export const MSG_TYPES_FULLNAME_MIDI = {
-    [MSG_LOAD_CC]: "Load CC",
+    [MSG_LOAD_CC]: "MIDI CC",
     [MSG_SW_NOTE]: "MIDI Note",
-    [MSG_SW_PRG_BANK]: "Program & Bank",
-    [MSG_SW_NRPN_COARSE]: "NRPN Coarse",
-    [MSG_SW_NRPN_FINE]: "NRPN Fine",
+    [MSG_SW_PRG_BANK]: "MIDI Program & Bank",
+    [MSG_SW_NRPN_COARSE]: "MIDI NRPN Coarse",
+    [MSG_SW_NRPN_FINE]: "MIDI NRPN Fine",
     [MSG_SW_MMC]: "MIDI Machine Control",
     [MSG_SW_RELAY]: "Relay Outputs",
-    [MSG_DAWFUNC]: "DAW Func.",
+    // [MSG_DAWFUNC]: "DAW Func.",
     [MSG_CTRL_OFF]: "OFF"
 };
 
-export const MSG_TYPES_FULLNAME_MIDI_SORTED = sortObject(MSG_TYPES_FULLNAME_MIDI);
+// export const MSG_TYPES_FULLNAME_MIDI_SORTED = object2Array(MSG_TYPES_FULLNAME_MIDI);
+// export const MSG_TYPES_FULLNAME_MIDI_SORTED = sortObject(MSG_TYPES_FULLNAME_MIDI);
+
+export const MSG_TYPES_FULLNAME_MIDI_SORTED = [
+    MSG_LOAD_CC,
+    MSG_SW_NOTE,
+    MSG_SW_PRG_BANK,
+    MSG_SW_NRPN_COARSE,
+    MSG_SW_NRPN_FINE,
+    MSG_SW_MMC,
+    MSG_SW_RELAY,
+    // MSG_DAWFUNC,
+    MSG_CTRL_OFF
+];
+
+
 
 export const NOT_USED = "not used";
 

@@ -49,7 +49,7 @@ class Home extends Component {
                         When you edit preset <span className="strong">CUR</span> your changes are immediately applied.</p>
                     <p>When you edit any other presets, you edit the <span className="fluo">saved</span> settings of the preset
                         and your changes will only be applied when you <span className="fluo">load</span> this preset in the Pacer.</p>
-                    <p>It is currently not possible to load the preset from this editor.</p>
+                    <p>It is currently not possible to remotely force the Pacer to load a specific preset.</p>
                     <div>
                         <h3>Example 1:</h3>
                         <p>The currently loaded preset (CUR) is preset <span className="strong">A5</span>.</p>

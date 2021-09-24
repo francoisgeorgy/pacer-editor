@@ -231,11 +231,8 @@ class Preset extends Component {
                         </div>}
 
                         {this.props.state.changed && this.props.state.midi.output !== 0 &&         // FIXME: midiConnected(output) &&
-                        <div className="content-row-content">
-                            {/*<h2>Send the updated config to the Pacer</h2>*/}
-                            <div className="actions">
-                                <button className="update" onClick={() => this.props.state.updatePacer()}>Update Pacer</button>
-                            </div>
+                        <div className="content-row-content mt-20 menu-buttons">
+                            <button className="action-button update" onClick={() => this.props.state.updatePacer()}>Update Pacer</button>
                         </div>}
 
                         {/* this.props.debug && this.props.state.changed &&
@@ -247,9 +244,11 @@ class Preset extends Component {
                             </div>
                         </div> */}
 
+{/*
                         <div className="content-row-content">
                             <UpdateMessages/>
                         </div>
+*/}
 
                     </div>
 

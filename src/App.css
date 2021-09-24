@@ -323,7 +323,8 @@ full screen busy indicator
 
 .content h2,
 .instructions h2 {
-    margin-top: 12px;
+    margin-top: 20px;
+    margin-bottom: 10px;
     padding-bottom: 2px;
     /*border-bottom: 1px solid #777;*/
     font-size: 1.75rem;
@@ -587,6 +588,7 @@ full screen busy indicator
 
 .menu-buttons .action-button {
     width: 135px;
+    margin-bottom: 0;
 }
 
 /*.preset-buttons button#clear-data {*/

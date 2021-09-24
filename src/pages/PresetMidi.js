@@ -86,22 +86,26 @@ class PresetMidi extends Component {
                         </div>}
 
                         {showEditor && <div className="edit-section-title control-name no-border">
-                            Preset MIDI settings:
+                            Preset Recall MIDI Configuration:
                         </div>}
+
+                        <div className="mb-10">
+                            You can define up to 16 MIDI messages or relay switches that will be activated instantly when the preset is recalled.
+                        </div>
 
                         {showEditor && <MidiSettingsEditor />}
 
                         {this.props.state.changed && this.props.state.midi.output !== 0 &&         // FIXME: midiConnected(output) &&
-                        <div className="content-row-content">
-                            <h2>Send the updated config to the Pacer</h2>
-                            <div className="actions">
-                                <button className="update" onClick={() => this.props.state.updatePacer()}>Update Pacer</button>
-                            </div>
+                        <div className="content-row-content mt-20 menu-buttons">
+                            {/*<h2>Send the updated config to the Pacer</h2>*/}
+                            <button className="action-button update" onClick={() => this.props.state.updatePacer()}>Update Pacer</button>
                         </div>}
 
+{/*
                         <div className="content-row-content">
                             <UpdateMessages/>
                         </div>
+*/}
 
                     </div>
 

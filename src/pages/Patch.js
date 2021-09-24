@@ -154,12 +154,11 @@ class Patch extends Component {
                             {status &&
                             <div className={`status ${status.severity}`}>
                                 {status.message}
-                            </div>
-                            }
-
-                            {data && <div className="Xpreset-buttons">
-                                <button onClick={() => this.props.state.clear()}>CLEAR DATA</button>
                             </div>}
+
+                            {/* data && <div className="Xpreset-buttons">
+                                <button onClick={() => this.props.state.clear()}>CLEAR DATA</button>
+                            </div> */}
 
                         </div>
 

@@ -23,6 +23,19 @@ export function sortObject(obj) {
     return arr;
 }
 
+export function object2Array(obj) {
+    let arr = [];
+    for (let prop in obj) {
+        if (obj.hasOwnProperty(prop)) {
+            arr.push({
+                'key': prop,
+                'value': obj[prop]
+            });
+        }
+    }
+    return arr;
+}
+
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat
 // Array.isArray() does not work with typed arrays; replaced with typeof === 'object'
 //

@@ -3,7 +3,7 @@ import {
     MSG_CTRL_OFF,
     MSG_SW_NOTE,
     MSG_TYPES_FULLNAME_MIDI_SORTED,
-    MSG_TYPES_DATA_HELP, TARGET_PRESET
+    MSG_TYPES_DATA_HELP, TARGET_PRESET, MSG_TYPES_FULLNAME_MIDI
 } from "../pacer/constants";
 import * as Note from "tonal-note";
 import {inject, observer} from "mobx-react";
@@ -33,10 +33,10 @@ const Setting = observer(({ index, config  }) => {
     if (inactive) {
         return (
             <Fragment>
-                <div className="setting-row-header">message {index}:</div>
+                <div className="setting-row-header">{index}:</div>
                 <div>
                     <select onChange={(event) => state.updateMidiSettings(index, "msg_type", null, event.target.value)} value={config.msg_type}>
-                        {MSG_TYPES_FULLNAME_MIDI_SORTED.map(v => <option key={v.key} value={v.key}>{v.value}</option>)}
+                        {MSG_TYPES_FULLNAME_MIDI_SORTED.map(v => <option key={v} value={v}>{MSG_TYPES_FULLNAME_MIDI[v]}</option>)}
                     </select>
                 </div>
                 <div></div>
@@ -62,10 +62,10 @@ const Setting = observer(({ index, config  }) => {
 
     return (
         <Fragment>
-            <div className="setting-row-header">Setting {index}:</div>
+            <div className="setting-row-header">{index}:</div>
             <div>
                 <select onChange={(event) => state.updateMidiSettings(index, "msg_type", null, event.target.value)} value={config.msg_type}>
-                    {MSG_TYPES_FULLNAME_MIDI_SORTED.map(v => <option key={v.key} value={v.key}>{v.value}</option>)}
+                    {MSG_TYPES_FULLNAME_MIDI_SORTED.map(v => <option key={v} value={v}>{MSG_TYPES_FULLNAME_MIDI[v]}</option>)}
                 </select>
             </div>
             <div>{d0}<div className="data-help">{MSG_TYPES_DATA_HELP[config.msg_type][0]}</div></div>
