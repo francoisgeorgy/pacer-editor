@@ -182,11 +182,17 @@ h3.preset-title {
     /*border: 1px solid blue;*/
     /*background-color: blue!important;       !* present selected color overrides preset hover color *!*/
     border-color: blue;
-    /*color: white;*/
+    color: #000;
 }
 
 .detail-view .overview-message-type {
     color: #555;
+    /*font-weight: normal;*/
+    /*font-family: inherit;*/
+}
+
+.detail-view .overview-control.selected .overview-message-type {
+    color: #000;
     /*font-weight: normal;*/
     /*font-family: inherit;*/
 }
