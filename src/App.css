@@ -154,20 +154,6 @@ a.external::after {
 }
 
 
-.subheader {
-    /*background-color: #e0e0e0;*/
-    /*padding-bottom: 1px;*/
-    /*padding: 10px 15px;*/
-    /*padding: 15px 0;*/
-}
-
-/*
-.subheader > div {
-    padding: 9px 14px 7px 8px;
-}
-*/
-
-
 .spacer {
     flex-grow: 10;
 }
@@ -571,6 +557,15 @@ full screen busy indicator
     align-content: end;
 }
 
+.menu-buttons {
+    margin-top: 10px;
+    display: flex;
+    /*flex-direction: row;*/
+    /*display: grid;*/
+    /*grid-template-columns: 1fr 1fr;*/
+    /*align-content: end;*/
+}
+
 /*
 .preset-buttons button {
     display: block;
@@ -588,6 +583,10 @@ full screen busy indicator
     margin-right: 16px;
     padding: 4px 8px;
     font-size: 1rem;
+}
+
+.menu-buttons .action-button {
+    width: 135px;
 }
 
 /*.preset-buttons button#clear-data {*/
@@ -641,35 +640,52 @@ button:hover {
 }
 
 button.read {
-    background: linear-gradient(to bottom, #acff99, #59ff30);
-    border: 1px solid #999;
-    /*padding: 4px 8px;*/
-    /*font-size: 1rem;*/
-    color: #000;
+    /*background: linear-gradient(to bottom, #acff99, #59ff30);*/
+    /*border: 1px solid #999;*/
+    /*color: #000;*/
+    color: green;
+    font-weight: bold;
 }
 
 button.read:hover {
-    background: linear-gradient(to bottom, #59ff30, #acff99);
-    border: 1px solid #999;
-    /*padding: 4px 8px;*/
-    /*font-size: 1rem;*/
-    color: #000;
+    /*background: linear-gradient(to bottom, #59ff30, #acff99);*/
+    /*border: 1px solid #999;*/
+    /*color: #000;*/
 }
 
 button.update {
-    background: linear-gradient(to bottom, #ffdd99, #ffaa00);
-    border: 1px solid #999;
-    /*padding: 4px 8px;*/
-    /*font-size: 1rem;*/
-    color: #000;
+    /*background: linear-gradient(to bottom, #ffdd99, #ffaa00);*/
+    /*border: 1px solid #999;*/
+    /*color: #000;*/
+    color: #d70000;
+    font-weight: bold;
 }
 
 button.update:hover {
-    background: linear-gradient(to bottom, #ffaa00, #ffdd99);
-    border: 1px solid #999;
-    /*padding: 4px 8px;*/
-    /*font-size: 1rem;*/
-    color: #000;
+    /*background: linear-gradient(to bottom, #ffaa00, #ffdd99);*/
+    /*border: 1px solid #999;*/
+    /*color: #000;*/
+}
+
+button.text-read {
+    color: red;
+    font-weight: bold;
+}
+
+button.text-green {
+    color: green;
+    font-weight: bold;
+}
+
+button:disabled,
+button[disabled],
+button.disabled,
+button:disabled:hover,
+button[disabled]:hover,
+button.disabled:hover {
+    /*background: #eee!important;*/
+    color: #888;
+    font-weight: normal;
 }
 
 .right-align {

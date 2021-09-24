@@ -4,6 +4,7 @@ import {presetXYToIndex} from "../pacer/utils";
 import {TARGET_PRESET} from "../pacer/constants";
 import {state} from "../stores/StateStore";
 import "./PresetSelector.css";
+import Switch from "react-switch";
 
 // TODO: is observer needed here?
 const Selector = observer(({ xyId, presetIndex, hasData, name, onClick }) => {
@@ -73,11 +74,18 @@ class PresetSelector extends Component {
                     <div></div>
                     <div></div>
 
-                    <div className="force-read align-self-center">
+                    <div className="force-read row align-center">
+{/*
                         <label>
                             <input type="checkbox" checked={this.props.state.forceReread} onChange={this.props.state.toggleForceReread} />
                             Always read from Pacer
                         </label>
+*/}
+                        <Switch onChange={(checked) => this.props.state.toggleForceReread(checked)} checked={this.props.state.forceReread} width={48} height={20}
+                                className="mr-10 align-self-center" />
+                        <span title="Always read the preset from the Pacer and refresh the editor memory. Use this if you update presets in the Pacer while using the editor.">
+                            Always read from Pacer
+                        </span>
                     </div>
                     {
                         ['A', 'B', 'C', 'D'].map(

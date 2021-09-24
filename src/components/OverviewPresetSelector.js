@@ -3,8 +3,8 @@ import {inject, observer} from "mobx-react";
 import {presetXYToIndex} from "../pacer/utils";
 import {TARGET_PRESET} from "../pacer/constants";
 import {state} from "../stores/StateStore";
-import "./PresetSelector.css";
 import Switch from "react-switch";
+import "./PresetSelector.css";
 
 // TODO: is observer needed here?
 const Selector = observer(({ xyId, presetIndex, hasData, name, onClick }) => {
@@ -75,7 +75,7 @@ class OverviewPresetSelector extends Component {
                     <div></div>
                     <div></div>
 
-                    <div className="force-read Xalign-self-center row align-center">
+                    <div className="force-read row align-center">
                         {/*<label>*/}
                             {/*<input type="checkbox" checked={this.props.state.forceReread} onChange={this.props.state.toggleForceReread} />*/}
                             <Switch onChange={(checked) => this.props.state.toggleForceReread(checked)} checked={this.props.state.forceReread} width={48} height={20}

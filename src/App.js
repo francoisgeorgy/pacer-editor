@@ -17,6 +17,7 @@ import * as QueryString from "query-string";
 import Patch from "./pages/Patch";
 import './App.css';
 import {MidiSupportWarning} from "./components/MidiSupportWarning";
+import MenuButtons from "./components/MenuButtons";
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
     <Route
@@ -74,6 +75,10 @@ class App extends Component {
                             <div className="grow right-align text-large">
                                 <a className="external" href="https://studiocode.dev/midi-monitor/" target="midi_monitor">MIDI Monitor</a>
                             </div>
+                        </div>
+
+                        <div className="subheader row align-center">
+                            <MenuButtons />
                         </div>
 
                         <div className="main-content-wrapper">

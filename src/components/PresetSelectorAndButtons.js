@@ -1,8 +1,7 @@
 import {observer} from "mobx-react";
+import React from "react";
 import {state} from "../stores/StateStore";
 import PresetSelector from "./PresetSelector";
-import ActionButtons from "./ActionButtons";
-import React from "react";
 import OverviewPresetSelector from "./OverviewPresetSelector";
 
 export const PresetSelectorAndButtons = observer((props) => {
@@ -14,7 +13,7 @@ export const PresetSelectorAndButtons = observer((props) => {
                     <div className="row align-bottom">
                         {props.overview && <OverviewPresetSelector showClearButton={props.showClearButton} />}
                         {!props.overview && <PresetSelector showClearButton={props.showClearButton} />}
-                        <ActionButtons />
+                        {/*<ActionButtons />*/}
                     </div>
                     {state.D6InfoVisible &&
                     <div className="d6info">

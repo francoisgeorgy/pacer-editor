@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component} from 'react';
 import {inject, observer} from "mobx-react";
 import {CONTROLS_DATA} from "../pacer/sysex";
 import ControlSelector from "../components/ControlSelector";
@@ -15,7 +15,6 @@ import {presetIndexToXY} from "../pacer/utils";
 import {PresetOverview} from "../components/PresetsOverview";
 import Switch from "react-switch";
 import "./Preset.css";
-import LoadFactoryDefaultsButton from "../components/LoadFactoryDefaultsButton";
 
 //FIXME: fix this:
 setAutoFreeze(false);   // needed to be able to update name and copy a preset at the same time. Otherwise immerjs freez the state in updateMessageName() and it is no longer possible to copy a preset.
@@ -145,7 +144,7 @@ class Preset extends Component {
 
                         <PresetSelectorAndButtons showClearButton={false} />
 
-                        <LoadFactoryDefaultsButton />
+                        {/*<LoadFactoryDefaultsButton />*/}
 
                         {data && data[TARGET_PRESET][presetIndex] &&
                         <div className="content-row-content">
@@ -182,12 +181,12 @@ class Preset extends Component {
                             {this.props.state.detailView &&
                             <div className="detail-view">
                                 <PresetOverview key={presetIndex} index={presetIndex} data={data[TARGET_PRESET][presetIndex]}
-                                                title={false} hexDisplay={false} extControls={true} />
+                                                title={false} hexDisplay={false} extControls={true} midi={false} />
                             </div>}
 
-                            <Fragment>
+                            {/*<Fragment>*/}
                                 {/*<h2>Controls for preset {presetLabel}</h2>*/}
-                                {!this.props.state.detailView && isVal(presetIndex) && <ControlSelector />}
+                            {!this.props.state.detailView && isVal(presetIndex) && <ControlSelector />}
 
 {/*
                                 {data && presetIndex in data[TARGET_PRESET] && Object.keys(data[TARGET_PRESET]).length > 1 &&
@@ -228,7 +227,7 @@ class Preset extends Component {
 
                                 {!isVal(presetIndex) && <div className="please">Select a preset.</div>}
 
-                            </Fragment>
+                            {/*</Fragment>*/}
                         </div>}
 
                         {this.props.state.changed && this.props.state.midi.output !== 0 &&         // FIXME: midiConnected(output) &&

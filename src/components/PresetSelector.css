@@ -77,7 +77,8 @@
 .selector.loaded {
     color: #000;
     /*background-color: #eceaf5;*/
-    background-color: #c8e6c9;
+    /*background-color: #c8e6c9;*/
+    background-color: #d1ebd2;
 }
 
 .selector.selected {

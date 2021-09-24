@@ -53,13 +53,12 @@ class LoadFactoryDefaultsButton extends Component {
 
     render() {
 
-        const data = this.props.state.data;
-
-        if (data) return null;
+        // const data = this.props.state.data;
+        // if (data) return null;
 
         return (
             <div>
-                <button className="action-button" onClick={this.loadFactoryDefaults}>Load Factory defaults</button>
+                <button className="action-button" onClick={this.loadFactoryDefaults}>Load Factory</button>
             </div>
         );
     }

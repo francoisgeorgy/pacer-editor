@@ -4,7 +4,6 @@ import Dropzone from "react-dropzone";
 import {dropOverlayStyle} from "../utils/misc";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import PresetsOverview from "../components/PresetsOverview";
-import LoadFactoryDefaultsButton from "../components/LoadFactoryDefaultsButton";
 import "./Overview.css";
 
 class Overview extends Component {
@@ -65,7 +64,7 @@ class Overview extends Component {
                                              extControls={this.props.state.extControls}
                                              currentPreset={this.props.state.currentPresetIndex}/>
                         </div>
-                        <LoadFactoryDefaultsButton />
+                        {/*<LoadFactoryDefaultsButton />*/}
                     </div>
                 </div>
             </Dropzone>

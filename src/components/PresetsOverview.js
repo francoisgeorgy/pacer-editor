@@ -187,7 +187,7 @@ const PresetTitle = withRouter(observer(({ history, presetIndex, presetName} = {
 
 }));
 
-export const PresetOverview = observer(({ index, data, hexDisplay, extControls, title }) => {
+export const PresetOverview = observer(({ index, data, hexDisplay, extControls, midi, title }) => {
     if (data === null || data === undefined) return null;
     // console.log("Preset", index, typeof index);
     return (
@@ -195,7 +195,7 @@ export const PresetOverview = observer(({ index, data, hexDisplay, extControls, 
             {title && <PresetTitle presetIndex={index} presetName={data["name"]} />}
             {/*<h3>{presetIndexToXY(parseInt(index, 10))}: <span className="bold">{data["name"]}</span></h3>*/}
             <Controls presetIndex={index} controls={data["controls"]} hexDisplay={hexDisplay} extControls={extControls} />
-            {hasMidiConfig(data) && <MidiSettings settings={data["midi"]} hexDisplay={hexDisplay} />}
+            {midi && hasMidiConfig(data) && <MidiSettings settings={data["midi"]} hexDisplay={hexDisplay} />}
         </div>
     );
 });
@@ -207,7 +207,7 @@ const Presets = observer(({ presets, hexDisplay, extControls, currentPreset }) =
         <div className="overview-presets">
             {Object.keys(presets)
                 .filter(presetIndex => (state.overviewSelection.length < 1) || state.overviewSelection.includes(presetIndex))
-                .map(presetIndex => <PresetOverview key={presetIndex} index={presetIndex} data={presets[presetIndex]} title={true} hexDisplay={hexDisplay} extControls={extControls} />)}
+                .map(presetIndex => <PresetOverview key={presetIndex} index={presetIndex} data={presets[presetIndex]} title={true} hexDisplay={hexDisplay} extControls={extControls} midi={true} />)}
         </div>
     );
     // {Object.keys(presets).map(presetIndex => <Preset key={presetIndex} index={presetIndex} data={presets[presetIndex]} hexDisplay={hexDisplay} extControls={extControls} />)}

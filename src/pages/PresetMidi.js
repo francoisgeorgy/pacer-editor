@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
 import Dropzone from "react-dropzone";
-import {CONTROLS_FULLNAME, TARGET_PRESET} from "../pacer/constants";
+import {TARGET_PRESET} from "../pacer/constants";
 import MidiSettingsEditor from "../components/MidiSettingsEditor";
 import {dropOverlayStyle} from "../utils/misc";
 import UpdateMessages from "../components/UpdateMessages";
 import {inject, observer} from "mobx-react";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
-import "./Preset.css";
-import LoadFactoryDefaultsButton from "../components/LoadFactoryDefaultsButton";
 import {presetIndexToXY} from "../pacer/utils";
+import "./Preset.css";
 
 class PresetMidi extends Component {
 
@@ -76,7 +75,7 @@ class PresetMidi extends Component {
 
                         <PresetSelectorAndButtons showClearButton={false} />
 
-                        <LoadFactoryDefaultsButton />
+                        {/*<LoadFactoryDefaultsButton />*/}
 
                         {showEditor &&
                         <div className="content-row-content">
