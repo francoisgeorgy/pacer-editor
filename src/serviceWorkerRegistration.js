@@ -37,8 +37,8 @@ export function register(config) {
 
         window.addEventListener('load', () => {
 
-            console.log("register service-worker.js");
-            const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+            console.log("register service-worker-custom.js");
+            const swUrl = `${process.env.PUBLIC_URL}/service-worker-custom.js`;
 
             if (isLocalhost) {
 
@@ -55,7 +55,6 @@ export function register(config) {
 
             } else {
                 // Is not localhost. Just register service worker
-                console.log("not localhost, register service worker");
                 registerValidSW(swUrl, config);
             }
         });
@@ -110,6 +109,7 @@ function registerValidSW(swUrl, config) {
 function checkValidServiceWorker(swUrl, config) {
 
     console.log("Check if the service worker can be found. If it can't reload the page.");
+
     fetch(swUrl, {
         headers: {'Service-Worker': 'script'},
     })

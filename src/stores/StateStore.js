@@ -108,6 +108,10 @@ class StateStore {
 
     clear() {
         console.log("state: clear data");
+        this.overviewSelection = [];
+        this.currentPresetIndex = "";
+        this.currentControl = "13";
+        this.updateMessages = {};
         this.data = null;
         this.clearBytes();
         this.updateMessages = {};

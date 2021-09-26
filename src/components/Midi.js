@@ -98,7 +98,7 @@ class Midi extends Component {
             if (port.hasListener("sysex", 'all', this.handleMidiInputEvent)) {
                 console.log(`Midi.connectInput: sysex messages on all channels listener already connected`);
             } else {
-                console.log(`Midi.connectInput: add listener for sysex messages on all channels`);
+                // console.log(`Midi.connectInput: add listener for sysex messages on all channels`);
                 port.addListener("sysex", 'all', this.handleMidiInputEvent);
                 console.log("connectInput: ", port.name);
             }
@@ -128,7 +128,7 @@ class Midi extends Component {
 
     autoConnectInput = () => {
         if (this.props.autoConnect) {
-            console.log(`Midi.autoConnectInput: autoConnect ${this.props.autoConnect}`);
+            // console.log(`Midi.autoConnectInput: autoConnect ${this.props.autoConnect}`);
             if (!this.props.state.midi.input) {
                 for (let port of this.props.state.midi.inputs) {      //WebMidi.inputs) {
                     if (port.type === 'input' && (port.name.match(new RegExp(this.props.autoConnect, 'i')) != null)) {
@@ -145,7 +145,7 @@ class Midi extends Component {
 
     autoConnectOutput = () => {
         if (this.props.autoConnect) {
-            console.log(`Midi.autoConnectOutput: autoConnect ${this.props.autoConnect}`);
+            // console.log(`Midi.autoConnectOutput: autoConnect ${this.props.autoConnect}`);
             if (!this.props.state.midi.output) {
                 for (let port of this.props.state.midi.outputs) {
                     if (port.type === 'output' && (port.name.match(new RegExp(this.props.autoConnect, 'i')) != null)) {
